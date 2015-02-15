@@ -1,0 +1,152 @@
+#!/usr/bin/env python
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+# OSZICAR 読み込み (汎用,その他)
+#
+################################################################################
+#
+# 2015.01.29
+#  get_tmod() の名称を get_md_mode() へ変更
+#  (ReadOutcar.get_tmode() ==> ReadOutcar.get_md_mode() への変更に合わせた)
+#
+# 2015.01.26 startup
+#
+#   temperature と etotal のゲット
+#   IBRION ゲット method 追加
+#
+################################################################################
+__author__     = "Kengo NAKADA"                                                           
+__maintainer__ = "Kengo NAKADA"                                                           
+__credits__    = ["Kengo NAKADA"]                                                         
+__email__      = "kengo.nakada@gmail.com"                                                 
+__copyright__  = "Copyright 2015, Kengo NAKADA"                                           
+__license__    = "MIT"                                                                    
+#                                                                                         
+__status__     = "alpha"                                                                  
+__version__    = "0.0.4"                                                                  
+################################################################################
+
+import sys
+import gzip
+import os
+import re
+import optparse
+import numpy as np
+
+#import StructureAnalysisEnvironment as SAE                                      
+#import SpaceGroupEnvironment as SGE  
+
+################################################################################
+class ReadOszicar(object):
+
+    def __init__(self,cname):
+
+        if os.path.exists(cname):
+            GZIP=False
+        elif os.path.exists(cname+".gz"):
+            GZIP=True
+        else:
+            sys.exit("STOP: "+cname+" or "+cname+".gz file not found")
+
+        try:
+            if GZIP:
+                tmp = gzip.open(cname+".gz")
+            else:
+                tmp = open(cname)
+            datfile = tmp.read()
+        except:
+            tmp.close()
+            sys.exit("STOP: "+cname+" or "+cname+".gz does'nt open")
+        finally:
+            tmp.close()
+
+        self.datlines = datfile.split('\n')
+        self.num = len(self.datlines) -1
+
+    # get_iter_num
+    # 実際に計算した ION iter 数をゲットする
+    def get_iter_num(self):
+        iter_reg = re.compile('.*F=',re.IGNORECASE)
+        for i in range(self.num):
+            if bool(iter_reg.match(self.datlines[i])):
+                tmp = self.datlines[i].split()
+                self.iter_num = int(tmp[0])
+
+        return self.iter_num
+
+    # get_md_mode
+    # IBRION=0 or それ以外の判定
+    def get_md_mode(self):
+        iter_reg = re.compile('.*T=')
+        self.md_FLAG = False
+        for i in range(self.num):
+            if bool(iter_reg.match(self.datlines[i])):
+                self.md_FLAG = True
+                break
+        return self.md_FLAG
+
+    def get_temperature(self):
+        MD_FLAG = self.get_md_mode()
+        if MD_FLAG:
+           iter_num = self.get_iter_num() 
+           self.temperature = np.zeros(iter_num)
+           iter_reg = re.compile('.*T=',re.IGNORECASE)
+           j = 0
+           for i in range(self.num):
+               if bool(iter_reg.match(self.datlines[i])):
+                   tmp = self.datlines[i].split()
+                   self.temperature[j] = float(tmp[2])
+                   j += 1
+
+        return self.temperature
+
+    def get_etotal(self):
+        MD_FLAG = self.get_md_mode()
+        if MD_FLAG:
+           iter_num = self.get_iter_num() 
+           self.ETOTAL = np.zeros(iter_num)
+           iter_reg = re.compile('.*E=',re.IGNORECASE)
+           j = 0
+           for i in range(self.num):
+               if bool(iter_reg.match(self.datlines[i])):
+                   tmp = self.datlines[i].split()
+                   self.ETOTAL[j] = float(tmp[4])
+                   j += 1
+
+        return self.ETOTAL
+
+
+################################################################################
+if __name__ == '__main__':
+                                                                                
+    name = 'OSZICAR'
+                                                                                
+    parser = optparse.OptionParser()
+    parser.add_option(  '-i','--input',
+                        dest='INPUT',
+                        default=name,
+    )
+    options,  args = parser.parse_args()
+                                                                                
+    if options.INPUT:
+        name=options.INPUT
+                                                                                
+    if len(args) > 0:
+        name=args[0]
+                                                                                
+    oszicar = ReadOszicar(name)
+
+    iter_num = oszicar.get_iter_num()
+    md_mode = oszicar.get_md_mode()
+    print "MD_mode", md_mode
+
+    if md_mode:
+        temperature = oszicar.get_temperature()
+        oszicar.get_temperature()
+        etotal = oszicar.get_etotal()
+    
+        for i in range(iter_num):
+            print i+1, temperature[i], etotal[i]
+
