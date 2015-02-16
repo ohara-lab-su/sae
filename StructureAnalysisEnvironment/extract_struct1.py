@@ -46,6 +46,9 @@
 #
 ################################################################################
 #
+# 2015.02.16
+#  import の名前空間を変更
+#
 # 2014.11.13 1st
 #
 ################################################################################
@@ -60,12 +63,13 @@ __status__     = "alpha"
 __version__    = "0.0.1"                                                                  
 ################################################################################
 
-import sys
-import os
-from numpy import *
+#import sys
+#import os
 
-from LIB_vasp.conv_direct2car import *
-from LIB_vasp.conv_car2carABS import *
+import numpy as np
+
+import StructureAnalysisEnvironment as SAE                                      
+#import SpaceGroupEnvironment as SGE 
 
 def extract_struct1(scale,t,natom,direct,position,fix,c0,c1,\
                     atoms,atoms_index,ion,ion_local,\
@@ -84,12 +88,12 @@ def extract_struct1(scale,t,natom,direct,position,fix,c0,c1,\
     t3_y = t[1,2]
     t3_z = t[2,2]
 
-    c0_new = zeros(3)
+    c0_new = np.zeros(3)
     c0_new[0] = ( t1_x*c0[0] + t2_x*c0[1] + t3_x*c0[2] )*scale
     c0_new[1] = ( t1_y*c0[0] + t2_y*c0[1] + t3_y*c0[2] )*scale
     c0_new[2] = ( t1_z*c0[0] + t2_z*c0[1] + t3_z*c0[2] )*scale
 
-    c1_new = zeros(3)
+    c1_new = np.zeros(3)
     c1_new[0] = ( t1_x*c1[0] + t2_x*c1[1] + t3_x*c1[2] )*scale
     c1_new[1] = ( t1_y*c1[0] + t2_y*c1[1] + t3_y*c1[2] )*scale
     c1_new[2] = ( t1_z*c1[0] + t2_z*c1[1] + t3_z*c1[2] )*scale
@@ -97,10 +101,10 @@ def extract_struct1(scale,t,natom,direct,position,fix,c0,c1,\
     # cartesian系へ変換
     if direct:
         ABS=False
-        scale,direct = conv_direct2car(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
 
     # 絶対座標系へ変換
-    conv_car2carABS(scale,t,natom,direct,position)
+    SAE.conv_car2carABS(scale,t,natom,direct,position)
 
     # リージョン内の原子探索(c軸のリージョンのみ)
     j=0

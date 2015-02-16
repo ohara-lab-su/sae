@@ -29,14 +29,20 @@ __license__    = "MIT"
 __status__     = "alpha"                                                                  
 __version__    = "0.0.1"                                                                  
 ################################################################################
+#
+# 2015.02.16
+#   import の名前空間を変更
+#   無駄な import の廃止
+#
+################################################################################
 
-import sys
-import os
-import re
-from numpy import *
+#import sys
+#import os
+#import re
+import numpy as np
 
-from LIB_vasp.get_atom_start import *
-
+import StructureAnalysisEnvironment as SAE                                      
+#import SpaceGroupEnvironment as SGE 
 
 ####################################################
 ## distanceでatom1とatom2がボンドしている数を返す
@@ -50,9 +56,9 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
 
     # 入力した原子種の通し番号の下限と上限を返す
     # 入力する原子種の種別番号は 1 からスタート
-    start1,end1 = get_atom_start(atom1,nion,atoms)
+    start1,end1 = SAE.get_atom_start(atom1,nion,atoms)
     if atom1 != atom2:
-        start2,end2 = get_atom_start(atom2,nion,atoms)
+        start2,end2 = SAE.get_atom_start(atom2,nion,atoms)
 
     # 入力した原子のサイト内ループを通し番号で記述
     atom1_0 = atom1 -1
@@ -71,8 +77,8 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
                   y2 = position[j,1]
                   z2 = position[j,2]
     
-                  r0 = fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                  r1 = sqrt(r0)
+                  r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
+                  r1 = np.sqrt(r0)
                   if r1 < distance:
                       num += 1
     else:
@@ -86,8 +92,8 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
                   y2 = position[j,1]
                   z2 = position[j,2]
     
-                  r0 = fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                  r1 = sqrt(r0)
+                  r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
+                  r1 = np.sqrt(r0)
                   if r1 < distance:
                       num += 1
 
@@ -110,9 +116,9 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
 
     # 入力した原子種の通し番号の下限と上限を返す
     # 入力する原子種の種別番号は 1 からスタート
-    start1,end1 = get_atom_start(atom1,nion,atoms)
+    start1,end1 = SAE.get_atom_start(atom1,nion,atoms)
     if atom1 != atom2:
-        start2,end2 = get_atom_start(atom2,nion,atoms)
+        start2,end2 = SAE.get_atom_start(atom2,nion,atoms)
     
 
     # 入力した原子のサイト内ループを通し番号で記述
@@ -132,8 +138,8 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
                     y2 = position[j,1]
                     z2 = position[j,2]
     
-                    r0 = fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                    r1 = sqrt(r0)
+                    r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
+                    r1 = np.sqrt(r0)
                     if r1 < distance:
                        #print num, i,"("+str(atoms_index[ion[i]])+") -",\
                        #           j,"("+str(atoms_index[ion[j]])+")"  ,\
@@ -156,8 +162,8 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
                    y2 = position[j,1]
                    z2 = position[j,2]
     
-                   r0 = fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                   r1 = sqrt(r0)
+                   r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
+                   r1 = np.sqrt(r0)
                    if r1 < distance:
                       #print num, i,"("+str(atoms_index[ion[i]])+") -",\
                       #           j,"("+str(atoms_index[ion[j]])+")"  ,\

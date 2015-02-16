@@ -3,18 +3,19 @@
 # Copyright (C) 2014,2015 K.NAKADA
 # MIT LICENSE
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 version='0.0.1'
 
 setup(
-        name='StructureAnalysisEnvironment',
-#       package=['SAE'],
-        py_modules=['StructureAnalysisEnvironment'],
+        name = 'StructureAnalysisEnvironment',
+        packages = find_packages(),
+#       packages = find_packages('StructureAnalysisEnvironment'),
+#       package_dir  = {'':'StructureAnalysisEnvironment'},
         version=version,
-        description='Structure Analysis Environment',
         author='K.NAKADA',
         author_email ='kengo.nakada@gmail.com',
         license='MIT',
-        platforms=['linux','OSX'],
+#       platforms=['linux','OSX'],
 )
+

@@ -1,1 +1,6 @@
 *.pyc
+*.tar.gz
+SAE
+build/
+dist/
+StructureAnalysisEnvironment.egg-info/

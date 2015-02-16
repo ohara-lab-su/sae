@@ -16,13 +16,17 @@ __license__    = "MIT"
 __status__     = "alpha"                                                                  
 __version__    = "0.0.1"                                                                  
 ################################################################################
+#
+# 2015.02.16
+#  import の名前空間を変更
+#
+################################################################################
 
-#from LIB_vasp.read_list_param import *
-#from LIB_vasp.read_list import *
 
 import numpy as np
 import StructureAnalysisEnvironment as SAE                                      
 #import SpaceGroupEnvironment as SGE 
+
 
 ### 原子番号から原子半径を返す
 def get_atomic_radius0(num):

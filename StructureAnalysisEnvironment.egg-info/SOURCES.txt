@@ -1,6 +1,0 @@
-README.txt
-setup.py
-StructureAnalysisEnvironment.egg-info/PKG-INFO
-StructureAnalysisEnvironment.egg-info/SOURCES.txt
-StructureAnalysisEnvironment.egg-info/dependency_links.txt
-StructureAnalysisEnvironment.egg-info/top_level.txt

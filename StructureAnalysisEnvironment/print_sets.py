@@ -15,16 +15,19 @@ __license__    = "MIT"
 __status__     = "alpha"                                                                  
 __version__    = "0.0.1"                                                                  
 ################################################################################
+#
+# 2015.02.16
+#  無駄な import をコメントアウト
+#
+################################################################################
 
 import sys
 import os
-import re
-import optparse
-from numpy import *
 
-#from LIB_vasp.read_sets_param import *
-#from LIB_vasp.read_sets import *
-#from LIB_vasp.print_sets import *
+#import re
+#import optparse
+#from numpy import *
+
 
 def print_sets(cname,STD,\
                title,nspin,spg_name,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kinfo,kpoints):
