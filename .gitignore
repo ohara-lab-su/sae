@@ -1,5 +1,6 @@
 *.pyc
 *.tar.gz
+update.csh
 SAE
 build/
 dist/
