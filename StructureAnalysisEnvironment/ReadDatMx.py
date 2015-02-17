@@ -14,6 +14,18 @@
 ################################################################################
 #
 # 2015.02.17
+#  get_position_max(), get_position_min 追加
+#   position[atom,3] のそれぞれ x,y,z の最大値を返す
+#
+# 2015.02.17
+#  get_t() を初めいくつかの method で *.dat のコメントアウト処理に正しく
+#  対応してなかったため意図しない動作になっていたのを修正
+#
+# 2015.02.17
+#  Al-Si111-ESM.dat が正しく読めないエラー
+#  ReadDatMx class, get_t, get_position のバグ(仕様)を修正
+#
+# 2015.02.17
 #  get_fix() も get_position() と同様に atoms_index の順番に合わせる
 #
 # 2015.02.17
@@ -39,7 +51,7 @@ __copyright__  = "Copyright 2014,2015, Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.0.4"
+__version__    = "0.0.6"
 ################################################################################
 
 import sys
@@ -85,34 +97,40 @@ class ReadDatMx(object):
     ###################################
     # title (System.Name)
     def get_title(self):
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         title_reg = re.compile('.*System\.Name')
         for i in range(self.num):
-            if bool(title_reg.match(self.datlines[i])):
-                src = self.datlines[i].split()[1]
-                self.SYSTEM = re.sub(' *$','',src) 
-                break
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(title_reg.match(self.datlines[i])):
+                    src = self.datlines[i].split()[1]
+                    self.SYSTEM = re.sub(' *$','',src) 
+                    break
         return self.SYSTEM
 
 
     ###################################
     # natom
     def get_natom(self):
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         reg = re.compile('.*Atoms\.Number')
         for i in range(self.num):
-            if bool(reg.match(self.datlines[i])):
-                self.natom = int(self.datlines[i].split()[1])
-                break 
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg.match(self.datlines[i])):
+                    self.natom = int(self.datlines[i].split()[1])
+                    break 
         return self.natom
 
 
     ###################################
     # NION
     def get_nion(self):
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         reg = re.compile('.*Species\.Number')
         for i in range(self.num):
-            if bool(reg.match(self.datlines[i])):
-                self.NION = int(self.datlines[i].split()[1])
-                break
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg.match(self.datlines[i])):
+                    self.NION = int(self.datlines[i].split()[1])
+                    break
         return self.NION
 
 
@@ -120,18 +138,22 @@ class ReadDatMx(object):
     # atoms_index
     def get_atoms_index(self):
         nion = self.get_nion()
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         reg0 = re.compile('.*\<Definition\.of\.Atomic\.Species')
         reg1 = re.compile('.*Definition\.of\.Atomic\.Species\>')
+
         self.atoms_index = []
         for i in range(self.num):
-            if bool(reg0.match(self.datlines[i])):
-                j = 1
-                while not bool(reg1.match(self.datlines[i+j])):
-                    self.atoms_index.append(self.datlines[i+j].split()[0])
-                    j += 1
-                if nion != j -1 :
-                    sys.exit("STOP: Atomic.Species Tag Error")
-                break
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg0.match(self.datlines[i])):
+                    j = 1
+                    while not bool(reg1.match(self.datlines[i+j])):
+                        self.atoms_index.append(self.datlines[i+j].split()[0])
+                        j += 1
+                    if nion != j -1 :
+                        sys.exit("STOP: Atomic.Species Tag Error")
+                    break
         return self.atoms_index
 
 
@@ -173,18 +195,23 @@ class ReadDatMx(object):
         nion = self.get_nion()
         natom = self.get_natom()
         atoms_index = self.get_atoms_index()
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         reg0 = re.compile('.*\<Atoms\.SpeciesAndCoordinates')
         reg1 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
+
         self.atoms = np.zeros(nion,dtype=int)
         for i in range(self.num):
-            if bool(reg0.match(self.datlines[i])):
-                i += 1
-                for j in range(natom):
-                    for k in range(nion):
-                        if self.datlines[i+j].split()[1] == atoms_index[k]:
-                            self.atoms[k] += 1
-                if not bool(reg1.match(self.datlines[i+j+1])):
-                    sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg0.match(self.datlines[i])):
+                    i += 1
+                    for j in range(natom):
+                        for k in range(nion):
+                            if self.datlines[i+j].split()[1] == atoms_index[k]:
+                                self.atoms[k] += 1
+                    if not bool(reg1.match(self.datlines[i+j+1])):
+                        sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
+
         return self.atoms
 
 
@@ -206,44 +233,50 @@ class ReadDatMx(object):
     def get_t(self):
         BOHR= 0.529177   # Bohr radius in Angstrom
 
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         reg_unit0 = re.compile('AU',re.IGNORECASE)
         reg_unit1 = re.compile('Ang',re.IGNORECASE)
         reg2 = re.compile('.*Atoms\.UnitVectors\.Unit')
-        reg3 = re.compile('.*\<Atoms\.UnitVectors ')
+        reg3 = re.compile('.*\<Atoms\.UnitVectors')
         reg4 = re.compile('.*Atoms\.UnitVectors\>')
 
         # get UNIT
         for i in range(self.num):
-            if bool(reg2.match(self.datlines[i])):
-                if bool(reg_unit0.match(self.datlines[i].split()[1])):
-                   #FLAG_UNIT = True   # 'Atomic Unit'
-                   UNIT = BOHR
-                elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-                   #FLAG_UNIT = False  # 'Ang'
-                   UNIT = 1.0
-                else:
-                    sys.exit("STOP: Unknown Atoms.UnitVectors.Unit")
-                break
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg2.match(self.datlines[i])):
+                    if bool(reg_unit0.match(self.datlines[i].split()[1])):
+                       #FLAG_UNIT = True   # 'Atomic Unit'
+                       UNIT = BOHR
+                    elif bool(reg_unit1.match(self.datlines[i].split()[1])):
+                       #FLAG_UNIT = False  # 'Ang'
+                       UNIT = 1.0
+                    else:
+                        sys.exit("STOP: Unknown Atoms.UnitVectors.Unit")
+                    break
 
         # get translation vector
         self.t = np.zeros((3,3))
+        self.FLAG_t = False
         for i in range(self.num):
-            if bool(reg3.match(self.datlines[i])):
-                self.t[0,0] = float(self.datlines[i+1+0].split()[0])*UNIT
-                self.t[1,0] = float(self.datlines[i+1+0].split()[1])*UNIT
-                self.t[2,0] = float(self.datlines[i+1+0].split()[2])*UNIT
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg3.match(self.datlines[i])):
+                    self.FLAG_t = True
 
-                self.t[0,1] = float(self.datlines[i+1+1].split()[0])*UNIT
-                self.t[1,1] = float(self.datlines[i+1+1].split()[1])*UNIT
-                self.t[2,1] = float(self.datlines[i+1+1].split()[2])*UNIT
+                    self.t[0,0] = float(self.datlines[i+1+0].split()[0])*UNIT
+                    self.t[1,0] = float(self.datlines[i+1+0].split()[1])*UNIT
+                    self.t[2,0] = float(self.datlines[i+1+0].split()[2])*UNIT
 
-                self.t[0,2] = float(self.datlines[i+1+2].split()[0])*UNIT
-                self.t[1,2] = float(self.datlines[i+1+2].split()[1])*UNIT
-                self.t[2,2] = float(self.datlines[i+1+2].split()[2])*UNIT
+                    self.t[0,1] = float(self.datlines[i+1+1].split()[0])*UNIT
+                    self.t[1,1] = float(self.datlines[i+1+1].split()[1])*UNIT
+                    self.t[2,1] = float(self.datlines[i+1+1].split()[2])*UNIT
 
-                if not bool(reg4.match(self.datlines[i+1+3])):
-                    sys.exit("STOP: Atoms.UnitVectors Error")
-                break
+                    self.t[0,2] = float(self.datlines[i+1+2].split()[0])*UNIT
+                    self.t[1,2] = float(self.datlines[i+1+2].split()[1])*UNIT
+                    self.t[2,2] = float(self.datlines[i+1+2].split()[2])*UNIT
+
+                    if not bool(reg4.match(self.datlines[i+1+3])):
+                        sys.exit("STOP: Atoms.UnitVectors Error")
+                    break
 
         return self.t
 
@@ -267,6 +300,8 @@ class ReadDatMx(object):
     ###################################
     # 内部座標のDirect Mode の取得
     def get_direct(self):
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
         reg_unit0 = re.compile('AU',re.IGNORECASE)
         reg_unit1 = re.compile('Ang',re.IGNORECASE)
         reg_unit2 = re.compile('FRAC',re.IGNORECASE)
@@ -274,16 +309,17 @@ class ReadDatMx(object):
 
         # get UNIT
         for i in range(self.num):
-            if bool(reg3.match(self.datlines[i])):
-                if bool(reg_unit0.match(self.datlines[i].split()[1])):
-                   direct = False
-                elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-                   direct = False
-                elif bool(reg_unit2.match(self.datlines[i].split()[1])):
-                   direct = True
-                else:
-                    sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
-                break
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg3.match(self.datlines[i])):
+                    if bool(reg_unit0.match(self.datlines[i].split()[1])):
+                       direct = False
+                    elif bool(reg_unit1.match(self.datlines[i].split()[1])):
+                       direct = False
+                    elif bool(reg_unit2.match(self.datlines[i].split()[1])):
+                       direct = True
+                    else:
+                        sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
+                    break
 
         return direct
 
@@ -358,7 +394,7 @@ class ReadDatMx(object):
         reg_unit1 = re.compile('Ang',re.IGNORECASE)
         reg_unit2 = re.compile('FRAC',re.IGNORECASE)
         reg_position0 = re.compile('.*Atoms\.SpeciesAndCoordinates\.Unit')
-        reg_position1 = re.compile('.*\<Atoms\.SpeciesAndCoordinates ')
+        reg_position1 = re.compile('.*\<Atoms\.SpeciesAndCoordinates')
        #reg_position2 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
 
         natom = self.get_natom()
@@ -367,25 +403,24 @@ class ReadDatMx(object):
 
         # get UNIT
         for i in range(self.num):
-            if bool(reg_position0.match(self.datlines[i])):
-                if bool(reg_unit0.match(self.datlines[i].split()[1])):
-                  #direct = False
-                   UNIT = BOHR        # 'Atomic Unit'
-                elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-                  #direct = False
-                   UNIT = 1.0 # 'Ang'
-                elif bool(reg_unit2.match(self.datlines[i].split()[1])):
-                  #direct = True
-                   UNIT = 1.0
-                else:
-                    sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
-                break
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg_position0.match(self.datlines[i])):
+                    if bool(reg_unit0.match(self.datlines[i].split()[1])):
+                      #direct = False
+                       UNIT = BOHR        # 'Atomic Unit'
+                    elif bool(reg_unit1.match(self.datlines[i].split()[1])):
+                      #direct = False
+                       UNIT = 1.0 # 'Ang'
+                    elif bool(reg_unit2.match(self.datlines[i].split()[1])):
+                      #direct = True
+                       UNIT = 1.0
+                    else:
+                        sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
+                    break
 
         self.position = np.zeros((natom,3))
-        # sort_index --> original_index
-        self.position_index = np.zeros(natom,dtype=int)
-        # original_index --> sort_index
-        self.position_index_r = np.zeros(natom,dtype=int)
+        self.position_index = np.zeros(natom,dtype=int)   # sort_index --> original_index
+        self.position_index_r = np.zeros(natom,dtype=int) # original_index --> sort_index
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg_position1.match(self.datlines[i])):
@@ -405,6 +440,32 @@ class ReadDatMx(object):
                                 l += 1
                     break
         return self.position
+
+
+    ###################################
+    ## position の(x,y,z) 毎の最大を返す
+    ##
+    def get_position_max(self):
+        position = self.get_position()
+
+        self.position_max_xyz = np.zeros((3))
+        for xyz in range(0,3):
+            self.position_max_xyz[xyz] = max(position[:,xyz])
+
+        return self.position_max_xyz
+
+
+    ###################################
+    ## position の(x,y,z) 毎の最小値を返す
+    ##
+    def get_position_min(self):
+        position = self.get_position()
+
+        self.position_min_xyz = np.zeros((3))
+        for xyz in range(0,3):
+            self.position_min_xyz[xyz] = min(position[:,xyz])
+
+        return self.position_min_xyz
 
 
     ###################################
@@ -505,12 +566,37 @@ if __name__ == '__main__':
     direct = dat.get_direct()
     position = dat.get_position()
     fix = dat.get_fix()
+    position_max = dat.get_position_max()
+    position_min = dat.get_position_min()
 
     print title
     print " ",scale
-    print "  %13.9f %13.9f %13.9f" %( t[0,0],t[1,0],t[2,0] )
-    print "  %13.9f %13.9f %13.9f" %( t[0,1],t[1,1],t[2,1] )
-    print "  %13.9f %13.9f %13.9f" %( t[0,2],t[1,2],t[2,2] )
+
+#   print ""
+#   print "max_x", position_max[0]
+#   print "max_y", position_max[1]
+#   print "max_z", position_max[2]
+#   print ""
+#   print "min_x", position_min[0]
+#   print "min_y", position_min[1]
+#   print "min_z", position_min[2]
+    if dat.FLAG_t:
+        print "  %13.9f %13.9f %13.9f" %( t[0,0],t[1,0],t[2,0] )
+        print "  %13.9f %13.9f %13.9f" %( t[0,1],t[1,1],t[2,1] )
+        print "  %13.9f %13.9f %13.9f" %( t[0,2],t[1,2],t[2,2] )
+    else:
+        t[1,0] = 0.0
+        t[2,0] = 0.0
+        t[0,1] = 0.0
+        t[2,1] = 0.0
+        t[0,2] = 0.0
+        t[1,2] = 0.0
+        t[0,0] = abs(position_max[0]-position_min[0])*1.20
+        t[1,1] = abs(position_max[1]-position_min[1])*1.20
+        t[2,2] = abs(position_max[2]-position_min[2])*1.20
+        print "  %13.9f %13.9f %13.9f" %( t[0,0],t[1,0],t[2,0] )
+        print "  %13.9f %13.9f %13.9f" %( t[0,1],t[1,1],t[2,1] )
+        print "  %13.9f %13.9f %13.9f" %( t[0,2],t[1,2],t[2,2] )
 
     print " ",
     for i in range(nion):
@@ -536,6 +622,7 @@ if __name__ == '__main__':
             print "",
             print fix[i,0],fix[i,1],fix[i,2],
         print ""
+
 
 #   for i in range(natom):
 #       print fix[i][0], fix[i][1], fix[i][2]

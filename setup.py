@@ -1,4 +1,4 @@
-#!/usr/bin/env pthon
+#!/usr/bin/env python
 
 # Copyright (C) 2014,2015 K.NAKADA
 # MIT LICENSE
