@@ -8,6 +8,9 @@
 ################################################################################
 #
 # 2015.02.24
+#  *.dat を superclass化したことで *.out (ReadMxOut)の重複 method を整理整頓
+#
+# 2015.02.24
 #  1st time
 #    とりあえず Utot と Uele の ION ステップごとと SCF 毎の結果を
 #    整理して抽出するだけのクラス/メッソドをとりあえず準備
@@ -31,12 +34,13 @@ import re
 import optparse
 import numpy as np
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadMxOut(object):
+class ReadMxOut(SAE.ReadMxDatMethod):
 
+    ###################################
     def __init__(self,cname):
 
         if os.path.exists(cname):
@@ -61,6 +65,8 @@ class ReadMxOut(object):
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1
 
+    ###################################
+    # イオンループの数
     def get_n_ion_loop(self):
         md_text = '.*SCF.*MD='
         md_reg = re.compile(md_text)
@@ -69,6 +75,7 @@ class ReadMxOut(object):
                 self.n_ion_loop = int(re.sub(md_text,'',self.datlines[i]))
         return self.n_ion_loop
 
+    ###################################
     # イオンループ毎の Total Energy
     def get_utot(self):
         n_ion_loop = self.get_n_ion_loop()
@@ -81,6 +88,7 @@ class ReadMxOut(object):
                     j += 1
         return self.utot
 
+    ###################################
     # SCFループの最大数
     def get_max_n_scf(self):
         scf_txt = '.*SCF='
@@ -93,6 +101,7 @@ class ReadMxOut(object):
                     self.max_n_scf = tmp
         return self.max_n_scf            
 
+    ###################################
     # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
     def get_uele(self):
         md_txt = '.*SCF.*at MD='
@@ -148,6 +157,10 @@ if __name__ == '__main__':
     max_n_scf = out.get_max_n_scf()
     utot = out.get_utot()
     uele,uele_index = out.get_uele()
+    nspin = out.get_ispin()
+    title = out.get_title()
+    natom = out.get_natom()
+    nion = out.get_nion()
 
     for md in range(n_ion_loop):
         print "***************** md = ",md+1,'**********************'
@@ -157,4 +170,5 @@ if __name__ == '__main__':
 
 #   for i in range(n_ion_loop):
 
-
+#   print nspin
+#   print title

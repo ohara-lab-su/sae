@@ -19,8 +19,10 @@ from ReadPoscar import *
 from ReadVps import *
 from ReadVpsList import *
 from ReadMd import *
+from ReadMxDatMethod import *
 from ReadMxDat import *
 from ReadMxOut import *
+from ReadMxDos import *
 
 
 ### function

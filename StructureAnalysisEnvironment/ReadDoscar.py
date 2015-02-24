@@ -47,6 +47,9 @@
 #
 ################################################################################
 #
+# 2015.02.25                                                                    
+#  get_emin() で用いているインスタンス変数名を変更
+#
 # 2015.01.28                                                                    
 #  title の取得における末尾までの空白削除を追加 
 #
@@ -176,8 +179,8 @@ class ReadDoscar(object):
     # EMIN をゲット
     def get_emin(self):
         tmp = self.datlines[5].split()
-        self.E_MIN = float(tmp[1])  # EMIN
-        return self.E_MIN
+        self.EMIN = float(tmp[1])  # EMIN
+        return self.EMIN
 
     # NEDOS をゲット
     def get_nedos(self):
