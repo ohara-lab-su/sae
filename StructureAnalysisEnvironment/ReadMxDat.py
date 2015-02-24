@@ -64,7 +64,7 @@ import optparse
 
 
 ################################################################################
-class ReadDatMx(object):
+class ReadMxDat(object):
 
     ###############################################
     ## init and Read POSCAR

@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2015.02.24
+#  get_iter_num() --> get_n_ion_loop() 変更
+#
 # 2015.01.29
 #  get_tmod() の名称を get_md_mode() へ変更
 #  (ReadOutcar.get_tmode() ==> ReadOutcar.get_md_mode() への変更に合わせた)
@@ -17,15 +20,15 @@
 #   IBRION ゲット method 追加
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2015, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.4"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.4"
 ################################################################################
 
 import sys
@@ -65,16 +68,16 @@ class ReadOszicar(object):
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1
 
-    # get_iter_num
+    # get_n_ion_loop (旧名) get_iter_num
     # 実際に計算した ION iter 数をゲットする
-    def get_iter_num(self):
+    def get_n_ion_loop(self):
         iter_reg = re.compile('.*F=',re.IGNORECASE)
         for i in range(self.num):
             if bool(iter_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
-                self.iter_num = int(tmp[0])
+                self.n_ion_loop = int(tmp[0])
 
-        return self.iter_num
+        return self.n_ion_loop
 
     # get_md_mode
     # IBRION=0 or それ以外の判定
@@ -90,8 +93,8 @@ class ReadOszicar(object):
     def get_temperature(self):
         MD_FLAG = self.get_md_mode()
         if MD_FLAG:
-           iter_num = self.get_iter_num() 
-           self.temperature = np.zeros(iter_num)
+           n_ion_loop = self.get_n_ion_loop() 
+           self.temperature = np.zeros(n_ion_loop)
            iter_reg = re.compile('.*T=',re.IGNORECASE)
            j = 0
            for i in range(self.num):
@@ -105,8 +108,8 @@ class ReadOszicar(object):
     def get_etotal(self):
         MD_FLAG = self.get_md_mode()
         if MD_FLAG:
-           iter_num = self.get_iter_num() 
-           self.ETOTAL = np.zeros(iter_num)
+           n_ion_loop = self.get_n_ion_loop() 
+           self.ETOTAL = np.zeros(n_ion_loop)
            iter_reg = re.compile('.*E=',re.IGNORECASE)
            j = 0
            for i in range(self.num):
@@ -138,7 +141,7 @@ if __name__ == '__main__':
                                                                                 
     oszicar = ReadOszicar(name)
 
-    iter_num = oszicar.get_iter_num()
+    n_ion_loop = oszicar.get_n_ion_loop()
     md_mode = oszicar.get_md_mode()
     print "MD_mode", md_mode
 
@@ -147,6 +150,6 @@ if __name__ == '__main__':
         oszicar.get_temperature()
         etotal = oszicar.get_etotal()
     
-        for i in range(iter_num):
+        for i in range(n_ion_loop):
             print i+1, temperature[i], etotal[i]
 

@@ -70,10 +70,10 @@
 28  Ni   6.0S  s4p4d3f2
 28  Ni   6.0H  s4p3d2f1  # Hard (3s,3p,3d,4s)
 28  Ni   6.0H  s4p4d3f2
-29  Cu   6.0H  s3p3d3    # Hard (3s,3p,3d,4s)
-29  Cu   6.0H  s3p3d3f1
 29  Cu   6.0S  s2p2d2    # Soft (3d,4s)
 29  Cu   6.0S  s3p3d3
+29  Cu   6.0H  s3p3d3    # Hard (3s,3p,3d,4s)
+29  Cu   6.0H  s3p3d3f1
 30  Zn   6.0H  s4p3d2    # Hard (3s,3p,4d,4s)
 30  Zn   6.0H  s4p4d3f1
 30  Zn   6.0S  s2p2d2    # Soft (3d,4s)

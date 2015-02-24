@@ -18,8 +18,9 @@ from ReadPoscar import *
 ### class for OpenMX
 from ReadVps import *
 from ReadVpsList import *
-from ReadDatMx import *
 from ReadMd import *
+from ReadMxDat import *
+from ReadMxOut import *
 
 
 ### function

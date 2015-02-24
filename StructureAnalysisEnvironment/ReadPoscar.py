@@ -99,7 +99,7 @@ class ReadPoscar(object):
             tmp.close()
 
         self.datlines = datfile.split('\n')
-        self.num = len(self.datlines)
+        self.num = len(self.datlines) -1
 
     ###############################################
     # TITLE

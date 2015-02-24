@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.02.24
+#  method 名ルール変更に伴い get_iter_num() --> get_n_ion_loop()
+#
 # 2015.01.31
 #  title 取得における末尾までの空白削除を追加(ReadDoscarに準ずる)
 #
@@ -405,23 +408,23 @@ class ReadOutcar(object):
 
         return self.MD_FLAG
 
-    # get_iter_num
+    # get_n_ion_loop (旧名) get_iter_num
     # 実際に計算した ION iter 数をゲットする
-    def get_iter_num(self):
+    def get_n_ion_loop(self):
         iter_reg = re.compile('.*-- Iteration',re.IGNORECASE)
         for i in range(self.num):
             if bool(iter_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
-                self.iter_num = int(tmp[2].replace('(',''))
-        return self.iter_num
+                self.n_ion_loop = int(tmp[2].replace('(',''))
+        return self.n_ion_loop
 
     # MD-mode のときに temperature をゲットする
     def get_temperature(self):
         IBRION = self.get_ibrion()
         if IBRION == 0:
             # MD-mode
-            iter_num = self.get_iter_num()
-            self.temperature = np.zeros(iter_num)
+            n_ion_loop = self.get_n_ion_loop()
+            self.temperature = np.zeros(n_ion_loop)
             ekin_reg = re.compile('.*EKIN_LAT=',re.IGNORECASE)
             j = 0
             for i in range(self.num):
@@ -437,8 +440,8 @@ class ReadOutcar(object):
     # free energy TOTEN を ion-loop 毎にゲットする
     def get_toten_ion(self):
         toten_ion_reg = re.compile('.*free  energy   TOTEN',re.IGNORECASE)
-        iter_num = self.get_iter_num()
-        self.toten_ion = np.zeros(iter_num)
+        n_ion_loop = self.get_n_ion_loop()
+        self.toten_ion = np.zeros(n_ion_loop)
         j = 0
         for i in range(self.num):
             if bool(toten_ion_reg.match(self.datlines[i])):
@@ -454,8 +457,8 @@ class ReadOutcar(object):
         IBRION = self.get_ibrion()
         if IBRION == 0:
             # MD-mode
-            iter_num = self.get_iter_num()
-            self.ETOTAL = np.zeros(iter_num)
+            n_ion_loop = self.get_n_ion_loop()
+            self.ETOTAL = np.zeros(n_ion_loop)
             etotal_reg = re.compile('.*ETOTAL =',re.IGNORECASE)
             j = 0
             for i in range(self.num):
@@ -562,20 +565,20 @@ if __name__ == '__main__':
 #   print IBRION
 
 #   # loop 数
-#   iter_num = outcar.get_iter_num()
-#   print iter_num
+#   n_ion_loop = outcar.get_n_ion_loop()
+#   print n_ion_loop
 
 #   temperature = outcar.get_temperature()
-#   for j in range(iter_num):
+#   for j in range(n_ion_loop):
 #       print temperature[j]
 
 #   outcar.get_etotal()
 #   ETOTAL = outcar.get_etotal()
-#   for j in range(iter_num):
+#   for j in range(n_ion_loop):
 #       print ETOTAL[j]
 
 #   etotal_ion = outcar.get_toten_ion()
-#   for j in range(iter_num):
+#   for j in range(n_ion_loop):
 #       print etotal_ion[j]
 
     rec_t = outcar.get_reciprocal_t_init()
