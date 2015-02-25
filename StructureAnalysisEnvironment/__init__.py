@@ -26,6 +26,9 @@ from ReadMxDosMethod import *
 from ReadMxTdos import *
 from ReadMxPdos import *
 
+### function (using class)
+from read_dataline import *
+
 
 ### function
 from change_density import *

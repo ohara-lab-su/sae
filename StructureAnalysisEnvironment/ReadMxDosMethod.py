@@ -17,6 +17,8 @@
 #
 # 2015.02.25
 #  Method の多くを SuperClass 化
+#  ReadMxDosMethod.py --(継承)--- ReadMxDos.py -(名前変更)-> ReadMxTdos.py
+#                     --(継承)-----------------------------> ReadMxPdos.py
 #
 # 2015.02.25
 #  OpenMX 用の DOS/PDOS 用の superclass に作成した method を分離、継承化
@@ -42,9 +44,9 @@ __version__    = "0.0.4"
 
 import sys
 import os
-import gzip
+#import gzip
 #import re
-import optparse
+#import optparse
 import numpy as np
 
 #from copy import deepcopy
@@ -101,6 +103,7 @@ class ReadMxDosMethod(object):
     ###################################
     # *.out or *.dat から TITLE 情報を読み込む( out 優先 )
     def get_title(self):
+
         module_name = 'StructureAnalysisEnvironment'
         if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
             class_name = 'ReadMxOut'
@@ -109,7 +112,7 @@ class ReadMxDosMethod(object):
             class_name = 'ReadMxDat'
             datname = self.name+'.dat'
         else:
-            sys.exit("STOP: "+name+".out or "+name+".dat file not found")
+            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
 
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
@@ -184,6 +187,7 @@ class ReadMxDosMethod(object):
     ###################################
     # INTTDOS ( *.DOS.Tetrahedron ) 読み込み
     def get_inttdos(self,spin=0):
+
         NSPIN = self.get_ispin()
         NEDOS = self.get_nedos()
 
@@ -205,20 +209,24 @@ class ReadMxDosMethod(object):
         self.INTTDOS = intdos[:,spin]
         return self.INTTDOS
 
-    def get_pdos(self,lm=0,atom=0,spin=0):
-        pass
+#   ReadMxPdos.py で実装
+#   def get_pdos(self,lm=0,atom=0,spin=0):
+#       pass
 
-    def get_pdos_all(self):
-        pass
+#   ReadMxPdos.py で実装
+#   def get_pdos_all(self):
+#       pass
 
-    def get_ldos(self,l=0,atom=0,spin=0):
-        pass
+#   ReadMxPdos.py で実装
+#   def get_ldos(self,l=0,atom=0,spin=0):
+#       pass
 
-    def get_ldos_all(self):
-        pass
+#   ReadMxPdos.py で実装
+#   def get_ldos_all(self):
+#       pass
 
-    def get_tdos_spd(self,l=0,spin=0):
-        pass
+#   def get_tdos_spd(self,l=0,spin=0):
+#       pass
 
     def get_ldos_ion(self,l=0,ion=0,spin=0):
         pass

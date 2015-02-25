@@ -95,7 +95,8 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
             sys.exit("STOP: "+dosname+" or "+dosname+".gz does'nt open")
         finally:
             tmp.close()
-   
+
+        self.suffix = suffix
         self.name = name
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1

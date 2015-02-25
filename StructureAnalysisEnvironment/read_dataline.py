@@ -1,0 +1,60 @@
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# read_dataline(name)
+#
+#  name ファイル or name.gz ファイルを読み込んで
+#  datlines[num] 配列に放り込む関数
+#  配列数 num および、datalines 配列を戻り値にする
+#
+################################################################################
+#
+# 2015.02.25
+#   startup
+#   わりと多用するので class のコンストラクタ部分から分離
+#   関数で呼び出すようにする
+#
+################################################################################
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
+################################################################################
+
+import sys
+import os
+import gzip
+
+
+################################################################################
+def read_dataline(name):
+
+    if os.path.exists(name):
+        GZIP=False
+    elif os.path.exists(name+".gz"):
+        GZIP=True
+    else:
+        sys.exit("STOP: "+name+" or "+name+".gz file not found")
+
+    try:
+        if GZIP:
+            tmp = gzip.open(name+".gz")
+        else:
+            tmp = open(name)
+        datfile = tmp.read()
+    except:
+        tmp.close()
+        sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+    finally:
+        tmp.close()
+
+    datlines = datfile.split('\n')
+    num = len(datlines) -1
+
+    return datlines,num
+
