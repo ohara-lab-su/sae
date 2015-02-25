@@ -14,6 +14,11 @@
 ################################################################################
 #
 # 2015.02.25
+#  get_ldos_ion()
+#  get_ldos_ion_all()
+#  実装初め (MXplot_ADOS.py 用)
+#
+# 2015.02.25
 #  ReadMxDosMethod から継承している Method において
 #  入力のデーターファイルの都合 self.datlines を取るインスタンス変数は
 #  ReadMxPdos ではうまく使えない
@@ -28,8 +33,8 @@
 #  get_tdos()
 #  get_inttdos()
 #
-#  method は ReadMxPdos 内でダミーにオーバーライトしておく
-#  ( ReadMxTdos を呼び出しても良い) 
+#  method は ReadMxPdos 内でオーバーライトしておく
+#   ---> ReadMxTdos を呼び出して使う形
 #
 # 2015.02.25
 #  ReadDoscar.py とほぼ同等の動作をする Method をほぼ実装
@@ -62,7 +67,7 @@ __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.1.2"
+__version__    = "0.1.4"
 ################################################################################
 
 import sys
@@ -105,6 +110,10 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
         # NEDOS の算出
         NEDOS = sum(1 for line in open(pdos_list[0]))
+
+        # インスタンス変数化
+        self.NATOM = NATOM
+        self.NSPIN = NSPIN
         self.num = NEDOS
 
         ls = []
@@ -283,28 +292,89 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                                     self.inttdos_spd[j,3,ispin] +\
                                     float(data[j].split()[2+ispin])
 
+    ###################################
     # PDOS (lm,atom,spin 指定)
     def get_pdos(self,lm=0,atom=0,spin=0):
         self.pdos0 = self.pdos[:,lm,atom,spin]
         return self.pdos0
 
+    ###################################
     # PDOS を全部そのまま返す
     def get_pdos_all(self):
         return self.pdos
 
+    ###################################
     # LDOS (l,atom,spin 指定)
     def get_ldos(self,l=0,atom=0,spin=0):
         self.ldos0 = self.ldos[:,l,atom,spin]
         return self.ldos0
 
+    ###################################
     # LDOS を全部そのまま返す
     def get_ldos_all(self):
         return self.ldos
 
+    ###################################
     # (TDOS_SPD) PDOS の spd 合計(原子情報でsum)
     def get_tdos_spd(self,l=0,spin=0):
         self.tdos_spd0 = self.tdos_spd[:,l,spin]
         return self.tdos_spd0
+
+    ###################################
+    # LDOS_ion (サイトごとのLDOSを取る), ReadDoscar.get_ldos_ion() 互換
+    # *.out or *.dat から atom の ion 情報を読み取るのは必須
+    def get_ldos_ion(self,l=0,ion=0,spin=0):
+
+        module_name = 'StructureAnalysisEnvironment'
+        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
+            class_name = 'ReadMxOut'
+            datname = self.name+'.out'
+        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
+            class_name = 'ReadMxDat'
+            datname = self.name+'.dat'
+        else:
+            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
+
+        module = __import__(module_name,globals(),locals(),[class_name],-1)
+        klass = getattr(module,class_name)
+        dat = klass(datname)
+
+        NEDOS = self.num
+        NATOM = self.NATOM
+        NSPIN = self.NSPIN
+        NION = dat.get_nion()
+        atoms_j = dat.get_nion()
+        print atoms_j
+
+        l_max = 4
+        ldos_ion = np.zeros((NEDOS,l_max,NION,NSPIN))
+
+        for spin in range(NSPIN):
+            for atom in range(NATOM):
+                ion = atoms_j[atom]
+                for i in range(NEDOS):
+                    for lm in range(0,1):  # 0:s
+                        ldos_ion[i,0,ion,spin] = \
+                                ldos_ion[i,0,ion,spin] + \
+                                self.pdos[i,lm,atom,spin]
+                    for lm in range(1,4):  # 3:p
+                        ldos_ion[i,0,ion,spin] = \
+                                ldos_ion[i,0,ion,spin] + \
+                                self.pdos[i,lm,atom,spin]
+                    for lm in range(4,9):  # 5:d
+                        ldos_ion[i,0,ion,spin] = \
+                                ldos_ion[i,0,ion,spin] + \
+                                self.pdos[i,lm,atom,spin]
+                    for lm in range(9,16): # 7:d
+                        ldos_ion[i,0,ion,spin] = \
+                                ldos_ion[i,0,ion,spin] + \
+                                self.pdos[i,lm,atom,spin]
+
+        self.LDOS_ION = ldos_ion[:,l,ion,spin]
+        return self.LDOS_ION
+    
+    def get_ldos_ion_all(self):
+        pass
 
     def get_emax(self):
         suffix_tdos='.DOS.Tetrahedron'

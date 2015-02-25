@@ -16,6 +16,7 @@
 #  get_nion()
 #  get_atoms_index()
 #  get_atoms()
+#  get_atoms_j()
 #  get_scale()
 #  get_t()
 #  get_selective()
@@ -256,13 +257,13 @@ class ReadMxDatMethod(object):
         natom = self.get_natom()
         atoms = self.get_atoms()
         j = 0
-        atoms_j = np.zeros(natom,dtype=int)
+        self.atoms_j = np.zeros(natom,dtype=int)
         for ion in range(nion):
             for atom in range(atoms[ion]):
-                atoms_j[j] = ion
+                self.atoms_j[j] = ion
                 j += 1
 
-        return atoms_j
+        return self.atoms_j
 
 
     ###################################

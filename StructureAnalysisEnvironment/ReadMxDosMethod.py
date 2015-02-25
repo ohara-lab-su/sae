@@ -225,13 +225,16 @@ class ReadMxDosMethod(object):
 #   def get_ldos_all(self):
 #       pass
 
+# ReadMxPdos() にて実装
 #   def get_tdos_spd(self,l=0,spin=0):
 #       pass
 
-    def get_ldos_ion(self,l=0,ion=0,spin=0):
-        pass
+# ReadMxPdos() にて実装
+#   def get_ldos_ion(self,l=0,ion=0,spin=0):
+#       pass
 
-    def get_ldos_ion_all(self):
-        pass
+# ReadMxPdos() にて実装
+#   def get_ldos_ion_all(self):
+#       pass
 
 ###############################################################################

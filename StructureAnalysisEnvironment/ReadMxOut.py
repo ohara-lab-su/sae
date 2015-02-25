@@ -126,6 +126,7 @@ class ReadMxOut(SAE.ReadMxDatMethod):
                 scf = 0
                 while not bool(md_end_reg.match(self.datlines[i])):
                     if bool(scf_reg.match(self.datlines[i])):
+                        print scf,self.datlines[i]
                         uele0 = float(re.sub(scf_reg,'',self.datlines[i]))
                        #print md,scf,uele0
                         self.uele[md,scf] = uele0
@@ -133,7 +134,7 @@ class ReadMxOut(SAE.ReadMxDatMethod):
                         scf +=1
                     i += 1
                 md += 1
-               #print ''
+                print ''
             i += 1
             if self.num == i: break
         return self.uele,self.uele_index
@@ -157,6 +158,7 @@ if __name__ == '__main__':
         name=args[0]
                                                                                 
     out = ReadMxOut(name)
+
     n_ion_loop = out.get_n_ion_loop()
     max_n_scf = out.get_max_n_scf()
     utot = out.get_utot()
@@ -165,6 +167,7 @@ if __name__ == '__main__':
     title = out.get_title()
     natom = out.get_natom()
     nion = out.get_nion()
+    atoms_j = out.get_atoms_j()
 
     for md in range(n_ion_loop):
         print "***************** md = ",md+1,'**********************'
@@ -176,3 +179,6 @@ if __name__ == '__main__':
 
 #   print nspin
 #   print title
+
+    for i in range(nion):
+        print atoms_j[i]
