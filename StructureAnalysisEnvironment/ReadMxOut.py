@@ -3,7 +3,11 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # OpenMX3.7
-# *.out ファイル 読み込み
+# *.out ファイル 読み込み ReadMxOut
+#
+#  ReadMxDatMethod
+#              ---> ReadMxOut
+#              ---> ReadMxDat
 #
 ################################################################################
 #
@@ -24,7 +28,7 @@ __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
 #                                                                                         
 __status__     = "alpha"
-__version__    = "0.0.1"
+__version__    = "0.1.1"
 ################################################################################
 
 import sys

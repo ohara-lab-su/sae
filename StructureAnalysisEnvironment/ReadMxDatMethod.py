@@ -26,8 +26,10 @@
 #  get_fix()
 #
 ################################################################################
-#
 # RedMxDatMethod.py
+#
+# 2015.02.25
+#   get_atoms_j() 作成 ReadOutcar.get_atoms_j() 相当
 #
 # 2015.02.24
 #   OpenMX の out 形式はその情報を *.dat 読み込みをそのまま貼り付ける形
@@ -38,9 +40,8 @@
 #   ReadMxDat.py ReadMxOut.py から分離
 #   method の実装についての changeLog はそちらを参照
 #
-################################################################################
-#
-# ReadMxDat.py (旧)
+# -----------------------------------------------------------------------------
+# ReadMxDat.py (旧) 2015.02.24
 #
 #  注意)
 #     get_fix() は必ず get_position() の後に実行する
@@ -244,6 +245,24 @@ class ReadMxDatMethod(object):
                         sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
 
         return self.atoms
+
+
+    ###################################
+    # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
+    #    ReadMxDatMethod.get_atoms version2 に対応する get_atoms_j
+    #   atoms_index (ReadOutcar.get_atoms_index_j に準じる)
+    def get_atoms_j(self):
+        nion = self.get_nion()
+        natom = self.get_natom()
+        atoms = self.get_atoms()
+        j = 0
+        atoms_j = np.zeros(natom,dtype=int)
+        for ion in range(nion):
+            for atom in range(atoms[ion]):
+                atoms_j[j] = ion
+                j += 1
+
+        return atoms_j
 
 
     ###################################
