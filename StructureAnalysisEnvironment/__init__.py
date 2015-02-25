@@ -22,7 +22,9 @@ from ReadMd import *
 from ReadMxDatMethod import *
 from ReadMxDat import *
 from ReadMxOut import *
-from ReadMxDos import *
+from ReadMxDosMethod import *
+from ReadMxTdos import *
+from ReadMxPdos import *
 
 
 ### function
