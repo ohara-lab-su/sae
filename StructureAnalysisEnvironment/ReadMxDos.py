@@ -67,7 +67,8 @@ class ReadMxDos(object):
             sys.exit("STOP: "+dosname+" or "+dosname+".gz does'nt open")
         finally:
             tmp.close()
-    
+   
+        self.name = name
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1
 
@@ -75,14 +76,14 @@ class ReadMxDos(object):
     # *.out or *.dat から ISPIN 情報を読み込む( out 優先 )
     def get_ispin(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(name+'.out') or os.path.exists(name+'.out'+'.gz'):
+        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
             class_name = 'ReadMxOut'
-            datname = name+'.out'
-        elif os.path.exists(name+'.dat') or os.path.exists(name+'.dat'+'.gz'):
+            datname = self.name+'.out'
+        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
             class_name = 'ReadMxDat'
-            datname = name+'.dat'
+            datname = self.name+'.dat'
         else:
-            sys.exit("STOP: "+name+".out or "+name+".dat file not found")
+            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
 
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
@@ -96,14 +97,14 @@ class ReadMxDos(object):
     # *.out or *.dat から NATOM 情報を読み込む( out 優先 )
     def get_natom(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(name+'.out') or os.path.exists(name+'.out'+'.gz'):
+        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
             class_name = 'ReadMxOut'
-            datname = name+'.out'
-        elif os.path.exists(name+'.dat') or os.path.exists(name+'.dat'+'.gz'):
+            datname = self.name+'.out'
+        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
             class_name = 'ReadMxDat'
-            datname = name+'.dat'
+            datname = self.name+'.dat'
         else:
-            sys.exit("STOP: "+name+".out or "+name+".dat file not found")
+            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
 
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
@@ -117,12 +118,12 @@ class ReadMxDos(object):
     # *.out or *.dat から TITLE 情報を読み込む( out 優先 )
     def get_title(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(name+'.out') or os.path.exists(name+'.out'+'.gz'):
+        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
             class_name = 'ReadMxOut'
-            datname = name+'.out'
-        elif os.path.exists(name+'.dat') or os.path.exists(name+'.dat'+'.gz'):
+            datname = self.name+'.out'
+        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
             class_name = 'ReadMxDat'
-            datname = name+'.dat'
+            datname = self.name+'.dat'
         else:
             sys.exit("STOP: "+name+".out or "+name+".dat file not found")
 
@@ -162,8 +163,14 @@ class ReadMxDos(object):
         pass
 
     ###################################
+    # Energy 固有値(この場合はDOSの分割値)
     def get_eng(self):
-        pass
+        NEDOS = self.get_nedos()
+        eng = np.zeros((NEDOS))
+        for i in range(NEDOS):
+            eng[i] = float(self.datlines[i].split()[0])
+        self.ENG = eng[:]
+        return self.ENG
 
     ###################################
     # TDOS ( *.DOS.Tetrahedron ) 読み込み
@@ -264,10 +271,18 @@ if __name__ == '__main__':
     print natom
     print title
 
-    tdos = dos.get_tdos()
+    ispin=0
+    tdos = dos.get_tdos(ispin)
+    inttdos = dos.get_inttdos(ispin)
+
+    eng = dos.get_eng()
+    nedos = dos.get_nedos()
 
     emax = dos.get_emax()
     emin = dos.get_emin()
     print emin,emax
+
+    for i in range(nedos):
+        print i,eng[i],tdos[i],inttdos[i]
 
 ################################################################################
