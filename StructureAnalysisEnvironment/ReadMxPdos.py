@@ -325,26 +325,12 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
     # *.out or *.dat から atom の ion 情報を読み取るのは必須
     def get_ldos_ion(self,l=0,ion=0,spin=0):
 
-        module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
-            class_name = 'ReadMxOut'
-            datname = self.name+'.out'
-        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
-            class_name = 'ReadMxDat'
-            datname = self.name+'.dat'
-        else:
-            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
-        dat = klass(datname)
-
-        NEDOS = self.num
         NATOM = self.NATOM
         NSPIN = self.NSPIN
-        NION = dat.get_nion()
-        atoms_j = dat.get_nion()
-        print atoms_j
+        NEDOS = self.num
+        NION = self.get_nion()
+        atoms_j = self.get_atoms_j()
 
         l_max = 4
         ldos_ion = np.zeros((NEDOS,l_max,NION,NSPIN))
@@ -358,16 +344,16 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                                 ldos_ion[i,0,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
                     for lm in range(1,4):  # 3:p
-                        ldos_ion[i,0,ion,spin] = \
-                                ldos_ion[i,0,ion,spin] + \
+                        ldos_ion[i,1,ion,spin] = \
+                                ldos_ion[i,1,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
                     for lm in range(4,9):  # 5:d
-                        ldos_ion[i,0,ion,spin] = \
-                                ldos_ion[i,0,ion,spin] + \
+                        ldos_ion[i,2,ion,spin] = \
+                                ldos_ion[i,2,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
                     for lm in range(9,16): # 7:d
-                        ldos_ion[i,0,ion,spin] = \
-                                ldos_ion[i,0,ion,spin] + \
+                        ldos_ion[i,3,ion,spin] = \
+                                ldos_ion[i,3,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
 
         self.LDOS_ION = ldos_ion[:,l,ion,spin]
@@ -419,7 +405,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 ################################################################################
 if __name__ == '__main__':
 
-    name = 'Cu'
+    name = 'openmx'
     suffix = '.PDOS.Tetrahedron'
                                                                                 
     parser = optparse.OptionParser()
@@ -437,9 +423,15 @@ if __name__ == '__main__':
 
     pdos = ReadMxPdos(name,suffix)
 
-    ispin = pdos.get_ispin()
-    natom = pdos.get_natom()
+    NSPIN = pdos.get_ispin()
+    NATOM = pdos.get_natom()
+    NION  = pdos.get_nion()
     title = pdos.get_title()
+
+    for spin in range(NSPIN):
+        for ion in  range(NION):
+            for l in range(3): # s,p,d
+                ldos_ion = pdos.get_ldos_ion(l,ion,spin)
 
 #   print ispin
 #   print natom

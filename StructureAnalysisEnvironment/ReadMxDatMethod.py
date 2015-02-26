@@ -263,6 +263,7 @@ class ReadMxDatMethod(object):
                 self.atoms_j[j] = ion
                 j += 1
 
+       #print '(method) self.atom_j',self.atoms_j
         return self.atoms_j
 
 
