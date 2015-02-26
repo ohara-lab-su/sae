@@ -48,12 +48,12 @@
 24  Cr   6.0   s3p3d3f1
 25  Mn   6.0   s3p3d3
 25  Mn   6.0   s3p3d3f1
+26  Fe   6.0S  s2p2d1    # Soft (3p,3d,4s)
+26  Fe   6.0S  s3p3d2
 26  Fe   5.5H  s2p2d1    # Hard (3s,3p,3d,4s)
 26  Fe   5.5H  s2p2d2
 26  Fe   5.5H  s3p3d2
 26  Fe   5.5H  s3p3d3f1
-26  Fe   6.0S  s2p2d1    # Soft (3p,3d,4s)
-26  Fe   6.0S  s3p3d2
 26  Fe   5.0H  s2p2d1    # Hard (3s,3p,3d,4s)
 26  Fe   5.0H  s2p2d2
 26  Fe   5.0H  s3p3d2
