@@ -572,8 +572,8 @@ class ReadDoscar(object):
                     f = 1
                     for l in range(l_max):
                         for ispin in range(NSPIN):
-                            ldos_ion[i,l,ion,ispin] = \
-                                    ldos_ion[i,l,ion,ispin] + float(tmp[f])
+                            ldos_ion[i,l,ion1,ispin] = \
+                                    ldos_ion[i,l,ion1,ispin] + float(tmp[f])
                             f += 1
 
         self.LDOS_ION = ldos_ion[:,l,ion,spin]

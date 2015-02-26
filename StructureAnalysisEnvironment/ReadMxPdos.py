@@ -352,22 +352,22 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
         for spin in range(NSPIN):
             for atom in range(NATOM):
-                ion = atoms_j[atom]
+                ion1 = atoms_j[atom]
                 for i in range(NEDOS):
                     for lm in range(0,1):  # 0:s
-                        ldos_ion[i,0,ion,spin] = \
+                        ldos_ion[i,0,ion1,spin] = \
                                 ldos_ion[i,0,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
                     for lm in range(1,4):  # 3:p
-                        ldos_ion[i,1,ion,spin] = \
+                        ldos_ion[i,1,ion1,spin] = \
                                 ldos_ion[i,1,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
                     for lm in range(4,9):  # 5:d
-                        ldos_ion[i,2,ion,spin] = \
+                        ldos_ion[i,2,ion1,spin] = \
                                 ldos_ion[i,2,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
                     for lm in range(9,16): # 7:d
-                        ldos_ion[i,3,ion,spin] = \
+                        ldos_ion[i,3,ion1,spin] = \
                                 ldos_ion[i,3,ion,spin] + \
                                 self.pdos[i,lm,atom,spin]
 
