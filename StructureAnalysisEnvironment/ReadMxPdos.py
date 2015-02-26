@@ -310,60 +310,60 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
         ########################## orbital (for VASP)
         # 0: eng
-        # 1: lm=0 s
-        # 2: lm=1 p_y
-        # 3: lm=2 p_z
-        # 4: lm=3 p_x
-        # 5: lm=4 d_xy
-        # 6: lm=5 d_yz
-        # 7: lm=6 d_3z2-r2
-        # 8: lm=7 d_xz
-        # 9: lm=8 d_x2-y2
+        # 0: lm=0 s
+        # 1: lm=1 p_y
+        # 2: lm=2 p_z
+        # 3: lm=3 p_x
+        # 4: lm=4 d_xy
+        # 5: lm=5 d_yz
+        # 6: lm=6 d_3z2-r2
+        # 7: lm=7 d_xz
+        # 8: lm=8 d_x2-y2
         ########################## orbital (for OpenMX)
-        # 1: s
-        # 2: px
-        # 3: py
-        # 4: pz
-        # 5: dz2
-        # 6: dx2-y2
-        # 7: dxy
-        # 8: dxz
-        # 9: dyz
+        # 0: s
+        # 1: px
+        # 2: py
+        # 3: pz
+        # 4: dz2
+        # 5: dx2-y2
+        # 6: dxy
+        # 7: dxz
+        # 8: dyz
         ##########################
         # OpenMX の並びを VASP の並びに変更する
         # 注意) 対称性が変わった時に OpenMX の並びがそのままかどうかは知らない
         #       2015.02.26
         #
         # origina 
-        # 1: s       ----> s      (1)
-        # 2: px      ----> py     (3)
-        # 3: py      ----> pz     (4)
-        # 4: pz      ----> px     (2)
-        # 5: dz2     ----> dxy    (7)
-        # 6: dx2-y2  ----> dyz    (9)
-        # 7: dxy     ----> dz2    (5)
-        # 8: dxz     ----> dxz    (8)
-        # 9: dyz     ----> dx2-y2 (6)
+        # 0: s       ----> s      (0)
+        # 1: px      ----> py     (2)
+        # 2: py      ----> pz     (3)
+        # 3: pz      ----> px     (1)
+        # 4: dz2     ----> dxy    (6)
+        # 5: dx2-y2  ----> dyz    (8)
+        # 6: dxy     ----> dz2    (4)
+        # 7: dxz     ----> dxz    (7)
+        # 8: dyz     ----> dx2-y2 (5)
         #
         ##########################
         # ex) self.pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
+        self.pdos[:,1,:,:] = self.pdos[:,2,:,:]
         self.pdos[:,2,:,:] = self.pdos[:,3,:,:]
-        self.pdos[:,3,:,:] = self.pdos[:,4,:,:]
-        self.pdos[:,4,:,:] = self.pdos[:,2,:,:]
-        self.pdos[:,5,:,:] = self.pdos[:,7,:,:]
-        self.pdos[:,6,:,:] = self.pdos[:,9,:,:]
-        self.pdos[:,7,:,:] = self.pdos[:,5,:,:]
-        self.pdos[:,8,:,:] = self.pdos[:,8,:,:]
-        self.pdos[:,9,:,:] = self.pdos[:,6,:,:]
+        self.pdos[:,3,:,:] = self.pdos[:,1,:,:]
+        self.pdos[:,4,:,:] = self.pdos[:,6,:,:]
+        self.pdos[:,5,:,:] = self.pdos[:,8,:,:]
+        self.pdos[:,6,:,:] = self.pdos[:,4,:,:]
+        self.pdos[:,7,:,:] = self.pdos[:,7,:,:]
+        self.pdos[:,8,:,:] = self.pdos[:,5,:,:]
 
+        self.intpdos[:,1,:,:] = self.intpdos[:,2,:,:]
         self.intpdos[:,2,:,:] = self.intpdos[:,3,:,:]
-        self.intpdos[:,3,:,:] = self.intpdos[:,4,:,:]
-        self.intpdos[:,4,:,:] = self.intpdos[:,2,:,:]
-        self.intpdos[:,5,:,:] = self.intpdos[:,7,:,:]
-        self.intpdos[:,6,:,:] = self.intpdos[:,9,:,:]
-        self.intpdos[:,7,:,:] = self.intpdos[:,5,:,:]
-        self.intpdos[:,8,:,:] = self.intpdos[:,8,:,:]
-        self.intpdos[:,9,:,:] = self.intpdos[:,6,:,:]
+        self.intpdos[:,3,:,:] = self.intpdos[:,1,:,:]
+        self.intpdos[:,4,:,:] = self.intpdos[:,6,:,:]
+        self.intpdos[:,5,:,:] = self.intpdos[:,8,:,:]
+        self.intpdos[:,6,:,:] = self.intpdos[:,4,:,:]
+        self.intpdos[:,7,:,:] = self.intpdos[:,7,:,:]
+        self.intpdos[:,8,:,:] = self.intpdos[:,5,:,:]
 
     ###################################
     # PDOS (lm,atom,spin 指定)
