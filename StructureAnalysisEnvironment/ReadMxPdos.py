@@ -308,6 +308,63 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                                     self.inttdos_spd[j,3,ispin] +\
                                     float(data[j].split()[2+ispin])
 
+        ########################## orbital (for VASP)
+        # 0: eng
+        # 1: lm=0 s
+        # 2: lm=1 p_y
+        # 3: lm=2 p_z
+        # 4: lm=3 p_x
+        # 5: lm=4 d_xy
+        # 6: lm=5 d_yz
+        # 7: lm=6 d_3z2-r2
+        # 8: lm=7 d_xz
+        # 9: lm=8 d_x2-y2
+        ########################## orbital (for OpenMX)
+        # 1: s
+        # 2: px
+        # 3: py
+        # 4: pz
+        # 5: dz2
+        # 6: dx2-y2
+        # 7: dxy
+        # 8: dxz
+        # 9: dyz
+        ##########################
+        # OpenMX の並びを VASP の並びに変更する
+        # 注意) 対称性が変わった時に OpenMX の並びがそのままかどうかは知らない
+        #       2015.02.26
+        #
+        # origina 
+        # 1: s       ----> s      (1)
+        # 2: px      ----> py     (3)
+        # 3: py      ----> pz     (4)
+        # 4: pz      ----> px     (2)
+        # 5: dz2     ----> dxy    (7)
+        # 6: dx2-y2  ----> dyz    (9)
+        # 7: dxy     ----> dz2    (5)
+        # 8: dxz     ----> dxz    (8)
+        # 9: dyz     ----> dx2-y2 (6)
+        #
+        ##########################
+        # ex) self.pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
+        self.pdos[:,2,:,:] = self.pdos[:,3,:,:]
+        self.pdos[:,3,:,:] = self.pdos[:,4,:,:]
+        self.pdos[:,4,:,:] = self.pdos[:,2,:,:]
+        self.pdos[:,5,:,:] = self.pdos[:,7,:,:]
+        self.pdos[:,6,:,:] = self.pdos[:,9,:,:]
+        self.pdos[:,7,:,:] = self.pdos[:,5,:,:]
+        self.pdos[:,8,:,:] = self.pdos[:,8,:,:]
+        self.pdos[:,9,:,:] = self.pdos[:,6,:,:]
+
+        self.intpdos[:,2,:,:] = self.intpdos[:,3,:,:]
+        self.intpdos[:,3,:,:] = self.intpdos[:,4,:,:]
+        self.intpdos[:,4,:,:] = self.intpdos[:,2,:,:]
+        self.intpdos[:,5,:,:] = self.intpdos[:,7,:,:]
+        self.intpdos[:,6,:,:] = self.intpdos[:,9,:,:]
+        self.intpdos[:,7,:,:] = self.intpdos[:,5,:,:]
+        self.intpdos[:,8,:,:] = self.intpdos[:,8,:,:]
+        self.intpdos[:,9,:,:] = self.intpdos[:,6,:,:]
+
     ###################################
     # PDOS (lm,atom,spin 指定)
     def get_pdos(self,lm=0,atom=0,spin=0):
