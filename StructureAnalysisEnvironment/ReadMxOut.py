@@ -11,6 +11,42 @@
 #
 ################################################################################
 #
+# 2015.02.26
+#  sample コードにおいて name と suffix を分離(今後の基本方針)
+#
+# 2015.02.26  ReadMxOut.get_uele()
+#   ReadMxOut.get_uele() のデーター取得方法を変更
+#
+#                   SCF history at MD= 1
+# ***********************************************************
+# ***********************************************************
+#
+#    SCF=   1  NormRD=  1.000000000000  Uele= -73.623378509947
+#    SCF=   2  NormRD=  1.445903182361  Uele= -72.425357322827
+#    SCF=   3  NormRD=  0.721184409476  Uele= -72.919901228322
+#    SCF=   4  NormRD=  0.408620444334  Uele= -73.197509246928
+#
+# ***********************************************************
+# ***********************************************************
+#                   SCF history at MD= 1
+# ***********************************************************
+# ***********************************************************
+#
+#    SCF=   1  NormRD=  1.000000000000  Uele= -73.674913315666
+#    SCF=   2  NormRD=  1.399483389381  Uele= -72.777436036187
+#
+#
+#  同じ MD ステップ(MD=1)で SCF ループが複数あるケースが発生した
+#  Davi ループと RMM-DIIS ループか？
+#
+#  この処理の対応のために基本方針として
+#
+#    (0) ReadMdOut.get_n_ion_loop() のカウント数は変更しない
+#        --> MD=1 が二回現れても MD ループは 1 とする(現行)まま
+#    (1) 結果的に ReadMdOut.get_uele() の修正で対応する
+#        --> MD=1 が二回現れたら 一度目の MD=1 を破棄する
+#
+# ------------------------------- superclass にmethodを移行/継承化
 # 2015.02.24
 #  *.dat を superclass化したことで *.out (ReadMxOut)の重複 method を整理整頓
 #
@@ -26,7 +62,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.1.1"
 ################################################################################
@@ -71,12 +107,19 @@ class ReadMxOut(SAE.ReadMxDatMethod):
 
     ###################################
     # イオンループの数
+    # SCF MD=* 項目の * の最大値を引き抜く
+    # 同一 MD=* 番号が連続して現れても関係なく * の最大を取る
     def get_n_ion_loop(self):
         md_text = '.*SCF.*MD='
         md_reg = re.compile(md_text)
+        self.n_ion_loop = 0
         for i in range(self.num):
             if bool(md_reg.match(self.datlines[i])):
-                self.n_ion_loop = int(re.sub(md_text,'',self.datlines[i]))
+                tmp = int(re.sub(md_text,'',self.datlines[i]))
+                if self.n_ion_loop < tmp:
+                    self.n_ion_loop = tmp
+               #print self.n_ion_loop, self.datlines[i]
+       #print "MAX",self.n_ion_loop
         return self.n_ion_loop
 
     ###################################
@@ -107,34 +150,37 @@ class ReadMxOut(SAE.ReadMxDatMethod):
 
     ###################################
     # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
+    # 同一 MD=* 番号が現れた時は最後の SCF ループのみを取り出す
     def get_uele(self):
-        md_txt = '.*SCF.*at MD='
-        md_end = '.*Total energy.*at MD ='
+
+        md_start_txt = '.*SCF.*at MD='
+        md_start_reg = re.compile(md_start_txt)
+
         scf_txt = '.*SCF=.*Uele='
         scf_reg = re.compile(scf_txt)
-        md_reg = re.compile(md_txt)
-        md_end_reg = re.compile(md_end)
 
         n_ion_loop = self.get_n_ion_loop()
         max_n_scf = self.get_max_n_scf()
         self.uele = np.zeros((n_ion_loop,max_n_scf))
         self.uele_index = np.zeros((n_ion_loop),dtype=int)
+
         i=0
-        md=0
         while 1:
-            if bool(md_reg.match(self.datlines[i])):
+            # MD= 行を見つけたらスタート
+            if bool(md_start_reg.match(self.datlines[i])):
+                md = int(re.sub(md_start_txt,'',self.datlines[i])) - 1
+                # SCF行が始まるまでジャンプ
+                while not bool(scf_reg.match(self.datlines[i])): i +=1
                 scf = 0
-                while not bool(md_end_reg.match(self.datlines[i])):
-                    if bool(scf_reg.match(self.datlines[i])):
-                        print scf,self.datlines[i]
-                        uele0 = float(re.sub(scf_reg,'',self.datlines[i]))
-                       #print md,scf,uele0
-                        self.uele[md,scf] = uele0
-                        self.uele_index[md] = scf
-                        scf +=1
+                # SCF 行がある間だけ読み込み
+                while bool(scf_reg.match(self.datlines[i])):
+                    uele0 = float(re.sub(scf_reg,'',self.datlines[i]))
+                   #print md,scf,uele0
+                    self.uele[md,scf] = uele0
+                    self.uele_index[md] = scf
+                    scf +=1
                     i += 1
-                md += 1
-                print ''
+               #print ''
             i += 1
             if self.num == i: break
         return self.uele,self.uele_index
@@ -142,20 +188,23 @@ class ReadMxOut(SAE.ReadMxDatMethod):
 ################################################################################
 if __name__ == '__main__':
                                                                                 
-    name = 'openmx.out'
+    name0 = 'openmx.out'
+    suffix = '.out'
                                                                                 
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
-                        default=name,
+                        default=name0,
     )
     options,  args = parser.parse_args()
                                                                                 
     if options.INPUT:
-        name=options.INPUT
+        name0=options.INPUT
                                                                                 
     if len(args) > 0:
-        name=args[0]
+        name0=args[0]
+
+    name = name0 + suffix
                                                                                 
     out = ReadMxOut(name)
 
@@ -180,5 +229,5 @@ if __name__ == '__main__':
 #   print nspin
 #   print title
 
-    for i in range(nion):
-        print atoms_j[i]
+#   for i in range(nion):
+#       print atoms_j[i]
