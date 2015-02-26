@@ -32,6 +32,10 @@
 ################################################################################
 #
 # 2015.02.25
+#  get_tdos(), get_inttdos() method を ReadMxDosMethod class から
+#  ReadMxTdos class へ移動、整理
+#
+# 2015.02.25
 #  共通する Class を ReadMxDosMethod に superclass として放り投げ
 #  現存する ReadMxDos クラスは ReadMxTdos に変更した
 #
@@ -62,7 +66,7 @@ import os
 import gzip
 #import re
 import optparse
-#import numpy as np
+import numpy as np
 
 #from copy import deepcopy
 
@@ -102,6 +106,58 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
         self.num = len(self.datlines) -1
 
 
+    ###################################
+    # TDOS ( *.DOS.Tetrahedron ) 読み込み
+    def get_tdos(self,spin=0):
+
+        NSPIN = self.get_ispin()
+        NEDOS = self.get_nedos()
+
+        eng = np.zeros((NEDOS))
+        dos = np.zeros((NEDOS,NSPIN))
+        intdos = np.zeros((NEDOS,NSPIN))
+
+        for i in range(NEDOS):
+            eng[i] = float(self.datlines[i].split()[0])
+            if NSPIN >= 2:
+                dos[i,0] = float(self.datlines[i].split()[1])
+                dos[i,1] = float(self.datlines[i].split()[2])
+                intdos[i,0] = float(self.datlines[i].split()[3])
+                intdos[i,1] = float(self.datlines[i].split()[4])
+            else:
+                dos[i,0] = float(self.datlines[i].split()[1])
+                intdos[i,0] = float(self.datlines[i].split()[2])
+
+        self.TDOS = dos[:,spin]
+        return self.TDOS
+
+
+
+    ###################################
+    # INTTDOS ( *.DOS.Tetrahedron ) 読み込み
+    def get_inttdos(self,spin=0):
+
+        NSPIN = self.get_ispin()
+        NEDOS = self.get_nedos()
+
+        eng = np.zeros((NEDOS))
+        dos = np.zeros((NEDOS,NSPIN))
+        intdos = np.zeros((NEDOS,NSPIN))
+
+        for i in range(NEDOS):
+            eng[i] = float(self.datlines[i].split()[0])
+            if NSPIN >= 2:
+                dos[i,0] = float(self.datlines[i].split()[1])
+                dos[i,1] = float(self.datlines[i].split()[2])
+                intdos[i,0] = float(self.datlines[i].split()[3])
+                intdos[i,1] = float(self.datlines[i].split()[4])
+            else:
+                dos[i,0] = float(self.datlines[i].split()[1])
+                intdos[i,0] = float(self.datlines[i].split()[2])
+
+        self.INTTDOS = intdos[:,spin]
+        return self.INTTDOS
+
 ################################################################################
 if __name__ == '__main__':
 
@@ -121,28 +177,28 @@ if __name__ == '__main__':
     if len(args) > 0:
         name=args[0]
 
-    dos = ReadMxTdos(name,suffix)
+    tdos = ReadMxTdos(name,suffix)
 
-    ispin = dos.get_ispin()
-    natom = dos.get_natom()
-    title = dos.get_title()
+    ispin = tdos.get_ispin()
+    natom = tdos.get_natom()
+    title = tdos.get_title()
 
     print ispin
     print natom
     print title
 
     ispin=0
-    tdos = dos.get_tdos(ispin)
-    inttdos = dos.get_inttdos(ispin)
+    tdos = tdos.get_tdos(ispin)
+    inttdos = tdos.get_inttdos(ispin)
 
-    eng = dos.get_eng()
-    nedos = dos.get_nedos()
+    eng = tdos.get_eng()
+    nedos = tdos.get_nedos()
 
-    emax = dos.get_emax()
-    emin = dos.get_emin()
-    print emin,emax
+    emax = tdos.get_emax()
+    emin = tdos.get_emin()
+#   print emin,emax
 
-    for i in range(nedos):
-        print i,eng[i],tdos[i],inttdos[i]
+#   for i in range(nedos):
+#       print i,eng[i],tdos[i],inttdos[i]
 
 ################################################################################

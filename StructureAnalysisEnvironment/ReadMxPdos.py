@@ -13,6 +13,21 @@
 #  
 ################################################################################
 #
+# get_pdos(lm,atom,spin)
+# get_pdos_all()
+# get_ldos_all()
+# get_tdos_spd(l,spin)
+# get_ldos_ion(l,ion,spin)
+#
+# get_ldos_ion_all()        ダミー
+#
+# get_emax()    : ReadMxTdos インスタンス作成
+# get_min()     : ReadMxTdos インスタンス作成
+# get_eng()     : ReadMxTdos インスタンス作成 
+# get_inttdos() : ReadMxTdos インスタンス作成  
+#
+################################################################################
+#
 # 2015.02.25
 #  get_ldos_ion()
 #  get_ldos_ion_all()
@@ -94,8 +109,9 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
     #
     def __init__(self,name,suffix):
 
-        # 読み込みファイル名の物質名部分
+        # 物質名
         self.name = name
+        self.suffix = suffix
 
         # NSPIN & NATOM を *.out もしくは *.dat から抽出
         NSPIN = self.get_ispin()
@@ -325,7 +341,6 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
     # *.out or *.dat から atom の ion 情報を読み取るのは必須
     def get_ldos_ion(self,l=0,ion=0,spin=0):
 
-
         NATOM = self.NATOM
         NSPIN = self.NSPIN
         NEDOS = self.num
@@ -362,6 +377,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
     def get_ldos_ion_all(self):
         pass
 
+    # ReadMxTdos
     def get_emax(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -370,6 +386,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
             self.EMAX = dos.get_emax()
         return self.EMAX
 
+    # ReadMxTdos
     def get_min(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -378,6 +395,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
             self.EMIN = dos.get_emin()
         return self.EMIN
 
+    # ReadMxTdos
     def get_eng(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -386,6 +404,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
             self.ENG = dos.get_eng()
         return self.ENG
 
+    # ReadMxTdos
     def get_tdos(self,spin=0):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -394,6 +413,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
             self.TDOS = dos.get_tdos(spin)
         return self.TDOS
 
+    # ReadMxTdos
     def get_inttdos(self,spin=0):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -426,12 +446,20 @@ if __name__ == '__main__':
     NSPIN = pdos.get_ispin()
     NATOM = pdos.get_natom()
     NION  = pdos.get_nion()
+    NEDOS = pdos.get_nedos()
     title = pdos.get_title()
+    atoms_j = pdos.get_atoms_j()
+    ENG = pdos.get_eng()
 
-    for spin in range(NSPIN):
-        for ion in  range(NION):
-            for l in range(3): # s,p,d
-                ldos_ion = pdos.get_ldos_ion(l,ion,spin)
+#   for spin in range(NSPIN):
+#       print '-------------------------- spin=',spin
+#       for ion in  range(NION):
+#           print '-------------------------- ion=',ion
+#           for l in range(3): # s,p,d
+#               print '------------------------------ l=',l
+#               ldos_ion = pdos.get_ldos_ion(l,ion,spin)
+#               for i in range(NEDOS):
+#                   print " %14.11f %14.11f" %(ENG[i],ldos_ion[i])
 
 #   print ispin
 #   print natom

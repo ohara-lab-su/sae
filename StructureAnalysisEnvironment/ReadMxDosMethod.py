@@ -15,20 +15,25 @@
 #
 ################################################################################
 #
-#  get_ispin()
-#  get_natom()
-#  get_title()
+#  get_ispin()   : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_natom()   : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_title()   : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#
 #  get_emax()
 #  get_emin()
 #  get_nedos()
+#
 #  get_efermi() ダミー
 #  get_lorbit() ダミー
-#  get_tdos()
-#  get_inittdos()
-#  get_atoms_j()  : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
-#  get_nion()     : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#
+#  get_nion()    : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_atoms_j() : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
 #
 ################################################################################
+#
+# 2015.02.26
+#  get_tdos()     ---> move ReadMxTdos
+#  get_inittdos() ---> move ReadMxTdos
 #
 # 2015.02.26
 #  get_atoms_j()  : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
@@ -75,7 +80,6 @@ import numpy as np
 
 ################################################################################
 class ReadMxDosMethod(object):
-
 
     ###################################
     # *.out or *.dat から ISPIN 情報を読み込む( out 優先 )
@@ -179,56 +183,6 @@ class ReadMxDosMethod(object):
         return self.ENG
 
     ###################################
-    # TDOS ( *.DOS.Tetrahedron ) 読み込み
-    def get_tdos(self,spin=0):
-
-        NSPIN = self.get_ispin()
-        NEDOS = self.get_nedos()
-
-        eng = np.zeros((NEDOS))
-        dos = np.zeros((NEDOS,NSPIN))
-        intdos = np.zeros((NEDOS,NSPIN))
-
-        for i in range(NEDOS):
-            eng[i] = float(self.datlines[i].split()[0])
-            if NSPIN >= 2:
-                dos[i,0] = float(self.datlines[i].split()[1])
-                dos[i,1] = float(self.datlines[i].split()[2])
-                intdos[i,0] = float(self.datlines[i].split()[3])
-                intdos[i,1] = float(self.datlines[i].split()[4])
-            else:
-                dos[i,0] = float(self.datlines[i].split()[1])
-                intdos[i,0] = float(self.datlines[i].split()[2])
-
-        self.TDOS = dos[:,spin]
-        return self.TDOS
-
-    ###################################
-    # INTTDOS ( *.DOS.Tetrahedron ) 読み込み
-    def get_inttdos(self,spin=0):
-
-        NSPIN = self.get_ispin()
-        NEDOS = self.get_nedos()
-
-        eng = np.zeros((NEDOS))
-        dos = np.zeros((NEDOS,NSPIN))
-        intdos = np.zeros((NEDOS,NSPIN))
-
-        for i in range(NEDOS):
-            eng[i] = float(self.datlines[i].split()[0])
-            if NSPIN >= 2:
-                dos[i,0] = float(self.datlines[i].split()[1])
-                dos[i,1] = float(self.datlines[i].split()[2])
-                intdos[i,0] = float(self.datlines[i].split()[3])
-                intdos[i,1] = float(self.datlines[i].split()[4])
-            else:
-                dos[i,0] = float(self.datlines[i].split()[1])
-                intdos[i,0] = float(self.datlines[i].split()[2])
-
-        self.INTTDOS = intdos[:,spin]
-        return self.INTTDOS
-
-    ###################################
     # ION の数を求める ( *.out or *.dat から読み込む)
     def get_nion(self):
         module_name = 'StructureAnalysisEnvironment'
@@ -251,6 +205,7 @@ class ReadMxDosMethod(object):
 
     ###################################
     # atoms_j を求める ( *.out or *.dat から読み込む)
+    def get_atoms_j(self):
         module_name = 'StructureAnalysisEnvironment'
         if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
             class_name = 'ReadMxOut'
