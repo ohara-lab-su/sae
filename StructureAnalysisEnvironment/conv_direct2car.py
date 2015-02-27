@@ -36,6 +36,27 @@
 ################################################################################
 #
 # 2015.02.27
+#  旧バージョン(引数版) を conv_direct2car0 へ名前変更
+#  新バージョン(戻り値版) を conv_direct2car1 へ名前変更
+#
+#  2015.02.27 の時点で影響があるルーチン
+#
+# Vdirect2car.py:              scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# VfindBond.py:                scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# Vforce2md.py:                scale,direct = np.conv_direct2car(ABS,scale,t,natom,direct,position0)
+# VmakeSuperCell2.py:          scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# VmodifyAtomPosition.py:      scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# Vplot_Crystal.py:            scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# Vplot_CrystalAnimePOSCAR.
+#
+# Rmove.py:                    scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# Rmove1.py:                   scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# RplotCrystal0.py:            SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# Rplot_Crystal.py:            scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# Rplot_CrystalAnimeCFG.py:    SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+# VfindNN1_library1.py:        scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)py
+#
+# 2015.02.27
 # conv_direct2car_return.py を作成
 #
 # 2015.02.27
@@ -66,8 +87,9 @@ import  numpy as np
 ################################################################################
 # 引数はリストのリファレンスで受け取り、引数で配列の内容を[in/out]する仕様
 # 少メモリ/高速仕様
+#  注意) 2015.02.27: conv_direct2car --> conv_direct2car0 名前変更
 #
-def conv_direct2car(ABS,scale0,t,natom,direct,position):
+def conv_direct2car0(ABS,scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")
@@ -159,8 +181,9 @@ def conv_direct2car(ABS,scale0,t,natom,direct,position):
 # メモリ使用量が倍かかるし、その都度配列を作り直すので少し遅い
 #
 # conv_direct2car と同一仕様(戻り値が異なる)
+#  ただし、ABS 仕様は消す
 #
-def conv_direct2car_return(ABS,scale0,t,natom,direct,position):
+def conv_direct2car1(scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")
@@ -199,13 +222,15 @@ def conv_direct2car_return(ABS,scale0,t,natom,direct,position):
     ##     VASP 用の POSCAR の car Mode の場合は
     ##     scale に関係なく内部座標は再スケールはない
     ##
-    if not ABS:
-        # for VASP
-        scale  = scale0
-        scale0 = 1.0
-    else:
-        # for RMC_POT
-        scale = 1.0
+   #if not ABS:
+   #    # for VASP
+   #    scale  = scale0
+   #    scale0 = 1.0
+   #else:
+   #    # for RMC_POT
+   #    scale = 1.0
+    scale  = scale0
+    scale0 = 1.0
 
     for j in range(natom):
             position[j,0] = car[j,0]*scale0
@@ -217,18 +242,18 @@ def conv_direct2car_return(ABS,scale0,t,natom,direct,position):
     ## 基本並進ベクトルをスケールしておく
     ## --> scale=1.0 とするため
     ##
-    if ABS:
-        t1_x = t1_x*scale0
-        t1_y = t1_y*scale0
-        t1_z = t1_z*scale0
-        
-        t2_x = t2_x*scale0
-        t2_y = t2_y*scale0
-        t2_z = t2_z*scale0
-        
-        t3_x = t3_x*scale0
-        t3_y = t3_y*scale0
-        t3_z = t3_z*scale0
+   #if ABS:
+   #    t1_x = t1_x*scale0
+   #    t1_y = t1_y*scale0
+   #    t1_z = t1_z*scale0
+   #    
+   #    t2_x = t2_x*scale0
+   #    t2_y = t2_y*scale0
+   #    t2_z = t2_z*scale0
+   #    
+   #    t3_x = t3_x*scale0
+   #    t3_y = t3_y*scale0
+   #    t3_z = t3_z*scale0
 
     t[0,0] = t1_x
     t[1,0] = t1_y
@@ -245,5 +270,7 @@ def conv_direct2car_return(ABS,scale0,t,natom,direct,position):
     scale  = scale
     direct = False
 
-    poscar = ABS,scale,t,natom,direct,position
+   #poscar = ABS,scale,t,natom,direct,position
+    poscar = scale,t,natom,direct,position
     return poscar
+
