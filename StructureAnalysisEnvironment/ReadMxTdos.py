@@ -31,6 +31,12 @@
 #
 ################################################################################
 #
+# 2015.02.27
+#   !!!!!!! OpenMX の down-spin の TDOS 値は負の符号が付いている !!!!!!
+#   気が付かなくてかなりハマった
+#
+#   get_tdos() で配列に放り込む際に値を正に戻しておく
+#
 # 2015.02.25
 #  get_tdos(), get_inttdos() method を ReadMxDosMethod class から
 #  ReadMxTdos class へ移動、整理
@@ -105,33 +111,31 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1
 
-
     ###################################
     # TDOS ( *.DOS.Tetrahedron ) 読み込み
+    # (注意) OpenMX の down-spin の TDOS 値は負の符号が付いている
     def get_tdos(self,spin=0):
 
         NSPIN = self.get_ispin()
         NEDOS = self.get_nedos()
 
-        eng = np.zeros((NEDOS))
+       #eng = np.zeros((NEDOS))
         dos = np.zeros((NEDOS,NSPIN))
-        intdos = np.zeros((NEDOS,NSPIN))
+       #intdos = np.zeros((NEDOS,NSPIN))
 
         for i in range(NEDOS):
-            eng[i] = float(self.datlines[i].split()[0])
+           #eng[i] = float(self.datlines[i].split()[0])
             if NSPIN >= 2:
                 dos[i,0] = float(self.datlines[i].split()[1])
                 dos[i,1] = float(self.datlines[i].split()[2])
-                intdos[i,0] = float(self.datlines[i].split()[3])
-                intdos[i,1] = float(self.datlines[i].split()[4])
+               #intdos[i,0] = float(self.datlines[i].split()[3])
+               #intdos[i,1] = float(self.datlines[i].split()[4])
             else:
                 dos[i,0] = float(self.datlines[i].split()[1])
-                intdos[i,0] = float(self.datlines[i].split()[2])
+               #intdos[i,0] = float(self.datlines[i].split()[2])
 
-        self.TDOS = dos[:,spin]
+        self.TDOS = np.abs(dos[:,spin])
         return self.TDOS
-
-
 
     ###################################
     # INTTDOS ( *.DOS.Tetrahedron ) 読み込み
@@ -140,29 +144,30 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
         NSPIN = self.get_ispin()
         NEDOS = self.get_nedos()
 
-        eng = np.zeros((NEDOS))
-        dos = np.zeros((NEDOS,NSPIN))
+       #eng = np.zeros((NEDOS))
+       #dos = np.zeros((NEDOS,NSPIN))
         intdos = np.zeros((NEDOS,NSPIN))
 
         for i in range(NEDOS):
-            eng[i] = float(self.datlines[i].split()[0])
+           #eng[i] = float(self.datlines[i].split()[0])
             if NSPIN >= 2:
-                dos[i,0] = float(self.datlines[i].split()[1])
-                dos[i,1] = float(self.datlines[i].split()[2])
+               #dos[i,0] = float(self.datlines[i].split()[1])
+               #dos[i,1] = float(self.datlines[i].split()[2])
                 intdos[i,0] = float(self.datlines[i].split()[3])
                 intdos[i,1] = float(self.datlines[i].split()[4])
             else:
-                dos[i,0] = float(self.datlines[i].split()[1])
+               #dos[i,0] = float(self.datlines[i].split()[1])
                 intdos[i,0] = float(self.datlines[i].split()[2])
 
         self.INTTDOS = intdos[:,spin]
         return self.INTTDOS
 
+
 ################################################################################
 if __name__ == '__main__':
 
-    name = 'Cu'
-    suffix = '.DOS.Tetrahedron'
+    name = 'openmx'
+    suffix_tdos = '.DOS.Tetrahedron'
                                                                                 
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
@@ -170,33 +175,55 @@ if __name__ == '__main__':
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン                     
+    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):   
+        try:                                                                    
+            options.INPUT = SAE.find_datfile('out')                             
+        except:                                                                 
+            pass                                                                
+    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):    
+        try:                                                                    
+            options.INPUT = SAE.find_datfile('dat')                             
+        except:                                                                 
+            pass 
+
     if options.INPUT:
         name=options.INPUT
                                                                                 
     if len(args) > 0:
         name=args[0]
 
-    tdos = ReadMxTdos(name,suffix)
+    print name
+    dos = ReadMxTdos(name,suffix_tdos)
 
-    ispin = tdos.get_ispin()
-    natom = tdos.get_natom()
-    title = tdos.get_title()
+    NSPIN = dos.get_ispin()
+    NATOM = dos.get_natom()
+    TITLE = dos.get_title()
+    ENG = dos.get_eng()
+    NEDOS = dos.get_nedos()
+    EMAX = dos.get_emax()
+    EMIN = dos.get_emin()
+    print EMIN,EMAX
 
-    print ispin
-    print natom
-    print title
+    for spin in range(NSPIN):
+        TDOS = dos.get_tdos(spin)
+        INTTDOS = dos.get_inttdos(spin)
+#       print "------------------------------------------- spin = ",spin+1
+#       for i in range(NEDOS):
+#           print " %14.11f %14.11f %14.11f" %(ENG[i],TDOS[i],INTTDOS[i])
 
-    ispin=0
-    tdos = tdos.get_tdos(ispin)
-    inttdos = tdos.get_inttdos(ispin)
-
-    eng = tdos.get_eng()
-    nedos = tdos.get_nedos()
-
-    emax = tdos.get_emax()
-    emin = tdos.get_emin()
-#   print emin,emax
+#   if NSPIN == 2:
+       #TDOS0 = dos.get_tdos(0)
+       #TDOS1 = dos.get_tdos(1)
+       #INTTDOS0 = dos.get_inttdos(0)
+       #INTTDOS1 = dos.get_inttdos(1)
+       #for i in range(NEDOS):
+       #   print ENG[i],TDOS0[i],TDOS1[i],INTTDOS0[i],INTTDOS1[i]
+       #TDOS = dos.get_tdos(1)
+       #import matplotlib.pyplot as plt
+       #plt.fill_between(ENG,TDOS, color='#cccccc', linewidth=2, label='total')
+       #plt.show()
 
 #   for i in range(nedos):
 #       print i,eng[i],tdos[i],inttdos[i]

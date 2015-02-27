@@ -12,6 +12,7 @@
 #                                 ---> ReadMxPdos.py
 #  
 ################################################################################
+# ReadMxPdos.py で直接実装しているMethod
 #
 # get_pdos(lm,atom,spin)
 # get_pdos_all()
@@ -27,6 +28,12 @@
 # get_inttdos() : ReadMxTdos インスタンス作成  
 #
 ################################################################################
+#
+# 2015.02.27                                                                    
+#   !!!!!!! OpenMX の down-spin の DOS 値は負の符号が付いている !!!!!!         
+#   気が付かなくてかなりハマった  
+#
+#   コンストラクタでの読み込みの段階でDOSの値をすべて正に戻しておく
 #
 # 2015.02.25
 #  get_ldos_ion()
@@ -197,20 +204,20 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                             self.eng[j] = float(data[j].split()[0])
 
                             self.pdos[j,0,atom-1,ispin] =\
-                                    float(data[j].split()[1+ispin])
+                                  abs(float(data[j].split()[1+ispin]))
                             self.intpdos[j,0,atom-1,ispin] =\
                                     float(data[j].split()[2+ispin])
 
                             self.ldos[j,0,atom-1,ispin] = \
                                     self.ldos[j,0,atom-1,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                 abs(float(data[j].split()[1+ispin]))
                             self.intpdos[j,0,atom-1,ispin] = \
                                     self.intpdos[j,0,atom-1,ispin] +\
                                     float(data[j].split()[2+ispin])
 
                             self.tdos_spd[j,0,ispin] = \
                                     self.tdos_spd[j,0,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.inttdos_spd[j,0,ispin] = \
                                     self.inttdos_spd[j,0,ispin] +\
                                     float(data[j].split()[2+ispin])
@@ -228,20 +235,20 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                             self.eng[j] = float(data[j].split()[0])
 
                             self.pdos[j,1+i,atom-1,ispin] =\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.intpdos[j,1+i,atom-1,ispin] =\
                                     float(data[j].split()[2+ispin])
 
                             self.ldos[j,1,atom-1,ispin] = \
                                     self.ldos[j,1,atom-1,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.intldos[j,1,atom-1,ispin] = \
                                     self.intldos[j,1,atom-1,ispin] +\
                                     float(data[j].split()[2+ispin])
 
                             self.tdos_spd[j,1,ispin] = \
                                     self.tdos_spd[j,1,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.inttdos_spd[j,1,ispin] =\
                                     self.inttdos_spd[j,1,ispin] +\
                                     float(data[j].split()[2+ispin])
@@ -259,20 +266,20 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                             self.eng[i] = float(data[j].split()[0])
 
                             self.pdos[j,4+i,atom-1,ispin] =\
-                                    float(data[j].split()[1+ispin])
+                                 abs(float(data[j].split()[1+ispin]))
                             self.intpdos[j,4+i,atom-1,ispin] =\
                                     float(data[j].split()[2+ispin])
 
                             self.ldos[j,2,atom-1,ispin] = \
                                     self.ldos[j,2,atom-1,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.intldos[j,2,atom-1,ispin] = \
                                     self.intldos[j,2,atom-1,ispin] +\
                                     float(data[j].split()[2+ispin])
 
                             self.tdos_spd[j,2,ispin] = \
                                     self.tdos_spd[j,2,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.inttdos_spd[j,2,ispin] = \
                                     self.inttdos_spd[j,2,ispin] +\
                                     float(data[j].split()[2+ispin])
@@ -290,20 +297,20 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                             self.eng[i] = float(data[j].split()[0])
 
                             self.pdos[i,9+i,atom-1,ispin] =\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.intpdos[i,9+i,atom-1,ispin] =\
                                     float(data[j].split()[2+ispin])
 
                             self.ldos[j,3,atom-1,ispin] = \
                                     self.ldos[j,3,atom-1,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.intldos[j,3,atom-1,ispin] = \
                                     self.intldos[j,3,atom-1,ispin] +\
                                     float(data[j].split()[2+ispin])
 
                             self.tdos_spd[j,3,ispin] = \
                                     self.tdos_spd[j,3,ispin] +\
-                                    float(data[j].split()[1+ispin])
+                                abs(float(data[j].split()[1+ispin]))
                             self.inttdos_spd[j,3,ispin] =\
                                     self.inttdos_spd[j,3,ispin] +\
                                     float(data[j].split()[2+ispin])
@@ -435,6 +442,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         pass
 
     # ReadMxTdos
+    # 固有値の最大(DOSのXレンジ)
     def get_emax(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -444,7 +452,8 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         return self.EMAX
 
     # ReadMxTdos
-    def get_min(self):
+    # 固有値の最小(DOSのXレンジ)
+    def get_emin(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
                 os.path.exists(self.name+suffix_tdos+'.gz'):
@@ -453,6 +462,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         return self.EMIN
 
     # ReadMxTdos
+    # 固有値の(DOSのX軸)
     def get_eng(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -491,7 +501,19 @@ if __name__ == '__main__':
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン                     
+    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):   
+        try:                                                                    
+            options.INPUT = SAE.find_datfile('out')                             
+        except:                                                                 
+            pass                                                                
+    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):    
+        try:                                                                    
+            options.INPUT = SAE.find_datfile('dat')                             
+        except:                                                                 
+            pass 
+
     if options.INPUT:
         name=options.INPUT
                                                                                 
@@ -508,6 +530,8 @@ if __name__ == '__main__':
     atoms_j = pdos.get_atoms_j()
     ENG = pdos.get_eng()
 
+    print "NSPIN",NSPIN
+
 #   for spin in range(NSPIN):
 #       print '-------------------------- spin=',spin
 #       for ion in  range(NION):
@@ -522,16 +546,16 @@ if __name__ == '__main__':
 #   print natom
 #   print title
 
-#   ispin=0
-#   tdos = dos.get_tdos(ispin)
-#   inttdos = dos.get_inttdos(ispin)
+    for spin in range(NSPIN):
+        tdos = pdos.get_tdos(spin)
+        inttdos = pdos.get_inttdos(spin)
 
-#   eng = dos.get_eng()
-#   nedos = dos.get_nedos()
+    eng = pdos.get_eng()
+    nedos = pdos.get_nedos()
 
-#   emax = dos.get_emax()
-#   emin = dos.get_emin()
-#   print emin,emax
+    emax = pdos.get_emax()
+    emin = pdos.get_emin()
+    print emin,emax
 
 #   for i in range(nedos):
 #       print i,eng[i],tdos[i],inttdos[i]

@@ -103,18 +103,30 @@ class ReadMxDat(SAE.ReadMxDatMethod):
         self.num = int(len(self.datlines)) -1
 
 
-
 ################################################################################
 if __name__ == '__main__':
 
-    name = 'openmx.dat'
+    name = 'openmx'
+    suffix = 'dat'
     parser = optparse.OptionParser()
     parser.add_option( '-i','--input',
                         dest='INPUT',
                         default=name,
                         )
     options, args = parser.parse_args()
-    name = options.INPUT
+
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン                     
+    if not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):    
+        try:                                                                    
+            options.INPUT = SAE.find_datfile('dat')                             
+        except:                                                                 
+            pass   
+
+    if options.INPUT:
+        name = options.INPUT+'.dat'
+
+    if len(args) > 0:                                                           
+        name=args[0] 
 
     dat = ReadMxDat(name)
 

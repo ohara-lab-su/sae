@@ -33,7 +33,7 @@
 #
 # 2015.02.26
 #  get_tdos()     ---> move ReadMxTdos
-#  get_inittdos() ---> move ReadMxTdos
+#  get_inttdos() ---> move ReadMxTdos
 #
 # 2015.02.26
 #  get_atoms_j()  : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
