@@ -36,6 +36,9 @@
 ################################################################################
 #
 # 2015.02.27
+# conv_direct2car_return.py を作成
+#
+# 2015.02.27
 #  numpy の import を from 仕様をやめて import * as * に変更
 #
 # 2014.10.30/31 1st
@@ -169,7 +172,6 @@ def conv_direct2car_return(ABS,scale0,t,natom,direct,position):
     ## 変換後に scale して絶対座標にする
     ## (入力がAngstrom 系なので A 単位になる)
     ##
-    t = np.zeros((3,3))
     t1_x = t[0,0]
     t1_y = t[1,0]
     t1_z = t[2,0]
@@ -243,5 +245,5 @@ def conv_direct2car_return(ABS,scale0,t,natom,direct,position):
     scale  = scale
     direct = False
 
-    atom = [ABS,scale,t,natom,direct,position]
-    return atom
+    poscar = ABS,scale,t,natom,direct,position
+    return poscar
