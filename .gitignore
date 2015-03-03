@@ -9,7 +9,9 @@
 *.in
 *.cif
 *.md
+*.md2
 *.xyz
+_*.py
 POSCAR*
 CONTCAR*
 update.csh

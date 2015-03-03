@@ -34,6 +34,26 @@
 #
 ################################################################################
 #
+# 基本構造情報読み込み Method
+#
+#   get_title()
+#   get_scale()
+#   get_t()
+#   get_vasp_version()
+#   get_atoms()
+#   get_atoms_index()
+#   get_atoms_index_j()
+#   get_nion()
+#   get_natom()
+#   get_ion()
+#   get_ion_local()
+#   get_selective()
+#   get_direct()
+#   get_position()
+#   get_fix()
+#
+################################################################################
+#
 # 2015.02.12
 #  get_position() の機能を get_fix() と分離した
 #  fix はappend するのではなく numpy で初期化に変更
@@ -70,6 +90,8 @@ import numpy as np
 
 import optparse 
 
+import StructureAnalysisEnvironment as SAE                                      
+#import SpaceGroupEnvironment as SGE 
 
 ################################################################################
 class ReadPoscar(object):
@@ -386,6 +408,50 @@ class ReadPoscar(object):
 
         return self.fix
 
+
+    ###############################################
+    # 基本並進ベクトルを、alpha, beta, gamma で回す
+    # VASP 表記とは転置した形で t ベクトルに入っているの注意
+    # 注意) むしろ VASP 表記が転置している
+    # ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
+    def conv_rot_euler(self,alpha,beta,gamma):
+
+        R = SAE.rotate_euler(alpha,beta,gamma)
+
+        # 基本並進ベクトルの変換
+        t = self.get_t()
+
+        t1 = np.matrix( [ t[0,0],t[0,1],t[0,2] ] )
+        t1r = t1 * R
+
+        t2 = np.matrix( [ t[1,0],t[1,1],t[1,2] ] )
+        t2r = t2 * R
+
+        t3 = np.matrix( [ t[2,0],t[2,1],t[2,2] ] )
+        t3r = t3 * R
+
+        # オイラー角で基本並進ベクトルを回したときの基本並進ベクトル
+        R_t = np.matrix([
+                [ t1r[0,0],t1r[0,1],t1r[0,2] ],
+                [ t2r[0,0],t2r[0,1],t2r[0,2] ],
+                [ t3r[0,0],t3r[0,1],t3r[0,2] ]
+                ])
+
+
+        # 内部座標の変換
+        position = self.get_position()
+        natom = self.get_natom()
+        R_position = np.zeros((natom,3))
+        for j in range(natom):
+            p  = np.matrix( [position[j,0],position[j,1],position[j,2]] )
+            pr = p * R
+            R_position[j,0] =pr[0,0]
+            R_position[j,1] =pr[0,1]
+            R_position[j,2] =pr[0,2]
+
+        return R_t,R_position
+
+
 ################################################################################
 if __name__ == '__main__':
 
@@ -402,20 +468,19 @@ if __name__ == '__main__':
 
     title = poscar.get_title()
     scale = poscar.get_scale()
+    t = poscar.get_t()
     vasp = poscar.get_vasp_version()
+    nion = poscar.get_nion()
     atoms = poscar.get_atoms()
     atoms_index = poscar.get_atoms_index()
     natom = poscar.get_natom()
-    nion = poscar.get_nion()
-    ion = poscar.get_ion()
-    ion_local = poscar.get_ion_local()
     selective = poscar.get_selective()
     direct = poscar.get_selective()
     position = poscar.get_position()
     fix = poscar.get_fix()
 
-    t = poscar.get_t()
-
+    ion = poscar.get_ion()
+    ion_local = poscar.get_ion_local()
     atoms_index_j = poscar.get_atoms_index_j()
 
 #   for i in range(natom):
