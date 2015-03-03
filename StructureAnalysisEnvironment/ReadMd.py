@@ -13,6 +13,27 @@
 #  
 ################################################################################
 #
+# get_natom()
+# get_nloop() 
+# get_atoms_index_j()
+# get_atoms_index()
+# get_nion()
+# get_atoms()
+# get_energy_loop()
+# get_position_loop()
+# get_selective()
+# get_force_loop()
+#
+# get_temp_loop()
+# get_temp_given_loop()
+#
+################################################################################
+#
+# 2015.03.03
+#  get_temp(), get_temp_given()
+#
+#     OpenMX *.md 形式: Temperature, Given Temp 吸い出し対応
+#
 # 2015.02.13 1st
 #
 ################################################################################
@@ -31,7 +52,7 @@ import sys
 import optparse 
 import os
 import gzip
-#import re
+import re
 #from numpy import *
 import numpy as np
 
@@ -267,13 +288,58 @@ class ReadMd(object):
         return self.force_loop
  
 
+    ###############################################
+    # OpenMX *.md 形式, MD モード
+    def get_temp_loop(self):
+        natom = self.get_natom()
+        nloop = self.get_nloop()
+
+        temp_text = '.*Temperature='
+        temp_reg = re.compile(temp_text)
+        given_end = '\(Given Temp.=.*'
+
+        i=0
+        self.temp_loop = np.zeros((nloop))
+        for l in range(nloop):
+            i += 1
+            if bool(temp_reg.match(self.datlines[i])):
+                src = re.sub(temp_text,'',self.datlines[i])
+                temp = float(re.sub(given_end,'',src))
+                self.temp_loop[l] = temp
+            i = i + natom + 1
+
+        return self.temp_loop
+
+    ###############################################
+    # OpenMX *.md 形式, MD モード
+    def get_temp_given_loop(self):
+        natom = self.get_natom()
+        nloop = self.get_nloop()
+
+        given_text = '.*\(Given Temp.='
+        given_reg = re.compile(given_text)
+        given_end = '\)'
+
+        i=0
+        self.temp_given_loop = np.zeros((nloop))
+        for l in range(nloop):
+            i += 1
+            if bool(given_reg.match(self.datlines[i])):
+                src = re.sub(given_text,'',self.datlines[i])
+                temp = float(re.sub(given_end,'',src))
+                self.temp_loop_given[l] = temp
+            i = i + natom + 1
+
+        return self.temp_given_loop
+
 
 ################################################################################
 if __name__ == '__main__':
 
 #   MD = "co.md"  # default name
 #   MD = "C60_position.xyz"
-    MD = "graphene_N.md"
+#   MD = "graphene_N.md"
+    MD = "gly_VS.md"
 
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
@@ -287,7 +353,8 @@ if __name__ == '__main__':
                                                                                 
     if len(args) > 0:
         MD=args[0]
-                                                                                
+
+    ############################################################################
     md = ReadMd(MD)
     natom = md.get_natom()
     nion  = md.get_nion()
@@ -299,6 +366,10 @@ if __name__ == '__main__':
     position_loop = md.get_position_loop()
     selective = md.get_selective()
     force_loop = md.get_force_loop()
+
+    temp_loop = md.get_temp_loop()
+    temp_given_loop = md.get_temp_given_loop()
+    ############################################################################
 
     print "NATOM =",natom
     print "NION  =",nion
@@ -317,21 +388,24 @@ if __name__ == '__main__':
     print ""
 
     print ""
-    for i in range(nloop):
-        print " ",i," ", energy_loop[i]
+#   for i in range(nloop):
+#       print " ",i," ", energy_loop[i]
 
     print "selective",selective
     print ""
-    for l in range(nloop):
-        print "===============loop===============",l
-        for j in range(natom):
-            print atoms_index_j[j],\
-                    position_loop[l,j,0],\
-                    position_loop[l,j,1],\
-                    position_loop[l,j,2],
-            if selective:
-                    print force_loop[l,j,0],\
-                          force_loop[l,j,1],\
-                          force_loop[l,j,2],
-            print ""
+#   for l in range(nloop):
+#       print "===============loop===============",l
+#       for j in range(natom):
+#           print atoms_index_j[j],\
+#                   position_loop[l,j,0],\
+#                   position_loop[l,j,1],\
+#                   position_loop[l,j,2],
+#           if selective:
+#                   print force_loop[l,j,0],\
+#                         force_loop[l,j,1],\
+#                         force_loop[l,j,2],
+#           print ""
+
+#   for l in range(nloop):
+#       print temp_loop[l]
 
