@@ -9,6 +9,12 @@
 #
 ################################################################################
 #
+# 2015.03.03
+#  複数の suffix ファイルが有るときに return する変数を None で返すようにした
+#
+# 2015.03.03
+#  引数の suffix に . をつけても同じように動作するように改変
+#
 # 2015.02.26
 #  指定suffixのファイルがカレントに一つの時はそのファイル名を返すルーチンへ
 #  変更
@@ -27,7 +33,7 @@ __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.0.1"
+__version__    = "0.0.4"
 ################################################################################
 
 #import sys
@@ -41,9 +47,11 @@ import glob
 ################################################################################
 def find_datfile(suffix):
 
-    filelist = glob.glob("*."+suffix)
+    suffix0 = re.sub('\.','',suffix)
+    filelist = glob.glob("*."+suffix0)
+    datname=None
     if len(filelist) == 1:
-        datname = re.sub('.'+suffix,'',filelist[0])
+        datname = re.sub('.'+suffix0,'',filelist[0])
     else:
         pass
 

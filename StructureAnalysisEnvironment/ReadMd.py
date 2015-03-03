@@ -15,6 +15,7 @@
 #
 # get_natom()
 # get_nloop() 
+# get_n_ion_loop() 
 # get_atoms_index_j()
 # get_atoms_index()
 # get_nion()
@@ -104,6 +105,11 @@ class ReadMd(object):
             j += 1
         self.nloop = j
 
+        return self.nloop
+
+    # 互換
+    def get_n_ion_loop(self):
+        self.nloop = self.get_nloop()
         return self.nloop
 
     ###############################################
@@ -327,7 +333,7 @@ class ReadMd(object):
             if bool(given_reg.match(self.datlines[i])):
                 src = re.sub(given_text,'',self.datlines[i])
                 temp = float(re.sub(given_end,'',src))
-                self.temp_loop_given[l] = temp
+                self.temp_given_loop[l] = temp
             i = i + natom + 1
 
         return self.temp_given_loop
