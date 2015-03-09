@@ -27,6 +27,9 @@
 #
 ################################################################################
 #
+# 2015.03.09
+#  戻り値のルールを変更したバージョン conv_car2carABS1 を用意
+#
 # 2014.11.12 1st
 #
 ################################################################################
@@ -42,11 +45,13 @@ __version__    = "0.0.1"
 ################################################################################
 
 import sys
-import os
-import re
+#import os
+#import re
 import numpy as np
-from copy import deepcopy
+#from copy import deepcopy
 
+
+################################################################################
 def conv_car2carABS(scale0,t,natom,direct,position):
 
     if direct:
@@ -99,3 +104,60 @@ def conv_car2carABS(scale0,t,natom,direct,position):
     t[2,2] = t3_z
 
     return scale
+
+################################################################################
+def conv_car2carABS1(scale0,t,natom,direct,position):
+
+    if direct:
+        sys.exit("STOP: current is Direct.")
+
+    t1_x = t[0,0]
+    t1_y = t[1,0]
+    t1_z = t[2,0]
+
+    t2_x = t[0,1]
+    t2_y = t[1,1]
+    t2_z = t[2,1]
+
+    t3_x = t[0,2]
+    t3_y = t[1,2]
+    t3_z = t[2,2]
+
+    # スケールファクターを 1.0 にする
+    scale = 1.0
+
+    # 内部座標のスケール
+    p = np.zeros((natom,3))
+    for j in range(natom):
+            p[j,0] = position[j,0]*scale0
+            p[j,1] = position[j,1]*scale0
+            p[j,2] = position[j,2]*scale0
+
+    # 基本並進ベクトルのスケール
+    t1_x = t1_x*scale0
+    t1_y = t1_y*scale0
+    t1_z = t1_z*scale0
+    
+    t2_x = t2_x*scale0
+    t2_y = t2_y*scale0
+    t2_z = t2_z*scale0
+    
+    t3_x = t3_x*scale0
+    t3_y = t3_y*scale0
+    t3_z = t3_z*scale0
+
+    t[0,0] = t1_x
+    t[1,0] = t1_y
+    t[2,0] = t1_z
+
+    t[0,1] = t2_x
+    t[1,1] = t2_y
+    t[2,1] = t2_z
+
+    t[0,2] = t3_x
+    t[1,2] = t3_y
+    t[2,2] = t3_z
+
+    return [scale,t,natom,direct,p]
+
+
