@@ -10,13 +10,31 @@
 #
 ################################################################################
 #
+# atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す  
+# atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+# atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す     
+# ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す         
+# ion_local[j]      : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+#                                                                               
+# position[j,3]     : 通し番号(max=natom)とx,y,z 指定で内部座標                 
+# fix[j,3]          : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定  
+#                                                                               
+# title             : タイトル                                                  
+# scale             : 格子定数(スケールファクター)                              
+# selective         : selective mode                                            
+# direct            : direct or cartesian  
+#
+################################################################################
+#
 #  get_title()
 #  get_ispin()
 #  get_natom()
 #  get_nion()
-#  get_atoms_index()
 #  get_atoms()
 #  get_atoms_j()
+#  get_atoms_index()
+#  get_atoms_index_j()
+#  get_ion()
 #  get_scale()
 #  get_t()
 #  get_selective()
@@ -28,6 +46,10 @@
 #
 ################################################################################
 # RedMxDatMethod.py
+#
+# 2015.03.09
+#   get_ion()
+#   get_atoms_index_j()
 #
 # 2015.02.25
 #   get_atoms_j() 作成 ReadOutcar.get_atoms_j() 相当
@@ -187,6 +209,7 @@ class ReadMxDatMethod(object):
                     if nion != j -1 :
                         sys.exit("STOP: Atomic.Species Tag Error")
                     break
+       #print "self.atoms_index =",self.atoms_index
         return self.atoms_index
 
 
@@ -251,31 +274,62 @@ class ReadMxDatMethod(object):
     ###################################
     # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
     #    ReadMxDatMethod.get_atoms version2 に対応する get_atoms_j
-    #   atoms_index (ReadOutcar.get_atoms_index_j に準じる)
+    #    atoms_index (ReadOutcar.get_atoms_index_j に準じる)
+    #    ただし、atoms_j は元素記号ではなく原子の種類番号を返す
+    #    この機能と互換のMethodは ReadOutcar.atoms_j() となる
     #
     # 混乱するので普通に get_atoms_index_j と命名し直す (2015.03.09)
-   #def get_atoms_j(self):
-    def get_atoms_index_j(self):
+    # --> さらに混乱した
+    #     atoms_index_j はそもそも番号ではなく元素記号で返す変数だったのを忘れいた
+    #     元に戻す(2015.03.09)
+    #
+    def get_atoms_j(self):
         nion = self.get_nion()
         natom = self.get_natom()
         atoms = self.get_atoms()
         j = 0
-       #self.atoms_j = np.zeros(natom,dtype=int)
-        self.atoms_index_j = np.zeros(natom,dtype=int)
+        self.atoms_j = np.zeros(natom,dtype=int)
         for ion in range(nion):
             for atom in range(atoms[ion]):
-               #self.atoms_j[j] = ion
-                self.atoms_index_j[j] = ion
+                self.atoms_j[j] = int(ion)
                 j += 1
 
        #print '(method) self.atom_j',self.atoms_j
-       #return self.atoms_j
-        return self.atoms_index_j
-
-    # get_atom_j で呼び出しがある場合のための互換で残しておく
-    def get_atoms_j(self):
-        self.atoms_j = self.get_atoms_index_j()
         return self.atoms_j
+
+    ###################################
+    # 2015.03.09
+    # ion[j]    : 通し番号(max=natom)を与えると原子の種類番号を返す
+    # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す  
+    def get_ion(self):
+        natom = self.get_natom()
+        atoms = self.get_atoms()  # atoms に依存
+        nion = self.get_nion()
+        self.ion = np.zeros(natom)
+        tmp = -1
+        for i in range(nion):
+            for k in range(atoms[i]):
+                tmp += 1
+                self.ion[tmp] = int(i)
+        return self.ion
+
+    ###################################
+    # 2015.03.09 
+    # atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す  
+    # atoms_j[j]        : 通し番号(max=natom)を与えると、原子の種類番号を返す
+    # atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+    # atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す 
+    #
+    def get_atoms_index_j(self):
+        natom = self.get_natom()
+        atoms_j = self.get_atoms_j()  # atoms_j() <-- atoms() に依存
+        atoms_index = self.get_atoms_index()
+        self.atoms_index_j = []
+        for j in range(natom):
+            self.atoms_index_j.append(atoms_index[atoms_j[j]])
+
+       #print "self.atoms_index_j",self.atoms_index_j
+        return self.atoms_index_j
 
 
     ###################################
