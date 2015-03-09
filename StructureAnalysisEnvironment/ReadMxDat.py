@@ -5,9 +5,9 @@
 #
 # OpenMX 3.7 *.dat 形式ファイル 読み込み class
 #
-#  ReadDatMx (ReadMxDat)
-#    *.dat 名の重複があるので DatMx とする( 例 RMC_POT の *.dat 形式 )
-#    ==> MxDat へルール変更
+#
+#  class ReadMxDatMethod ----- class RreadMxDat
+#
 #
 ################################################################################
 #
@@ -18,6 +18,12 @@
 #
 # 2015.02.24
 #   spin チェックmethod
+#
+# 2015.02.17
+#
+#  旧名) ReadDatMx (ReadMxDat)
+#    *.dat 名の重複があるので DatMx とする( 例 RMC_POT の *.dat 形式 )
+#    ==> MxDat へルール変更
 #
 # 2015.02.17
 #  get_position_max(), get_position_min 追加

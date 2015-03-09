@@ -252,18 +252,29 @@ class ReadMxDatMethod(object):
     # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
     #    ReadMxDatMethod.get_atoms version2 に対応する get_atoms_j
     #   atoms_index (ReadOutcar.get_atoms_index_j に準じる)
-    def get_atoms_j(self):
+    #
+    # 混乱するので普通に get_atoms_index_j と命名し直す (2015.03.09)
+   #def get_atoms_j(self):
+    def get_atoms_index_j(self):
         nion = self.get_nion()
         natom = self.get_natom()
         atoms = self.get_atoms()
         j = 0
-        self.atoms_j = np.zeros(natom,dtype=int)
+       #self.atoms_j = np.zeros(natom,dtype=int)
+        self.atoms_index_j = np.zeros(natom,dtype=int)
         for ion in range(nion):
             for atom in range(atoms[ion]):
-                self.atoms_j[j] = ion
+               #self.atoms_j[j] = ion
+                self.atoms_index_j[j] = ion
                 j += 1
 
        #print '(method) self.atom_j',self.atoms_j
+       #return self.atoms_j
+        return self.atoms_index_j
+
+    # get_atom_j で呼び出しがある場合のための互換で残しておく
+    def get_atoms_j(self):
+        self.atoms_j = self.get_atoms_index_j()
         return self.atoms_j
 
 

@@ -29,7 +29,7 @@ import numpy as np
 ################################################################################
 # 応用群論 p.122 - p123
 def rotate_z(deg):
-    r = np.radians(deg)
+    r = np.radians(float(deg))
     C = np.cos(r)
     S = np.sin(r)
     # z軸周りの回転行列
@@ -41,7 +41,7 @@ def rotate_z(deg):
     return R_z
 
 def rotate_y(deg):
-    r = np.radians(deg)
+    r = np.radians(float(deg))
     C = np.cos(r)
     S = np.sin(r)
     # z軸周りの回転行列

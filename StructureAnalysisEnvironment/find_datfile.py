@@ -10,6 +10,9 @@
 ################################################################################
 #
 # 2015.03.03
+#  拡張子の自動 . 削除＆追加ルーチンにバグを発見したので直した
+#
+# 2015.03.03
 #  複数の suffix ファイルが有るときに return する変数を None で返すようにした
 #
 # 2015.03.03
@@ -42,12 +45,12 @@ __version__    = "0.0.4"
 
 import re
 import glob
-
+import optparse
 
 ################################################################################
 def find_datfile(suffix):
 
-    suffix0 = re.sub('\.','',suffix)
+    suffix0 = re.sub('^\.','',suffix)
     filelist = glob.glob("*."+suffix0)
     datname=None
     if len(filelist) == 1:
@@ -59,8 +62,17 @@ def find_datfile(suffix):
 
 ################################################################################
 if __name__ == '__main__':
+
+    suffix = 'dat'
+    parser = optparse.OptionParser()
+    parser.add_option( '-s','--suffix',)
+    options, args = parser.parse_args()
+
+    if options.suffix:
+        suffix = options.suffix
+
     try:
-        datname = find_datfile('dat')
+        datname = find_datfile(suffix)
         print datname
     except:
         pass

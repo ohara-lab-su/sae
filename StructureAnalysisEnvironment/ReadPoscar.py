@@ -52,7 +52,15 @@
 #   get_position()
 #   get_fix()
 #
+#   conv_rot_euler(self,alpha,beta,gamma)
+#
 ################################################################################
+#
+# 2015.02.12
+#  conv_rot_euler(alpha,beta,gamma) method を実装
+#  とりあえずは意図したように動く
+#  func_rotate.py で定義した関数を色々呼び出す。
+#  バグ修正のつもりが一周りして元に戻った
 #
 # 2015.02.12
 #  get_position() の機能を get_fix() と分離した
@@ -344,6 +352,7 @@ class ReadPoscar(object):
            #print "Cartesian Mode"
             self.direct = False
 
+       #print "get_direct:",self.direct
         return self.direct
 
     ###############################################
@@ -421,22 +430,41 @@ class ReadPoscar(object):
         # 基本並進ベクトルの変換
         t = self.get_t()
 
+       #print "t"
+       #print t
+       #print ""
+
+       #t1 = np.matrix( [ t[0,0],t[1,0],t[2,0] ] )
         t1 = np.matrix( [ t[0,0],t[0,1],t[0,2] ] )
         t1r = t1 * R
+       #print " t1r = %14.8f %14.8f %14.8f" % (t1r[0,0],t1r[0,1],t1r[0,2])
 
+       #t2 = np.matrix( [ t[0,1],t[1,1],t[2,1] ] )
         t2 = np.matrix( [ t[1,0],t[1,1],t[1,2] ] )
         t2r = t2 * R
+       #print " t2r = %14.8f %14.8f %14.8f" % (t2r[0,0],t2r[0,1],t2r[0,2])
 
+       #t3 = np.matrix( [ t[0,2],t[1,2],t[2,2] ] )
         t3 = np.matrix( [ t[2,0],t[2,1],t[2,2] ] )
         t3r = t3 * R
+       #print " t3r = %14.8f %14.8f %14.8f" % (t3r[0,0],t3r[0,1],t3r[0,2])
+
+       #print ""
 
         # オイラー角で基本並進ベクトルを回したときの基本並進ベクトル
+#       R_t = np.matrix([
+#               [ t1r[0,0],t2r[0,0],t3r[0,0] ],
+#               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
+#               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
+#               ])
         R_t = np.matrix([
                 [ t1r[0,0],t1r[0,1],t1r[0,2] ],
                 [ t2r[0,0],t2r[0,1],t2r[0,2] ],
                 [ t3r[0,0],t3r[0,1],t3r[0,2] ]
                 ])
 
+       #print "R_t"
+       #print R_t
 
         # 内部座標の変換
         position = self.get_position()
@@ -475,7 +503,7 @@ if __name__ == '__main__':
     atoms_index = poscar.get_atoms_index()
     natom = poscar.get_natom()
     selective = poscar.get_selective()
-    direct = poscar.get_selective()
+    direct = poscar.get_direct()
     position = poscar.get_position()
     fix = poscar.get_fix()
 
