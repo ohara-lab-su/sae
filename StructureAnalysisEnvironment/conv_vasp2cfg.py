@@ -19,28 +19,33 @@
 #
 ################################################################################
 #
+# 2015.03.10
+#  戻り値と引数を1:1にしたバージョンの関数を作成
+#   conv_vasp2cfg
+#
 # 2014.10.31 bug fix
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.2"
 ################################################################################
 
 import sys
-import os
-import re
-import optparse
-from numpy import *
+#import os
+#import re
+#import optparse
+#from numpy import *
 
 
+################################################################################
 def conv_vasp2cfg(scale0,t,natom,direct,position):
 
     if not direct:
@@ -97,4 +102,63 @@ def conv_vasp2cfg(scale0,t,natom,direct,position):
     scale  = 1.0
     direct = True
     return [scale,direct]
+
+
+################################################################################
+def conv_vasp2cfg1(scale0,t,natom,direct,position):
+
+    if not direct:
+        sys.exit("STOP: input file is not direct mode")
+
+    t1_x = t[0,0]
+    t1_y = t[1,0]
+    t1_z = t[2,0]
+
+    t2_x = t[0,1]
+    t2_y = t[1,1]
+    t2_z = t[2,1]
+
+    t3_x = t[0,2]
+    t3_y = t[1,2]
+    t3_z = t[2,2]
+
+    ###############################################
+    ## data convert for cfg (RMC_POT) format
+    ## from direct to direct coordinate
+    ##
+    t1_x = scale0*t1_x / 2.0
+    t1_y = scale0*t1_y / 2.0
+    t1_z = scale0*t1_z / 2.0
+    t2_x = scale0*t2_x / 2.0
+    t2_y = scale0*t2_y / 2.0
+    t2_z = scale0*t2_z / 2.0
+    t3_x = scale0*t3_x / 2.0
+    t3_y = scale0*t3_y / 2.0
+    t3_z = scale0*t3_z / 2.0
+    
+    x_offset=0.5
+    y_offset=0.5
+    z_offset=0.5
+    
+    for j in range(int(natom)):
+        position[j,0] = (position[j,0] - x_offset)*2.0
+        position[j,1] = (position[j,1] - y_offset)*2.0
+        position[j,2] = (position[j,2] - z_offset)*2.0
+       #print " %16.12f %16.12f %16.12f" %(position[j,0],position[j,1],position[j,2])
+
+    t[0,0] = t1_x 
+    t[1,0] = t1_y 
+    t[2,0] = t1_z 
+                  
+    t[0,1] = t2_x 
+    t[1,1] = t2_y 
+    t[2,1] = t2_z 
+                  
+    t[0,2] = t3_x 
+    t[1,2] = t3_y 
+    t[2,2] = t3_z 
+
+    scale  = 1.0
+    direct = True
+    return [scale,t,natom,direct,position]
 

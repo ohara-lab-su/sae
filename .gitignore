@@ -14,6 +14,8 @@
 _*.py
 POSCAR*
 CONTCAR*
+KPOINTS*
+INCAR*
 update.csh
 SAE
 SAE_dev

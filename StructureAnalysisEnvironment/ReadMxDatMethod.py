@@ -44,8 +44,16 @@
 #  get_position_min()
 #  get_fix()
 #
+#  get_left_natom()
+#  get_left_atoms_index_j()
+#
 ################################################################################
 # RedMxDatMethod.py
+#
+# 2015.03.09
+#   NEGF 対応化(1)
+#       LeftLeadAtoms
+#       RightLeadAtoms 対応 --> *.xyz 出力
 #
 # 2015.03.09
 #   get_ion()
@@ -111,11 +119,11 @@ __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015, Kengo NAKADA"
+__copyright__  = "Copyright 2014-2015, Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.0.1"
+__version__    = "0.1.4"
 ################################################################################
 
 import sys
@@ -241,12 +249,12 @@ class ReadMxDatMethod(object):
    #    return self.atoms
 
 
-   ####################################
-   ## atoms (get_atoms version2) 正しく動作します
-   ##  OpenMX 的には Species.Number で区分される PAO/VPS は同一記号ならば
-   ##  かならず同一サイトとして分類してもよい感じなので、そのように分類し直す
-   ##  この分類変更にともなって position と fix の行列も整理し直す必要あるので注意
-   ##  むしろ、VASP の PP の並び(atoms_index と atoms)を直したほうが早い？
+    ###################################
+    # atoms (get_atoms version2) 正しく動作します
+    #  OpenMX 的には Species.Number で区分される PAO/VPS は同一記号ならば
+    #  かならず同一サイトとして分類してもよい感じなので、そのように分類し直す
+    #  この分類変更にともなって position と fix の行列も整理し直す必要あるので注意
+    #  むしろ、VASP の PP の並び(atoms_index と atoms)を直したほうが早い？
     def get_atoms(self):
         nion = self.get_nion()
         natom = self.get_natom()
@@ -333,6 +341,140 @@ class ReadMxDatMethod(object):
 
 
     ###################################
+    # natom の Left 版
+    def get_left_natom(self):
+        self.FLAG_left = False
+        self.left_natom = 0
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        reg = re.compile('.*LeftLeadAtoms\.Number')
+        for i in range(self.num):
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg.match(self.datlines[i])):
+                    self.FLAG_left = True
+                    self.left_natom = int(self.datlines[i].split()[1])
+                    break 
+        return self.left_natom
+
+    ###################################
+    # Left_atoms_index_j
+    # 通し番号を与えると元素記号を返す
+    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+    def get_left_atoms_index_j(self):
+        self.FLAG_left = False
+        left_natom = self.get_left_natom()
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        reg0 = re.compile('.*\<LeftLeadAtoms\.SpeciesAndCoordinates')
+#       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
+
+        self.left_atoms_index_j = []
+        for i in range(self.num):
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg0.match(self.datlines[i])):
+                    self.FLAG_left = True
+                    for j in range(left_natom):
+                        self.left_atoms_index_j.append(\
+                                self.datlines[i+j+1].split()[1])
+                    break
+        return self.left_atoms_index_j
+
+    ###################################
+    # Left_position
+    # 通し番号を与えると元素記号を返す
+    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+    # self.UNIT を用いるので get_position の後に実行する
+    def get_left_position(self):
+        self.FLAG_left = False
+        left_natom = self.get_left_natom()
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        reg0 = re.compile('.*\<LeftLeadAtoms\.SpeciesAndCoordinates')
+#       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
+
+        self.FLAG_left = False
+        self.left_position = np.zeros((left_natom,3))
+        for i in range(self.num):
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg0.match(self.datlines[i])):
+                    self.FLAG_left = True
+                    for j in range(left_natom):
+                        self.left_position[j,0] = \
+                                float(self.datlines[i+j+1].split()[2])*self.UNIT 
+                        self.left_position[j,1] = \
+                                float(self.datlines[i+j+1].split()[3])*self.UNIT
+                        self.left_position[j,2] = \
+                                float(self.datlines[i+j+1].split()[4])*self.UNIT
+                    break
+        return self.left_position
+
+
+    ###################################
+    # natom の Right 版
+    def get_right_natom(self):
+        self.FLAG_right = False
+        self.right_natom = 0
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        reg = re.compile('.*RightLeadAtoms\.Number')
+        for i in range(self.num):
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg.match(self.datlines[i])):
+                    self.FLAG_right = True
+                    self.right_natom = int(self.datlines[i].split()[1])
+                    break 
+        return self.right_natom
+
+    ###################################
+    # Right_atoms_index_j
+    # 通し番号を与えると元素記号を返す
+    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+    def get_right_atoms_index_j(self):
+        self.FLAG_right = False
+        right_natom = self.get_right_natom()
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        reg0 = re.compile('.*\<RightLeadAtoms\.SpeciesAndCoordinates')
+
+        self.right_atoms_index_j = []
+        for i in range(self.num):
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg0.match(self.datlines[i])):
+                    self.FLAG_right = True
+                    for j in range(right_natom):
+                        self.right_atoms_index_j.append(\
+                                self.datlines[i+j+1].split()[1])
+                    break
+        return self.right_atoms_index_j
+
+    ###################################
+    # Right_position
+    # 通し番号を与えると元素記号を返す
+    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+    # self.UNIT を用いるので get_position の後に実行する
+    def get_right_position(self):
+        self.FLAG_right = False
+        right_natom = self.get_right_natom()
+
+        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        reg0 = re.compile('.*\<RightLeadAtoms\.SpeciesAndCoordinates')
+
+        self.right_position = np.zeros((right_natom,3))
+        for i in range(self.num):
+            if not bool(comment_reg.match(self.datlines[i])):
+                if bool(reg0.match(self.datlines[i])):
+                    self.FLAG_right = True
+                    for j in range(right_natom):
+                        self.right_position[j,0] = \
+                                float(self.datlines[i+j+1].split()[2])*self.UNIT 
+                        self.right_position[j,1] = \
+                                float(self.datlines[i+j+1].split()[3])*self.UNIT
+                        self.right_position[j,2] = \
+                                float(self.datlines[i+j+1].split()[4])*self.UNIT
+                    break
+        return self.right_position
+
+
+
+    ###################################
     ## scale factor
     def get_scale(self):
         return 1.0
@@ -363,10 +505,10 @@ class ReadMxDatMethod(object):
                 if bool(reg2.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
                        #FLAG_UNIT = True   # 'Atomic Unit'
-                       UNIT = BOHR
+                       self.UNIT = BOHR
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
                        #FLAG_UNIT = False  # 'Ang'
-                       UNIT = 1.0
+                       self.UNIT = 1.0
                     else:
                         sys.exit("STOP: Unknown Atoms.UnitVectors.Unit")
                     break
@@ -379,17 +521,17 @@ class ReadMxDatMethod(object):
                 if bool(reg3.match(self.datlines[i])):
                     self.FLAG_t = True
 
-                    self.t[0,0] = float(self.datlines[i+1+0].split()[0])*UNIT
-                    self.t[1,0] = float(self.datlines[i+1+0].split()[1])*UNIT
-                    self.t[2,0] = float(self.datlines[i+1+0].split()[2])*UNIT
+                    self.t[0,0] = float(self.datlines[i+1+0].split()[0])*self.UNIT
+                    self.t[1,0] = float(self.datlines[i+1+0].split()[1])*self.UNIT
+                    self.t[2,0] = float(self.datlines[i+1+0].split()[2])*self.UNIT
 
-                    self.t[0,1] = float(self.datlines[i+1+1].split()[0])*UNIT
-                    self.t[1,1] = float(self.datlines[i+1+1].split()[1])*UNIT
-                    self.t[2,1] = float(self.datlines[i+1+1].split()[2])*UNIT
+                    self.t[0,1] = float(self.datlines[i+1+1].split()[0])*self.UNIT
+                    self.t[1,1] = float(self.datlines[i+1+1].split()[1])*self.UNIT
+                    self.t[2,1] = float(self.datlines[i+1+1].split()[2])*self.UNIT
 
-                    self.t[0,2] = float(self.datlines[i+1+2].split()[0])*UNIT
-                    self.t[1,2] = float(self.datlines[i+1+2].split()[1])*UNIT
-                    self.t[2,2] = float(self.datlines[i+1+2].split()[2])*UNIT
+                    self.t[0,2] = float(self.datlines[i+1+2].split()[0])*self.UNIT
+                    self.t[1,2] = float(self.datlines[i+1+2].split()[1])*self.UNIT
+                    self.t[2,2] = float(self.datlines[i+1+2].split()[2])*self.UNIT
 
                     if not bool(reg4.match(self.datlines[i+1+3])):
                         sys.exit("STOP: Atoms.UnitVectors Error")
@@ -467,13 +609,13 @@ class ReadMxDatMethod(object):
    #        if bool(reg_position0.match(self.datlines[i])):
    #            if bool(reg_unit0.match(self.datlines[i].split()[1])):
    #              #direct = False
-   #               UNIT = BOHR        # 'Atomic Unit'
+   #               self.UNIT = BOHR        # 'Atomic Unit'
    #            elif bool(reg_unit1.match(self.datlines[i].split()[1])):
    #              #direct = False
-   #               UNIT = 1.0 # 'Ang'
+   #               self.UNIT = 1.0 # 'Ang'
    #            elif bool(reg_unit2.match(self.datlines[i].split()[1])):
    #              #direct = True
-   #               UNIT = 1.0
+   #               self.UNIT = 1.0
    #            else:
    #                sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
    #            break
@@ -484,9 +626,9 @@ class ReadMxDatMethod(object):
    #            if bool(reg_position1.match(self.datlines[i])):
    #                j = 1
    #                while not bool(reg_position2.match(self.datlines[i+j])):
-   #                    self.p[j-1,0] = float(self.datlines[i+j].split()[2])*UNIT
-   #                    self.p[j-1,1] = float(self.datlines[i+j].split()[3])*UNIT
-   #                    self.p[j-1,2] = float(self.datlines[i+j].split()[4])*UNIT
+   #                    self.p[j-1,0] = float(self.datlines[i+j].split()[2])*self.UNIT
+   #                    self.p[j-1,1] = float(self.datlines[i+j].split()[3])*self.UNIT
+   #                    self.p[j-1,2] = float(self.datlines[i+j].split()[4])*self.UNIT
    #                    j += 1
    #                if natom != j -1 :
    #                    sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
@@ -524,13 +666,13 @@ class ReadMxDatMethod(object):
                 if bool(reg_position0.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
                       #direct = False
-                       UNIT = BOHR        # 'Atomic Unit'
+                       self.UNIT = BOHR        # 'Atomic Unit'
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
                       #direct = False
-                       UNIT = 1.0 # 'Ang'
+                       self.UNIT = 1.0 # 'Ang'
                     elif bool(reg_unit2.match(self.datlines[i].split()[1])):
                       #direct = True
-                       UNIT = 1.0
+                       self.UNIT = 1.0
                     else:
                         sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
                     break
@@ -549,11 +691,11 @@ class ReadMxDatMethod(object):
                                       int(self.datlines[i+j].split()[0]) -1
                                 self.position_index_r[j-1] = l
                                 self.position[l,0] = \
-                                      float(self.datlines[i+j].split()[2])*UNIT
+                                      float(self.datlines[i+j].split()[2])*self.UNIT
                                 self.position[l,1] = \
-                                      float(self.datlines[i+j].split()[3])*UNIT
+                                      float(self.datlines[i+j].split()[3])*self.UNIT
                                 self.position[l,2] = \
-                                      float(self.datlines[i+j].split()[4])*UNIT
+                                      float(self.datlines[i+j].split()[4])*self.UNIT
                                 l += 1
                     break
         return self.position

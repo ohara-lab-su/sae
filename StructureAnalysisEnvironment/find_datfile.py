@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2015.03.10
+#  複数ファイルを纏めて返すバージョン find_datfiles() を追加
+#
 # 2015.03.03
 #  拡張子の自動 . 削除＆追加ルーチンにバグを発見したので直した
 #
@@ -36,7 +39,7 @@ __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.0.4"
+__version__    = "0.0.6"
 ################################################################################
 
 #import sys
@@ -59,6 +62,17 @@ def find_datfile(suffix):
         pass
 
     return datname
+
+################################################################################
+def find_datfiles(suffix):
+    suffix0 = re.sub('^\.','',suffix)
+    filelist = glob.glob("*."+suffix0)
+    datnames=None
+    datnames = []
+    for i in filelist:
+        datnames.append(re.sub('.'+suffix0,'',filelist[i]))
+
+    return datnames
 
 ################################################################################
 if __name__ == '__main__':
