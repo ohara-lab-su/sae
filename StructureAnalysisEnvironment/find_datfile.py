@@ -65,12 +65,11 @@ def find_datfile(suffix):
 
 ################################################################################
 def find_datfiles(suffix):
-    suffix0 = re.sub('^\.','',suffix)
-    filelist = glob.glob("*."+suffix0)
+    filelist = glob.glob("*."+str(suffix))
     datnames=None
     datnames = []
     for i in filelist:
-        datnames.append(re.sub('.'+suffix0,'',filelist[i]))
+        datnames.append(re.sub('.'+str(suffix),'',i))
 
     return datnames
 
