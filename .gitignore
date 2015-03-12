@@ -11,11 +11,15 @@
 *.md
 *.md2
 *.xyz
+*.inp
+*.wfn*
 _*.py
 POSCAR*
 CONTCAR*
 KPOINTS*
 INCAR*
+BASIS_SET
+GTH_POTENTIALS
 update.csh
 SAE
 SAE_dev
