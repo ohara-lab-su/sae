@@ -9,6 +9,10 @@
 #
 ################################################################################
 #
+# 2015.05.08
+#  コメントアウト対応版 read_datline1 を作成
+#    nline をカウント数も、dataline へも放り込みも コメントアウトは除く
+#
 # 2015.02.25
 #   startup
 #   わりと多用するので class のコンストラクタ部分から分離
@@ -29,7 +33,6 @@ __version__    = "0.0.1"
 import sys
 import os
 import gzip
-
 
 ################################################################################
 def read_dataline(name):
@@ -57,4 +60,42 @@ def read_dataline(name):
     num = len(datlines) -1
 
     return datlines,num
+
+################################################################################
+def read_dataline1(name):
+
+    import re
+    comment_reg = re.compile('^#.*',re.IGNORECASE)
+
+    if os.path.exists(name):
+        GZIP=False
+    elif os.path.exists(name+".gz"):
+        GZIP=True
+    else:
+        sys.exit("STOP: "+name+" or "+name+".gz file not found")
+
+    try:
+        if GZIP:
+            tmp = gzip.open(name+".gz")
+        else:
+            tmp = open(name)
+        datfile = tmp.read()
+    except:
+        tmp.close()
+        sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+    finally:
+        tmp.close()
+
+    datalines0 = datfile.split('\n')
+    num0 = len(datalines0) -1
+
+    j = 0
+    datalines = []
+    for i in range(num0):
+        if not bool(comment_reg.match(datalines0[i])):
+            datalines.append(datalines0[i])
+            j += 1
+
+    num = j
+    return datalines,num
 

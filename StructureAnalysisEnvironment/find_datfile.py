@@ -2,12 +2,19 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# find_datfile
+# find_datfile(suffix)
 #
 #  指定suffixのファイルがカレントに一つの時はそのファイル名を返すルーチンへ
 #  変更
 #
+#  注意) suffix には . は付かないで入力
+#        もし . が付いていたら自動で一度 . を落とす
+#
 ################################################################################
+#
+# 2015.03.16
+#  ライブラリとしてではなく実行プログラムとしてみたときに、引数処理を
+#  してなかったので修正
 #
 # 2015.03.10
 #  複数ファイルを纏めて返すバージョン find_datfiles() を追加
@@ -80,6 +87,9 @@ if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option( '-s','--suffix',)
     options, args = parser.parse_args()
+
+    if len(args) >0:
+        suffix = args[0]
 
     if options.suffix:
         suffix = options.suffix
