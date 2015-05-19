@@ -1,3 +1,12 @@
+.DS_Store
+*.pdb
+*.log
+*.dvi
+*.aux
+*.pdf
+*.pdf.*
+*.zip
+*.gz
 *.pyc
 *.tar.gz
 *.tgz
@@ -62,3 +71,4 @@ dist/
 StructureAnalysisEnvironment.egg-info/
 IGZO*
 Graph*
+update.csh

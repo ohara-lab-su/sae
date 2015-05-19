@@ -2,37 +2,51 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # 原子番号もしくは元素記号を渡すと原子半径を返すルーチン等
+# (いささかルーチン全体の基本センスが古いので扱いにくい)
 #
-# atomic_radius.list ファイルが必要
+# カレントに atomic_radius.list ファイルが必要
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
+#
+# 2015.05.19
+#  原子番号から元素記号を返すルーチンを追加
 #
 # 2015.02.16
 #  import の名前空間を変更
 #
 ################################################################################
 
+import sys
+import os
 
 import numpy as np
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ### 原子番号から原子半径を返す
 def get_atomic_radius0(num):
 
-    name='atomic_radius.list' 
-    nlist = SAE.read_list_param(name)
+    name='atomic_radius.list'
+
+    ldir = os.path.dirname(SAE.__file__)
+    if not os.path.exists(name):
+        if os.path.exists( ldir+'/'+name ):
+            name=ldir+'/'+name
+        else:
+            sys.exit("STOP: "+name+" file not found")
+
+    nlist = SAE.read_list_param(name) # pre read
 
     radius_list = np.zeros((nlist,3),dtype='S4')
     nlist = SAE.read_list3(name,radius_list)
@@ -43,12 +57,19 @@ def get_atomic_radius0(num):
 
     return radius
 
-
 ### 元素記号から原子半径を返す
 def get_atomic_radius1(atom):
 
-    name='atomic_radius.list' 
-    nlist = SAE.read_list_param(name)
+    name='atomic_radius.list'
+
+    ldir = os.path.dirname(SAE.__file__)
+    if not os.path.exists(name):
+        if os.path.exists( ldir+'/'+name ):
+            name=ldir+'/'+name
+        else:
+            sys.exit("STOP: "+name+" file not found")
+
+    nlist = SAE.read_list_param(name) # pre read
 
     radius_list = np.zeros((nlist,3),dtype='S4')
     nlist = SAE.read_list3(name,radius_list)
@@ -59,12 +80,19 @@ def get_atomic_radius1(atom):
 
     return radius
 
-
 ### 元素記号から原子番号を返す
 def get_atomic_number1(atom):
 
-    name='atomic_radius.list' 
-    nlist = SAE.read_list_param(name)
+    name='atomic_radius.list'
+
+    ldir = os.path.dirname(SAE.__file__)
+    if not os.path.exists(name):
+        if os.path.exists( ldir+'/'+name ):
+            name=ldir+'/'+name
+        else:
+            sys.exit("STOP: "+name+" file not found")
+
+    nlist = SAE.read_list_param(name) # pre read
 
     radius_list = np.zeros((nlist,3),dtype='S4')
     nlist = SAE.read_list3(name,radius_list)
@@ -74,3 +102,26 @@ def get_atomic_number1(atom):
             num=float(radius_list[i,0])
 
     return num
+
+### 原子番号から元素記号を返す
+def get_atomic_symbol0(num):
+
+    name='atomic_radius.list'
+
+    ldir = os.path.dirname(SAE.__file__)
+    if not os.path.exists(name):
+        if os.path.exists( ldir+'/'+name ):
+            name=ldir+'/'+name
+        else:
+            sys.exit("STOP: "+name+" file not found")
+
+    nlist = SAE.read_list_param(name) # pre read
+
+    radius_list = np.zeros((nlist,3),dtype='S4')
+    nlist = SAE.read_list3(name,radius_list)
+
+    for i in range(nlist):
+        if num == int(radius_list[i,0]):
+            symbol = str(radius_list[i,1])
+
+    return symbol

@@ -56,41 +56,43 @@ class ReadPwIn(object):
 
         # set default
         self.ispin = 1
+        self.prefix = 'input'
 
         for line in self.datlines:
 
             if bool(ibrav_reg.match(line)):
-                tmp = re.sub('.*ibrav *=','',line,re.IGNORECASE)
+                tmp = re.sub('.*ibrav *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
                 self.ibrav = int(tmp)
                 if self.ibrav != 0:
                     sys.exit("STOP: ibrav != 0")
 
             if bool(lattice_a_reg.match(line)):
-                tmp = re.sub('.* a *=','',line,re.IGNORECASE)
+                tmp = re.sub('.*a *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
 #               self.scale = float(tmp)*0.529177249
                 self.scale = float(tmp)
 
             if bool(natom_reg.match(line)):
-                tmp = re.sub('.* nat *=','',line,re.IGNORECASE)
+                tmp = re.sub('.*nat *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
                 self.natom = int(tmp)
 
             if bool(nion_reg.match(line)):
-                tmp = re.sub('.* ntyp *=','',line,re.IGNORECASE)
+                tmp = re.sub('.*ntyp *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
                 self.nion = int(tmp)
 
             if bool(spin_reg.match(line)):
-                tmp = re.sub('.* nspin *=','',line,re.IGNORECASE)
+                tmp = re.sub('.*nspin *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
                 self.ispin = int(tmp)
 
             if bool(prefix_reg.match(line)):
-                tmp = re.sub('.* prefix *=','',line,re.IGNORECASE)
+                tmp = re.sub('.*prefix *=','',line.lower())
+                tmp = re.sub('\'','',tmp)
                 tmp = re.sub(',.*','',tmp)
-                self.prefix = str(tmp)
+                self.prefix = str(tmp.strip())
 
     ############################################################################
     # ReadPoscar.py での t に準ずる構造
