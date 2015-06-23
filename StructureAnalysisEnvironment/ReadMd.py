@@ -4,18 +4,19 @@
 #
 #  MD(xyz) 形式の読み込み class
 #
-#   read_md.py 
+#   read_md.py
 #     def read_md3(): 座標(x,y,z) + フォース(x,y,z) + Energy 形式に対応
 #   をベースとして作成
 #
 #   エネルギーの取得に関しては OpenMX の *.md 形式が念頭
-#   ただし、それ以外は基本的には *.xyz (*.md) 形式に準じている
-#  
+#   ただし、それ以外は基本的には *.xyz (*.md) 形式に準じているので、
+#   ReadMd.py の名前のままにしておく ( ゆえに ReadMxMd.py とはしない)
+#
 ################################################################################
 #
 # get_natom()
-# get_nloop() 
-# get_n_ion_loop() 
+# get_nloop()
+# get_n_ion_loop()
 # get_atoms_index_j()
 # get_atoms_index()
 # get_nion()
@@ -50,7 +51,7 @@ __version__    = "0.0.1"
 ################################################################################
 
 import sys
-import optparse 
+import optparse
 import os
 import gzip
 import re
@@ -130,11 +131,11 @@ class ReadMd(object):
     def get_atoms_index(self):
         natom = self.get_natom()
         atoms_index_j = self.get_atoms_index_j()
-  
+
         i=0
         self.atoms_index = []
         for a in range(natom):
-  
+
             i = i+2
             atoms_tmp = ''
             for j in range(natom):
@@ -153,10 +154,10 @@ class ReadMd(object):
         natom = self.get_natom()
         nloop = self.get_nloop()
         atoms_index_j = self.get_atoms_index_j()
-  
+
         i=0
         for l in range(nloop):
-  
+
             i = i+2
             atoms_tmp = ''
             self.nion = 0
@@ -186,7 +187,7 @@ class ReadMd(object):
             nion = 0
             local =0
             for j in range(natom):
-        
+
                 # makes atoms[ion]
                 if atoms_index_j[j] != atoms_tmp:
                     local =0
@@ -196,7 +197,7 @@ class ReadMd(object):
                     local += 1
                     self.atoms[nion-1] = local
                 i += 1
-        
+
         return self.atoms
 
     ###############################################
@@ -204,56 +205,56 @@ class ReadMd(object):
     def get_energy_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
-  
+
         i=0
         self.energy_loop = np.zeros(nloop)
         for l in range(nloop):
-  
+
             # get Energy
             tmp = self.datlines[i+1].split()
             if len(tmp) >= 5:
                 self.energy_loop[l] =tmp[4]
                #print energy_loop[l]
-  
+
             i = i+2
             for j in range(natom):
                 i += 1
 
-        return self.energy_loop 
+        return self.energy_loop
 
     ###############################################
     # position_loop データー読み込み
     def get_position_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
-  
+
         i=0
         self.position_loop = np.zeros((nloop,natom,3))
         energy_loop = np.zeros(nloop)
 
         for l in range(nloop):
-  
+
             # get Energy
             tmp = self.datlines[i+1].split()
             if len(tmp) >= 5:
                 energy_loop[l] =tmp[4]
                #print energy_loop[l]
-  
+
             i = i+2
-  
+
             for j in range(natom):
-  
+
                 self.position_loop[l,j,0]  = float(self.datlines[i].split()[1])
                 self.position_loop[l,j,1]  = float(self.datlines[i].split()[2])
                 self.position_loop[l,j,2]  = float(self.datlines[i].split()[3])
-  
+
 #               nlist = len(tmp)
 #               if nlist >= 7:
 #                   force_loop[l,j,0]     = float(tmp[4])
 #                   force_loop[l,j,1]     = float(tmp[5])
 #                   force_loop[l,j,2]     = float(tmp[6])
                 i += 1
- 
+
         return self.position_loop
 
     ###############################################
@@ -279,10 +280,10 @@ class ReadMd(object):
         i=0
         self.force_loop = np.zeros((nloop,natom,3))
         for l in range(nloop):
-  
+
             i = i+2
             for j in range(natom):
- 
+
                 tmp = self.datlines[i].split()
                 nlist = len(tmp)
                 if nlist >= 7:
@@ -290,9 +291,9 @@ class ReadMd(object):
                     self.force_loop[l,j,1]     = float(tmp[5])
                     self.force_loop[l,j,2]     = float(tmp[6])
                 i += 1
- 
+
         return self.force_loop
- 
+
 
     ###############################################
     # OpenMX *.md 形式, MD モード
@@ -352,11 +353,11 @@ if __name__ == '__main__':
                         dest='INPUT',
                         default=MD,
     )
-    options,  args = parser.parse_args()                                        
-                                                                                
+    options,  args = parser.parse_args()
+
     if options.INPUT:
         MD=options.INPUT
-                                                                                
+
     if len(args) > 0:
         MD=args[0]
 

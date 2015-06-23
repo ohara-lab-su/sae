@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.05.21
+#  ファイル名の自動取得&基本プロットのサンプル追加
+#
 # 2015.03.30
 #  startup
 #
@@ -41,12 +44,17 @@ class ReadAthenaNor(object):
 
         self.datlines,self.num = SAE.read_dataline(name)
         comment_reg = re.compile('^#.*')
+        E0_reg = re.compile('^#.*E0.*')
 
         self.eng = []
         self.nor = []
         self.ndata = 0
         for i in range(self.num):
             line = self.datlines[i]
+
+            if bool(E0_reg.match(line)):
+                self.e0 = float(re.sub('E0=','',line.split()[2]))
+
             if not bool(comment_reg.match(line)):
                 self.eng.append(float(line.split()[0]))
                 self.nor.append(float(line.split()[1]))
@@ -64,9 +72,49 @@ class ReadAthenaNor(object):
     def get_ndata(self):
         return self.ndata
 
-################################################################################
-if __name__ == '__main__':
+    def get_e0(self):
+        return self.e0
 
+################################################################################
+def plot_athena_nor(eng,nor):
+
+    import matplotlib.pyplot as plt
+
+
+    plt.rcParams['font.family']     = 'Times New Roman'
+    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
+
+    plt.figure(figsize=(7.00, 9.89))  # for portrait
+
+    orgx = 0.170
+    orgy = 0.080
+    off = 0.010
+    xsize = 0.75
+    ysize = 0.83/2.
+
+    plt.axes([orgx,orgy,xsize,ysize])
+
+    plt.plot(eng,nor,linewidth=2,label='XAS')
+
+    plt.xlabel("E")
+    plt.ylabel(" chi mu (E)")
+#   plt.axvline(x=0,color='black',linewidth=1)
+
+    leg = plt.legend(fontsize=12,loc='lower right')
+    leg.get_frame().set_alpha(0.5)
+
+    plt.savefig("XAS.eps")
+    plt.savefig("XAS.pdf")
+    plt.savefig("XAS.png")
+
+    plt.show()
+
+    plt.close('all')
+
+################################################################################
+def options():
     import optparse
 
     name = 'Cu_foil_10ms.txt.nor'
@@ -75,15 +123,29 @@ if __name__ == '__main__':
     parser.add_option( '-i','--input', dest='INPUT', )
     options, args = parser.parse_args()
 
+    if not os.path.exists(name):
+        name0 = SAE.find_datfile1('.txt.nor')
+        if name0 == 'None':
+            name0 = name
+    name = name0
+
     if options.INPUT:
-        case = options.INPUT
+        name = options.INPUT
+
+    if len(args) > 0:
+        name = args[0]
+
+    return name
+
+################################################################################
+if __name__ == '__main__':
+
+    name = options()
 
     spec = ReadAthenaNor(name)
-    eng = spec.get_eng()
-    nor = spec.get_nor()
-    ndata = spec.get_ndata()
+    print spec.get_e0()
+#   plot_athena_nor(spec.eng,spec.nor)
 
-    for i in range(ndata):
-        print eng[i],nor[i]
-
+#   for i in range(ndata):
+#       print eng[i],nor[i]
 

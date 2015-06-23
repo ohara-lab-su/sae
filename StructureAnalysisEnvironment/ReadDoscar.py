@@ -47,11 +47,15 @@
 #
 ################################################################################
 #
-# 2015.02.25                                                                    
+# 2015.06.15
+#  get_ldos(orbit.atom,spin)
+#  にて、orbit に s,p,d 記号でも入力が出来るようにした
+#
+# 2015.02.25
 #  get_emin() で用いているインスタンス変数名を変更
 #
-# 2015.01.28                                                                    
-#  title の取得における末尾までの空白削除を追加 
+# 2015.01.28
+#  title の取得における末尾までの空白削除を追加
 #
 # 2015.01.14
 #    PDOS, PDOS_ALL まわりのバグ修正
@@ -88,7 +92,7 @@
 #    メッソッド名に get_ を追加(変数名との住み分けの容易化のため)
 #
 #    get_ldos_all メッソッドを追加(メッソド名と戻り値が異なるだけ)
-#    
+#
 #
 # 2015.01.11 (sun)
 #    細かい修正,まったりと作成
@@ -108,7 +112,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.11"
 ################################################################################
@@ -122,8 +126,8 @@ import numpy as np
 
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadDoscar(object):
@@ -136,7 +140,7 @@ class ReadDoscar(object):
             GZIP=True
         else:
             sys.exit("STOP: "+name+" or "+name+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(name+".gz")
@@ -148,7 +152,7 @@ class ReadDoscar(object):
             sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
         finally:
             tmp.close()
-    
+
         self.datlines = datfile.split('\n')
 
     # DOSCAR のTOTAL-DOS 情報列からspin情報を推測する
@@ -230,7 +234,7 @@ class ReadDoscar(object):
 
         for i in range(NEDOS):
             dos_line = self.datlines[6+i].split()
-    
+
             eng[i] = float(dos_line[0])
             if NSPIN >= 2:
                 dos[i,0]    = float(dos_line[1])  # up-sin
@@ -258,7 +262,7 @@ class ReadDoscar(object):
 
         for i in range(NEDOS):
             dos_line = self.datlines[6+i].split()
-    
+
             eng[i] = float(dos_line[0])
             if NSPIN >= 2:
                 pass
@@ -320,7 +324,7 @@ class ReadDoscar(object):
                    for ispin in range(NSPIN):
                        pdos[i,lm_local,ispin] = float(tmp[f])
                        f += 1
-    
+
         self.PDOS = pdos[:,lm,spin]
         return self.PDOS
 
@@ -373,7 +377,7 @@ class ReadDoscar(object):
                       for ispin in range(NSPIN):
                           pdos[i,lm,atom0,ispin] = float(tmp[f])
                           f += 1
-    
+
         self.PDOS = pdos
         return self.PDOS
 
@@ -382,6 +386,13 @@ class ReadDoscar(object):
     # 注意) atom と spin は 0 から始める(spin=0 --> up-spin)
     # 注意) PDOS で計算していても、PDOS から LDOS を算出して返す
     def get_ldos(self,l=0,atom=0,spin=0):
+
+        if l == 's':
+            l=0
+        if l == 'p':
+            l=1
+        if l == 'd':
+            l=2
 
         NEDOS = self.get_nedos()
         NSPIN = self.get_ispin()
@@ -533,7 +544,7 @@ class ReadDoscar(object):
         LORBIT = self.get_lorbit()
         NEDOS = self.get_nedos()
 
-        import StructureAnalysisEnvironment as SAE                                      
+        import StructureAnalysisEnvironment as SAE
         outcar = SAE.ReadOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
@@ -593,7 +604,7 @@ class ReadDoscar(object):
         LORBIT = self.get_lorbit()
         NEDOS = self.get_nedos()
 
-        import StructureAnalysisEnvironment as SAE                                      
+        import StructureAnalysisEnvironment as SAE
         outcar = SAE.ReadOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
@@ -644,17 +655,17 @@ class ReadDoscar(object):
 if __name__ == '__main__':
 
     name = 'DOSCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
-                                                                                
+
     if len(args) > 0:
         name=args[0]
 
@@ -702,4 +713,4 @@ if __name__ == '__main__':
 
 
 ################################################################################
-     
+

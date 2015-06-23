@@ -10,11 +10,11 @@
 # [in]  ABS
 #           True  : 1) スケールファクターを1 にする
 #                   2) 内部座標もスケール(絶対座標系)
-#     
+#
 #           False : VASP の cartesian mode
 #                   1) 並進ベクトルはスケールしない(別にしても構わないのだが)
 #                   2) 内部座標はスケールしない(これをスケールしたらVASPではダメ)
-#     
+#
 #
 # [in]     scale0         : 基本並進にかかるスケール(変換前)
 #
@@ -52,15 +52,15 @@
 # 2014.10.30/31 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -101,13 +101,13 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
         car[j,0] = t1_x*position[j,0] + t2_x*position[j,1] + t3_x*position[j,2]
         car[j,1] = t1_y*position[j,0] + t2_y*position[j,1] + t3_y*position[j,2]
         car[j,2] = t1_z*position[j,0] + t2_z*position[j,1] + t3_z*position[j,2]
-    
+
     ###############################################
     ## scale0 を掛けて car の絶対座標系へなおす
     ## ABS mode:
     ##     scale=1.0 とするので必須作業 (絶対座標記述の場合)
     ##
-    ## non ABS mode:     
+    ## non ABS mode:
     ##     VASP 用の POSCAR の car Mode の場合は
     ##     scale に関係なく内部座標は再スケールはない
     ##
@@ -124,7 +124,7 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
             position[j,1] = car[j,1]*scale0
             position[j,2] = car[j,2]*scale0
 
-             
+
     ###############################################
     ## 基本並進ベクトルをスケールしておく
     ## --> scale=1.0 とするため
@@ -133,11 +133,11 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
         t1_x = t1_x*scale0
         t1_y = t1_y*scale0
         t1_z = t1_z*scale0
-        
+
         t2_x = t2_x*scale0
         t2_y = t2_y*scale0
         t2_z = t2_z*scale0
-        
+
         t3_x = t3_x*scale0
         t3_y = t3_y*scale0
         t3_z = t3_z*scale0
@@ -191,13 +191,13 @@ def conv_direct2carABS1(scale0,t,natom,direct,position):
         car[j,0] = t1_x*position[j,0] + t2_x*position[j,1] + t3_x*position[j,2]
         car[j,1] = t1_y*position[j,0] + t2_y*position[j,1] + t3_y*position[j,2]
         car[j,2] = t1_z*position[j,0] + t2_z*position[j,1] + t3_z*position[j,2]
-    
+
     ###############################################
     ## scale0 を掛けて car の絶対座標系へなおす
     ## ABS mode:
     ##     scale=1.0 とするので必須作業 (絶対座標記述の場合)
     ##
-    ## non ABS mode:     
+    ## non ABS mode:
     ##     VASP 用の POSCAR の car Mode の場合は
     ##     scale に関係なく内部座標は再スケールはない
     ##
@@ -215,7 +215,7 @@ def conv_direct2carABS1(scale0,t,natom,direct,position):
             position[j,1] = car[j,1]*scale0
             position[j,2] = car[j,2]*scale0
 
-             
+
     ###############################################
     ## 基本並進ベクトルをスケールしておく
     ## --> scale=1.0 とするため
@@ -224,11 +224,11 @@ def conv_direct2carABS1(scale0,t,natom,direct,position):
     t1_x = t1_x*scale0
     t1_y = t1_y*scale0
     t1_z = t1_z*scale0
-    
+
     t2_x = t2_x*scale0
     t2_y = t2_y*scale0
     t2_z = t2_z*scale0
-    
+
     t3_x = t3_x*scale0
     t3_y = t3_y*scale0
     t3_z = t3_z*scale0

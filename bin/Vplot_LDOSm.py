@@ -67,7 +67,7 @@ def options():
         oname=options.OUTCAR
 
     if options.atom:
-        atom = options.atom
+        atom = int(options.atom)
 
     if options.ALL:
         options.nw = True

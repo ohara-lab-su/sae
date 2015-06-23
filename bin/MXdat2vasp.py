@@ -62,10 +62,10 @@ import re
 #import gzip
 #import numpy as np
 
-import optparse 
+import optparse
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
@@ -78,12 +78,8 @@ def options():
     xyzname = 'openmx.xyz'
 
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input',
-                        dest='INPUT',
-    )
-    parser.add_option( '-o','--output',
-                        dest='OUTPUT',
-    )
+    parser.add_option( '-i','--input', dest='INPUT',)
+    parser.add_option( '-o','--output', dest='OUTPUT',)
     parser.add_option( '-d','--direct',
                         action='store_true',
                         default=False,
@@ -96,17 +92,14 @@ def options():
     )
     options, args = parser.parse_args()
 
-    # デフォルト名より最適なデフォルトファイル名の推定ルーチン                     
+    # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(mxname):
-        try:
-            name0 = SAE.find_datfile('dat')
-            if not name0 == None:
-                name = name0
-                mxname = name+suffix 
-                poscarname = mxname+'.vasp'
-                xyzname = mxname+'.xyz'
-        except:                                                                 
-            pass 
+        name0 = SAE.find_datfile('dat')
+        if not name0 == None:
+            name = name0
+            mxname = name+suffix
+            poscarname = mxname+'.vasp'
+            xyzname = mxname+'.xyz'
 
     if options.INPUT:
         mxname = options.INPUT
@@ -158,8 +151,8 @@ if __name__ == '__main__':
     position = dat.get_position()
     fix = dat.get_fix()
 
-    position_max = dat.get_position_max()                                       
-    position_min = dat.get_position_min() 
+    position_max = dat.get_position_max()
+    position_min = dat.get_position_min()
 
     left_natom = dat.get_left_natom()
     left_atoms_index_j = dat.get_left_atoms_index_j()
@@ -188,7 +181,7 @@ if __name__ == '__main__':
         for i in range(natom):
             print >> out_xyz, " %s %13.9f %13.9f %13.9f" \
                     % ( atoms_index_j[i], position[i,0],position[i,1],position[i,2] )
-        
+
     if not dat.FLAG_t:
         out_xyz.close()
 
@@ -252,7 +245,7 @@ if __name__ == '__main__':
         print >> out_poscar, title+"  (mol-mode: dummy translation vector)"
 
     # makes scale and translation vector
-    if dat.FLAG_t:                                                              
+    if dat.FLAG_t:
         print >> out_poscar, " ",scale
         print >> out_poscar,"  %13.9f %13.9f %13.9f" %( t[0,0],t[1,0],t[2,0] )
         print >> out_poscar,"  %13.9f %13.9f %13.9f" %( t[0,1],t[1,1],t[2,1] )

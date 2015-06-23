@@ -11,8 +11,11 @@
 #
 ################################################################################
 #
+# 2015.06.15
+#   *.dat ファイル名と systemname が異なるときの自動処理を追加
+#
 # 2015.03.12
-#  *.out が出力される前の 計算途中のファイル *.DFTSCF の読み込みに対応   
+#  *.out が出力される前の 計算途中のファイル *.DFTSCF の読み込みに対応
 #
 # 2015.02.24
 #  startup
@@ -25,25 +28,25 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-#import sys
+import sys
 #import gzip
 import os
 import re
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################
 if __name__ == '__main__':
-                                                                                
+
     name = 'openmx'
     suffix = '.out'
     mxname = name+suffix
@@ -53,8 +56,9 @@ if __name__ == '__main__':
                         dest='INPUT',
     )
     options,  args = parser.parse_args()
-                                                                                
+
     # デフォルト名より最適なデフォルトファイル名の推定ルーチン
+    # dat ファイル捜索
     if not os.path.exists(mxname):
         try:
             name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
@@ -63,7 +67,7 @@ if __name__ == '__main__':
                 mxname = name+suffix
         except:
             pass
-                                                                                
+
     # オプションでファイル名を入力した時
     if options.INPUT:
         mxname = options.INPUT
@@ -75,7 +79,18 @@ if __name__ == '__main__':
         name = re.sub('\.out$','',name)
 
     mxname = name+suffix
-                                                                                
+
+    # *.out が存在しないとき、かつ *.dat ファイルが存在するとき
+    # dat ファイルの中身を読んで systemname (*.out)を検索する
+    if not os.path.exists(name+'.out'):
+        if os.path.exists(name+'.dat'):
+            dat = SAE.ReadMxDat(name+'.dat')
+            sysname = dat.get_title()
+            name = sysname
+            mxname = name+suffix
+        else:
+            sys.exit("STOP: "+name+'.out and '+name+'.dat file not found.')
+
     # 計算途中での DFTSCF ファイル読み込み or 通常の *.out ファイル読み込み
     module_name = 'StructureAnalysisEnvironment'
     if not os.path.exists(mxname):
@@ -83,7 +98,7 @@ if __name__ == '__main__':
         class_name = 'ReadMxDftscf'
     else:
         class_name = 'ReadMxOut'
-                                                                                
+
     # makes instance
     module = __import__(module_name,globals(),locals(),[class_name],-1)
     klass = getattr(module,class_name)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
@@ -28,6 +28,12 @@
 #
 ################################################################################
 #
+# 2016.06.19
+#  simple_v1 へと古いバージョンをブランチ(実質バックアップ)
+#   今後の master 版は INCAR や KPOINTS や OUTCAR などを読み込んで
+#   なるべくそのまま VASP の計算と同じ条件になる *.dat を自動作成する
+#   方向性へゴージャスにする
+#
 # 2015.02.27
 #
 #   hexagonal 系でのバグ (cubic では基本並進は対象なのでこの問題発生しない)
@@ -51,10 +57,10 @@
 #
 #   --> それぞ戻り値版とした
 #
-# 2015.02.27                                                                    
-#  変換バグ発覚、再チェック                                                     
-#   1) IGZO (sc) vasp direct    --> dat [OK]  
-#   2) IGZO (sc) vasp cartesian --> dat [OK]  
+# 2015.02.27
+#  変換バグ発覚、再チェック
+#   1) IGZO (sc) vasp direct    --> dat [OK]
+#   2) IGZO (sc) vasp cartesian --> dat [OK]
 #   3) Cu   (fcc) vasp direct   --> dat [OK]
 #   4) graphene (hex) vasp direct   --> dat [Error]
 #
@@ -92,13 +98,13 @@
 #  全面的に改修
 #
 #    0) POSCAR 読み込みを直接実行から ReadPoscar クラス呼び出しへ変更
-#  
+#
 #    1) VPS and PAO リスト一覧からそれぞれの情報をゲットするクラス呼び出し
-#  
+#
 #    2) 元素名から valence.electron の数を VPS ファイルから読み取り、出力する
 #       デフォルトポテンシャルは PBE で DFT_DATA13 とする
 #       non-mag 版
-#  
+#
 #    3) 元素名から PAO ファイル一覧を取得
 #        その中の中間のカットオフ長のファイルをチョイスする形で一応ジェネレート
 #        する
@@ -107,15 +113,15 @@
 #   based on Vdirect2car.pl (and ReadPOSCAR.py)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                 
-__maintainer__ = "Kengo NAKADA"                                                 
-__credits__    = ["Kengo NAKADA"]                                               
-__email__      = "kengo.nakada@gmail.com"                                       
-__copyright__  = "Copyright 2014,2015, Kengo NAKADA"                                 
-__license__    = "MIT"                                                          
-#                                                                                         
-__status__     = "alpha"                                                        
-__version__    = "0.0.7"                                                        
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014,2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.1.0"
 ################################################################################
 
 import optparse
@@ -125,8 +131,8 @@ import re
 import numpy as np
 
 #import glob
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE                                            
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################
@@ -136,24 +142,21 @@ def options():
     datname    = 'POSCAR'
 
     parser = optparse.OptionParser(os.getcwd())
-    parser = optparse.OptionParser()                                            
+    parser = optparse.OptionParser()
 
-    parser.add_option(  '-s','--stdout',                                            
-                       action='store_true',                                        
-    )
-    parser.add_option( '-i','--input',
-                       dest='INPUT',
-                      #default=poscarname,
-    )
-    parser.add_option( '-o','--output',
-                       dest='OUTPUT',
-    )
-    parser.add_option(  '-d','--direct',                                            
-                       action='store_true',                                        
-                       dest='FRAC',                                                
-    ) 
-    options, args = parser.parse_args() 
-    
+    parser.add_option( '-s','--stdout', action='store_true',)
+    parser.add_option( '-i','--input', dest='INPUT',)
+    parser.add_option( '-o','--output', dest='OUTPUT',)
+    parser.add_option( '-d','--direct', action='store_true', dest='FRAC',)
+    options, args = parser.parse_args()
+
+    # VASP 入力ファイル名の自動取得
+    if not os.path.exists(poscarname):
+        poscarname0 = SAE.find_datfile('vasp')
+        if poscarname0 == 'None':
+            sys.exxit("STOP: POSCAR or .vasp files not found")
+        poscarname = poscarname0+'.vasp'
+
     if options.INPUT:
         poscarname=options.INPUT
 
@@ -171,6 +174,7 @@ def options():
 
     return [poscarname,datname,options.stdout,options.FRAC]
 
+
 ################################################################################
 if __name__ == '__main__':
 
@@ -179,10 +183,84 @@ if __name__ == '__main__':
     ## options
     poscarname,datname,OPT_STD,OPT_FRAC = options()
 
+
+    ############################################################################
+    ## VASP の情報読み込み、POSCAR 読み込み
+    ##
+    poscar = SAE.ReadPoscar(poscarname)
+    print "Read VASP POSCAR = "+poscarname
+
+   #title = poscar.get_title()
+    title = datname
+
+    scale = poscar.get_scale()
+    vasp = poscar.get_vasp_version()
+    if vasp < 5:
+        sys.exit("STOP: This script requires VASP5 style POSCAR")
+
+    atoms = poscar.get_atoms()
+    atoms_index = poscar.get_atoms_index()
+    atoms_index_j = poscar.get_atoms_index_j()
+    natom = poscar.get_natom()
+    nion = poscar.get_nion()
+    ion = poscar.get_ion()
+    ion_local = poscar.get_ion_local()
+    selective = poscar.get_selective()
+    direct = poscar.get_direct()
+    position = poscar.get_position()
+    fix = poscar.get_fix()
+    t = poscar.get_t()
+
+
+    ############################################################################
+    ## VASP の情報読み込み、INCAR 読み込み or OUTCAR 読み込み
+    ##
+    if os.path.exists('INCAR'):
+
+        module_name = 'StructureAnalysisEnvironment'
+        if os.path.exists('INCAR'):
+            print "Read VASP INCAR  = INCAR"
+            file_name = 'INCAR'
+            class_name = 'ReadIncar'
+       #elif os.path.exists('OUTCAR'):
+       #    print "Read VASP INCAR  = OUTCAR"
+       #    file_name = 'OUTCAR'
+       #    class_name = 'ReadOutcar'
+       #elif os.path.exists('vasprun.xml'):
+       #    print "Read VASP INCAR  = vasprun.xml"
+       #    file_name = 'vasprun.xml'
+       #    class_name = 'ReadVasprun'
+
+        module = __import__(module_name,globals(),locals(),[class_name],-1)
+        klass = getattr(module,class_name)
+
+        incar = klass(file_name)
+        NSW = incar.get_nsw()
+        NELM = incar.get_nelm()
+        IBRION = incar.get_ibrion()
+
+        EDIFF = incar.get_ediff()/10.   # about 1 Hartree = 10 eV
+        EDIFFG = incar.get_ediffg()/10. #
+
+        print ""
+
+    ############################################################################
+    ## VASP の情報読み込み、KPOINTS
+    ##
+    if os.path.exists('KPOINTS'):
+        kpoints = SAE.ReadKpoints('KPOINTS')
+        KP = kpoints.get_kpoints_array()
+        kx = KP[0:0]
+        ky = KP[0:1]
+        kz = KP[0:2]
+
+    ############################################################################
+    ## OpenMX Version チェック & DATAPATH 環境変数の確認
+    ##
     version_FLAG=False
     if sys.version_info[0] >= 2 and sys.version_info[1] >= 7:
          version_FLAG=True
-    
+
     DATAPATH=os.environ.get('OPENMXDATAPATH', "")
     if not DATAPATH:
         print "can't found OPENMXDATAPATH environment on yuur system"
@@ -190,12 +268,11 @@ if __name__ == '__main__':
         print "STOP"
         sys.exit()
 
-
     ############################################################################
     ## データーファイルパスとデフォルトPAO/VPS 情報のセット
     ##
-    VPSLIST = 'openmx_defaults_vpsdata'                                         
-    DFT_DATA = 'DFT_DATA13' 
+    VPSLIST = 'openmx_defaults_vpsdata'
+    DFT_DATA = 'DFT_DATA13'
 
     data = '../'+DFT_DATA
     pot = 'PBE'
@@ -207,9 +284,9 @@ if __name__ == '__main__':
     print "DATA PATH ",data
 
 
-    # VPS 及び PAO のパス設定                                                   
-    vpspath = data+'/VPS/'                                                      
-    paopath = data+'/PAO/' 
+    # VPS 及び PAO のパス設定
+    vpspath = data+'/VPS/'
+    paopath = data+'/PAO/'
 
 
     ############################################################################
@@ -234,37 +311,9 @@ if __name__ == '__main__':
     ##
     OUT=datname
     datfile = open(OUT+'.dat','w')
-    
+
     if not OPT_STD:
         sys.stdout = datfile
-  
-
-    ############################################################################
-    ## POSCAR 読み込み
-    ##
-    poscar = SAE.ReadPoscar(poscarname)
-    
-   #title = poscar.get_title()
-    title = datname
-
-    scale = poscar.get_scale()
-    vasp = poscar.get_vasp_version()
-    if vasp < 5:
-        sys.exit("STOP: This script requires VASP5 style POSCAR")
-
-    atoms = poscar.get_atoms()
-    atoms_index = poscar.get_atoms_index()
-    atoms_index_j = poscar.get_atoms_index_j()
-    natom = poscar.get_natom()
-    nion = poscar.get_nion()
-    ion = poscar.get_ion()
-    ion_local = poscar.get_ion_local()
-    selective = poscar.get_selective()
-    direct = poscar.get_direct()
-    position = poscar.get_position()
-    fix = poscar.get_fix()
-    t = poscar.get_t()
-   
 
     ############################################################################
     ## 座標系を Cartesian に変換
@@ -275,8 +324,8 @@ if __name__ == '__main__':
    #    car_y = np.zeros(natom)
    #    car_z = np.zeros(natom)
    #    for i in range(natom):
-   #        car_x[i] = t[0][0]*position[i][0] + t[1][0]*position[i][1] + t[2][0]*position[i][2] 
-   #        car_y[i] = t[0][1]*position[i][0] + t[1][1]*position[i][1] + t[2][1]*position[i][2] 
+   #        car_x[i] = t[0][0]*position[i][0] + t[1][0]*position[i][1] + t[2][0]*position[i][2]
+   #        car_y[i] = t[0][1]*position[i][0] + t[1][1]*position[i][1] + t[2][1]*position[i][2]
    #        car_z[i] = t[0][2]*position[i][0] + t[1][2]*position[i][1] + t[2][2]*position[i][2]
    #
    #        position[i][0]=car_x[i]
@@ -293,7 +342,7 @@ if __name__ == '__main__':
 
     ############################################################################
     # VPS と PAO の情報リストのインスタンス生成
-    vpslist = SAE.ReadVpsList(vpslistpath) 
+    vpslist = SAE.ReadVpsList(vpslistpath)
 
 
     ############################################################################
@@ -324,7 +373,7 @@ if __name__ == '__main__':
     ############################################################################
     ## output OpenMX *.dat file
     ##
-    
+
     print "###########################################"
     print "# File Name"
     print "###########################################"
@@ -334,8 +383,8 @@ if __name__ == '__main__':
     print "level.of.stdout                    1    # default=1 (1-3)"
     print "level.of.fileout                   1    # default=1 (0-2)"
     print "DATA.PATH                        "+data
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
@@ -355,7 +404,7 @@ if __name__ == '__main__':
         ## VPS と PAO の情報リストから PAO と VPS の情報ゲット
         num,symbol,cutoff,vps_orbit = vpslist.get_vps_name(atoms_index[i])
         opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
-                                                                                    
+
         vps_name = symbol+cutoff+'-'+vps_orbit
         vps_file = vpspath+symbol+'_'+pot+ver+opt+'.vps'
         pao_file = paopath+symbol+cutoff+'.pao'
@@ -378,8 +427,8 @@ if __name__ == '__main__':
     print "# Ni  1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 4.0 2d 0.0"
     print "# O   1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 0.0"
     print "#Hubbard.U.values>"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
@@ -387,7 +436,7 @@ if __name__ == '__main__':
     print "#    num, name, x,y,z,  up-spin, down-spin"
     print "###########################################"
     print ""
-    
+
     print "Atoms.Number",natom
     if OPT_FRAC:
         print "Atoms.SpeciesAndCoordinates.Unit  FRAC  # Ang|AU|FRAC"
@@ -395,11 +444,11 @@ if __name__ == '__main__':
     else:
         print "Atoms.SpeciesAndCoordinates.Unit  Ang   # Ang|AU|FRAC"
         print "<Atoms.SpeciesAndCoordinates            # Unit=Ang."
-    
+
     for i in range(natom):
         atom = re.sub('_.*','',atoms_index_j[i])
         atoms_index_j[i]=atom
-    
+
         if not version_FLAG:
             print "%4d  %2s %12.8f %12.8f %12.8f  %12.8f  %12.8f " \
                    %(i+1, atoms_index_j[i], \
@@ -410,28 +459,28 @@ if __name__ == '__main__':
             print myStr.format(i+1, atoms_index_j[i], \
                     position[i][0],position[i][1],position[i][2],\
                     electron[i], electron[i])
-    
+
     print "Atoms.SpeciesAndCoordinates>"
-    
+
     print "Atoms.UnitVectors.Unit            Ang   # Ang|AU"
     print "<Atoms.UnitVectors                      # Unit=Ang."
     print "   %12.8f %12.8f %12.8f" %(t[0][0], t[1][0], t[2][0])
     print "   %12.8f %12.8f %12.8f" %(t[0][1], t[1][1], t[2][1])
     print "   %12.8f %12.8f %12.8f" %(t[0][2], t[1][2], t[2][2])
-    
+
     print "Atoms.UnitVectors>"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
     print "# SCF or Electronic System"
     print "###########################################"
     print ""
-    
+
     print "#scf.restart                On"
     print ""
-    
+
     print "scf.XcType                 GGA-PBE     # LDA|LSDA-CA|LSDA-PW|GGA-PBE"
     print "scf.SpinPolarization       Off         # On|Off|NC"
     print "#scf.SpinOrbit.Coupling     Off         # On|Off"
@@ -442,10 +491,28 @@ if __name__ == '__main__':
     print "#scf.fixed.grid             12 12 12"
     print ""
     print "scf.EigenvalueSolver       band        # DC|Krylov|ON2|Cluster|Band"
-    print "scf.Kgrid                 12 12 12     # means 4x4x4"
+
+    ################################################
+    try:
+        KP = KP
+    except:
+        KP = np.zeros((1,3))
+        KP[0,0] = 12
+        KP[0,1] = 12
+        KP[0,2] = 12
+    print "scf.Kgrid                 "\
+            +str(int(KP[0,0]))+" "+str(int(KP[0,1]))+" "+str(int(KP[0,2]))+\
+            "     # means 4x4x4"
+    ################################################
+
     print "scf.Generation.Kpoint     regular      # regular|MP"
     print ""
-    print "scf.criterion             1.0e-8       # default=1.0e-6 (Hartree) "
+
+    ################################################
+    EDIFF = EDIFF if 'EDIFF' in locals() else 1.0e-6
+    print "scf.criterion             "+str(EDIFF)+"       # default=1.0e-6 (Hartree) "
+    ################################################
+
     print "scf.lapack.dste            dstevx      # dstegr|dstedc|dstevx, default=dstevx"
     print ""
     print "scf.Mixing.Type           rmm-diisk    # Simple|Rmm-Diis|Gr-Pulay|Kerker|Rmm-Diisk"
@@ -454,32 +521,37 @@ if __name__ == '__main__':
     print ""
     print "# on-the-fly ( using ./case_SCF_keywords files"
     print ""
-    print "scf.maxIter                 70         # default=40"
+
+    ################################################
+    NELM = NELM if 'NELM' in locals() else 40
+    print "scf.maxIter                 "+str(NELM)+"         # default=40"
+    ################################################
+
     print "scf.Min.Mixing.Weight      0.001       # default=0.001 "
     print "scf.Max.Mixing.Weight      0.400       # default=0.40 "
     print "#scf.Kerker.factor"
     print "scf.Mixing.StartPulay       6          # default=6"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
     print "# 1D FFT"
     print "###########################################"
     print ""
-    
+
     print "#1DFFT.NumGridK             900         # default=900"
     print "#1DFFT.NumGridR             900         # default=900"
     print "#1DFFT.EnergyCutoff        3600.0       # default=3600 (Ry)"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
     print "# Orbital Optimization"
     print "###########################################"
     print ""
-    
+
     print "#orbitalOpt.Method           Off        # Off|Unrestricted|Restricted|species"
     print "#orbitalOpt.Opt.Method       EF         # DIIS|EF"
     print "#orbitalOpt.SD.step        0.001        # default=0.001"
@@ -498,28 +570,39 @@ if __name__ == '__main__':
     print "#<Atoms.Cont.Orbitals"
     print "# 1"
     print "#Atoms.Cont.Orbitals>"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
     print "# SCF Order-N"
     print "###########################################"
     print ""
-    
+
     print "#orderN.HoppingRanges        7.0        # default=5.0 (Ang) "
     print "#orderN.NumHoppings           2         # default=2"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
     print "# MD or Geometry Optimization"
     print "###########################################"
     print ""
-    
+
+    ################################################
     #print "MD.Type                   nomd         # Nomd|Opt|NVE|NVT_VS|NVT_NH or EvsLC"
-    print "MD.Type                   nomd         # Nomd|Opt|DIIS|BFGS|RF|EF, MD( NVE|NVT_VS|NVT_NH ) or EvsLC"
+    print "# Nomd|Opt|DIIS|BFGS|RF|EF, MD( NVE|NVT_VS|NVT_NH ) or EvsLC"
+    NSW = NSW if 'NSW' in locals() else 0
+    if NSW == 0:
+        print "MD.Type                   nomd"
+    else:
+        IBRION = IBRION if 'IBRION' in locals() else 2
+        if IBRION != 0:
+            print "MD.Type                   Opt"
+    ################################################
+
+    print ""
     print "#MD.EvsLC.Step             0.4         # default=0.4%"
     print "#MD.EvsLC.flag            1 1 1        # a,b,c, default=1 1 1"
     print ""
@@ -527,13 +610,25 @@ if __name__ == '__main__':
     print "MD.Opt.StartDIIS           20          # default=3"
     print "MD.Opt.EveryDIIS           200         # default=200"
     print ""
-    print "MD.maxIter                 1000        # default=1 (only MD=1)"
+
+    ################################################
+    if NSW > 0:
+        print "MD.maxIter                 "+str(NSW)+"        # default=1 (only MD=1)"
+    else:
+        print "MD.maxIter                 1       # default=1 (only MD=1)"
+    ################################################
+
     print "MD.TimeStep                1.0         # default=0.5 (fs)"
-    print "MD.Opt.criterion          1.0e-4       # default=1.0e-4 (Hartree/bohr)"
+
+    ################################################
+    EDIFFG = EDIFFG if 'EDIFFG' in locals() else EDIFF*10.
+    print "MD.Opt.criterion          "+str(EDIFFG)+"       # default=1.0e-4 (Hartree/bohr)"
+    ################################################
+
     print "MD.Opt.DIIS_Mixing         0.5         # default=0.5"
     print ""
     print "scf.ExtCharge.History       2          # default=2"
-   
+
     print "#<MD>TempControl"
     print "#2"
     print "#100   2   5500.0 0.0"
@@ -546,7 +641,7 @@ if __name__ == '__main__':
         print "# MD.Fixed.XYZ"
         print "###########################################"
         print ""
-    
+
         print "<MD.Fixed.XYZ"
         for i in range(natom):
             if fix[i][0] == 'F':
@@ -566,15 +661,15 @@ if __name__ == '__main__':
 
             print "  %d  %d %d %d" %(i+1,fix_x,fix_y,fix_z)
         print "MD.Fixed.XYZ>"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
     print "# Band dispersion"
     print "###########################################"
     print ""
-    
+
     print "#Band.dispersion              on        # on|off, default=off"
     print "#<Band.KPath.UnitCell"
     print "#3.56  0.00  0.00"
@@ -591,14 +686,14 @@ if __name__ == '__main__':
     print "#   25  0.5 0.5 0.5   0.0 0.0 0.0   L g"
     print "#   25  0.0 0.0 0.0   1.0 0.0 0.0   g X"
     print "#Band.kpath>"
-    
+
     ################################################
     print ""
     print "###########################################"
     print "# MO output"
     print "###########################################"
     print ""
-    
+
     print "#MO.fileout                       off   # on|off"
     print "#num.HOMOs                         1    # default=2"
     print "#num.LUMOs                         1    # default=2"
@@ -607,14 +702,14 @@ if __name__ == '__main__':
     print "#  0.0  0.0  0.0"
     print "#  0.0  0.0  0.2"
     print "#MO.kpoint>"
-    
+
     ################################################
     print ""
     print "###########################################"
     print "# DOS and PDOS"
     print "###########################################"
     print ""
-    
+
     print "Dos.fileout                  on        # on|off, default=off"
     print "Dos.Erange              -20.0  10.0    # default = -20 20 "
     print "#Dos.Kgrid                12 12 12     # default = Kgrid1 Kgrid2 Kgrid3"
@@ -622,8 +717,8 @@ if __name__ == '__main__':
     print "#DosGauss.fileout             on        # default=off, on|off"
     print "#DosGauss.Num.Mesh           200        # default=200"
     print "#DosGauss.Width              0.2        # default=0.2 (eV)"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
@@ -631,8 +726,8 @@ if __name__ == '__main__':
     print "###########################################"
     print ""
     print "#HS.fileout               off    # on|off, default=off"
-    
-    
+
+
     ################################################
     print ""
     print "###########################################"
@@ -640,7 +735,7 @@ if __name__ == '__main__':
     print "###########################################"
     print ""
     print "#scf.Electric.Field"
-   
+
 
     ################################################
     print ""
@@ -649,7 +744,7 @@ if __name__ == '__main__':
     print "###########################################"
     print ""
     print "#scf.system.charge         1.0   # default=0.0"
-   
+
 
     ################################################
     print "###########################################"
@@ -671,7 +766,7 @@ if __name__ == '__main__':
     print "# Wannier Function"
     print "###########################################"
     print ""
-    
+
     print "#Wannier.Func.Calc        on"
     print "#Wannier.Func.Num          4"
     print "#Wannier.Outer.Window.Bottom -14.0"
@@ -680,7 +775,7 @@ if __name__ == '__main__':
     print "#Wannier.Inner.Window.Top       0.0"
     print "#Wannier.Initial.Guess         on"
     print "#Wannier.Initial.Projectors.Unit FRAC     # AU, ANG or FRAC "
-    
+
     print "##proj-sp3 0.25 0.25 0.25 0.0 0.0 -1.0  -1.0 0.0 0.0"
     print "#"
     print "#<Wannier.Initial.Projectors"
@@ -717,7 +812,7 @@ if __name__ == '__main__':
     print "#Wannier.Readin.Overlap.Matrix            off"
     print ""
     print ""
-    
+
     if not OPT_STD:
         datfile.close()
         sys.stdout = sys.__stdout__
@@ -728,5 +823,5 @@ if __name__ == '__main__':
         print "INPUT  "+poscarname
         print "OUTPUT "+OUT+".dat"
         print "NORMAL END"
-    
-    
+
+

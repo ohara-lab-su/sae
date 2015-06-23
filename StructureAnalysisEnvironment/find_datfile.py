@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2015.05.21
+#  find_datfile() の超シンプル版 find_datfile1() を追加
+#
 # 2015.03.16
 #  ライブラリとしてではなく実行プログラムとしてみたときに、引数処理を
 #  してなかったので修正
@@ -71,7 +74,18 @@ def find_datfile(suffix):
     return datname
 
 ################################################################################
+def find_datfile1(tail):
+
+    filelist = glob.glob("*"+tail)
+    datname = None
+    if len(filelist) == 1:
+        datname = filelist[0]
+
+    return datname
+
+################################################################################
 def find_datfiles(suffix):
+
     filelist = glob.glob("*."+str(suffix))
     datnames=None
     datnames = []

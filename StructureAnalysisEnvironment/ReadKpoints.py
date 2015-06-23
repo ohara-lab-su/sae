@@ -16,8 +16,8 @@
 #
 ################################################################################
 #
-# 2015.01.28                                                                    
-#  title の取得における末尾までの空白削除を追加 
+# 2015.01.28
+#  title の取得における末尾までの空白削除を追加
 #
 # 2015.01.28
 #
@@ -44,7 +44,7 @@
 #     ただし、逆格子の基本並進ベクトルの情報を必要とするので
 #     OUTCAR を読み込む(必須)
 #
-# 2015.01.27 startup 
+# 2015.01.27 startup
 #   get_title()
 #   get_kpoints_mode()
 #   get_kpoints()
@@ -58,7 +58,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.5"
 ################################################################################
@@ -76,7 +76,7 @@ import numpy as np
 ################################################################################
 class ReadKpoints(object):
 
-    def __init__(self,name):
+    def __init__(self,name='KPOINTS'):
 
         if os.path.exists(name):
             GZIP=False
@@ -84,7 +84,7 @@ class ReadKpoints(object):
             GZIP=True
         else:
             sys.exit("STOP: "+name+" or "+name+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(name+".gz")
@@ -101,7 +101,7 @@ class ReadKpoints(object):
         self.num = len(self.datlines)
 
     # title のゲット(正直この情報は使わない)
-    def get_title(self): 
+    def get_title(self):
         src = str(self.datlines[0])
         self.title = re.sub(' *$','',src)
         return self.title
@@ -161,7 +161,7 @@ class ReadKpoints(object):
             for i in range(start,self.num):
                 if len(self.datlines[i]) > 0:
                     j += 1
-            
+
             kpoints_array_num = j
 
             if FLAGS[1]:
@@ -207,7 +207,7 @@ class ReadKpoints(object):
     #  各逆格子のゾーンにおける距離を求める method の実装
     def get_kpoints_vector(self,outcarname):
 
-        import StructureAnalysisEnvironment as SAE 
+        import StructureAnalysisEnvironment as SAE
         import math
 
         # get kpoints
@@ -219,20 +219,20 @@ class ReadKpoints(object):
         kpoints_type = outcar.get_kpoints_type()
         rec_t = outcar.get_reciprocal_t_init()
 
-#       print kpoints_type                                                          
-#       print " reciprocal lattice vectors "                                        
-#       print " %12.9f %12.9f %12.9f" % ( rec_t[0,0], rec_t[1,0], rec_t[2,0])       
-#       print " %12.9f %12.9f %12.9f" % ( rec_t[0,1], rec_t[1,1], rec_t[2,1])       
-#       print " %12.9f %12.9f %12.9f" % ( rec_t[0,2], rec_t[1,2], rec_t[2,2]) 
+#       print kpoints_type
+#       print " reciprocal lattice vectors "
+#       print " %12.9f %12.9f %12.9f" % ( rec_t[0,0], rec_t[1,0], rec_t[2,0])
+#       print " %12.9f %12.9f %12.9f" % ( rec_t[0,1], rec_t[1,1], rec_t[2,1])
+#       print " %12.9f %12.9f %12.9f" % ( rec_t[0,2], rec_t[1,2], rec_t[2,2])
 
         if len(kpoints_array) % 2 != 0:
             sys.exit("STOP: num of kpoints is odd")
 
         v = np.zeros(int(len(kpoints_array)/2))
         j = 0
-        a_x = 0 
-        a_y = 0 
-        a_z = 0 
+        a_x = 0
+        a_y = 0
+        a_z = 0
         for i in range(len(kpoints_array)):
             ################### even
             if (i+1) % 2 == 0:
@@ -245,11 +245,11 @@ class ReadKpoints(object):
                     rec_t1_x = rec_t[0,0]
                     rec_t1_y = rec_t[1,0]
                     rec_t1_z = rec_t[2,0]
-    
+
                     rec_t2_x = rec_t[0,1]
                     rec_t2_y = rec_t[1,1]
                     rec_t2_z = rec_t[2,1]
-    
+
                     rec_t3_x = rec_t[0,2]
                     rec_t3_y = rec_t[1,2]
                     rec_t3_z = rec_t[2,2]
@@ -257,7 +257,7 @@ class ReadKpoints(object):
                     b_x = 1.0*( b_x0*rec_t1_x + b_y0*rec_t2_x + b_z0*rec_t3_x )
                     b_y = 1.0*( b_x0*rec_t1_y + b_y0*rec_t2_y + b_z0*rec_t3_y )
                     b_z = 1.0*( b_x0*rec_t1_z + b_y0*rec_t2_z + b_z0*rec_t3_z )
-    
+
                 else:
                     b_x = kpoints_array[i,0]
                     b_y = kpoints_array[i,1]
@@ -276,11 +276,11 @@ class ReadKpoints(object):
                     rec_t1_x = rec_t[0,0]
                     rec_t1_y = rec_t[1,0]
                     rec_t1_z = rec_t[2,0]
-    
+
                     rec_t2_x = rec_t[0,1]
                     rec_t2_y = rec_t[1,1]
                     rec_t2_z = rec_t[2,1]
-    
+
                     rec_t3_x = rec_t[0,2]
                     rec_t3_y = rec_t[1,2]
                     rec_t3_z = rec_t[2,2]
@@ -288,7 +288,7 @@ class ReadKpoints(object):
                     a_x = 1.0*( a_x0*rec_t1_x + a_y0*rec_t2_x + a_z0*rec_t3_x )
                     a_y = 1.0*( a_x0*rec_t1_y + a_y0*rec_t2_y + a_z0*rec_t3_y )
                     a_z = 1.0*( a_x0*rec_t1_z + a_y0*rec_t2_z + a_z0*rec_t3_z )
-    
+
                 else:
                     a_x = kpoints_array[i,0]
                     a_y = kpoints_array[i,1]
@@ -315,7 +315,7 @@ class ReadKpoints(object):
     def get_kpoints_vector_ratio(self,outcarname):
         vector = self.get_kpoints_vector(outcarname)
         num_vector = len(vector)
-        total_vector = 0 
+        total_vector = 0
         for i in range(num_vector):
             total_vector = vector[i] + total_vector
 
@@ -330,7 +330,7 @@ if __name__ == '__main__':
 
     name = 'KPOINTS'
     outcarname = 'OUTCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
@@ -341,23 +341,38 @@ if __name__ == '__main__':
                         default=outcarname,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
 
     if options.OUTCAR:
         outcarname=options.OUTCAR
-                                                                                
+
 #   if len(args) > 0:
 #       name=args[0]
 
     kpoints = ReadKpoints(name)
 
+#   auto_FLAG = False  # FLAGS[0]
+#   line_FLAG = False  # FLAGS[1]
+#   hand_FLAG = False  # FLAGS[2]
+#   car_FLAG  = False  # FLAGS[3]
+#   rec_FLAG  = False  # FLAGS[4]
+
+    print "K-Points"
+    # K-points 情報の入手(現時点では auto-modeのみ動作)
     FLAGS = kpoints.get_kpoints_mode()
     if FLAGS[0]:
         kp = kpoints.get_kpoints()
+        print "0"
         print kp[0],kp[1],kp[2]
 
+    ### SCF の KPOINTS 情報はここで終了
+
+    print ""
+    print ""
+
+    # K-points 情報の入手(auto-mode では kx,ky,kz を返す)
     kpoints_array = kpoints.get_kpoints_array()
     for i in range(len(kpoints_array)):
         print " %10.7f %10.7f %10.7f " \
@@ -365,6 +380,8 @@ if __name__ == '__main__':
         if not i % 2 == 0:
             print ""
 
+    # kpoints_array で求めた KPOINTS の line情報から
+    # 各逆格子のゾーンにおける距離を求める method の実装
     v = kpoints.get_kpoints_vector(outcarname)
     for i in range(int(len(kpoints_array)/2)):
         print " line %d : %10.7f " % ( i, v[i] )
@@ -373,6 +390,7 @@ if __name__ == '__main__':
     print "number of lines: ",kpoints.get_num_kpoints_line()
 
 
+    # KPOINTS 各ゾーンの比率(全部足し合わせて 1.0 となる)
     zone_ratio = kpoints.get_kpoints_vector_ratio(outcarname)
     for i in range(len(v)):
         print zone_ratio[i]
@@ -383,4 +401,4 @@ if __name__ == '__main__':
     print "num_line:",num_line
 
 ################################################################################
-     
+

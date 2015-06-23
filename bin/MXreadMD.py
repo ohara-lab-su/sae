@@ -16,6 +16,9 @@
 #
 ################################################################################
 #
+# 2015.06.16
+#   *.md ファイル自動取得ルーチンを追加
+#
 # 2015.01.07
 #   MXreadMD.py に分離整理
 #
@@ -26,20 +29,20 @@
 #   Library: read_md():  xyz 情報の読み込み
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #import sys
-import optparse 
-#import os
+import optparse
+import os
 #import re
 #from numpy import *
 import numpy as np
@@ -51,21 +54,27 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 if __name__ == '__main__':
 
-    MD = "co.md"  # default name                                     
-                                                                                
-    parser = optparse.OptionParser()                                            
-    parser.add_option(  '-i','--input',                                         
-                        dest='INPUT',                                           
-                        default=MD,                                        
-    )                                                                           
-    options,  args = parser.parse_args()                                        
-                                                                                
-    if options.INPUT:                                                           
-        MD=options.INPUT                                                   
-                                                                                
-    if len(args) > 0:                                                           
-        MD=args[0]                                                         
-                                                                                
+    name = 'openmx'
+    suffix = 'md'  # dot を付けない
+    MD = name+'.'+suffix
+
+    parser = optparse.OptionParser()
+    parser.add_option(  '-i','--input',dest='INPUT', )
+    options,  args = parser.parse_args()
+
+    # デフォルト名より適切なデフォルトファイル名の推定ルーチン
+    if not os.path.exists(MD):
+        name0 = SAE.find_datfile('md')
+        if not name0 == None:
+            name = name0
+            MD = name+'.'+suffix
+
+    if options.INPUT:
+        MD=options.INPUT
+
+    if len(args) > 0:
+        MD=args[0]
+
     # MD(xyz) ファイルの事前読み込み
     nloop,natom = SAE.read_md_param(MD)
 
@@ -79,14 +88,14 @@ if __name__ == '__main__':
 
     # MD(xyz) ファイル読み込み + Force 対応
     natom,nlist = \
-            SAE.read_md2(MD,nloop,atoms_index_j,position_loop,force_loop)     
+            SAE.read_md2(MD,nloop,atoms_index_j,position_loop,force_loop)
 
     print nlist
-                                                                                
+
     if nlist >= 7:
         for l in range(nloop):
             print "------- LOOP "+str(l)+" ------"
-            for j in range(natom):                                              
+            for j in range(natom):
                 print " %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f" \
                       % ( atoms_index_j[j],\
                           position_loop[l,j,0],\

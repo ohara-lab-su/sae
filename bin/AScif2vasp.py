@@ -40,6 +40,15 @@ def options():
 
     name = base+in_suffix
 
+    if not os.path.exists(name):
+        try:
+            base0 = SAE.find_datfile('cif')
+            if not base0 == None:
+                base = base0
+                name = base+in_suffix
+        except:
+            pass
+
     parser = optparse.OptionParser(os.getcwd())
     parser = optparse.OptionParser()
     parser.add_option( '-i','--input',dest='INPUT')

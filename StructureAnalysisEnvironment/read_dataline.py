@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2015.06.18
+#  コメントアウト対応版を複数のコメント(# or !)にアップデート
+#
 # 2015.05.08
 #  コメントアウト対応版 read_datline1 を作成
 #    nline をカウント数も、dataline へも放り込みも コメントアウトは除く
@@ -65,7 +68,8 @@ def read_dataline(name):
 def read_dataline1(name):
 
     import re
-    comment_reg = re.compile('^#.*',re.IGNORECASE)
+    comment0_reg = re.compile('^#.*',re.IGNORECASE)
+    comment1_reg = re.compile('^!.*',re.IGNORECASE)
 
     if os.path.exists(name):
         GZIP=False
@@ -92,9 +96,10 @@ def read_dataline1(name):
     j = 0
     datalines = []
     for i in range(num0):
-        if not bool(comment_reg.match(datalines0[i])):
-            datalines.append(datalines0[i])
-            j += 1
+        if not bool(comment0_reg.match(datalines0[i])):
+            if not bool(comment1_reg.match(datalines0[i])):
+                datalines.append(datalines0[i])
+                j += 1
 
     num = j
     return datalines,num

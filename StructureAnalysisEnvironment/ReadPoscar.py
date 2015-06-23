@@ -5,19 +5,19 @@
 #
 # POSCAR 読み込み class
 #
-#          
+#
 # t[3,3]            :  基本並進ベクトル(注意:配列内indexは0から)
 #
 #                              x   y   z
 #                        t1 = a11 a21 a31  ! lattice vector t1
 #                        t2 = a12 a22 a32  ! lattice vector t2
 #                        t3 = a13 a23 a33  ! lattice vector t3
-# 注意) 
+# 注意)
 #    t(基本並進行列)
 #                             t11, t12, t13
 #                             t21, t22, t23
 #                             t31, t32, t33
-#          
+#
 # atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
 # atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
 # atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
@@ -85,7 +85,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2014,2015 Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.5"
 ################################################################################
@@ -96,17 +96,17 @@ import re
 import gzip
 import numpy as np
 
-import optparse 
+import optparse
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadPoscar(object):
 
     ###############################################
     ## init and Read POSCAR
-    def __init__(self,POSCAR):
+    def __init__(self,POSCAR='POSCAR'):
 
         if os.path.exists(POSCAR):
             GZIP=False
@@ -155,17 +155,17 @@ class ReadPoscar(object):
         t1_x = float(v[0])
         t1_y = float(v[1])
         t1_z = float(v[2])
-        
+
         v = self.datlines[3].split()
         t2_x = float(v[0])
         t2_y = float(v[1])
         t2_z = float(v[2])
-        
+
         v = self.datlines[4].split()
         t3_x = float(v[0])
         t3_y = float(v[1])
         t3_z = float(v[2])
-        
+
         self.t = np.zeros((3,3))
         self.t[0,0] = t1_x
         self.t[1,0] = t1_y
@@ -192,7 +192,7 @@ class ReadPoscar(object):
             self.vasp_version = 5
 
         return self.vasp_version
-        
+
     ###############################################
     ## get VASP version, atoms
     ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
@@ -209,7 +209,7 @@ class ReadPoscar(object):
             sys.exit("Error: unknown VASP format")
 
         return self.atoms
-   
+
     ###############################################
     ## get VASP version, atoma_index
     ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
@@ -297,7 +297,7 @@ class ReadPoscar(object):
     ###############################################
     ## get atomc coordinate mode
     def get_selective(self):
-    
+
         VASP = self.get_vasp_version()
         if VASP == 4:
             i = 5+1
@@ -322,7 +322,7 @@ class ReadPoscar(object):
                 self.selective = False
 
         return self.selective
-    
+
     ###############################################
     ## 内部座標のモードを取得
     def get_direct(self):
@@ -373,7 +373,7 @@ class ReadPoscar(object):
         natom = self.get_natom()
         self.position = np.zeros((int(natom),3))
         self.fix= np.zeros((int(natom),3),dtype='S')
-    
+
         i += 2
         for j in range(natom):
             xyz = self.datlines[i+j].split()
@@ -388,7 +388,7 @@ class ReadPoscar(object):
            #print " %16.12f %16.12f %16.12f" \
            #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
            #print ""
-    
+
         return self.position
 
     ###############################################
@@ -518,9 +518,9 @@ if __name__ == '__main__':
     out = sys.stdout
     print >> out, title
     print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])              
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])              
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])    
+    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
+    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
+    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
 
     if vasp >= 5:
         print >> out, " ",

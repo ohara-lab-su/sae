@@ -9,6 +9,13 @@
 #
 ################################################################################
 #
+# 2015.06.15
+#  追加実装
+#  get_atoms()
+#  get_atoms_index()
+#  get_atoms_j()
+#  get_atoms_index_j()
+#
 # 2015.01.20
 #  gzip 対応
 #
@@ -17,15 +24,15 @@
 #  まったりと作業
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2015, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.2"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.2"
 ################################################################################
 
 import os
@@ -35,8 +42,8 @@ import gzip
 import xml.etree.ElementTree as ET
 
 import numpy as np
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import re
 #from copy import deepcopy
@@ -45,28 +52,28 @@ import numpy as np
 ################################################################################
 class ReadVasprun(object):
 
-    def __init__(self,name):
+    def __init__(self,name='vasprun.xml'):
 
-        if os.path.exists(name):                                                 
-            f = name                                                             
-            ZIP_FLAG = False                                                        
-        elif os.path.exists(name+".gz"):                                         
-            f = gzip.open(name+".gz")                                            
-            ZIP_FLAG = True                                                         
-        else:                                                                       
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")          
-                                                                                    
-        try:                                                                        
-            tree = ET.parse(f)                                                      
-        except:                                                                     
-            if ZIP_FLAG:                                                            
-                sys.exit("can't parse "+XMLFILE+".gz")                              
-            else:                                                                   
-                sys.exit("can't parse "+XMLFILE)                                    
-        finally:                                                                    
-            if ZIP_FLAG:                                                            
-                f.close()                
-    
+        if os.path.exists(name):
+            f = name
+            ZIP_FLAG = False
+        elif os.path.exists(name+".gz"):
+            f = gzip.open(name+".gz")
+            ZIP_FLAG = True
+        else:
+            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+
+        try:
+            tree = ET.parse(f)
+        except:
+            if ZIP_FLAG:
+                sys.exit("can't parse "+XMLFILE+".gz")
+            else:
+                sys.exit("can't parse "+XMLFILE)
+        finally:
+            if ZIP_FLAG:
+                f.close()
+
         self.root = tree.getroot()
 
         self.n_ion_loop = len(self.root.findall('calculation'))
@@ -112,18 +119,18 @@ class ReadVasprun(object):
         for es in self.root.find("kpoints/varray[@name='kpointlist']"):
             KPOINTS.append(es.text)
 
-        return [KPOINTS]                
+        return [KPOINTS]
 
 
     ###################################################
     # Get Number of atom
     def get_natom(self):
-        self.NATOM = int(self.root.findtext("atominfo/atoms"))  # atoms
-        return self.NATOM
+        self.natom = int(self.root.findtext("atominfo/atoms"))  # atoms
+        return self.natom
 
     def get_nion(self):
-        self.NION = int(self.root.findtext("atominfo/types"))   # types
-        return self.NION
+        self.nion = int(self.root.findtext("atominfo/types"))   # types
+        return self.nion
 
 
     ###################################################
@@ -140,7 +147,7 @@ class ReadVasprun(object):
             index_FLAG=True
             for rc in es:
                 if index_FLAG:
-                    name = str(rc.text)
+                    name = str(rc.text).strip()
                     index_FLAG=False
                 else:
                     number_tmp = int(rc.text)
@@ -152,23 +159,51 @@ class ReadVasprun(object):
             atoms[number-1] = local_nion
             atoms_index[number-1] = name
 
-        TYPES = [atoms,atoms_index]
-        return [TYPES]
-    
-     #  for i in range(nion):
-     #      print atoms_index[i],atoms[i]
+        TYPES = atoms,atoms_index
+        return TYPES
 
+    def get_atoms(self):
+        atoms, atoms_index = self.get_types()
+        return atoms
+
+    def get_atoms_index(self):
+        atoms, atoms_index = self.get_types()
+        return atoms_index
+
+    def get_atoms_j(self):
+        natom = self.get_natom()
+        nion = self.get_nion()
+        atoms = self.get_atoms()
+        j = 0
+        atoms_j = np.zeros(natom,dtype=int)
+        for ion in range(nion):
+            for atom in range(atoms[ion]):
+                atoms_j[j] = ion
+                j += 1
+        return atoms_j
+
+    def get_atoms_index_j(self):
+        natom = self.get_natom()
+        nion = self.get_nion()
+        atoms,atoms_index = self.get_types()
+        j = 0
+        atoms_index_j = np.zeros(natom,dtype='S2')
+        for ion in range(nion):
+            for atom in range(atoms[ion]):
+                atoms_index_j[j] = atoms_index[ion]
+                j += 1
+        return atoms_index_j
 
     ###################################################
     # [initial] [lattice vector]
-    #     基本並進ベクトル(注意:配列内indexは0から)          
-    #     POSCAR 入力形式                                    
-    #                                                        
-    #           x   y   z                                    
-    #     t1 = a11 a21 a31  ! lattice vector t1              
-    #     t2 = a12 a22 a32  ! lattice vector t2              
-    #     t3 = a13 a23 a33  ! lattice vector t3    
-    #                                                        
+    #     基本並進ベクトル(注意:配列内indexは0から)
+    #     POSCAR 入力形式
+    #
+    #           x   y   z
+    #     t1 = a11 a21 a31  ! lattice vector t1
+    #     t2 = a12 a22 a32  ! lattice vector t2
+    #     t3 = a13 a23 a33  ! lattice vector t3
+    #
     def get_t_initial(self):
         t_initial = np.zeros((3,3))
         j=0
@@ -235,7 +270,7 @@ class ReadVasprun(object):
             t_final[1,j] = tmp[1]
             t_final[2,j] = tmp[2]
             j += 1
-    
+
         return [t_final]
 
     ###################################################
@@ -277,7 +312,7 @@ class ReadVasprun(object):
 
         return [fix_final]
 
-    ###################################################                         
+    ###################################################
     # [ion_loop] [lattice vector]
     def get_t_loop(self):
         t_loop = np.zeros((3,3,self.n_ion_loop))
@@ -298,7 +333,7 @@ class ReadVasprun(object):
 
         return [t_loop]
 
-    ###################################################                         
+    ###################################################
     # [ion_loop] [position]
 #   for cal in root.findall("calculation/structure/varray[@name='positions']/v"):
     def get_position_loop(self):
@@ -306,7 +341,7 @@ class ReadVasprun(object):
         ion_loop=0
         position_loop = np.zeros((natom,3,self.n_ion_loop))
         for cal in self.root.findall(\
-                "calculation/structure/varray[@name='positions']"): 
+                "calculation/structure/varray[@name='positions']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
@@ -321,14 +356,14 @@ class ReadVasprun(object):
 
         return [position_loop]
 
-    ###################################################                         
+    ###################################################
     # [ion_loop] [forces]
     def get_force_loop(self):
         natom = self.get_natom()
         ion_loop=0
         force_loop = np.zeros((natom,3,self.n_ion_loop))
         for cal in self.root.findall(\
-                "calculation/varray[@name='forces']"): 
+                "calculation/varray[@name='forces']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
@@ -343,13 +378,13 @@ class ReadVasprun(object):
 
         return [force_loop]
 
-    ###################################################                         
+    ###################################################
     # [ion_loop] [stress]
     def get_stress_loop(self):
         natom = self.get_natom()
         ion_loop=0
         stress_loop = np.zeros((natom,3,self.n_ion_loop))
-        for cal in self.root.findall("calculation/varray[@name='stress']"): 
+        for cal in self.root.findall("calculation/varray[@name='stress']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
@@ -364,7 +399,7 @@ class ReadVasprun(object):
 
         return [stress_loop]
 
-    ###################################################                         
+    ###################################################
     # [ion_loop] [energy]
     # ion loop 毎の Energy (without entropy)
     def get_energy(self):
@@ -395,7 +430,7 @@ class ReadVasprun(object):
 #      t_final,atoms,atoms_index,position_final,fix_final]
 
 #   CONTCAR_ALL=[title,scale,natom,nion,selective,direct,VASP,\
-#      t_loop,atoms,atoms_index,position_loop,fix_final]  
+#      t_loop,atoms,atoms_index,position_loop,fix_final]
 
 #   return [n_ion_loop,POSCAR,CONTCAR,CONTCAR_ALL,FORCE_ALL,ENERGY_ALL]
 
@@ -409,22 +444,50 @@ if __name__ == '__main__':
     # Default & OptionParser
    #XMLFILE = options()
     XMLFILE = "vasprun.xml"  # default name
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=XMLFILE,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    if options.INPUT:                                                           
+    if options.INPUT:
         XMLFILE=options.INPUT
 
-    if len(args) > 0:                                                           
-        XMLFILE=args[0]                                                              
+    if len(args) > 0:
+        XMLFILE=args[0]
 
     # vasprun.xml parse
     vasprun = ReadVasprun(XMLFILE)
 
-    print vasprun.get_n_ion_loop()
+    nion = vasprun.get_nion()
+    natom = vasprun.get_natom()
+    n_ion_loop =  vasprun.get_n_ion_loop()
+    atoms = vasprun.get_atoms()
+    atoms_j = vasprun.get_atoms_j()
+    atoms_index = vasprun.get_atoms_index()
+    atoms_index_j = vasprun.get_atoms_index_j()
+
+    print 'NATOM   =',natom
+    print 'NION    =',nion
+    print 'LOOP    =',vasprun.get_n_ion_loop()
+
+    print ""
+    print "atoms_index"
+    print "   ",
+    for ion in range(nion):
+        print atoms_index[ion],
+    print ""
+    print "atoms"
+    print "   ",
+    for ion in range(nion):
+        print atoms[ion],
+
+#   print ""
+#   print "atom_j"
+#   for atom in range(natom):
+#       print atom,atoms_j[atom]
+
+#   print ""
+#   print "atoms_index_j"
+#   for atom in range(natom):
+#       print atom,atoms_index_j[atom]
 
