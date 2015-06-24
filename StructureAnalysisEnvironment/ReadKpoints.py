@@ -332,21 +332,12 @@ if __name__ == '__main__':
     outcarname = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
-    parser.add_option(  '-o','--outcar',
-                        dest='OUTCAR',
-                        default=outcarname,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
+    parser.add_option(  '-o','--outcar', dest='OUTCAR',)
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if options.OUTCAR:
-        outcarname=options.OUTCAR
+    if options.INPUT: name=options.INPUT
+    if options.OUTCAR: outcarname=options.OUTCAR
 
 #   if len(args) > 0:
 #       name=args[0]

@@ -47,6 +47,9 @@
 #
 ################################################################################
 #
+# 2015.06.24
+#  if statement を少し書き直し
+#
 # 2015.06.15
 #  get_ldos(orbit.atom,spin)
 #  にて、orbit に s,p,d 記号でも入力が出来るようにした
@@ -387,12 +390,10 @@ class ReadDoscar(object):
     # 注意) PDOS で計算していても、PDOS から LDOS を算出して返す
     def get_ldos(self,l=0,atom=0,spin=0):
 
-        if l == 's':
-            l=0
-        if l == 'p':
-            l=1
-        if l == 'd':
-            l=2
+        if isinstance(l, str):
+            if l == 's': l=0
+            if l == 'p': l=1
+            if l == 'd': l=2
 
         NEDOS = self.get_nedos()
         NSPIN = self.get_ispin()

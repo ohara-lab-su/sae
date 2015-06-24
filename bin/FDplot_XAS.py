@@ -57,11 +57,8 @@ def options():
     parser.add_option(  '-d','--dos', action='store_true',default=False,)
     options,args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name,options.emax,options.emin,options.ymax,options.dmax,\
             options.fermi,options.broad,options.dos

@@ -28,7 +28,7 @@ __version__    = "0.1.1"
 #import sys
 #import gzip
 #import os
-import re
+#import re
 import optparse
 import numpy as np
 
@@ -82,15 +82,11 @@ def options():
     name = 'Fe.dos'
 
     parser = optparse.OptionParser()
-
     parser.add_option(  '-i','--input', dest='INPUT', default=name,)
     options,args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name
 

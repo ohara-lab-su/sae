@@ -21,9 +21,9 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-import sys
+#import sys
 #import gzip
-import os
+#import os
 #import re
 import optparse
 import numpy as np
@@ -142,11 +142,8 @@ def options():
 #           name0 = name
 #   name = name0
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name,suffix
 

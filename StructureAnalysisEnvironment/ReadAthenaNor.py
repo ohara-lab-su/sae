@@ -129,11 +129,8 @@ def options():
             name0 = name
     name = name0
 
-    if options.INPUT:
-        name = options.INPUT
-
-    if len(args) > 0:
-        name = args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     return name
 

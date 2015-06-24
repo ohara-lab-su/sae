@@ -61,7 +61,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.4"
 ################################################################################
@@ -75,8 +75,8 @@ import numpy as np
 
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadMxDosMethod(object):
@@ -101,7 +101,7 @@ class ReadMxDosMethod(object):
         self.ispin = dat.get_ispin()
 
         return self.ispin
-    
+
     ###################################
     # *.out or *.dat から NATOM 情報を読み込む( out 優先 )
     def get_natom(self):

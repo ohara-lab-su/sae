@@ -578,17 +578,11 @@ if __name__ == '__main__':
     name = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     outcar = ReadOutcar(name)
     NION = outcar.get_nion()

@@ -74,7 +74,7 @@ import os
 #import re
 import gzip
 #import numpy as np
-import optparse 
+import optparse
 
 import StructureAnalysisEnvironment as SAE
 
@@ -115,24 +115,18 @@ if __name__ == '__main__':
     name = 'openmx'
     suffix = 'dat'
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input',
-                        dest='INPUT',
-                        default=name,
-                        )
+    parser.add_option( '-i','--input', dest='INPUT',)
     options, args = parser.parse_args()
 
-    # 'openmx' より最適なデフォルトファイル名の推定ルーチン                     
-    if not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):    
-        try:                                                                    
-            options.INPUT = SAE.find_datfile('dat')                             
-        except:                                                                 
-            pass   
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン
+    if not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):
+        try:
+            options.INPUT = SAE.find_datfile('dat')
+        except:
+            pass
 
-    if options.INPUT:
-        name = options.INPUT+'.dat'
-
-    if len(args) > 0:                                                           
-        name=args[0] 
+    if options.INPUT: name = options.INPUT+'.dat'
+    if len(args) > 0: name = args[0]
 
     dat = ReadMxDat(name)
 

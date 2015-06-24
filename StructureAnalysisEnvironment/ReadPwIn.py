@@ -224,15 +224,11 @@ def options():
     name = 'scf.in'
 
     parser = optparse.OptionParser()
-
     parser.add_option(  '-i','--input', dest='INPUT', default=name,)
     options,args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name
 

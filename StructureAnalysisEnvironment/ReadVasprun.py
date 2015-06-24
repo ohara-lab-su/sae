@@ -449,11 +449,8 @@ if __name__ == '__main__':
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        XMLFILE=options.INPUT
-
-    if len(args) > 0:
-        XMLFILE=args[0]
+    if options.INPUT: XMLFILE=options.INPUT
+    if len(args) > 0: XMLFILE=args[0]
 
     # vasprun.xml parse
     vasprun = ReadVasprun(XMLFILE)

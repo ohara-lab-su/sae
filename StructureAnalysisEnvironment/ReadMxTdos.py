@@ -62,7 +62,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -76,8 +76,8 @@ import numpy as np
 
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadMxTdos(SAE.ReadMxDosMethod):
@@ -93,7 +93,7 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
             GZIP=True
         else:
             sys.exit("STOP: "+dosname+" or "+dosname+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(dosname+".gz")
@@ -168,31 +168,25 @@ if __name__ == '__main__':
 
     name = 'openmx'
     suffix_tdos = '.DOS.Tetrahedron'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
-    options,  args = parser.parse_args()
+    parser.add_option(  '-i','--input', dest='INPUT',)
+    options, args = parser.parse_args()
 
-    # 'openmx' より最適なデフォルトファイル名の推定ルーチン                     
-    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):   
-        try:                                                                    
-            options.INPUT = SAE.find_datfile('out')                             
-        except:                                                                 
-            pass                                                                
-    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):    
-        try:                                                                    
-            options.INPUT = SAE.find_datfile('dat')                             
-        except:                                                                 
-            pass 
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン
+    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):
+        try:
+            options.INPUT = SAE.find_datfile('out')
+        except:
+            pass
+    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):
+        try:
+            options.INPUT = SAE.find_datfile('dat')
+        except:
+            pass
 
-    if options.INPUT:
-        name=options.INPUT
-                                                                                
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     print name
     dos = ReadMxTdos(name,suffix_tdos)

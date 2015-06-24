@@ -5,12 +5,12 @@
 #
 # OpenMX 3.7
 #   ReadMxPdos.py 目盛バカ食いバージョン(動作は割と速いはず)
-#  
+#
 #    *.Dos.Tetrahedron.atom*
 #    ReadMxDosMethod.py (superclass)
 #                                 ---> ReadMxTdos.py
 #                                 ---> ReadMxPdos.py
-#  
+#
 ################################################################################
 # ReadMxPdos.py で直接実装しているMethod
 #
@@ -24,14 +24,14 @@
 #
 # get_emax()    : ReadMxTdos インスタンス作成
 # get_min()     : ReadMxTdos インスタンス作成
-# get_eng()     : ReadMxTdos インスタンス作成 
-# get_inttdos() : ReadMxTdos インスタンス作成  
+# get_eng()     : ReadMxTdos インスタンス作成
+# get_inttdos() : ReadMxTdos インスタンス作成
 #
 ################################################################################
 #
-# 2015.02.27                                                                    
-#   !!!!!!! OpenMX の down-spin の DOS 値は負の符号が付いている !!!!!!         
-#   気が付かなくてかなりハマった  
+# 2015.02.27
+#   !!!!!!! OpenMX の down-spin の DOS 値は負の符号が付いている !!!!!!
+#   気が付かなくてかなりハマった
 #
 #   コンストラクタでの読み込みの段階でDOSの値をすべて正に戻しておく
 #
@@ -102,8 +102,8 @@ import numpy as np
 
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################
@@ -221,7 +221,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                             self.inttdos_spd[j,0,ispin] = \
                                     self.inttdos_spd[j,0,ispin] +\
                                     float(data[j].split()[2+ispin])
-    
+
             # p-orbital (3)
             orbit='p'
             orbit_list = glob.glob(base+'.'+orbit+'*')
@@ -341,7 +341,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         # 注意) 対称性が変わった時に OpenMX の並びがそのままかどうかは知らない
         #       2015.02.26
         #
-        # origina 
+        # origina
         # 0: s       ----> s      (0)
         # 1: px      ----> py     (2)
         # 2: py      ----> pz     (3)
@@ -437,7 +437,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
         self.LDOS_ION = ldos_ion[:,l,ion,spin]
         return self.LDOS_ION
-    
+
     def get_ldos_ion_all(self):
         pass
 
@@ -494,31 +494,25 @@ if __name__ == '__main__':
 
     name = 'openmx'
     suffix = '.PDOS.Tetrahedron'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    # 'openmx' より最適なデフォルトファイル名の推定ルーチン                     
-    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):   
-        try:                                                                    
-            options.INPUT = SAE.find_datfile('out')                             
-        except:                                                                 
-            pass                                                                
-    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):    
-        try:                                                                    
-            options.INPUT = SAE.find_datfile('dat')                             
-        except:                                                                 
-            pass 
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン
+    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):
+        try:
+            options.INPUT = SAE.find_datfile('out')
+        except:
+            pass
+    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):
+        try:
+            options.INPUT = SAE.find_datfile('dat')
+        except:
+            pass
 
-    if options.INPUT:
-        name=options.INPUT
-                                                                                
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     pdos = ReadMxPdos(name,suffix)
 

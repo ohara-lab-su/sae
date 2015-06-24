@@ -146,7 +146,7 @@ class ReadMxOut(SAE.ReadMxDatMethod):
                 tmp = int(re.sub(scf_txt,'',self.datlines[i]).split()[0])
                 if self.max_n_scf < tmp:
                     self.max_n_scf = tmp
-        return self.max_n_scf            
+        return self.max_n_scf
 
     ###################################
     # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
@@ -187,25 +187,19 @@ class ReadMxOut(SAE.ReadMxDatMethod):
 
 ################################################################################
 if __name__ == '__main__':
-                                                                                
+
     name0 = 'openmx.out'
     suffix = '.out'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name0,
-    )
-    options,  args = parser.parse_args()
-                                                                                
-    if options.INPUT:
-        name0=options.INPUT
-                                                                                
-    if len(args) > 0:
-        name0=args[0]
+    parser.add_option(  '-i','--input', dest='INPUT',)
+    options, args = parser.parse_args()
+
+    if options.INPUT: name0=options.INPUT
+    if len(args) > 0: name0=args[0]
 
     name = name0 + suffix
-                                                                                
+
     out = ReadMxOut(name)
 
     n_ion_loop = out.get_n_ion_loop()

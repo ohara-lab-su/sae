@@ -349,17 +349,11 @@ if __name__ == '__main__':
     MD = "gly_VS.md"
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=MD,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        MD=options.INPUT
-
-    if len(args) > 0:
-        MD=args[0]
+    if options.INPUT: MD=options.INPUT
+    if len(args) > 0: MD=args[0]
 
     ############################################################################
     md = ReadMd(MD)

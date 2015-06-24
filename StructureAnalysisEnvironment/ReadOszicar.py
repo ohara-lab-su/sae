@@ -38,8 +38,8 @@ import re
 import optparse
 import numpy as np
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadOszicar(object):
@@ -93,7 +93,7 @@ class ReadOszicar(object):
     def get_temperature(self):
         MD_FLAG = self.get_md_mode()
         if MD_FLAG:
-           n_ion_loop = self.get_n_ion_loop() 
+           n_ion_loop = self.get_n_ion_loop()
            self.temperature = np.zeros(n_ion_loop)
            iter_reg = re.compile('.*T=',re.IGNORECASE)
            j = 0
@@ -108,7 +108,7 @@ class ReadOszicar(object):
     def get_etotal(self):
         MD_FLAG = self.get_md_mode()
         if MD_FLAG:
-           n_ion_loop = self.get_n_ion_loop() 
+           n_ion_loop = self.get_n_ion_loop()
            self.ETOTAL = np.zeros(n_ion_loop)
            iter_reg = re.compile('.*E=',re.IGNORECASE)
            j = 0
@@ -123,22 +123,16 @@ class ReadOszicar(object):
 
 ################################################################################
 if __name__ == '__main__':
-                                                                                
+
     name = 'OSZICAR'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
-                                                                                
-    if options.INPUT:
-        name=options.INPUT
-                                                                                
-    if len(args) > 0:
-        name=args[0]
-                                                                                
+
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
+
     oszicar = ReadOszicar(name)
 
     n_ion_loop = oszicar.get_n_ion_loop()
@@ -149,7 +143,7 @@ if __name__ == '__main__':
         temperature = oszicar.get_temperature()
         oszicar.get_temperature()
         etotal = oszicar.get_etotal()
-    
+
         for i in range(n_ion_loop):
             print i+1, temperature[i], etotal[i]
 

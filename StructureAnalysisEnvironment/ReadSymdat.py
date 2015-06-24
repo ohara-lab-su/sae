@@ -27,7 +27,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -41,8 +41,8 @@ import optparse
 
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadSymdat(object):
@@ -55,7 +55,7 @@ class ReadSymdat(object):
             GZIP=True
         else:
             sys.exit("STOP: "+name+" or "+name+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(name+".gz")
@@ -67,7 +67,7 @@ class ReadSymdat(object):
             sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
         finally:
             tmp.close()
-    
+
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1
 
@@ -86,19 +86,13 @@ class ReadSymdat(object):
 if __name__ == '__main__':
 
     name = 'sym.dat'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
-                                                                                
-    if options.INPUT:
-        name=options.INPUT
-                                                                                
-    if len(args) > 0:
-        name=args[0]
+
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     sym = ReadSymdat(name)
 
@@ -109,4 +103,4 @@ if __name__ == '__main__':
         print symlines[i]
 
 ################################################################################
-     
+

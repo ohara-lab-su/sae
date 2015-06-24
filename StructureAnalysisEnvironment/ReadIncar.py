@@ -108,45 +108,26 @@ class ReadIncar(object):
 
     def get_title(self):
         self.title = self.title if hasattr(self.__class__.__name__,'title') else 'unknown system'
-#       try:
-#           self.title = self.title
-#       except:
-#           self.title = None
         return self.title
 
     def get_system(self):
-        try:
-            self.system = self.system
-        except:
-            self.system = 'unknown system'
+        self.system = self.system if hasattr(self, 'system') else 'unknown system'
         return self.title
 
     def get_nsw(self):
-        try:
-            self.nsw = self.nsw
-        except:
-            self.nsw = 0
+        self.nsw = self.nsw if hasattr(self, 'nsw') else 0
         return self.nsw
 
     def get_sigma(self):
-        try:
-            self.sigma = self.sigma
-        except:
-            self.sigma = 0.2
+        self.sigma = self.sigma if hasattr(self, 'sigma') else 0.2
         return self.sigma
 
     def get_ismear(self):
-        try:
-            self.ismear = self.ismear
-        except:
-            self.ismear = 1
+        self.ismear = self.ismear if hasattr(self, 'ismear') else 1
         return self.ismear
 
     def get_ediff(self):
-        try:
-            self.ediff = self.ediff
-        except:
-            self.ediff = 1.0e-4
+        self.ediff = self.ediff if hasattr(self, 'ediff') else 1.0e-4
         return self.ediff
 
     def get_ediffg(self):
@@ -158,24 +139,15 @@ class ReadIncar(object):
         return self.ediffg
 
     def get_nbands(self):
-        try:
-            self.nbands = self.nbands
-        except:
-            self.nbands = None
+        self.nbands = self.nbands if hasattr(self, 'nbands') else None
         return self.nbands
 
     def get_ispin(self):
-        try:
-            self.ispin = self.ispin
-        except:
-            self.ispin = 1
+        self.ispin = self.ispin if hasattr(self, 'ispin') else 1
         return self.ispin
 
     def get_nelm(self):
-        try:
-            self.nelm = self.nelm
-        except:
-            self.nelm = 60
+        self.nelm = self.nelm if hasattr(self, 'nelm') else 60
         return self.nelm
 
     def get_ibrion(self):

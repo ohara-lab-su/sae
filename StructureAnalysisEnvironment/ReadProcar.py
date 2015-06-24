@@ -11,21 +11,21 @@
 #
 ################################################################################
 #
-#  s, p_y, p_z, p_x, d_xy, d_yz, d_z2-r2, d_xz, d_x2-y2,                       
-#  i.e. (l,-m, ..... l,0, ..... l,+m)                                          
-#                                                                              
-#           1:s                                                                
-#                                                                              
-#           2:p_y                                                              
-#           3:p_z                                                              
-#           4:p_x                                                              
-#                                                                              
-#           5:d_xy                                                             
-#           6:d_yz                                                             
-#           7:d_3z2-r2                                                         
-#           8:d_xz                                                             
-#           9:d-x2-y2                                                          
-#                                                                              
+#  s, p_y, p_z, p_x, d_xy, d_yz, d_z2-r2, d_xz, d_x2-y2,
+#  i.e. (l,-m, ..... l,0, ..... l,+m)
+#
+#           1:s
+#
+#           2:p_y
+#           3:p_z
+#           4:p_x
+#
+#           5:d_xy
+#           6:d_yz
+#           7:d_3z2-r2
+#           8:d_xz
+#           9:d-x2-y2
+#
 #  t2g: 5,6,8
 #
 ################################################################################
@@ -66,8 +66,8 @@ import numpy as np
 
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadProcar(object):
@@ -80,7 +80,7 @@ class ReadProcar(object):
             GZIP=True
         else:
             sys.exit("STOP: "+name+" or "+name+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(name+".gz")
@@ -92,7 +92,7 @@ class ReadProcar(object):
             sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
         finally:
             tmp.close()
-    
+
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines)
 
@@ -100,8 +100,8 @@ class ReadProcar(object):
     # NCM のときはもっと注意して実装し直す必要がある
     def get_ispin(self):
         band_reg = re.compile('^band')
-        for i in range(self.num):                                               
-            if bool(band_reg.match(self.datlines[i])): 
+        for i in range(self.num):
+            if bool(band_reg.match(self.datlines[i])):
                 if 'occ.' ==self.datlines[i].split()[6]:
                     occ = float(self.datlines[i].split()[7])
                     if occ > 1.0:
@@ -130,11 +130,11 @@ class ReadProcar(object):
             if 'ions:' == str(self.datlines[1].split()[10]):
                 self.NATOM = int(self.datlines[1].split()[11])
         return self.NATOM
-    
+
     def get_lorbit(self):
         ion_reg = re.compile('^ion')
-        for i in range(self.num):                                               
-            if bool(ion_reg.match(self.datlines[i])): 
+        for i in range(self.num):
+            if bool(ion_reg.match(self.datlines[i])):
                 if len(self.datlines[i].split()) > 10:
                     self.LORBIT = 11
                 else:
@@ -203,7 +203,7 @@ class ReadProcar(object):
                             pro[7,a,i,k,s] = float(self.datlines[j].split()[8]) # dxz
                             pro[8,a,i,k,s] = float(self.datlines[j].split()[9]) # dx2
                             pro[9,a,i,k,s] = float(self.datlines[j].split()[10]) # tot
-                            
+
                         else:
                             pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
                             pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # p
@@ -321,7 +321,7 @@ class ReadProcar(object):
                        #for m in range(LMMAX):
                        #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
                        ##################
- 
+
                     if NATOM > 1: # total
                         j += 1
                         a += 1
@@ -379,19 +379,13 @@ class ReadProcar(object):
 if __name__ == '__main__':
 
     name = 'PROCAR'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
-    options,  args = parser.parse_args()
-                                                                                
-    if options.INPUT:
-        name=options.INPUT
-                                                                                
-    if len(args) > 0:
-        name=args[0]
+    parser.add_option(  '-i','--input', dest='INPUT',)
+    options, args = parser.parse_args()
+
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     procar = ReadProcar(name)
     NSPIN = procar.get_ispin()

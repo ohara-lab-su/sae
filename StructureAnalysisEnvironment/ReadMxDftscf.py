@@ -80,11 +80,11 @@ class ReadMxDftscf(SAE.ReadMxOut):
         return self.n_ion_loop
 
 
-    ###################################                                         
-    # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出         
-    # 同一 MD=* 番号が現れた時は最後の SCF ループのみを取り出す                 
+    ###################################
+    # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
+    # 同一 MD=* 番号が現れた時は最後の SCF ループのみを取り出す
     def get_uele(self):
-                                                                                
+
         md_start_txt = '.*SCF.*at MD='
         md_start_reg = re.compile(md_start_txt)
 
@@ -156,26 +156,24 @@ class ReadMxDftscf(SAE.ReadMxOut):
 
 ################################################################################
 if __name__ == '__main__':
-                                                                                
+
     name = 'openmx'
     suffix = '.out'
     mxname = name+suffix
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    # デフォルト名より最適なデフォルトファイル名の推定ルーチン                     
+    # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(mxname):
         try:
             name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
             if not name0 == None:
                 name = name0
                 mxname = name+suffix
-        except:                                                                 
-            pass 
+        except:
+            pass
 
     # オプションでファイル名を入力した時
     if options.INPUT:
@@ -194,7 +192,7 @@ if __name__ == '__main__':
         suffix = '.DFTSCF'
         mxname = name+suffix
 
-    dftscf = ReadMxDftscf(mxname) 
+    dftscf = ReadMxDftscf(mxname)
 
     n_ion_loop = dftscf.get_n_ion_loop()
     max_n_scf = dftscf.get_max_n_scf()

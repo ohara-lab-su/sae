@@ -39,8 +39,9 @@ class ReadFdmBav(object):
         self.datlines,self.num = SAE.read_dataline(cname+suffix)
 
         excited_atom_reg = re.compile('.*Excited atom.*')
-        for i in range(self.num):
+        threshold_reg = re.compile('.*Threshold:.*')
 
+        for i in range(self.num):
             # 吸収原子の最大のlを探す
             if bool(excited_atom_reg.match(self.datlines[i])):
                 i += 2
@@ -53,6 +54,13 @@ class ReadFdmBav(object):
                     if not len(self.datlines[i]):
                         break
                 self.lmax = l
+
+            # 吸収端
+            if bool(threshold_reg.match(self.datlines[i])):
+                self.edge = self.datlines[i].split()[2]
+
+    def get_edge(self):
+        return self.edge
 
     def get_lmax(self):
         self.lmax = self.lmax if hasattr(self,'lmax') else None
@@ -69,11 +77,8 @@ def options():
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name,suffix
 
@@ -83,5 +88,6 @@ if __name__ == '__main__':
     name,suffix = options()
     bav = ReadFdmBav(name,suffix)
 
-    print bav.get_lmax()
+    print "lmax = ",bav.get_lmax()
+    print "edge = ",bav.get_edge()
 

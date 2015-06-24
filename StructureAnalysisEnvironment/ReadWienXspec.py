@@ -141,8 +141,7 @@ if __name__ == '__main__':
     parser.add_option( '-i','--input', dest='INPUT', )
     options, args = parser.parse_args()
 
-    if options.INPUT:
-        case = options.INPUT
+    if options.INPUT: case=options.INPUT
 
     xspec = ReadWienXspec(case=case,suffix=suffix)
     head = xspec.get_head()

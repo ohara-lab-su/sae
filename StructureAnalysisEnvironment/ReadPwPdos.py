@@ -145,11 +145,8 @@ def options():
         if len(pdosname) == 1:
             prefix = re.sub('.pdos.pdos_tot','',pdosname[0])
 
-    if options.INPUT:
-        prefix=options.INPUT
-
-    if len(args) > 0:
-        prefix=args[0]
+    if options.INPUT: prefix=options.INPUT
+    if len(args) > 0: prefix=args[0]
 
     return prefix
 

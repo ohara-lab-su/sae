@@ -120,14 +120,11 @@ class ReadFdmSd(object):
     # LDOS(NEDOS,L,SPIN)
     def get_ldos(self,l=0,spin=0):
 
-        if l == 's'  and self.lmax >= 0:
-            l = 0
-        if l == 'p' and self.lmax >= 1:
-            l = 1
-        if l == 'd' and self.lmax >= 2:
-            l = 2
-        if l == 'f' and self.lmax >= 3:
-            l = 3
+        if isinstance(l,str):
+            if l == 's' and self.lmax >= 0: l = 0
+            if l == 'p' and self.lmax >= 1: l = 1
+            if l == 'd' and self.lmax >= 2: l = 2
+            if l == 'f' and self.lmax >= 3: l = 3
 
         self.ldos = self.dos[:,l,spin]
         return self.ldos
@@ -146,11 +143,8 @@ def options():
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name,suffix
 
