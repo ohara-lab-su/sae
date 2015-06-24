@@ -59,7 +59,7 @@ class ReadFdmInp(object):
         absorber_reg = re.compile('.*Absorber.*',re.IGNORECASE)
 #       filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
         filout_reg = re.compile('.*Fil.*out.*',re.IGNORECASE)
-        atom_reg = re.compile('.*Atom',re.IGNORECASE)
+        atom_reg = re.compile('^\S*Atom',re.IGNORECASE)
         crystal_reg = re.compile('.*crystal.*',re.IGNORECASE)
         mole_reg = re.compile('.*molecule.*',re.IGNORECASE)
         char_reg = re.compile('\D',re.IGNORECASE)
