@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2015.06.24
+#  allsite 計算をしているか否かの判断を*.inp かおこなう
+#
 # 2015.06.19
 #   読み込むタグをいくつか追加
 #   コメントアウトの処理
@@ -41,7 +44,7 @@ import sys
 #import os
 import re
 import optparse
-#import numpy as np
+import numpy as np
 
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
@@ -64,10 +67,17 @@ class ReadFdmInp(object):
         mole_reg = re.compile('.*molecule.*',re.IGNORECASE)
         char_reg = re.compile('\D',re.IGNORECASE)
         comment_reg = re.compile('^!.*',re.IGNORECASE)
+        allsite_reg = re.compile('^.*allsite.*',re.IGNORECASE)
+        calculation_reg = re.compile('^.*Calculation.*',re.IGNORECASE)
+        conv_out_reg = re.compile('^.*Conv_out.*',re.IGNORECASE)
+        convolution_reg = re.compile('^.*Convolution.*',re.IGNORECASE)
 
         self.ispin = 1
+        self.allsite = False
         self.energygpho = False
         self.position = []
+        self.convolution = False
+
         for i in range(self.num):
 
 
@@ -83,6 +93,10 @@ class ReadFdmInp(object):
             if bool(magnetism_reg.match(self.datlines[i])):
                 self.ispin = 2
 
+            # allsite
+            if bool(allsite_reg.match(self.datlines[i])):
+                self.allsite = True
+
             # Filout 名確保
             if bool(filout_reg.match(self.datlines[i])):
                 if len(self.datlines[i].split()) > 1:
@@ -90,6 +104,19 @@ class ReadFdmInp(object):
                 else:
                     self.filout = self.datlines[i+1].strip()
 
+            # Calculation (以前の計算結果を引き継ぐ) 名の確保
+            if bool(calculation_reg.match(self.datlines[i])):
+                self.calculation = str(self.datlines[i+1].split()[0])
+
+            # conv_out
+            if bool(conv_out_reg.match(self.datlines[i])):
+                self.conv_out = self.datlines[i+1].split()[0]
+
+            # convolution flag
+            if bool(convolution_reg.match(self.datlines[i])):
+                self.convolution = True
+
+            # Absorber
             if bool(absorber_reg.match(self.datlines[i])):
                 if len(self.datlines[i].split()) > 1:
                     self.absorber = int(self.datlines[i].split()[1].strip())
@@ -137,9 +164,39 @@ class ReadFdmInp(object):
                     if i == self.num:
                         break
 
-            elif bool(mole_reg.match(self.datlines[i])):
+                self.position = np.array(self.position)
+
+            # Mol 行を検索 (position の スペース行コメント行も対応)
+            elif bool(mole_reg.match(self.datlines[i])) \
+                    and not bool(comment_reg.match(self.datlines[i])):
+
+                # molecule mode (ただし、現状ではcrystal と変わりない形式しか読まない)
                 self.MOL=True
-                print "mole",self.datlines[i]
+
+                # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
+                if not len(self.datlines[i+1].split()) == 6:
+                    sys.exit("STOP: a,b,c,alpha,beta,gamma INPUT LINE error")
+
+                i +=1
+                self.atoms_index_j = []
+                while 1:
+                    i +=1
+                    if len(self.datlines[i].split()) > 0: # 空白行はスキップ
+
+                        if bool(char_reg.match(self.datlines[i].split()[0])):
+                            break # 数字以外は スキップ
+
+                        zz = int(self.datlines[i].split()[0])
+                        x = float(self.datlines[i].split()[1])
+                        y = float(self.datlines[i].split()[2])
+                        z = float(self.datlines[i].split()[3])
+                        self.atoms_index_j.append(SAE.get_atomic_symbol0(zz))
+                        self.position.append([x,y,z])
+
+                    if i == self.num:
+                        break
+
+                self.position = np.array(self.position)
 
 
         # すべてのサイトの原子数
@@ -156,14 +213,29 @@ class ReadFdmInp(object):
     def get_ispin(self):
         return self.ispin
 
+    def get_allsite(self):
+        return self.allsite
+
     def get_energygpho(self):
         return self.energygpho
 
     def get_absorber(self):
-        self.absorbeer = self.absorber if hasattr(self, 'absorber') else 1
+        self.absorber = self.absorber if hasattr(self, 'absorber') else 1
         return self.absorber
 
+    def get_convolution(self):
+        return self.convolution
+
+    def get_conv_out(self):
+        self.conv_out = self.conv_out if hasattr(self,'conv_out') else None
+        return self.conv_out
+
+    def get_calculation(self):
+        self.calculation = self.calculation if hasattr(self,'calculation') else None
+        return self.calculation
+
     def get_filout(self):
+        self.filout = self.filout if hasattr(self, 'filout') else None
         return self.filout
 
     def get_position(self):
@@ -173,6 +245,10 @@ class ReadFdmInp(object):
         return self.natom
 
     def get_atoms_index_j(self):
+        try:
+            self.atoms_index_j = self.atoms_index_j
+        except:
+            self.atoms_index_j = []
         return self.atoms_index_j
 
 ################################################################################
@@ -204,11 +280,27 @@ if __name__ == '__main__':
     energygpho = out.get_energygpho()
     ispin = out.get_ispin()
 
+    allsite = out.get_allsite()
+    calculation = out.get_calculation()
+    convolution = out.get_convolution()
+    conv_out = out.get_conv_out()
+
+    print 'allsite    :',allsite
     print 'absorber   :',absorber
     print 'energygpho :',energygpho
     print 'ispin      :',ispin
     print 'filout     :',filout
+    print 'natom      :',natom
 
-#   print "NAME",name
+    for i in range(natom):
+         print " %s %14.10f %14.10f %14.10f" \
+                 %(atoms_index_j[i],position[i,0],position[i,1],position[i,2])
+
+    if convolution:
+        print ""
+        print "convolution:",convolution
+        print 'calculation:',calculation
+        print 'conv_out   :',conv_out
+#       print "NAME",name
 
 

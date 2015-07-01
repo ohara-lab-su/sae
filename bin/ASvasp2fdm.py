@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 ################################################################################
 # VASP to FDMNES crystal 情報
-#  using ASE version
+#
+# using ASE version
+#
+# (注意)
+#  1) ASE のルーチン(cellconst) を使っている
+#  2) ASE のmodule を呼び出している
 #
 ################################################################################
 #
@@ -40,34 +45,6 @@ def cellconst(metT):
     beta = np.arccos(metT[0, 2] / (aa * cc)) / np.pi * 180.0
     alpha = np.arccos(metT[1, 2] / (bb * cc)) / np.pi * 180.0
     return np.array([aa, bb, cc, alpha, beta, gamma])
-
-################################################################################
-def options():
-    name = 'POSCAR'
-
-    parser = optparse.OptionParser()
-    parser.add_option( '-i','--ipput',dest='INPUT')
-    parser.add_option( '-m','--mol',action='store_true',default=False)
-    options,args = parser.parse_args()
-
-    if options.INPUT:
-        name = options.INPUT
-
-    if options.mol:
-        MOL=True
-    else:
-        MOL=False
-
-    if len(args) > 0:
-        name = str(args[0])
-
-    if not os.path.exists(name):
-        if os.path.exists(name+'.vasp'):
-            name = name+'.vasp'
-        else:
-            sys.exit("STOP: "+name+" file not found")
-
-    return [name,MOL]
 
 ################################################################################
 def write_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
@@ -141,6 +118,7 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
     print >> out, ""
     print >> out, " Absorber"
     print >> out, "  1"
+    print >> out, "! allsite"
     print >> out, ""
     print >> out, " Filout"
     print >> out, "  Cu"
@@ -202,6 +180,31 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
     out.close()
 
 ################################################################################
+def options():
+    name = 'POSCAR'
+
+    parser = optparse.OptionParser()
+    parser.add_option( '-i','--ipput',dest='INPUT')
+    parser.add_option( '-m','--mol',action='store_true',default=False)
+    options,args = parser.parse_args()
+
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = str(args[0])
+
+    if options.mol:
+        MOL=True
+    else:
+        MOL=False
+
+    if not os.path.exists(name):
+        if os.path.exists(name+'.vasp'):
+            name = name+'.vasp'
+        else:
+            sys.exit("STOP: "+name+" file not found")
+
+    return [name,MOL]
+
+################################################################################
 if __name__ == '__main__':
 
     name,MOL = options()
@@ -214,7 +217,7 @@ if __name__ == '__main__':
     #print ""
     #print atoms.get_scaled_positions()
 
-    write_fdmnes(atoms=atoms,MOL=MOL)
-    write_fdmnes(name=name,atoms=atoms,STD=False,MOL=MOL)
-    write_fdmnes_inp(atoms=atoms,MOL=MOL)
+    print_fdmnes(atoms=atoms,MOL=MOL)
+    print_fdmnes(name=name,atoms=atoms,STD=False,MOL=MOL)
+    print_fdmnes_inp(atoms=atoms,MOL=MOL)
 

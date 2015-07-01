@@ -31,6 +31,12 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#   == None --> is None
+#
+# 2015.06.26
+#  get_position() 追加: get_position_loop の loop=0 のみ対応
+#
 # 2015.03.03
 #  get_temp(), get_temp_given()
 #
@@ -58,7 +64,7 @@ import re
 #from numpy import *
 import numpy as np
 
-#import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -258,6 +264,22 @@ class ReadMd(object):
         return self.position_loop
 
     ###############################################
+    # position (initial) データー読み込み
+    def get_position(self,loop=0):
+
+        natom = self.get_natom()
+        self.position = np.zeros((natom,3))
+
+        i = 2
+        for j in range(natom):
+            self.position[j,0]  = float(self.datlines[i+j].split()[1])
+            self.position[j,1]  = float(self.datlines[i+j].split()[2])
+            self.position[j,2]  = float(self.datlines[i+j].split()[3])
+
+        return self.position
+
+
+    ###############################################
     # position_loop データー読み込み
     def get_selective(self):
 
@@ -348,12 +370,34 @@ if __name__ == '__main__':
 #   MD = "graphene_N.md"
     MD = "gly_VS.md"
 
+    MD0 = "gly_VS"
+    suffix = "md"
+
+    MD = MD0+'.'+suffix
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
     if options.INPUT: MD=options.INPUT
     if len(args) > 0: MD=args[0]
+
+    if not os.path.exists(MD):
+        MD0 = SAE.find_datfile('md')
+        suffix ='md'
+        if MD0 is None:
+            MD0 = SAE.find_datfile('xyz')
+            suffix ='xyz'
+            if MD0 is None:
+                sys.exit("STOP: INPUT file not found.")
+
+        if not os.path.exists(MD0+'.md'):
+            MD0 = SAE.find_datfile('xyz')
+            suffix ='xyz'
+            if not os.path.exists(MD0+'.xyz'):
+                sys.exit("STOP")
+
+    MD = MD0+'.'+suffix
 
     ############################################################################
     md = ReadMd(MD)

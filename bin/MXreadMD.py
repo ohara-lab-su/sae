@@ -16,6 +16,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
+#
 # 2015.06.16
 #   *.md ファイル自動取得ルーチンを追加
 #
@@ -65,7 +68,7 @@ if __name__ == '__main__':
     # デフォルト名より適切なデフォルトファイル名の推定ルーチン
     if not os.path.exists(MD):
         name0 = SAE.find_datfile('md')
-        if not name0 == None:
+        if not name0 is None:
             name = name0
             MD = name+'.'+suffix
 

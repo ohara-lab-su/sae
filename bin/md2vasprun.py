@@ -16,6 +16,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
+#
 # 2015.06.16
 #  関数ライブラリを用いた read_md ではなく、ReadMd クラスの仕様へチェンジ
 #
@@ -83,7 +86,7 @@ if __name__ == '__main__':
     # デフォルト名 or 入力名が存在しない時の入力ファイル名自動探索
     if not os.path.exists(MD):
         name0 = SAE.find_datfile(MD_suffix)
-        if not name0 == None:
+        if not name0 is None:
             name = name0
             MD = name+'.'+MD_suffix
         else:

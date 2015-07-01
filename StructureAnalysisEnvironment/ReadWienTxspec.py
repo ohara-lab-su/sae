@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#   == None --> is None
+#
 # 2015.04.06
 #  suffix を変更可能にした(以前のままでも使える)
 #
@@ -42,10 +45,10 @@ class ReadWienTxspec(object):
 
     ############################################################################
     ## init
-    def __init__(self,case='case',spin='None',suffix='.txspec'):
+    def __init__(self,case='case',spin=None,suffix='.txspec'):
 
 #       suffix = '.txspec'
-        if spin == 'None':
+        if spin is None:
             spin = ''
         self.datlines,self.num = SAE.read_dataline(case+suffix+spin)
 
@@ -89,8 +92,8 @@ class ReadWienTxspec(object):
 #   def get_gamma(self):
 #       return self.g
 
-    def write(self,outputname='None'):
-        if outputname == 'None':
+    def write(self,outputname=None):
+        if outputname is None:
             out = sys.stdout
         else:
             try:
@@ -103,7 +106,7 @@ class ReadWienTxspec(object):
         for i in range(nxas):
             print >> out, "%9.5f %14.8f" % (self.eng[i], self.xas[i])
 
-        if not outputname == 'None':
+        if not outputname is None:
             out.close()
 
 ################################################################################

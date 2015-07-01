@@ -7,6 +7,12 @@
 #
 ################################################################################
 #
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
+#
+# 2015.07.01
+#   absorber 複数のファイル結合モードを追加
+#
 # 2015.05.21
 #   startup (スピン未対応)
 #
@@ -35,17 +41,62 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 class ReadFdmSd(object):
 
-    def __init__(self,name,suffix='_sd0.txt',inpname='read_pdb.inp'):
+    def __init__(self,sdname,bavname=None,\
+            suffix='_sd0.txt',inpname='read_pdb.inp',absorber=None,weight=None):
 
-        self.datlines,self.num = SAE.read_dataline(name+suffix)
+        if bavname is None:
+            bavname = sdname
 
-        bav = SAE.ReadFdmBav(name)
+        ############################## self.datlines ###########################
+        if absorber is None:
+            print "---- ReadFdmSd ----"
+            print "sdname + suffix = ",sdname+suffix
+            print "bavname_bav.txt = ",bavname+'_bav.txt'
+            print "inpname         = ",inpname
+            print "-------------------"
+            self.datlines,self.num = SAE.read_dataline(sdname+suffix)
+        else:
+            print "--- ReadFdmSd ------"
+            print "    average mode ---"
+            sdname0 = bavname+'_'+str(absorber[0])+suffix
+            row,num = SAE.read_row(sdname0,column=1)
+            if weight is None:
+                n_site = float(len(absorber))
+            else:
+                print "    weight = "+str(weight)
+                n_site = float(weight)
+
+            # アホな合計->平均->元の要素が結合したリスト形式への変換
+            dsum  = np.zeros((num,row))
+            dtmp = np.zeros((num,row))
+            numdata = np.zeros((num,row))
+            for i in range(len(absorber)):
+                sdname = bavname+'_'+str(absorber[i])+suffix
+                print "sum : ",sdname
+                datatmp,num0 = SAE.read_dataline(sdname)
+                for i in range(1,num):
+                    for r in range(row):
+                        dtmp[i,r] = datatmp[i].split()[r]
+                dsum = dtmp + dsum
+            numdata = dsum/n_site  # 平均値を出す
+
+            # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
+            listdata = list(numdata)
+            self.datlines = []
+            self.datlines.append('') # dummy '1st-line'
+            for i in range(1,num):
+                self.datlines.append(''.join(str(listdata[i])).\
+                        replace('\n','').replace('[','').replace(']',''))
+            self.num = num
+        ############################## self.datlines ###########################
+
+        bav = SAE.ReadFdmBav(bavname)
         inp = SAE.ReadFdmInp(inpname)
 
         self.lmax = int(bav.get_lmax())
         self.ispin = int(inp.get_ispin())
         mmax = 2*self.lmax+1
-#       print mmax
+#       print "mmax=",mmax
 
         mmax = 0
         for l in range(self.lmax+1):
@@ -55,8 +106,9 @@ class ReadFdmSd(object):
         total_line = 2 + total_orbit*2 + (l+1)*2
 
         # _sd0.txt の一行目のチェック
-        if len(self.datlines[0].split()) != total_line:
-            sys.exit("STOP: unknown type "+name+"_sd0.txt")
+        if absorber is None:
+            if len(self.datlines[0].split()) != total_line:
+                sys.exit("STOP: unknown type "+name+"_sd0.txt")
 
         # 各l軌道ごとのデーターが収納されている行数の番号を取得(非スピン)
         lnum = []

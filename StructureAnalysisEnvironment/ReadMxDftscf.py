@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#   == None --> is None
+#
 # 2015.03.13
 #  get_uele()
 #  IONループが途中で終了した時の最後のSCFループの情報を配列に放り込むように変更
@@ -169,7 +172,7 @@ if __name__ == '__main__':
     if not os.path.exists(mxname):
         try:
             name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
-            if not name0 == None:
+            if not name0 is None:
                 name = name0
                 mxname = name+suffix
         except:

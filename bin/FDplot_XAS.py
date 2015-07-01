@@ -11,8 +11,36 @@
 #
 ################################################################################
 #
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加したのを呼び出すように
+#
+# 2015.07.01
+#   average モードで XAS だけではなく DOS も対応(ReadFdmSdの対応化)
+#
+# 2015.06.30
+#   average モードを追加
+#    filout 名 + _ + 数字 + _conv.txt
+#    ファイルを複数読み込み平均化してプロットするモードを追加
+#
+# 2015.06.30
+#   可変長オプションに変更
+#   optparser() --> argparse()
+#
+# 2015.06.30
+#   -i 指定で conv.inp を読み込んで 別途に計算した XAS conv を
+#   プロットできるように修正
+#
+#   このとき、conv.inp ファイル中の conv_out 情報を取得して
+#   プロットする名前を獲得できる
+#
+#   さらにDOS モードの時は
+#     conv.inp 中の Filout から *_bav.txt 名を取得して情報を入手がかのう
+#
+#   つまり、Convolution 名とログファイル名の２つの名前を扱える
+#
 # 2015.06.24
 #  実験データもプロット可能に
+#        obs_file = filout+'_obs.txt.nor'
 #
 # 2015.06.23
 #  DOSもプロット可能に
@@ -37,7 +65,8 @@ import sys
 #import gzip
 import os
 #import re
-import optparse
+#import optparse
+import argparse
 #import numpy as np
 
 import StructureAnalysisEnvironment as SAE
@@ -54,29 +83,37 @@ def options():
     name = 'read_pdb.inp'
 #   name = 'POSCAR.inp'
 
-    parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    parser.add_option(  '--emax',)
-    parser.add_option(  '--emin',)
-    parser.add_option(  '--ymax',)
-    parser.add_option(  '--dmax',)
-    parser.add_option(  '-f','--fermi', action='store_true',default=False,)
-    parser.add_option(  '-b','--broad', action='store_true',default=False,)
-    parser.add_option(  '-d','--dos', action='store_true',default=False,)
-    parser.add_option(  '-o','--obs', action='store_true',default=False,)
-    options,args = parser.parse_args()
+#   parser = optparse.OptionParser()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(  '-i','--input', dest='INPUT',)
+    parser.add_argument(  '--emax',)
+    parser.add_argument(  '--emin',)
+    parser.add_argument(  '--ymax',)
+    parser.add_argument(  '--dmax',)
+    parser.add_argument(  '-f','--fermi', action='store_true',default=False,)
+    parser.add_argument(  '-b','--broad', action='store_true',default=False,)
+    parser.add_argument(  '-d','--dos', action='store_true',default=False,)
+    parser.add_argument(  '-o','--obs', action='store_true',default=False,)
+    parser.add_argument(  '-a','--absorber', nargs='*')
+    parser.add_argument(  '-w','--weight',)
+#   options,args = parser.parse_args()
+    options = parser.parse_args()
 
     if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+#   if len(args) > 0: name=args[0]
+
+    if not os.path.exists(name):
+        name = 'conv.inp'
 
     return name,options.emax,options.emin,options.ymax,options.dmax,\
-            options.fermi,options.broad,options.dos,options.obs
+            options.fermi,options.broad,options.dos,options.obs,\
+            options.absorber,options.weight
 
 ###############################################################################
 if __name__ == '__main__':
 
     inpname,OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_DMAX,\
-            FLAG_fermi,FLAG_B,FLAG_DOS,FLAG_OBS = options()
+            FLAG_fermi,FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE = options()
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
@@ -90,6 +127,10 @@ if __name__ == '__main__':
     if OPT_DMAX:
         OPT_DMAX=float(OPT_DMAX)
         print "Ymax(DOS)=",OPT_DMAX
+
+    if WE:
+        WE=float(WE)
+        print "Weight   =",WE
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
@@ -112,17 +153,86 @@ if __name__ == '__main__':
 
     ############################################################################
     inp = SAE.ReadFdmInp(inpname)
-    filout = inp.get_filout()
 
-    txt = SAE.ReadFdm(filout,'.txt')
-    conv = SAE.ReadFdmConv(filout,'_conv.txt')
-    sd = SAE.ReadFdmSd(filout,'_sd0.txt')
-    bav = SAE.ReadFdmBav(filout,'_bav.txt')
+    calculation = inp.get_calculation()
+    if calculation:
+        filout = calculation.replace('.txt','')
+    else:
+        filout = inp.get_filout()
 
+
+    ## 計算結果の読み込み (平均化モード のときは最初に指定したabsorberから)
+    if AV:
+        txt = SAE.ReadFdm(filout+'_'+str(AV[0]),'.txt')
+        conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]),'_conv.txt')
+    else:
+        txt = SAE.ReadFdm(filout,'.txt')
+        conv = SAE.ReadFdmConv(filout,'_conv.txt')
+
+    ############################################################################
+    # 平均化モードのとき txt インスタンスの結果を上書き(平均の結果にする)
+    # 平均化モードの時に filbav 名を取得
+    if AV:
+        try:
+            filbav = inp.get_filout()
+        except:
+            if filbav is None:
+                sys.exit("STOP: filout TAG not found in "+inpname)
+
+        print "--- average mode "
+        if WE:
+            conv.xas = conv.average_conv(filbav,AV,weight=WE)
+        else:
+            conv.xas = conv.average_conv(filbav,AV)
+
+    ############################################################################
+    ## *_0_conv.txt ファイルへ結果出力
+    if AV:
+        try:
+            outav = open(filbav+'_'+str(0)+'_conv.txt','w')
+            print >> outav, ""
+            for i in range(len(conv.eng)):
+                print >> outav, "  %14.8f %14.8f" %(conv.eng[i],conv.xas[i])
+        except:
+            outav.close()
+
+
+    ############################################################################
+    # DOS モードで fileout TAG から元の計算のログファイル名を入手
+    if FLAG_DOS:
+        try:
+            filbav = filbav
+        except:
+            filbav = inp.get_filout()
+            if filbav is None:
+                sys.exit("STOP: filout TAG not found in "+inpname)
+
+        if AV:
+            if WE:
+                sd = SAE.ReadFdmSd(filout,filbav,suffix='_sd0.txt',\
+                        inpname=inpname,absorber=AV,weight=WE)
+            else:
+                sd = SAE.ReadFdmSd(filout,filbav,suffix='_sd0.txt',\
+                        inpname=inpname,absorber=AV)
+        else:
+            sd = SAE.ReadFdmSd(filout,filbav,suffix='_sd0.txt',inpname=inpname)
+
+    if AV: print ""
+    print "INP FILE           = ",inpname," (.inp)"
+    print "DATA FILE (filout) = ",filout, " (.txt)"
+    try:
+        filbav = filbav
+        print "BAV FILE  (filout) = ",filbav, " (_bav.txt)"
+    except:
+        pass
+
+    print "-------------------"
     print "E_edge   =",txt.E_edge
     print "E_fermi  =",txt.E_Fermi
 
-    # XASエネルギー原点の変換
+
+    ############################################################################
+    # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
     if not inp.get_energygpho() and not FLAG_fermi:
         txt.eng = txt.eng + txt.E_edge
         conv.eng = conv.eng  + txt.E_edge

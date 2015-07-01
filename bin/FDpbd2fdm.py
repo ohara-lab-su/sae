@@ -49,11 +49,8 @@ def options():
     parser.add_option( '-i','--ipput',dest='INPUT')
     options,args = parser.parse_args()
 
-    if options.INPUT:
-        name = options.INPUT
-
-    if len(args) > 0:
-        name = str(args[0])
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = str(args[0])
 
     if not os.path.exists(name):
         sys.exit("STOP: "+name+" file not found")

@@ -43,7 +43,7 @@ def options():
     if not os.path.exists(name):
         try:
             base0 = SAE.find_datfile('cif')
-            if not base0 == None:
+            if not base0 is None:
                 base = base0
                 name = base+in_suffix
         except:

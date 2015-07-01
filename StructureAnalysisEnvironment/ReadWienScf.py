@@ -14,6 +14,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#   == None --> is None
+#
 # 2015.03.30
 #  startup
 #
@@ -123,9 +126,9 @@ class ReadWienScf(object):
 
     ############################################################################
     # print EPL
-    def write_epl(self,ion='None'):
+    def write_epl(self,ion=None):
         print "         Q-s-low  E-s-low  Q-p-low  E-p-low  Q-d-low  E-d-low  Q-f-low  E-f-low"
-        if ion == 'None':
+        if ion is None:
             for it in range(self.nscf):
                 print "======== ITER",it
                 for ion in range(self.nion):
@@ -137,9 +140,9 @@ class ReadWienScf(object):
 
     ############################################################################
     # print EPH
-    def write_eph(self,ion='None'):
+    def write_eph(self,ion=None):
         print "         Q-s-hi   E-s-hi   Q-p-hi   E-p-hi   Q-d-hi   E-d-hi   Q-f-hi   E-f-hi"
-        if ion == 'None':
+        if ion is None:
             for it in range(self.nscf):
                 print "======== ITER",it
                 for ion in range(self.nion):
@@ -151,16 +154,16 @@ class ReadWienScf(object):
 
     ############################################################################
     # print E_parameter
-    def write_epar(self,ion='None',par='None',l='None'):
+    def write_epar(self,ion=None,par=None,l=None):
 
-        if ion == 'None' and par == 'None' and l == 'None':
+        if ion is None and par is None and l is None:
             for it in range(self.nscf):
                 print "======== ITER",it
                 for ion in range(self.nion):
                     for par in range(len(self.epar_iter[it][ion])):
                         print self.site_iter[it][ion],self.epar_iter[it][ion][par]
 
-        elif ion != 'None' and par == 'None' and l == 'None':
+        elif ion is not None and par is None and l is None:
             ion = int(ion)
             for it in range(self.nscf):
                 print "======== ITER",it
@@ -168,7 +171,7 @@ class ReadWienScf(object):
                     print "ion=",ion,"",\
                             self.site_iter[it][ion],self.epar_iter[it][ion][par]
 
-        elif ion == 'None' and par != 'None' and l == 'None':
+        elif ion is None and par is not None and l is None:
             par = int(par)
             for it in range(self.nscf):
                 print "======== ITER",it
@@ -176,13 +179,13 @@ class ReadWienScf(object):
                     print "ion=",ion,"orbit=",par,"",\
                             self.site_iter[it][ion],self.epar_iter[it][ion][par]
 
-        elif ion != 'None' and par != 'None' and l == 'None':
+        elif ion is not None and par is not None and l is not None:
             par = int(par)
             ion = int(ion)
             for it in range(self.nscf):
                 print "iter=",it,"",self.site_iter[it][ion],self.epar_iter[it][ion][par]
 
-        elif ion != 'None' and par == 'None' and l != 'None':
+        elif ion is not None and par is None and l is not None:
             ion = int(ion)
             l = int(l)
             l_orbit_txt = ':E.*_.*: E\(.*'+str(l)+'\)'
@@ -193,7 +196,7 @@ class ReadWienScf(object):
                     if bool(l_orbit_reg.match(self.epar_iter[it][ion][par])):
                         print "ion=",ion,"",self.epar_iter[it][ion][par]
 
-        elif ion == 'None' and par == 'None' and l != 'None':
+        elif ion is None and par is None and l is not None:
             l = int(l)
             l_orbit_txt = ':E.*_.*: E\(.*'+str(l)+'\)'
             l_orbit_reg = re.compile(l_orbit_txt)

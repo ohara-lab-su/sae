@@ -38,7 +38,7 @@ if __name__ == '__main__':
     cifname = 'case.cif'
     if not os.path.exists(cifname):
         cifname = SAE.find_datfile('cif')
-        if cifname == 'None':
+        if cifname is None:
             sys.exit("STOP: cif file not found")
         cifname = cifname+'.cif'
 

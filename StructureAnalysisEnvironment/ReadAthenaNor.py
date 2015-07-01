@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#   == Noneo --> is None
+#
 # 2015.05.21
 #  ファイル名の自動取得&基本プロットのサンプル追加
 #
@@ -125,7 +128,7 @@ def options():
 
     if not os.path.exists(name):
         name0 = SAE.find_datfile1('.txt.nor')
-        if name0 == 'None':
+        if name0 is None:
             name0 = name
     name = name0
 

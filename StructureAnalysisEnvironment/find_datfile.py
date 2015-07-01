@@ -61,6 +61,9 @@ import glob
 import optparse
 
 ################################################################################
+# suffix が dot 付きだったときは dot を削除してから *.suffix を探す
+# 複数見つけた時および見つけなかった時は None を返す
+#
 def find_datfile(suffix):
 
     suffix0 = re.sub('^\.','',suffix)
@@ -68,12 +71,12 @@ def find_datfile(suffix):
     datname=None
     if len(filelist) == 1:
         datname = re.sub('.'+suffix0,'',filelist[0])
-    else:
-        pass
 
     return datname
 
 ################################################################################
+# suffix に対しての事後処理をせずに *suffix を探す
+#
 def find_datfile1(tail):
 
     filelist = glob.glob("*"+tail)
@@ -84,6 +87,8 @@ def find_datfile1(tail):
     return datname
 
 ################################################################################
+#  *.suffix を探す（複数ファイルを返す)
+#
 def find_datfiles(suffix):
 
     filelist = glob.glob("*."+str(suffix))
@@ -102,11 +107,8 @@ if __name__ == '__main__':
     parser.add_option( '-s','--suffix',)
     options, args = parser.parse_args()
 
-    if len(args) >0:
-        suffix = args[0]
-
-    if options.suffix:
-        suffix = options.suffix
+    if options.suffix: suffix = options.suffix
+    if len(args) >0: suffix = args[0]
 
     try:
         datname = find_datfile(suffix)

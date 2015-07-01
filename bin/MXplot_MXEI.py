@@ -10,6 +10,8 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
 #
 # 2015.06.15
 #   *.dat ファイル名と systemname が異なるときの自動処理を追加
@@ -62,7 +64,7 @@ if __name__ == '__main__':
     # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(mxname):
         name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
-        if not name0 == None:
+        if not name0 is None:
             name = name0
             mxname = name+suffix
 

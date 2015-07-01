@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
+#
 # 2015.05.21 startup
 #
 ################################################################################
@@ -47,15 +50,12 @@ def options():
     if not os.path.exists(name):
         name0 = SAE.find_datfile1('_conv.txt')
         name0 = name0.replace(suffix,'')
-        if name0 == 'None':
+        if name0 is None:
             name0 = name
         name = name0
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name,suffix
 

@@ -65,6 +65,7 @@ def read_dataline(name):
     return datlines,num
 
 ################################################################################
+# コメントアウト対応版
 def read_dataline1(name):
 
     import re

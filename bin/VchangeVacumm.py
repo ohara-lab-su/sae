@@ -82,10 +82,6 @@ def options():
             else:
                 sys.exit(POSCAR+" file not found")
 
-    print "INPUT file name    :",inpname
-    print "OUTPUT file name   :",outname+".vasp"
-    print "Vacuum SIZE        :",str(vacuum)
-
     return [inpname,outname,vacuum]
 
 
@@ -94,6 +90,13 @@ if __name__ == '__main__':
 
     # Default & OptionParser
     inpname,outname,vacuum = options()
+
+    outsuffix = "_v"+str(int(vacuum))
+    outname = outname+outsuffix
+
+    print "INPUT file name    :",inpname
+    print "OUTPUT file name   :",outname+".vasp"
+    print "Vacuum SIZE        :",str(int(vacuum))
 
     # Read POSCAR file
     poscar = SAE.ReadPoscar(inpname)

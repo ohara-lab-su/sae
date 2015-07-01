@@ -14,6 +14,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
+#
 # 2015.06.16
 #  VASP --> OpenMX (cartesian) 変換した後の計算結果を vasprun.xml に乗せるとき
 #  は scale 1.0 の基本並進をそのまま用いるときは direct --> cartesian すると
@@ -105,7 +108,7 @@ if __name__ == '__main__':
     # デフォルト名 or 入力名が存在しない時の入力ファイル名自動探索
     if not os.path.exists(MD):
         name0 = SAE.find_datfile(MD_suffix)
-        if not name0 == None:
+        if not name0 is None:
             name = name0
             MD = name+'.'+MD_suffix
         else:

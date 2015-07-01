@@ -28,6 +28,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
+#
 # 2016.06.19
 #  simple_v1 へと古いバージョンをブランチ(実質バックアップ)
 #   今後の master 版は INCAR や KPOINTS や OUTCAR などを読み込んで
@@ -153,7 +156,7 @@ def options():
     # VASP 入力ファイル名の自動取得
     if not os.path.exists(poscarname):
         poscarname0 = SAE.find_datfile('vasp')
-        if poscarname0 == 'None':
+        if poscarname0 is None:
             sys.exxit("STOP: POSCAR or .vasp files not found")
         poscarname = poscarname0+'.vasp'
 

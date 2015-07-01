@@ -151,20 +151,17 @@ class ReadPoscar(object):
     ##   t3 = t13 t23 t33
     ##
     def get_t(self):
-        v = self.datlines[2].split()
-        t1_x = float(v[0])
-        t1_y = float(v[1])
-        t1_z = float(v[2])
+        t1_x = float(self.datlines[2].split()[0])
+        t1_y = float(self.datlines[2].split()[1])
+        t1_z = float(self.datlines[2].split()[2])
 
-        v = self.datlines[3].split()
-        t2_x = float(v[0])
-        t2_y = float(v[1])
-        t2_z = float(v[2])
+        t2_x = float(self.datlines[3].split()[0])
+        t2_y = float(self.datlines[3].split()[1])
+        t2_z = float(self.datlines[3].split()[2])
 
-        v = self.datlines[4].split()
-        t3_x = float(v[0])
-        t3_y = float(v[1])
-        t3_z = float(v[2])
+        t3_x = float(self.datlines[4].split()[0])
+        t3_y = float(self.datlines[4].split()[1])
+        t3_z = float(self.datlines[4].split()[2])
 
         self.t = np.zeros((3,3))
         self.t[0,0] = t1_x

@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#  == None --> is None
+#
 # 2015.03.11
 #  自動ファイル名検索関係のバグを修正
 #
@@ -95,7 +98,7 @@ def options():
     # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(mxname):
         name0 = SAE.find_datfile('dat')
-        if not name0 == None:
+        if not name0 is None:
             name = name0
             mxname = name+suffix
             poscarname = mxname+'.vasp'

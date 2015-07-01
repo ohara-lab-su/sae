@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.06.30
+#   == None --> is None
+#
 # 2015.04.06
 #  .xspec のヘッダを返すようにした
 #
@@ -48,10 +51,10 @@ class ReadWienXspec(object):
 
     ############################################################################
     ## init
-    def __init__(self,case='case',spin='None',suffix='.xspec'):
+    def __init__(self,case='case',spin=None,suffix='.xspec'):
 
 #       suffix = '.xspec'
-        if spin == 'None':
+        if spin is None:
             spin = ''
         self.datlines,self.num = SAE.read_dataline(case+suffix+spin)
 
@@ -108,8 +111,8 @@ class ReadWienXspec(object):
     def get_gamma(self):
         return self.g
 
-    def write(self,outputname='None'):
-        if outputname == 'None':
+    def write(self,outputname=None):
+        if outputname is None:
             out = sys.stdout
         else:
             try:
@@ -122,7 +125,7 @@ class ReadWienXspec(object):
         for i in range(nxas):
             print >> out, "%9.5f %14.8f" % (self.eng[i], self.xas[i])
 
-        if not outputname == 'None':
+        if not outputname is None:
             out.close()
 
 ################################################################################

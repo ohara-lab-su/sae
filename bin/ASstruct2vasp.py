@@ -44,7 +44,7 @@ def options():
 
     if not os.path.exists(name):
         base = SAE.find_datfile(suffix)
-        if not base == "None":
+        if not base is None:
             name = base+suffix
 
     if options.INPUT:

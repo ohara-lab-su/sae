@@ -7,6 +7,12 @@
 #
 ################################################################################
 #
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
+#
+# 2015.06.30
+#   == Noneo --> is None
+#
 # 2015.05.21 startup
 #
 ################################################################################
@@ -34,10 +40,12 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 class ReadFdmConv(object):
 
-    def __init__(self,cname,suffix='_conv.txt'):
+    def __init__(self,cname,conv_suffix='_conv.txt'):
 
-        self.datlines,self.num = SAE.read_dataline(cname+suffix)
+        self.datlines,self.num = SAE.read_dataline(cname+conv_suffix)
 
+        self.name = cname
+        self.conv_suffix = conv_suffix
         self.eng = np.zeros(self.num-1)
         self.xas = np.zeros(self.num-1)
 
@@ -50,6 +58,34 @@ class ReadFdmConv(object):
 
     def get_xas(self):
         return self.xas
+
+    ############################################################################
+    # allsite のときの複数の *_conv.txt の平均を取る
+    # filout = Pd6 のとき allsite ならばとして結果を出力したとする
+    # Pd_1_conv.txt
+    # Pd_2_conv.txt
+    # Pd_3_conv.txt
+    # このとき、average_conv(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
+    # 平均を self.xas に返す
+    #
+#   def average_conv(self,name,*allsite):
+    def average_conv(self,name,absorber,weight=None):
+        if weight is None:
+            n_site = float(len(absorber))
+        else:
+            print "weight : ",weight
+            n_site = float(weight)
+        s_xas = np.zeros(self.num-1)
+       #print absorber
+        for site in absorber :
+            convname = name+"_"+str(site)+self.conv_suffix
+            datlines,num = SAE.read_dataline(convname)
+            print "sum : ",convname
+            for i in range(1,self.num):
+                s_xas[i-1] = float(datlines[i].split()[1]) + s_xas[i-1]
+        self.xas = s_xas/n_site
+        return self.xas
+
 
 ################################################################################
 def plot_fdm_xas(eng,xas):
@@ -101,9 +137,9 @@ def options():
     if not os.path.exists(name):
         name0 = SAE.find_datfile1(suffix)
         name0 = name0.replace(suffix,'')
-        if name0 == 'None':
+        if name0 is not None:
             name0 = name
-    name = name0
+        name = name0
 
     if options.INPUT: name=options.INPUT
     if len(args) > 0: name=args[0]
@@ -114,12 +150,15 @@ def options():
 if __name__ == '__main__':
 
     name,suffix = options()
+#   print name,suffix
     conv = ReadFdmConv(name,suffix)
 
     eng = conv.get_eng()
     xas = conv.get_xas()
 
-    plot_fdm_xas(eng,xas)
+    av = conv.average_conv(1,2,3,4,5)
+
+#   plot_fdm_xas(eng,xas)
 
 #   print "NAME",name
 
