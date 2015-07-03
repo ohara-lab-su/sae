@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
@@ -69,9 +70,9 @@ if __name__ == '__main__':
     xas = conv.get_xas()
 
     plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 16  # $B%i%Y%kEy$N%U%)%s%H%5%$%:(B
-    plt.rcParams['legend.fontsize'] = 14  # $B%l%8%'%s%I$N%U%)%s%H%5%$%:(B
-    plt.rcParams['axes.linewidth']  = 1.5 # $B<4$NB@$5$r@_Dj!#L\@9$j$OJQ$o$i$J$$(B
+    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
 
@@ -92,6 +93,13 @@ if __name__ == '__main__':
 #   leg = plt.legend(fontsize=12,loc='lower right')
     leg = plt.legend(loc='lower right')
     leg.get_frame().set_alpha(0.5)
+
+#   plt.xlim( xmax=12100 )
+#   plt.xlim( xmin=11900 )
+
+#   plt.xlim( xmax=200 )
+#   plt.xlim( xmin=-10 )
+
 
     plt.savefig("XAS.eps")
     plt.savefig("XAS.pdf")

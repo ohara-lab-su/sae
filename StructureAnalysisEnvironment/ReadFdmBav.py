@@ -1,14 +1,15 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
-# *_bav.txt $B%U%!%$%k(B
+# *_bav.txt ファイル
 #
 ################################################################################
 #
 # 2015.06.25
-#  R2 bases $B$KBP1~$7$?(B cluster: atom positions $B5[$$=P$7$KBP1~(B
+#  R2 bases に対応した cluster: atom positions 吸い出しに対応
 #
 # 2015.06.23 startup
 #
@@ -52,14 +53,14 @@ class ReadFdmBav(object):
 
         for i in range(self.num):
 
-            # $BA486;R?t$N8!:w(B
+            # 全原子数の検索
             if bool(ngroup_reg.match(self.datlines[i])):
                 if self.datlines[i].split()[0] == 'ngroup':
                     self.ngroup = int(self.datlines[i].split()[2].replace(',',''))
                 else:
                     sys.exit("STOP: ngroup tag not found.")
 
-            # $B5[<}86;R$N:GBg$N(Bl$B$rC5$9(B
+            # 吸収原子の最大のlを探す
             if bool(excited_atom_reg.match(self.datlines[i])):
                 i += 2
                 l = 0
@@ -72,11 +73,11 @@ class ReadFdmBav(object):
                         break
                 self.lmax = l
 
-            # $B5[<}C<(B
+            # 吸収端
             if bool(threshold_reg.match(self.datlines[i])):
                 self.edge = self.datlines[i].split()[2]
 
-            # absorber $B$r86E@$H$7$?;~$N4pK\JB?J%Y%/%H%k(B
+            # absorber を原点とした時の基本並進ベクトル
             if bool(r2_reg.match(self.datlines[i])):
                 t1_x = float(self.datlines[i+1].split()[0])
                 t1_y = float(self.datlines[i+1].split()[1])
@@ -102,7 +103,7 @@ class ReadFdmBav(object):
                 self.t[1,2] = t3_y
                 self.t[2,2] = t3_z
 
-            # positon ($B@dBP:BI87O(B)
+            # positon (絶対座標系)
             if bool(positions_reg.match(self.datlines[i])):
 
                 self.position = []

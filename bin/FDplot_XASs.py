@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
 #   *_{1,2,3,,,}_conv.txt plot program
 #
-#  allsite $B$G=PNO$7$?(B XAS $B$N7k2L(B(_conv.txt) $B$r$^$H$a$F%W%m%C%H(B
+#  allsite で出力した XAS の結果(_conv.txt) をまとめてプロット
 #
 #
 ################################################################################
@@ -89,9 +90,9 @@ if __name__ == '__main__':
 
 
     plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 16  # $B%i%Y%kEy$N%U%)%s%H%5%$%:(B
-    plt.rcParams['legend.fontsize'] = 14  # $B%l%8%'%s%I$N%U%)%s%H%5%$%:(B
-    plt.rcParams['axes.linewidth']  = 1.5 # $B<4$NB@$5$r@_Dj!#L\@9$j$OJQ$o$i$J$$(B
+    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
 
 #   plt.figure(figsize=(7.00, 9.89))  # for portrait
     plt.figure(figsize=(8.10, 9.89))  # for portrait
@@ -116,7 +117,7 @@ if __name__ == '__main__':
     print "INP FILE  = ",inpname
     print "DATA FILE = ",filout
 
-    ## $B7W;;7k2L$NFI$_9~$_(B
+    ## 計算結果の読み込み
     if AV:
         txt = SAE.ReadFdm(filout+'_'+str(AV[0]),'.txt')
     else:
@@ -141,7 +142,7 @@ if __name__ == '__main__':
 
         conv = SAE.ReadFdmConv(filout,'_conv.txt')
 
-        # XAS$B%(%M%k%.!<86E@$NJQ49(B (*.txt $B%U%!%$%k$*$h$S(B *_conv.txt $BFI$_9~$_(B)
+        # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
         if not inp.get_energygpho() and not FLAG_fermi:
             txt.eng = txt.eng + txt.E_edge
             conv.eng = conv.eng  + txt.E_edge

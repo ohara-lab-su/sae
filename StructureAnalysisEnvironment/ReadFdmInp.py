@@ -1,31 +1,32 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
-# *.in $B%U%!%$%k(B
+# *.in ファイル
 #
-# $B<g$K(B Crystal $B$NItJ,$N2r@O$HFI$_9~$_(B
+# 主に Crystal の部分の解析と読み込み
 #
 ################################################################################
 #
 # 2015.06.24
-#  allsite $B7W;;$r$7$F$$$k$+H]$+$NH=CG$r(B*.inp $B$+$*$3$J$&(B
+#  allsite 計算をしているか否かの判断を*.inp かおこなう
 #
 # 2015.06.19
-#   $BFI$_9~$`%?%0$r$$$/$D$+DI2C(B
-#   $B%3%a%s%H%"%&%H$N=hM}(B
-#   $B%?%0L>$H%?%0$NFbMF$,F10l9T$G$bBP1~2DG=$K(B
+#   読み込むタグをいくつか追加
+#   コメントアウトの処理
+#   タグ名とタグの内容が同一行でも対応可能に
 #
 # 2015.05.19 startup
-#   cellpar(a,b,c,alpha,beta,gamma) --> cell($B4pK\JB?J(B) $B$X$NJQ49$,0U30$K54Lg(B
+#   cellpar(a,b,c,alpha,beta,gamma) --> cell(基本並進) への変換が意外に鬼門
 #
-#   $B#2$D$NA*Br;h(B
+#   ２つの選択肢
 #
-#   (1) $B0JA0$K(B HiLAPW $B$N72O@%Q!<%H$r;29M$K<BAu$7$?$b$N(B SGE $B$rMQ$$$k(B
-#   (2) ASE $B$rMQ$$$k(B
+#   (1) 以前に HiLAPW の群論パートを参考に実装したもの SGE を用いる
+#   (2) ASE を用いる
 #
-#   ---> $B$H$j$"$($:$3$N%k!<%A%s$N3+H/$O0lC6%5%9%Z%s%I(B
+#   ---> とりあえずこのルーチンの開発は一旦サスペンド
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -84,12 +85,12 @@ class ReadFdmInp(object):
             if bool(energygpho_reg.match(self.datlines[i])):
                 self.energygpho = True
 
-            # Atom TAG $B$,$"$k$H$-$ODd;_(B($BL$BP1~(B)
+            # Atom TAG があるときは停止(未対応)
             if bool(atom_reg.match(self.datlines[i])) \
                     and not bool(comment_reg.match(self.datlines[i])):
                 sys.exit("STOP: non support Atom tag")
 
-            # Magnetism ( Atom $B%?%0$,$J$$(B Magnetism $B$O(B SOC $B$N$_(B )
+            # Magnetism ( Atom タグがない Magnetism は SOC のみ )
             if bool(magnetism_reg.match(self.datlines[i])):
                 self.ispin = 2
 
@@ -97,14 +98,14 @@ class ReadFdmInp(object):
             if bool(allsite_reg.match(self.datlines[i])):
                 self.allsite = True
 
-            # Filout $BL>3NJ](B
+            # Filout 名確保
             if bool(filout_reg.match(self.datlines[i])):
                 if len(self.datlines[i].split()) > 1:
                     self.filout = self.datlines[i].split()[1].strip()
                 else:
                     self.filout = self.datlines[i+1].strip()
 
-            # Calculation ($B0JA0$N7W;;7k2L$r0z$-7Q$0(B) $BL>$N3NJ](B
+            # Calculation (以前の計算結果を引き継ぐ) 名の確保
             if bool(calculation_reg.match(self.datlines[i])):
                 self.calculation = str(self.datlines[i+1].split()[0])
 
@@ -123,20 +124,20 @@ class ReadFdmInp(object):
                 else:
                     self.absorber = int(self.datlines[i+1].strip())
 
-            # Crystal $B9T$r8!:w(B (position $B$N(B $B%9%Z!<%99T%3%a%s%H9T$bBP1~(B)
+            # Crystal 行を検索 (position の スペース行コメント行も対応)
             if bool(crystal_reg.match(self.datlines[i])) \
                     and not bool(comment_reg.match(self.datlines[i])):
 
-                # crystal $B9T$r8+$D$1$?$i$=$l$O(B molecule $B%b!<%I$G$O$J$$(B
+                # crystal 行を見つけたらそれは molecule モードではない
                 self.MOL=False
 
-                # $B$3$3$GA[Dj$7$F$$$k$N$O(B a,b,c,alpha,beta,gamma $B5-=R%b!<%I(B
+                # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i+1].split()) == 6:
                     sys.exit("STOP: a,b,c,alpha,beta,gamma INPUT LINE error")
 
                 i += 1
 
-                # cell $B%Q%i%a!<%?!<$r%2%C%H(B
+                # cell パラメーターをゲット
                 lattice_a = float(self.datlines[i].split()[0])
                 lattice_b = float(self.datlines[i].split()[1])
                 lattice_c = float(self.datlines[i].split()[2])
@@ -149,10 +150,10 @@ class ReadFdmInp(object):
                 self.atoms_index_j = []
                 while 1:
                     i +=1
-                    if len(self.datlines[i].split()) > 0: # $B6uGr9T$O%9%-%C%W(B
+                    if len(self.datlines[i].split()) > 0: # 空白行はスキップ
 
                         if bool(char_reg.match(self.datlines[i].split()[0])):
-                            break # $B?t;z0J30$O(B $B%9%-%C%W(B
+                            break # 数字以外は スキップ
 
                         zz = int(self.datlines[i].split()[0])
                         x = float(self.datlines[i].split()[1])
@@ -166,14 +167,14 @@ class ReadFdmInp(object):
 
                 self.position = np.array(self.position)
 
-            # Mol $B9T$r8!:w(B (position $B$N(B $B%9%Z!<%99T%3%a%s%H9T$bBP1~(B)
+            # Mol 行を検索 (position の スペース行コメント行も対応)
             elif bool(mole_reg.match(self.datlines[i])) \
                     and not bool(comment_reg.match(self.datlines[i])):
 
-                # molecule mode ($B$?$@$7!"8=>u$G$O(Bcrystal $B$HJQ$o$j$J$$7A<0$7$+FI$^$J$$(B)
+                # molecule mode (ただし、現状ではcrystal と変わりない形式しか読まない)
                 self.MOL=True
 
-                # $B$3$3$GA[Dj$7$F$$$k$N$O(B a,b,c,alpha,beta,gamma $B5-=R%b!<%I(B
+                # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i+1].split()) == 6:
                     sys.exit("STOP: a,b,c,alpha,beta,gamma INPUT LINE error")
 
@@ -181,10 +182,10 @@ class ReadFdmInp(object):
                 self.atoms_index_j = []
                 while 1:
                     i +=1
-                    if len(self.datlines[i].split()) > 0: # $B6uGr9T$O%9%-%C%W(B
+                    if len(self.datlines[i].split()) > 0: # 空白行はスキップ
 
                         if bool(char_reg.match(self.datlines[i].split()[0])):
-                            break # $B?t;z0J30$O(B $B%9%-%C%W(B
+                            break # 数字以外は スキップ
 
                         zz = int(self.datlines[i].split()[0])
                         x = float(self.datlines[i].split()[1])
@@ -199,7 +200,7 @@ class ReadFdmInp(object):
                 self.position = np.array(self.position)
 
 
-        # $B$9$Y$F$N%5%$%H$N86;R?t(B
+        # すべてのサイトの原子数
         self.natom = len(self.position)
 
        #########################

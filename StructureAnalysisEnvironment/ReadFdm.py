@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
-# *.txt $B%U%!%$%k(B
+# *.txt ファイル
 #
 ################################################################################
 #
@@ -47,14 +48,14 @@ class ReadFdm(object):
         self.eng = np.zeros(self.num-2)
         self.xas = np.zeros(self.num-2)
 
-        # $B0l9TL\$N%$%3!<%k$G7k$P$l$?$H$3$m$^$G$NJQ?t$N?t$N%+%&%s%H(B
+        # 一行目のイコールで結ばれたところまでの変数の数のカウント
         count = 0
         for i in self.datlines[0].split():
             count += 1
             if i == '=':
                 break
 
-        # $B0l9TL\$N%$%3!<%k$G7k$P$l$?CM(B=$BJQ?tL>$r!"F0E*$KJQ?t!aCM$H$7$F%;%C%H(B
+        # 一行目のイコールで結ばれた値=変数名を、動的に変数＝値としてセット
         for i in range(count,len(self.datlines[0].split())):
             var = str(self.datlines[0].split()[i].strip()).replace(',','')
             value = float(self.datlines[0].split()[i-count])
@@ -94,9 +95,9 @@ def plot_fdm_xas(eng,xas):
     import matplotlib.pyplot as plt
 
     plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 16  # $B%i%Y%kEy$N%U%)%s%H%5%$%:(B
-    plt.rcParams['legend.fontsize'] = 14  # $B%l%8%'%s%I$N%U%)%s%H%5%$%:(B
-    plt.rcParams['axes.linewidth']  = 1.5 # $B<4$NB@$5$r@_Dj!#L\@9$j$OJQ$o$i$J$$(B
+    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
 

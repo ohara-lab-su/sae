@@ -1,49 +1,62 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
-#   *_conv.txt plot program
-#    $B%U%!%$%kL><+F0H=JL$rIU$12C$($?$@$1$N4pK\E*$J(B XAS plot
 #
-#   fdXAS.py $B$N%4!<%8%c%9HG(B
-#   fdXAS $B$O=q$-49$($k$N$rA0Ds$H$7$?%9%/%j%W%H(B($B>.J8;z7O(B)
+#   *_conv.txt plot program
+#    ファイル名自動判別を付け加えただけの基本的な XAS plot
+#
+#   fdXAS.py のゴージャス版
+#   fdXAS は書き換えるのを前提としたスクリプト(小文字系)
+#
+#   Kエッジ版
+#
+#   SPIN 対応版
+#    ただし、read_pdb.inp と conv.inp 両対応を意識して、自動判別ではなく
+#    -s もしくは --spin オプション時に強制的に対応させる
+#    spin の計算で -s をつけていない時は up-spin の DOS を描く
 #
 ################################################################################
 #
-# 2015.07.01
-#  $BJ?6Q2=%k!<%A%s$G=E$_(B($BJ?6Q$9$k:]$K3d$k?t(B)$B$r0z?t$KDI2C$7$?$N$r8F$S=P$9$h$&$K(B
+# 2015.07.02
+#  spin対応(DOSのプロットでupとdownの併記プロット)
+#  その代わりに LDOS のプロットで p軌道のみ出力
 #
 # 2015.07.01
-#   average $B%b!<%I$G(B XAS $B$@$1$G$O$J$/(B DOS $B$bBP1~(B(ReadFdmSd$B$NBP1~2=(B)
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加したのを呼び出すように
+#
+# 2015.07.01
+#   average モードで XAS だけではなく DOS も対応(ReadFdmSdの対応化)
 #
 # 2015.06.30
-#   average $B%b!<%I$rDI2C(B
-#    filout $BL>(B + _ + $B?t;z(B + _conv.txt
-#    $B%U%!%$%k$rJ#?tFI$_9~$_J?6Q2=$7$F%W%m%C%H$9$k%b!<%I$rDI2C(B
+#   average モードを追加
+#    filout 名 + _ + 数字 + _conv.txt
+#    ファイルを複数読み込み平均化してプロットするモードを追加
 #
 # 2015.06.30
-#   $B2DJQD9%*%W%7%g%s$KJQ99(B
+#   可変長オプションに変更
 #   optparser() --> argparse()
 #
 # 2015.06.30
-#   -i $B;XDj$G(B conv.inp $B$rFI$_9~$s$G(B $BJLES$K7W;;$7$?(B XAS conv $B$r(B
-#   $B%W%m%C%H$G$-$k$h$&$K=$@5(B
+#   -i 指定で conv.inp を読み込んで 別途に計算した XAS conv を
+#   プロットできるように修正
 #
-#   $B$3$N$H$-!"(Bconv.inp $B%U%!%$%kCf$N(B conv_out $B>pJs$r<hF@$7$F(B
-#   $B%W%m%C%H$9$kL>A0$r3MF@$G$-$k(B
+#   このとき、conv.inp ファイル中の conv_out 情報を取得して
+#   プロットする名前を獲得できる
 #
-#   $B$5$i$K(BDOS $B%b!<%I$N;~$O(B
-#     conv.inp $BCf$N(B Filout $B$+$i(B *_bav.txt $BL>$r<hF@$7$F>pJs$rF~<j$,$+$N$&(B
+#   さらにDOS モードの時は
+#     conv.inp 中の Filout から *_bav.txt 名を取得して情報を入手がかのう
 #
-#   $B$D$^$j!"(BConvolution $BL>$H%m%0%U%!%$%kL>$N#2$D$NL>A0$r07$($k(B
+#   つまり、Convolution 名とログファイル名の２つの名前を扱える
 #
 # 2015.06.24
-#  $B<B83%G!<%?$b%W%m%C%H2DG=$K(B
+#  実験データもプロット可能に
 #        obs_file = filout+'_obs.txt.nor'
 #
 # 2015.06.23
-#  DOS$B$b%W%m%C%H2DG=$K(B
+#  DOSもプロット可能に
 #
 # 2015.06.19 FDplot_XAS startup
 #
@@ -90,6 +103,7 @@ def options():
     parser.add_argument(  '--emin',)
     parser.add_argument(  '--ymax',)
     parser.add_argument(  '--dmax',)
+    parser.add_argument(  '-s','--spin', action='store_true',default=False,)
     parser.add_argument(  '-f','--fermi', action='store_true',default=False,)
     parser.add_argument(  '-b','--broad', action='store_true',default=False,)
     parser.add_argument(  '-d','--dos', action='store_true',default=False,)
@@ -106,6 +120,7 @@ def options():
         name = 'conv.inp'
 
     return name,options.emax,options.emin,options.ymax,options.dmax,\
+            options.spin,\
             options.fermi,options.broad,options.dos,options.obs,\
             options.absorber,options.weight
 
@@ -113,6 +128,7 @@ def options():
 if __name__ == '__main__':
 
     inpname,OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_DMAX,\
+            FLAG_SPIN,\
             FLAG_fermi,FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE = options()
 
     if OPT_EMAX:
@@ -127,6 +143,8 @@ if __name__ == '__main__':
     if OPT_DMAX:
         OPT_DMAX=float(OPT_DMAX)
         print "Ymax(DOS)=",OPT_DMAX
+    if FLAG_SPIN:
+        print "Enforce spin=2 mode"
 
     if WE:
         WE=float(WE)
@@ -136,9 +154,9 @@ if __name__ == '__main__':
 #   xas = conv.get_xas()
 
     plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 16  # $B%i%Y%kEy$N%U%)%s%H%5%$%:(B
-    plt.rcParams['legend.fontsize'] = 14  # $B%l%8%'%s%I$N%U%)%s%H%5%$%:(B
-    plt.rcParams['axes.linewidth']  = 1.5 # $B<4$NB@$5$r@_Dj!#L\@9$j$OJQ$o$i$J$$(B
+    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
 
 #   plt.figure(figsize=(7.00, 9.89))  # for portrait
     plt.figure(figsize=(8.10, 9.89))  # for portrait
@@ -161,7 +179,7 @@ if __name__ == '__main__':
         filout = inp.get_filout()
 
 
-    ## $B7W;;7k2L$NFI$_9~$_(B ($BJ?6Q2=%b!<%I(B $B$N$H$-$O:G=i$K;XDj$7$?(Babsorber$B$+$i(B)
+    ## 計算結果の読み込み (平均化モード のときは最初に指定したabsorberから)
     if AV:
         txt = SAE.ReadFdm(filout+'_'+str(AV[0]),'.txt')
         conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]),'_conv.txt')
@@ -170,8 +188,8 @@ if __name__ == '__main__':
         conv = SAE.ReadFdmConv(filout,'_conv.txt')
 
     ############################################################################
-    # $BJ?6Q2=%b!<%I$N$H$-(B txt $B%$%s%9%?%s%9$N7k2L$r>e=q$-(B($BJ?6Q$N7k2L$K$9$k(B)
-    # $BJ?6Q2=%b!<%I$N;~$K(B filbav $BL>$r<hF@(B
+    # 平均化モードのとき txt インスタンスの結果を上書き(平均の結果にする)
+    # 平均化モードの時に filbav 名を取得
     if AV:
         try:
             filbav = inp.get_filout()
@@ -186,7 +204,7 @@ if __name__ == '__main__':
             conv.xas = conv.average_conv(filbav,AV)
 
     ############################################################################
-    ## *_0_conv.txt $B%U%!%$%k$X7k2L=PNO(B
+    ## *_0_conv.txt ファイルへ結果出力
     if AV:
         try:
             outav = open(filbav+'_'+str(0)+'_conv.txt','w')
@@ -198,7 +216,7 @@ if __name__ == '__main__':
 
 
     ############################################################################
-    # DOS $B%b!<%I$G(B fileout TAG $B$+$i85$N7W;;$N%m%0%U%!%$%kL>$rF~<j(B
+    # DOS モードで fileout TAG から元の計算のログファイル名を入手
     if FLAG_DOS:
         try:
             filbav = filbav
@@ -209,13 +227,14 @@ if __name__ == '__main__':
 
         if AV:
             if WE:
-                sd = SAE.ReadFdmSd(filout,filbav,suffix='_sd0.txt',\
-                        inpname=inpname,absorber=AV,weight=WE)
+                sd = SAE.ReadFdmSd(filout,suffix='_sd0.txt',\
+                        bavname=filbav,inpname=inpname,absorber=AV,weight=WE)
             else:
-                sd = SAE.ReadFdmSd(filout,filbav,suffix='_sd0.txt',\
-                        inpname=inpname,absorber=AV)
+                sd = SAE.ReadFdmSd(filout,suffix='_sd0.txt',\
+                        bavname=filbav,inpname=inpname,absorber=AV)
         else:
-            sd = SAE.ReadFdmSd(filout,filbav,suffix='_sd0.txt',inpname=inpname)
+            sd = SAE.ReadFdmSd(filout,suffix='_sd0.txt',\
+                    bavname=filbav,inpname=inpname)
 
     if AV: print ""
     print "INP FILE           = ",inpname," (.inp)"
@@ -232,8 +251,10 @@ if __name__ == '__main__':
 
 
     ############################################################################
-    # XAS$B%(%M%k%.!<86E@$NJQ49(B (*.txt $B%U%!%$%k$*$h$S(B *_conv.txt $BFI$_9~$_(B)
+    # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
     if not inp.get_energygpho() and not FLAG_fermi:
+        print "current mode is Fermi"
+        print "---> convert to PhotoEnergy"
         txt.eng = txt.eng + txt.E_edge
         conv.eng = conv.eng  + txt.E_edge
 
@@ -295,9 +316,16 @@ if __name__ == '__main__':
         plt.plot(conv.eng,dos_p,linewidth=1,label='absorber-LDOS(p)')
         plt.ticklabel_format(axis='x',useOffset=False)
 
-        dos_s = sd.get_ldos(l='s')
-        plt.plot(conv.eng,dos_s,linewidth=1,label='absorber-LDOS(s)')
-        plt.ticklabel_format(axis='x',useOffset=False)
+        if not FLAG_SPIN:
+            dos_s = sd.get_ldos(l='s')
+            plt.plot(conv.eng,dos_s,linewidth=1,label='absorber-LDOS(s)')
+            plt.ticklabel_format(axis='x',useOffset=False)
+        else:
+            dos_s = sd.get_ldos(l='p',spin='up')
+            plt.plot(conv.eng,dos_s,linewidth=1,label='absorber-LDOS(p)  up')
+            dos_s = sd.get_ldos(l='p',spin='down')
+            plt.plot(conv.eng,dos_s,linewidth=1,label='absorber-LDOS(p)  down')
+            plt.ticklabel_format(axis='x',useOffset=False)
 
         plt.ylabel("DOS [stat/eV]")
         if FLAG_fermi:

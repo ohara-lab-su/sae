@@ -1,13 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDmakeConvAllsite.py
 #
-#  allsite $B7W;;MQ(B
+#  allsite 計算用
 #
 #   -i conv.inp
-#    $B$r;2>H$7$F(B $B$9$Y$F$N%5%$%H$N(B conv $B$r9T$&(B conv.inp $B$H(B fdmfile.txt $B$r:n@.$9$k(B
+#    を参照して すべてのサイトの conv を行う conv.inp と fdmfile.txt を作成する
 #
 ################################################################################
 #
@@ -31,8 +32,8 @@ import os
 import glob
 import re
 #import fnmatch
-#import optparse
-import argparse
+import optparse
+#import argparse
 #import numpy as np
 
 import StructureAnalysisEnvironment as SAE
@@ -49,10 +50,12 @@ def options():
     name = 'read_pdb.inp'
 #   name = 'POSCAR.inp'
 
-#   parser = optparse.OptionParser()
-    parser = argparse.ArgumentParser()
-    parser.add_argument(  '-i','--input', dest='INPUT',)
-    options = parser.parse_args()
+    parser = optparse.OptionParser()
+#   parser = argparse.ArgumentParser()
+#   parser.add_argument(  '-i','--input', dest='INPUT',)
+    parser.add_option(  '-i','--input', dest='INPUT',)
+#   options = parser.parse_args()
+    options,args = parser.parse_args()
 
     if options.INPUT: name=options.INPUT
 

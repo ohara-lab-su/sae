@@ -1,20 +1,28 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
-# *_sd*.txt $B%U%!%$%k(B( pw.x $BF~NO%U%!%$%k(B $BFI$_9~$_(B)
+# *_sd*.txt ファイル( pw.x 入力ファイル 読み込み)
 #
 ################################################################################
 #
-# 2015.07.01
-#  $BJ?6Q2=%k!<%A%s$G=E$_(B($BJ?6Q$9$k:]$K3d$k?t(B)$B$r0z?t$KDI2C(B
+# 2015.07.02
+#  spin,ylm,intt,等の全出力の対応を含めた一般化
 #
 # 2015.07.01
-#   absorber $BJ#?t$N%U%!%$%k7k9g%b!<%I$rDI2C(B
+#  spin対応版 startup
+#
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
+#  --> 平均化ルーチンはコンストラクタで処理
+#
+# 2015.07.01
+#   absorber 複数のファイル結合モードを追加
 #
 # 2015.05.21
-#   startup ($B%9%T%sL$BP1~(B)
+#   startup (スピン未対応)
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -41,13 +49,15 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 class ReadFdmSd(object):
 
-    def __init__(self,sdname,bavname=None,\
-            suffix='_sd0.txt',inpname='read_pdb.inp',absorber=None,weight=None):
+    def __init__(self,sdname,\
+            suffix='_sd0.txt',inpname='read_pdb.inp',\
+            bavname=None,absorber=None,weight=None):
 
         if bavname is None:
             bavname = sdname
 
         ############################## self.datlines ###########################
+        # sum
         if absorber is None:
             print "---- ReadFdmSd ----"
             print "sdname + suffix = ",sdname+suffix
@@ -66,7 +76,7 @@ class ReadFdmSd(object):
                 print "    weight = "+str(weight)
                 n_site = float(weight)
 
-            # $B%"%[$J9g7W(B->$BJ?6Q(B->$B85$NMWAG$,7k9g$7$?%j%9%H7A<0$X$NJQ49(B
+            # アホな合計->平均->元の要素が結合したリスト形式への変換
             dsum  = np.zeros((num,row))
             dtmp = np.zeros((num,row))
             numdata = np.zeros((num,row))
@@ -74,13 +84,13 @@ class ReadFdmSd(object):
                 sdname = bavname+'_'+str(absorber[i])+suffix
                 print "sum : ",sdname
                 datatmp,num0 = SAE.read_dataline(sdname)
-                for i in range(1,num):
-                    for r in range(row):
+                for i in range(1,num):     # 一行目は除く
+                    for r in range(1,row): # Energy は除く
                         dtmp[i,r] = datatmp[i].split()[r]
                 dsum = dtmp + dsum
-            numdata = dsum/n_site  # $BJ?6QCM$r=P$9(B
+            numdata = dsum/n_site  # 平均値を出す
 
-            # $B85!9$N(B self.datlines $B7A<0$K9g$o$;$FG[Ns$r:n$j$J$*$9(B($B8_49@-0];}(B)
+            # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
             listdata = list(numdata)
             self.datlines = []
             self.datlines.append('') # dummy '1st-line'
@@ -90,83 +100,60 @@ class ReadFdmSd(object):
             self.num = num
         ############################## self.datlines ###########################
 
+        # オービタルの情報(bav) とスピンの情報(inp) を入手
         bav = SAE.ReadFdmBav(bavname)
         inp = SAE.ReadFdmInp(inpname)
 
         self.lmax = int(bav.get_lmax())
         self.ispin = int(inp.get_ispin())
-        mmax = 2*self.lmax+1
-#       print "mmax=",mmax
+        self.mmax = int(2*self.lmax+1)
 
-        mmax = 0
+        # トータルのオービタル数を計算
+        tmmax = 0
         for l in range(self.lmax+1):
-            mmax += 2*l+1
+            tmmax += (2*l+1)*self.ispin
+        total_orbit = tmmax
 
-        total_orbit = mmax
-        total_line = 2 + total_orbit*2 + (l+1)*2
+        # _sd0.txt で出力される列数
+        total_row = 1 + self.ispin + total_orbit*2 + (l+1)*2*self.ispin
 
-        # _sd0.txt $B$N0l9TL\$N%A%'%C%/(B
+        # _sd0.txt の一行目のチェック
         if absorber is None:
-            if len(self.datlines[0].split()) != total_line:
+            if len(self.datlines[0].split()) != total_row:
                 sys.exit("STOP: unknown type "+name+"_sd0.txt")
 
-        # $B3F(Bl$B50F;$4$H$N%G!<%?!<$,<}G<$5$l$F$$$k9T?t$NHV9f$r<hF@(B($BHs%9%T%s(B)
-        lnum = []
-        line = 2
-        for ll in range(self.lmax+1):
-            for m in range(-ll,ll+1):
-                line += 2
-            lnum.append(line)
-            line += 2
-#       for l in range(lmax+1):
-#           print lnum[l]
-#       print "s",lnum[0]
-#       print "p",lnum[1]
-#       print "d",lnum[2]
+        # すべての row 成分の情報を配列に叩きこむ
+        self.ylm   = np.zeros((self.num-1,self.lmax+1,self.mmax,self.ispin))
+        self.intylm= np.zeros((self.num-1,self.lmax+1,self.mmax,self.ispin))
+        self.dos   = np.zeros((self.num-1,self.lmax+1,self.ispin))
+        self.tdos  = np.zeros((self.num-1,self.lmax+1,self.ispin))
+        self.intt  = np.zeros((self.num-1,self.ispin))
+        self.eng   = np.zeros(self.num-1)
 
-
-        # DOS & TDOS $B$r50F;$4$H$KFI$_9~$`(B
-        ## for non-spin Cu
-        #  0     Energy
-        #  1,    Int_t
-        #
-        #  2, 3  n(0,0)    Intn(0,0)
-        #
-        #  4, 5  n_l(0)    Intn_l(0) ---> s
-        #
-        #  6, 7  n(1,-1)   Intn(1,-1)
-        #  8, 9  n(1,0)    Intn(1,0)
-        # 10,11  n(1,1)    Intn(1,1)
-        #
-        # 12,13  n_l(1)    Intn_l(1) ---> p
-        #
-        # 14,15  n(2,-2)   Intn(2,-2)
-        # 16,17  n(2,-1)   Intn(2,-1)
-        # 18,19  n(2,0)    Intn(2,0)
-        # 20,21  n(2,1)    Intn(2,1)
-        # 22,23  n(2,2)    Intn(2,2)
-        #
-        # 24,25  n_l(2)    Intn_l(2) --->  d
-
-        self.dos = np.zeros((self.num-1,self.lmax+1,self.ispin))
-        self.tdos = np.zeros((self.num-1,self.lmax+1,self.ispin))
-        self.eng = []
-        self.intt = []
-        spin = 0
         for i in range(1,self.num):
-            self.eng.append(float(self.datlines[i].split()[0]))
-            self.intt.append(float(self.datlines[i].split()[1]))
-            self.intt.append(float(self.datlines[i].split()[1]))
-            for l in range(self.lmax+1):
-                self.dos[i-1,l,spin] = float(self.datlines[i].split()[lnum[l]])
-                self.tdos[i-1,l,spin] = float(self.datlines[i].split()[lnum[l]+1])
+            row = 0
+            self.eng[i-1] = float(self.datlines[i].split()[row])
+            row += 1
 
-#       self.eng = np.zeros(self.num-1)
-#       self.xas = np.zeros(self.num-1)
+            for s in range(self.ispin):
+                self.intt[i-1,s] = float(self.datlines[i].split()[row])
+                row += 1
 
-#       for i in range(1,self.num):
-#           self.eng[i-1] = float(self.datlines[i].split()[0])
-#           self.xas[i-1] = float(self.datlines[i].split()[1])
+            for ll in range(self.lmax+1):
+                m0=0
+                for m in range(-ll,ll+1): # m,s成分分解
+                    for s in range(self.ispin):
+                        # 成分 and 積分
+                        self.ylm[i-1,ll,m0,s] = float(self.datlines[i].split()[row])
+                        row += 1
+                        self.intylm[i-1,ll,m0,s] = float(self.datlines[i].split()[row])
+                        row += 1
+                    m0 += 1
+                for s in range(self.ispin): # l軌道のsum
+                    self.dos[i-1,ll,s] = float(self.datlines[i].split()[row])
+                    row +=1
+                    self.tdos[i-1,ll,s] = float(self.datlines[i].split()[row])
+                    row +=1
 
 
     # LDOS(NEDOS,L,SPIN)
@@ -178,6 +165,11 @@ class ReadFdmSd(object):
             if l == 'd' and self.lmax >= 2: l = 2
             if l == 'f' and self.lmax >= 3: l = 3
 
+        if isinstance(spin,str):
+            if spin == 'up': spin = 0
+            if spin == 'dn': spin = 1
+            if spin == 'down': spin = 1
+
         self.ldos = self.dos[:,l,spin]
         return self.ldos
 
@@ -188,7 +180,8 @@ class ReadFdmSd(object):
 ################################################################################
 def options():
 
-    name = 'Cu'
+#   name = 'Cu'
+    name = 'Fe'
     suffix = '_sd0.txt'
 
     parser = optparse.OptionParser()

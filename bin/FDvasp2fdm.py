@@ -217,7 +217,7 @@ if __name__ == '__main__':
     #print ""
     #print atoms.get_scaled_positions()
 
-    print_fdmnes(atoms=atoms,MOL=MOL)
-    print_fdmnes(name=name,atoms=atoms,STD=False,MOL=MOL)
-    print_fdmnes_inp(atoms=atoms,MOL=MOL)
+    write_fdmnes(atoms=atoms,MOL=MOL)
+    write_fdmnes(name=name,atoms=atoms,STD=False,MOL=MOL)
+    write_fdmnes_inp(atoms=atoms,MOL=MOL)
 
