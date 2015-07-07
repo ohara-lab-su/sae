@@ -58,6 +58,11 @@ class ReadIncar(object):
         nelm_reg = re.compile('.*NELM',re.IGNORECASE)
         smass_reg = re.compile('.*SMASS',re.IGNORECASE)
         ibrion_reg = re.compile('.*IBRION',re.IGNORECASE)
+        laechg_reg = re.compile('.*LAECHG',re.IGNORECASE)
+
+        self.ispin = 1
+        self.nsw = 0
+        self.laechg = '.FALSE.'
 
         for i in range(self.num):
 
@@ -105,6 +110,10 @@ class ReadIncar(object):
             # IBRION
             if bool(ibrion_reg.match(self.datlines[i])):
                 self.ibrion = int(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # LAECHG
+            if bool(ibrion_reg.match(self.datlines[i])):
+                self.laechg = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
     def get_title(self):
         self.title = self.title if hasattr(self.__class__.__name__,'title') else 'unknown system'

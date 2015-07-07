@@ -20,6 +20,9 @@
 #
 ################################################################################
 #
+# 2015.07.06
+#   XAS の Weight と DOS の Weight を別に設定可能にした
+#
 # 2015.07.02
 #  spin対応(DOSのプロットでupとdownの併記プロット)
 #  その代わりに LDOS のプロットで p軌道のみ出力
@@ -105,11 +108,13 @@ def options():
     parser.add_argument(  '--dmax',)
     parser.add_argument(  '-s','--spin', action='store_true',default=False,)
     parser.add_argument(  '-f','--fermi', action='store_true',default=False,)
+    parser.add_argument(  '-n','--nonsubtract', action='store_true',default=False,)
     parser.add_argument(  '-b','--broad', action='store_true',default=False,)
     parser.add_argument(  '-d','--dos', action='store_true',default=False,)
     parser.add_argument(  '-o','--obs', action='store_true',default=False,)
     parser.add_argument(  '-a','--absorber', nargs='*')
-    parser.add_argument(  '-w','--weight',)
+    parser.add_argument(  '-w','--weight',) # for XAS
+    parser.add_argument(  '-x','--dosweight',) # for LDOS
 #   options,args = parser.parse_args()
     options = parser.parse_args()
 
@@ -121,34 +126,39 @@ def options():
 
     return name,options.emax,options.emin,options.ymax,options.dmax,\
             options.spin,\
-            options.fermi,options.broad,options.dos,options.obs,\
-            options.absorber,options.weight
+            options.fermi,options.nonsubtract,\
+            options.broad,options.dos,options.obs,\
+            options.absorber,options.weight,options.dosweight
 
 ###############################################################################
 if __name__ == '__main__':
 
     inpname,OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_DMAX,\
             FLAG_SPIN,\
-            FLAG_fermi,FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE = options()
+            FLAG_fermi,FLAG_subt,\
+            FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE,WEDOS = options()
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
-        print "Emax     =",OPT_EMAX
+        print "Emax             =",OPT_EMAX
     if OPT_EMIN:
         OPT_EMIN=float(OPT_EMIN)
-        print "Emin     =",OPT_EMIN
+        print "Emin             =",OPT_EMIN
     if OPT_YMAX:
         OPT_YMAX=float(OPT_YMAX)
-        print "Ymax     =",OPT_YMAX
+        print "Ymax             =",OPT_YMAX
     if OPT_DMAX:
         OPT_DMAX=float(OPT_DMAX)
-        print "Ymax(DOS)=",OPT_DMAX
+        print "Ymax(DOS)        =",OPT_DMAX
     if FLAG_SPIN:
         print "Enforce spin=2 mode"
 
     if WE:
         WE=float(WE)
-        print "Weight   =",WE
+        print "Weight           =",WE
+    if WEDOS:
+        WEDOW=float(WEDOS)
+        print "Weight for LDOS  =",WEDOS
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
@@ -226,7 +236,10 @@ if __name__ == '__main__':
                 sys.exit("STOP: filout TAG not found in "+inpname)
 
         if AV:
-            if WE:
+            if WEDOS:
+                sd = SAE.ReadFdmSd(filout,suffix='_sd0.txt',\
+                        bavname=filbav,inpname=inpname,absorber=AV,weight=WEDOS)
+            elif WE:
                 sd = SAE.ReadFdmSd(filout,suffix='_sd0.txt',\
                         bavname=filbav,inpname=inpname,absorber=AV,weight=WE)
             else:
@@ -252,19 +265,32 @@ if __name__ == '__main__':
 
     ############################################################################
     # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
-    if not inp.get_energygpho() and not FLAG_fermi:
-        print "current mode is Fermi"
-        print "---> convert to PhotoEnergy"
-        txt.eng = txt.eng + txt.E_edge
-        conv.eng = conv.eng  + txt.E_edge
+    if not FLAG_subt:
 
-    if inp.get_energygpho() and FLAG_fermi:
-        txt.eng = txt.eng - txt.E_Fermi - txt.E_edge
-        conv.eng = conv.eng - txt.E_Fermi - txt.E_edge
+        # PhotoEnegy モードで計算した時と同じ結果を返す
+        if not inp.get_energygpho() and not FLAG_fermi:
+            print "current mode is Fermi"
+            print "---> convert to PhotoEnergy"
+            print "     + E_edge"
+            txt.eng = txt.eng + txt.E_edge
+            conv.eng = conv.eng  + txt.E_edge
 
-    if not inp.get_energygpho() and FLAG_fermi:
-        txt.eng = txt.eng - txt.E_Fermi
-        conv.eng = conv.eng - txt.E_Fermi
+        # E_fermi を引く(A) : A=B
+        if not inp.get_energygpho() and FLAG_fermi:
+            print "current mode is Fermi"
+            print "---> subtract E_fermi"
+            print "     - E_fermi"
+            txt.eng = txt.eng - txt.E_Fermi
+            conv.eng = conv.eng - txt.E_Fermi
+
+        # E_fermi を引く(B) : A=B
+        if inp.get_energygpho() and FLAG_fermi:
+            print "current mode is PhotoEnergy"
+            print "---> convert to EF0 mode"
+            print "     - E_edge - E_fermi"
+            txt.eng = txt.eng - txt.E_Fermi - txt.E_edge
+            conv.eng = conv.eng - txt.E_Fermi - txt.E_edge
+
 
     ############################################################################
     ## XAS plot
@@ -288,10 +314,11 @@ if __name__ == '__main__':
     plt.ylabel("Absorption [arb. unit]")
 
     EF0 =txt.E_edge + txt.E_fermi
-    if FLAG_fermi:
-        plt.axvline(x=0,color='black',linewidth=1)
-    else:
-        plt.axvline(x=EF0,color='black',linewidth=1)
+    if not FLAG_subt:
+        if FLAG_fermi:
+            plt.axvline(x=0,color='black',linewidth=1)
+        else:
+            plt.axvline(x=EF0,color='black',linewidth=1)
 
 
 #   leg = plt.legend(fontsize=12,loc='lower right')
@@ -328,10 +355,11 @@ if __name__ == '__main__':
             plt.ticklabel_format(axis='x',useOffset=False)
 
         plt.ylabel("DOS [stat/eV]")
-        if FLAG_fermi:
-            plt.axvline(x=0,color='black',linewidth=1)
-        else:
-            plt.axvline(x=EF0,color='black',linewidth=1)
+        if not FLAG_subt:
+            if FLAG_fermi:
+                plt.axvline(x=0,color='black',linewidth=1)
+            else:
+                plt.axvline(x=EF0,color='black',linewidth=1)
 
     #   leg = plt.legend(fontsize=12,loc='lower right')
         leg = plt.legend(loc='upper right')

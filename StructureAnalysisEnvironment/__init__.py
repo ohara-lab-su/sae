@@ -19,6 +19,9 @@ from ReadProcar import *
 from ReadPoscar import *
 from ReadIncar import *
 
+from ReadVaspAcf import *
+from ReadVaspPotcar import *
+
 ### LOBSTER,COHP for VASP
 from ReadLobCohp import *
 from ReadLobDos import *

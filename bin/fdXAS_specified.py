@@ -83,11 +83,19 @@ if __name__ == '__main__':
 
     plt.axes([orgx,orgy,xsize,ysize])
 
-    conv = SAE.ReadFdmConv(name,suffix)
-#   conv = SAE.ReadFdmConv('R3.0/Au',suffix)
-    plt.plot(conv.eng,conv.xas,linewidth=2,label='XAS')
+#   E_edge   = 8979.0
+    E_edge   = 0.0
+    E_fermi  = -5.41217
 
+#   conv = SAE.ReadFdmConv(name,suffix)
+
+    conv = SAE.ReadFdmConv('R3.0/Au',suffix)
+    plt.plot(conv.eng+E_edge,conv.xas,linewidth=2,label='XAS')
+
+
+    plt.ticklabel_format(axis='x',useOffset=False)
     plt.xlabel("Energy above Fermi [eV]")
+#   plt.xlabel("Photon Energy [eV]")
     plt.ylabel("Absorption [arb. unit]")
 
 #   plt.axvline(x=0,color='black',linewidth=1)

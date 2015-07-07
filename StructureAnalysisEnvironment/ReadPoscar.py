@@ -56,6 +56,12 @@
 #
 ################################################################################
 #
+# 2015.07.06
+#  ReadPoscar class のリファクタ
+#  超コンパクトな instance をやめて、基本インスタンスで初シリする形に変更
+#  データーのパースは instance で、データーの二次処理は Method にする
+#  基本的には get_***() しなくても instance.** でインスタンス変数をそのまま使える
+#
 # 2015.02.12
 #  conv_rot_euler(alpha,beta,gamma) method を実装
 #  とりあえずは意図したように動く
@@ -91,9 +97,9 @@ __version__    = "0.0.5"
 ################################################################################
 
 import sys
-import os
+#import os
 import re
-import gzip
+#import gzip
 import numpy as np
 
 import optparse
@@ -108,49 +114,18 @@ class ReadPoscar(object):
     ## init and Read POSCAR
     def __init__(self,POSCAR='POSCAR'):
 
-        if os.path.exists(POSCAR):
-            GZIP=False
-        elif os.path.exists(POSCAR+".gz"):
-            GZIP=True
-        else:
-            sys.exit("STOP: "+POSCAR+" or "+POSCAR+".gz file not found")
+        self.datlines, self.num = SAE.read_dataline(POSCAR)
 
-        try:
-            if GZIP:
-                tmp = gzip.open(POSCAR+".gz")
-            else:
-                tmp = open(POSCAR)
-
-            datfile = tmp.read()
-        except:
-            tmp.close()
-            sys.exit("STOP: "+POSCAR+" does'nt open")
-        finally:
-            tmp.close()
-
-        self.datlines = datfile.split('\n')
-        self.num = len(self.datlines) -1
-
-    ###############################################
-    # TITLE
-    def get_title(self):
-        self.SYSTEM = self.datlines[0]
-        return self.SYSTEM
-
-    ###############################################
-    # SCALE
-    def get_scale(self):
+        self.system = self.datlines[0]
         self.scale = float(self.datlines[1])
-        return self.scale
 
-    ###############################################
-    ## Read Translation Vector
-    ##         x   y   z
-    ##   t1 = t11 t21 t31
-    ##   t2 = t12 t22 t32
-    ##   t3 = t13 t23 t33
-    ##
-    def get_t(self):
+        ###############################################
+        ## Read Translation Vector
+        ##         x   y   z
+        ##   t1 = t11 t21 t31
+        ##   t2 = t12 t22 t32
+        ##   t3 = t13 t23 t33
+        ##
         t1_x = float(self.datlines[2].split()[0])
         t1_y = float(self.datlines[2].split()[1])
         t1_z = float(self.datlines[2].split()[2])
@@ -176,11 +151,9 @@ class ReadPoscar(object):
         self.t[1,2] = t3_y
         self.t[2,2] = t3_z
 
-        return self.t
-
-    ###############################################
-    ## get VASP version
-    def get_vasp_version(self):
+        ###############################################
+        ## VASP のバージョン番号確認(記号があるか否か)
+        ##
         i=5
         atoms = self.datlines[i].split()
         if atoms[0].isdigit():
@@ -188,115 +161,70 @@ class ReadPoscar(object):
         else:
             self.vasp_version = 5
 
-        return self.vasp_version
-
-    ###############################################
-    ## get VASP version, atoms
-    ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
-    def get_atoms(self):
-        VASP = int(self.get_vasp_version())
+        ###############################################
+        ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+        ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+        ##
         i=5
+        self.atoms_index = []
         self.atoms = []
-        if VASP == 4:
+        if self.vasp_version == 4:
             self.atoms.extend(self.datlines[i].split())
-        elif VASP == 5:
-            i += 1
-            self.atoms.extend(self.datlines[i].split())
+        elif self.vasp_version == 5:
+            self.atoms_index.extend(self.datlines[i].split())
+            self.atoms.extend(self.datlines[i+1].split())
         else:
             sys.exit("Error: unknown VASP format")
 
-        return self.atoms
+        self.nion = len(self.atoms)
 
-    ###############################################
-    ## get VASP version, atoma_index
-    ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
-    def get_atoms_index(self):
-        VASP = self.get_vasp_version()
-        i=5
-        atoms = self.datlines[i].split()
-        self.atoms_index = []
-        if VASP == 5:
-            self.atoms_index=list(atoms)
-
-        return self.atoms_index
-
-    ###############################################
-    ## atoms_index の通し番号版
-    ##    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
-    ##    atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
-    ##    ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す
-    def get_atoms_index_j(self):
-        atoms_index = self.get_atoms_index()
-        atoms = self.get_atoms()
-        nion = self.get_nion()
-
+        ###############################################
+        ## atoms_index の通し番号版
+        ##    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
         self.atoms_index_j = []
-        for k in range(nion):
-            for l in range(int(atoms[k])):
-                self.atoms_index_j.append(str(atoms_index[k]))
+        if self.vasp_version == 5:
+            for k in range(self.nion):
+                for l in range(int(self.atoms[k])):
+                    self.atoms_index_j.append(str(self.atoms_index[k]))
 
-        return self.atoms_index_j
-
-    ###############################################
-    # NION
-    def get_nion(self):
-        return len(self.get_atoms())
-
-    ###############################################
-    ## get number of atoms
-    def get_natom(self):
-        atoms = self.get_atoms()
-        nion = int(len(atoms))
+        ###############################################
+        ## 全原子数の確認
         self.natom = 0
-        for j in range(nion):
-            sum = int(atoms[j])
+        for j in range(self.nion):
+            sum = int(self.atoms[j])
             self.natom = self.natom + sum
 
-       #print "natom= ",self.natom
-        return self.natom
-
-    ###############################################
-    ## get ion (makes index)
-    ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
-    def get_ion(self):
-        natom = self.get_natom()
-        atoms = self.get_atoms()
-        nion = int(len(atoms))
-        self.ion = np.zeros(natom)
+        ###############################################
+        ## get ion (makes index)
+        ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+        ##
+        self.ion = np.zeros(self.natom)
         tmp = -1
-        for j in range(nion):
+        for j in range(self.nion):
             local = -1
-            for k in range(int(atoms[j])):
+            for k in range(int(self.atoms[j])):
                 tmp += 1
                 local += 1
                 self.ion[tmp] = int(j)
                #print tmp, int(ion[tmp])
-        return self.ion
 
-    ###############################################
-    ## get ion_local (makes index)
-    ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
-    def get_ion_local(self):
-        natom = self.get_natom()
-        atoms = self.get_atoms()
-        nion = int(len(atoms))
-        self.ion_local = np.zeros(natom)
+        ###############################################
+        ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+        ##
+        self.ion_local = np.zeros(self.natom)
         tmp = -1
-        for j in range(nion):
+        for j in range(self.nion):
             local = -1
-            for k in range(int(atoms[j])):
+            for k in range(int(self.atoms[j])):
                 tmp += 1
                 local += 1
                 self.ion_local[tmp] = int(local)
                #print tmp, int(ion[tmp]), int(ion_local[tmp])
-        return self.ion_local
 
-    ###############################################
-    ## get atomc coordinate mode
-    def get_selective(self):
-
-        VASP = self.get_vasp_version()
-        if VASP == 4:
+        ###############################################
+        ## get atomc coordinate mode
+        ##
+        if self.vasp_version == 4:
             i = 5+1
         else:
             i = 6+1
@@ -304,118 +232,113 @@ class ReadPoscar(object):
         num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
         selective_reg = re.compile('^S.*',re.IGNORECASE)
 
-        tmp = self.datlines[i].split()
-        if bool(num_reg.match(tmp[0])):
-            print tmp[0]
+        if bool(num_reg.match(self.datlines[i].split()[0])):
+            print self.datlines[i].split()[0]
             sys.exit("Format Error")
         else:
-            if bool(selective_reg.match(tmp[0])):
-               #print "selective True"
-                i += 1
-                tmp = self.datlines[i].split()
+            if bool(selective_reg.match(self.datlines[i].split()[0])):
                 self.selective = True
             else:
-               #print "selective False"
                 self.selective = False
 
-        return self.selective
-
-    ###############################################
-    ## 内部座標のモードを取得
-    def get_direct(self):
-
-        VASP = self.get_vasp_version()
-        if VASP == 4:
+        ###############################################
+        ## 内部座標のモードを取得
+        ##
+        if self.vasp_version == 4:
             i = 5+1
         else:
             i = 6+1
+        if self.selective: i +=1
 
-        selective = self.get_selective()
-        if selective:
-            i +=1
-
-        num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
         direct_reg = re.compile('^D.*',re.IGNORECASE)
         car_reg = re.compile('^C.*',re.IGNORECASE)
 
-        tmp = self.datlines[i].split()
-        if bool(num_reg.match(tmp[0])):
-            print tmp[0]
+        if bool(num_reg.match(self.datlines[i].split()[0])):
+            print self.datlines[i].split()[0]
             sys.exit("Format Error")
-        if bool(direct_reg.match(tmp[0])):
-           #print "Direct Mode"
+        if bool(direct_reg.match(self.datlines[i].split()[0])):
             self.direct = True
-        elif bool(car_reg.match(tmp[0])):
-           #print "Cartesian Mode"
+        elif bool(car_reg.match(self.datlines[i].split()[0])):
             self.direct = False
 
-       #print "get_direct:",self.direct
-        return self.direct
 
-    ###############################################
-    ## get atomic coordinate position
-    ##
-    def get_position(self):
-
-        VASP = self.get_vasp_version()
-        if VASP == 4:
+        ###############################################
+        ## get atomic coordinate position
+        ##
+        if self.vasp_version == 4:
             i = 5
         else:
             i = 6
+        if self.selective: i += 1
 
-        selective = self.get_selective()
-        if selective:
-            i += 1
-
-        natom = self.get_natom()
-        self.position = np.zeros((int(natom),3))
-        self.fix= np.zeros((int(natom),3),dtype='S')
+        self.position = np.zeros((int(self.natom),3))
+        self.fix= np.zeros((int(self.natom),3),dtype='S')
 
         i += 2
-        for j in range(natom):
-            xyz = self.datlines[i+j].split()
-            self.position[j,0] = xyz[0]
-            self.position[j,1] = xyz[1]
-            self.position[j,2] = xyz[2]
-            if selective:
-                self.fix[j,0] = str(xyz[3])
-                self.fix[j,1] = str(xyz[4])
-                self.fix[j,2] = str(xyz[5])
+        for j in range(self.natom):
+            self.position[j,0] = float(self.datlines[i+j].split()[0])
+            self.position[j,1] = float(self.datlines[i+j].split()[1])
+            self.position[j,2] = float(self.datlines[i+j].split()[2])
+            if self.selective:
+                if len(self.datlines[i+j].split()) < 6:
+                    sys.exit("STOP: corrdinate line Format Error")
+                self.fix[j,0] = str(self.datlines[i+j].split()[3])
+                self.fix[j,1] = str(self.datlines[i+j].split()[4])
+                self.fix[j,2] = str(self.datlines[i+j].split()[5])
            #print j,
            #print " %16.12f %16.12f %16.12f" \
            #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
            #print ""
 
+
+    ############################################################################
+    def get_title(self):
+        return self.system
+
+    def get_scale(self):
+        return self.scale
+
+    def get_t(self):
+        return self.t
+
+    def get_vasp_version(self):
+        return self.vasp_version
+
+    def get_atoms(self):
+        return self.atoms
+
+    def get_atoms_index(self):
+        return self.atoms_index
+
+    def get_atoms_index_j(self):
+        return self.atoms_index_j
+
+    def get_nion(self):
+        return self.nion
+
+    def get_natom(self):
+        return self.natom
+
+    def get_ion(self):
+        return self.ion
+
+    def get_ion_local(self):
+        return self.ion_local
+
+    def get_selective(self):
+        return self.selective
+
+    def get_direct(self):
+        return self.direct
+
+    def get_position(self):
         return self.position
 
-    ###############################################
-    ## get atomic coordinate position
-    ##
     def get_fix(self):
-
-        natom = self.get_natom()
-        selective = self.get_selective()
-       #self.fix = np.zeros((natom,3),dtype='S2')
-        self.fix = np.zeros((natom,3),dtype='S')
-
-        if selective:
-            VASP = self.get_vasp_version()
-            if VASP == 4:
-                i = 5+1
-            else:
-                i = 6+1
-
-            i += 2
-            for j in range(natom):
-                xyz = self.datlines[i+j].split()
-                self.fix[j,0] =str(xyz[3])
-                self.fix[j,1] =str(xyz[4])
-                self.fix[j,2] =str(xyz[5])
-
         return self.fix
 
 
-    ###############################################
+    ############################################################################
     # 基本並進ベクトルを、alpha, beta, gamma で回す
     # VASP 表記とは転置した形で t ベクトルに入っているの注意
     # 注意) むしろ VASP 表記が転置している

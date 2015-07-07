@@ -96,10 +96,19 @@ if __name__ == '__main__':
 
     plt.axes([orgx,orgy,xsize,ysize])
 
+
+#   E_edge   = 24350.0
+#   E_fermi  = -5.82491
+
+    E_edge   = 0.0
+    E_fermi  = 0.0
+    EF0 = E_edge + E_fermi
+
     ###########################################################################
-    sd = SAE.ReadFdmSd('Pd6',absorber=(1,2,3,4,5),weight=6.0)
+    sd = SAE.ReadFdmSd('Pd6/Pd6',inpname='Pd6/read_pdb.inp',\
+                        absorber=(1,2,3,4,5),weight=6.0)
     dos = sd.get_ldos(l='p')
-    plt.plot(sd.eng,dos,linewidth=2,label='absorber LDOS (p)')
+    plt.plot(sd.eng+E_edge,dos,linewidth=2,label='absorber LDOS (p)')
     ###########################################################################
 #   sd = SAE.ReadFdmSd('Pd19/R5_fdm/allsite/Pd19',absorber=(1,2,3),weight=3.0)
 #   dos = sd.get_ldos(l='p')
@@ -108,8 +117,11 @@ if __name__ == '__main__':
 
 #   plt.xlabel("Energy above Fermi [eV]")
 #   plt.ylabel("Absorption [arb. unit]")
-    plt.axvline(x=0,color='black',linewidth=1)
+    plt.ylabel("LDOS [stat/eV]")
+#   plt.axvline(x=0,color='black',linewidth=1)
+    plt.axvline(x=EF0,color='black',linewidth=1)
 
+    plt.ticklabel_format(axis='x',useOffset=False)
 #   leg = plt.legend(fontsize=12,loc='lower right')
 #   leg = plt.legend(loc='lower right')
     leg = plt.legend(loc='upper right')
