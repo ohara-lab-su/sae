@@ -349,23 +349,45 @@ def options():
         else:
             inpname = inpname0
 
+
+    if len(args) < 3:
+        super_x = 1
+        super_y = 1
+        super_z = 1
+    else:
+        super_x = int(args[0])
+        super_y = int(args[1])
+        super_z = int(args[2])
+        print "Super Cell         : [",super_x,",",super_y,",",super_z,"]"
+
     return inpname,\
             options.bond,\
             options.log,\
             options.charge,\
             options.noncell,\
-            options.cmax,options.cmin
+            options.cmax,options.cmin,\
+            super_x,super_y,super_z
 
 ################################################################################
 if __name__ == '__main__':
 
-    readfile,OPT_BOND,OPT_LOG,OPT_CHARGE,OPT_CELL,CMAX,CMIN = options()
+    #####################################
+    # オプション処理
+    #
+    readfile,OPT_BOND,OPT_LOG,OPT_CHARGE,OPT_CELL,CMAX,CMIN,\
+            super_x,super_y,super_z = options()
 
+
+    #####################################
     # wxPython の基本インスタンスの生成
+    #
 #   app = wx.App(True,None)
     app = wx.PySimpleApp()
 
+
+    #####################################
     # 入出力&モード確認
+    #
     print "INPUT file name    :",readfile
     print "plot BOND Mode     :",OPT_BOND
     print "plot without cell  :",OPT_CELL
@@ -377,13 +399,24 @@ if __name__ == '__main__':
     if CMIN: print "charge MIN         :",CMIN
     print "-----------------------------------"
 
+
+    #####################################
     # POSCAR/CONTCAR 読み込み
+    #
     poscar = SAE.ReadPoscar(readfile)
     potcar = SAE.ReadVaspPotcar()
     acf = SAE.ReadVaspAcf(poscar=poscar,potcar=potcar)
 
-    # 結晶描画フレーム(vpython) & 描画メッソド
-    crystal = CrystalMaker(poscar,origin=[-0.5,-0.5,0],times=[2,2,2])
+
+    #####################################
+    # 結晶描画フレーム(vpython)インスタンス作成
+    #
+    crystal = CrystalMaker(poscar,origin=[-0.5,-0.5,0],\
+            times=[super_x,super_y,super_z])
+
+    #####################################
+    # 描画メッソド
+    #
     crystal.plot_atoms()
     if OPT_CHARGE:     crystal.plot_bader(acf,mode='CHARGE',cmax=CMAX,cmin=CMIN)
     if not OPT_CHARGE: crystal.plot_bader(acf,cmax=CMAX,cmin=CMIN)

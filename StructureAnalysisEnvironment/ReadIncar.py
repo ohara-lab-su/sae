@@ -59,6 +59,9 @@ class ReadIncar(object):
         smass_reg = re.compile('.*SMASS',re.IGNORECASE)
         ibrion_reg = re.compile('.*IBRION',re.IGNORECASE)
         laechg_reg = re.compile('.*LAECHG',re.IGNORECASE)
+        ngxf_reg = re.compile('.*NGXF',re.IGNORECASE)
+        ngyf_reg = re.compile('.*NGYF',re.IGNORECASE)
+        ngzf_reg = re.compile('.*NGZF',re.IGNORECASE)
 
         self.ispin = 1
         self.nsw = 0
@@ -113,7 +116,22 @@ class ReadIncar(object):
 
             # LAECHG
             if bool(laechg_reg.match(self.datlines[i])):
-                self.laechg = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                if bool(re.compile('^.*=.*T',re.IGNORECASE).match(self.datlines[i])):
+                    self.laechg = True
+                elif bool(re.compile('^.*=.*F',re.IGNORECASE).match(self.datlines[i])):
+                    self.laechg = False
+
+            # NGXF
+            if bool(ngxf_reg.match(self.datlines[i])):
+                self.ngxf = int(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # NGYF
+            if bool(ngyf_reg.match(self.datlines[i])):
+                self.ngyf = int(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # NGZF
+            if bool(ngzf_reg.match(self.datlines[i])):
+                self.ngzf = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
     def get_title(self):
         self.title = self.title if hasattr(self.__class__.__name__,'title') else 'unknown system'
@@ -171,7 +189,20 @@ class ReadIncar(object):
         return self.ibrion
 
     def get_laechg(self):
+        self.laechg = self.laechg if hasattr(self, 'laechg') else False
         return self.laechg
+
+    def get_ngxf(self):
+        self.ngxf = self.ngxf if hasattr(self, 'ngxf') else None
+        return self.ngxf
+
+    def get_ngyf(self):
+        self.ngyf = self.ngyf if hasattr(self, 'ngyf') else None
+        return self.ngyf
+
+    def get_ngzf(self):
+        self.ngzf = self.ngzf if hasattr(self, 'ngzf') else None
+        return self.ngzf
 
 ################################################################################
 if __name__ == '__main__':

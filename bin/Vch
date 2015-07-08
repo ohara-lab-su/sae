@@ -79,8 +79,6 @@ if __name__ == '__main__':
 
     print "EDIFF  = ",incar.ediff
     print "EDIFFG = ",incar.ediffg
-    print ""
-    print "LAECHG = ",incar.laechg
 
 
     kpoints = SAE.ReadKpoints()
@@ -99,5 +97,10 @@ if __name__ == '__main__':
         else:
             print "non Selective Dynamics"
 
-#   if laechg.nsw:
-#       print ""
+    if incar.laechg:
+        print ""
+        print "LAECHG = ",incar.laechg
+        print "NGXF   = ",incar.ngxf
+        print "NGYF   = ",incar.ngyf
+        print "NGZF   = ",incar.ngzf
+
