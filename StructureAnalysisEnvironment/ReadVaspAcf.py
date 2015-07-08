@@ -69,7 +69,8 @@ class ReadVaspAcf(object):
         i = 2
         while 1 :
             self.charge[i-2] = float(self.datlines[i].split()[4])
-            self.bader[i-2] = self.atoms_zval_j[i-2] - self.charge[i-2]
+           #self.bader[i-2] = self.atoms_zval_j[i-2] - self.charge[i-2]
+            self.bader[i-2] = self.charge[i-2] - self.atoms_zval_j[i-2]
             i += 1
             if bool(line_reg.match(self.datlines[i])):
                     break

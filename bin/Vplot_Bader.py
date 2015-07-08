@@ -5,13 +5,16 @@
 #
 # Vplot_Bader.py の電荷数描画プログラム
 #
-#  1) POSCAR/OUTCAR を読み込む
-#  2) ACF.cat を読み込みむ
+#  デフォルトではChargeの変化量（絶対値）変化を示す。
+#  モードを変えて(-cオプション) で Charge の正負で色の濃淡モードに変更
 #
 # 基本的にコマンドラインオプションで制御。
 # GUI は表示だけ
 #
 ################################################################################
+#
+# 2015.07.08
+#   スーパーセル表示対応
 #
 # 2015.07.06 1st
 #    vpython,wxpython 利用
@@ -58,11 +61,13 @@ class CrystalMaker(object):
     def __init__(self,cell,\
             code='VASP',\
             origin=[-0.5,-0.5,0],\
-            background=[0.5,0.5,0.5]):
+            background=[0.5,0.5,0.5],\
+            times=[1,1,1]):
 
         self.origin = origin
         self.code = code
         self.cell = cell
+        self.times = times
 
 #       background=(0.5,0.5,0.5)
 
@@ -71,9 +76,14 @@ class CrystalMaker(object):
 
     ############################################################################
     ## 原子の描画
-    def plot_atoms(self,cell=None):
+    ##  (super cell 対応版)
+    def plot_atoms(self,cell=None,times=None):
 
         if cell is not None: self.cell = cell
+        if times is not None: self.times = times
+
+        # スーパーセル化
+        self.cell.conv_supercell(times=(self.times[0],self.times[1],self.times[2]))
 
         # 原子座標系のCartesian to Direct 変換
         if self.cell.direct:
@@ -115,7 +125,7 @@ class CrystalMaker(object):
             # 原子の描画
             atom = vp.sphere(frame=self.crystalframe,pos=(xp,yp,zp), radius=R)
 
-            # 原子の色設定(RGB)を適当に自動化
+            # 原子の色設定(RGB)を適当に自動化,マジで適当(いい加減)
             atom.red   = 0.5*num*num
             atom.green = 0.1*num
             atom.blue  = 1/num
@@ -139,72 +149,104 @@ class CrystalMaker(object):
         if cell is not None: self.cell = cell
         if code is not None: self.code = code
 
-        # デフォルトのボンド設定
-        atom1 = 1
-        atom2 = 1
-        distance = 2.8
+        # ボンド情報の獲得
+        if os.path.exists('bond.dat'):
+            try:
+                bondfile = open('bond.dat').read().split('\n')
+            except:
+                bondfile.close()
 
-        print "nion =",self.cell.nion
-        print "atom1=",atom1
-        print "atom2=",atom2
-        if atom1 >  self.cell.nion or atom2 > self.cell.nion:
-            print "set bond_FLAG=False : aotm1 >  nion or atom2 >  nion"
+#           nline = len(bondfile) -1
+            nbond = int(bondfile[0])
 
-        # VASP の場合はVASP5以上の書式が必要(原子番号情報が必要)
-        if self.code == 'VASP':
-            if self.cell.vasp_version < 5:
-                sys.exit("STOP: VASP version < 5 ")
+            atom1 = np.zeros(nbond)
+            atom2 = np.zeros(nbond)
+            dist = np.zeros(nbond)
 
-        # bond 情報の取得
-        bondnum = \
-                SAE.get_bond_info_param(atom1,atom2,distance,\
-                        self.cell.nion,\
-                        self.cell.atoms,\
-                        self.cell.position)
+            for i in range(nbond):
+                atom1[i] = int(bondfile[1+i].split()[0])
+                atom2[i] = int(bondfile[1+i].split()[1])
+                dist[i] = float(bondfile[1+i].split()[2])
 
-        print "NUMBER OF BOND     :",bondnum
+        else:
+            # デフォルトのボンド設定
+            nbond = 1
+            atom1 = np.zeros(1)
+            atom2 = np.zeros(1)
+            dist = np.zeros(1)
+            atom1[0] = 1
+            atom2[0] = 1
+            dist[0] = 2.8
 
-        bondr = np.zeros((bondnum))
-        bond1 = np.zeros((bondnum),dtype=int)
-        bond2 = np.zeros((bondnum),dtype=int)
+        # ボンドの数だけループする
+        for j in range(nbond):
 
-        SAE.get_bond_info(atom1,atom2,distance,\
-                self.cell.nion,\
-                self.cell.atoms,\
-                self.cell.atoms_index,\
-                self.cell.position,\
-                bondr,bond1,bond2)
+            print "------------- bond "+str(j+1)+" ------------"
+            print "atom1=",atom1[0]
+            print "atom2=",atom2[0]
+            print "distance=",dist[0]
+            if atom1[0] >  self.cell.nion or atom2[0] > self.cell.nion:
+                print "set bond_FLAG=False : aotm1 >  nion or atom2 >  nion"
 
-        # ボンドの太さ
-        BR = bondradious
+            # VASP の場合はVASP5以上の書式が必要(原子番号情報が必要)
+            if self.code == 'VASP':
+                if self.cell.vasp_version < 5:
+                    sys.exit("STOP: VASP version < 5 ")
 
-        for num in range(bondnum):
+            # bond 情報の取得
+            bondnum = \
+                    SAE.get_bond_info_param(atom1[j],atom2[j],dist[j],\
+                            self.cell.nion,\
+                            self.cell.atoms,\
+                            self.cell.position)
 
-            x1 = self.cell.position[bond1[num],0]
-            y1 = self.cell.position[bond1[num],1]
-            z1 = self.cell.position[bond1[num],2]
+            print "NUMBER OF BOND     :",bondnum
 
-            x2 = self.cell.position[bond2[num],0]
-            y2 = self.cell.position[bond2[num],1]
-            z2 = self.cell.position[bond2[num],2]
+            bondr = np.zeros((bondnum))
+            bond1 = np.zeros((bondnum),dtype=int)
+            bond2 = np.zeros((bondnum),dtype=int)
 
-            x12 =  x2 - x1
-            y12 =  y2 - y1
-            z12 =  z2 - z1
+            SAE.get_bond_info(atom1[j],atom2[j],dist[j],\
+                    self.cell.nion,\
+                    self.cell.atoms,\
+                    self.cell.atoms_index,\
+                    self.cell.position,\
+                    bondr,bond1,bond2)
 
-            x0 = x1 + self.origin[0]
-            y0 = y1 + self.origin[1]
-            z0 = z1 + self.origin[2]
+            # ボンドの太さ
+            BR = bondradious
 
-            r1 = bondr[num]
+            for num in range(bondnum):
 
-            vp.cylinder (frame=self.crystalframe, pos=(x0,y0,z0), axis=(x12,y12,z12), radius =BR )
+                x1 = self.cell.position[bond1[num],0]
+                y1 = self.cell.position[bond1[num],1]
+                z1 = self.cell.position[bond1[num],2]
 
-            if bondlog:
-                print num, bond1[num],"("+str(self.cell.atoms_index[int(self.cell.ion[bond1[num]])])+") -",\
-                           bond2[num],"("+str(self.cell.atoms_index[int(self.cell.ion[bond2[num]])])+")"  ,\
-                           " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
-                           % ( r1, x1,y1,z1, x2,y2,z2)
+                x2 = self.cell.position[bond2[num],0]
+                y2 = self.cell.position[bond2[num],1]
+                z2 = self.cell.position[bond2[num],2]
+
+                x12 =  x2 - x1
+                y12 =  y2 - y1
+                z12 =  z2 - z1
+
+                x0 = x1 + self.origin[0]
+                y0 = y1 + self.origin[1]
+                z0 = z1 + self.origin[2]
+
+                r1 = bondr[num]
+
+                vp.cylinder( frame=self.crystalframe, \
+                        pos=(x0,y0,z0), \
+                        axis=(x12,y12,z12), \
+                        radius =BR )
+
+                if bondlog:
+                    print "-------------------- bond "+str(j)+" ---------------"
+                    print num, bond1[num],"("+str(self.cell.atoms_index[int(self.cell.ion[bond1[num]])])+") -",\
+                               bond2[num],"("+str(self.cell.atoms_index[int(self.cell.ion[bond2[num]])])+")"  ,\
+                               " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
+                               % ( r1, x1,y1,z1, x2,y2,z2)
 
     ############################################################################
     # 画像保存
@@ -214,7 +256,8 @@ class CrystalMaker(object):
 
     ############################################################################
     ## Bader Charge の描画(色で区別する)
-    def plot_bader(self,acf):
+    ## 一度 plot_crystal を読んだことがあるのが前提(cell情報の変換等)
+    def plot_bader(self,acf,mode='ABS',cmax=None,cmin=None):
 
         if not isinstance(acf, SAE.ReadVaspAcf):
             sys.exit("STOP: acf does'nt instance")
@@ -232,20 +275,54 @@ class CrystalMaker(object):
             radius = SAE.get_atomic_radius1(atom_type)
             R = radius*self.ratio
 
+            if mode != 'ABS':
+                if abs(acf.max_bader) >= abs(acf.min_bader):
+                    charge_max = abs(acf.max_bader)
+                else:
+                    charge_max = abs(acf.min_bader)
+
             # 原子の描画
-            bader_color  = abs(acf.bader[i])/abs(acf.max_bader)
             atom = vp.sphere(frame=self.crystalframe,pos=(xp,yp,zp), radius=R)
 
-            print "%s %7.3f %7.3f" %( acf.atoms_index_j[i], acf.bader[i], bader_color)
-
             # 原子の色設定(RGB)を適当に自動化
-            atom.red   = bader_color
-            atom.green = 0
-            atom.blue  = 0
-#           atom.green = 255
-#           atom.blue  = 255
-#           c = (1,1,0)
-#           color=vp.color.hsv
+            if mode == 'ABS':
+               #bader_abs_color  = abs(acf.bader[i])/abs(acf.max_bader)
+                bader_abs_color  = abs(acf.bader[int(self.cell.sp_j[i])])/abs(acf.max_bader)
+                atom.red   = bader_abs_color
+                atom.green = 0
+                atom.blue  = 0
+            else:
+               #if 0 < acf.bader[i]: # 電荷が正(増える): 負の価数
+                if 0 < acf.bader[self.cell.sp_j[i]]: # 電荷が正(増える): 負の価数
+                    if CMAX:
+                       #bader_abs_color = abs(acf.bader[i])/abs(float(CMAX))
+                        bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/abs(float(CMAX))
+                    else:
+                       #bader_abs_color = abs(acf.bader[i])/charge_max
+                        bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/charge_max
+                    atom.red   = bader_abs_color
+                    atom.green = 0
+                    atom.blue  = 0
+               #elif 0 > acf.bader[i]: # 電荷が負(減る) : 正の価数
+                elif 0 > acf.bader[self.cell.sp_j[i]]: # 電荷が負(減る) : 正の価数
+                    if CMIN:
+                       #bader_abs_color = abs(acf.bader[i])/abs(float(CMIN))
+                        bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/abs(float(CMIN))
+                    else:
+                       #bader_abs_color = abs(acf.bader[i])/charge_max
+                        bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/charge_max
+                    atom.red   = 0
+                    atom.green = 0
+                    atom.blue  = bader_abs_color
+
+            # 非スーパセル
+           #print "%s %7.3f %7.3f" %( acf.atoms_index_j[i], acf.bader[i], bader_abs_color)
+
+            # スーパーセルインデックスに対応
+            print "%s %7.3f %7.3f"\
+                    %( acf.atoms_index_j[int(self.cell.sp_j[i])], \
+                               acf.bader[int(self.cell.sp_j[i])], bader_abs_color)
+
 
 
 ################################################################################
@@ -256,8 +333,11 @@ def options():
     parser = optparse.OptionParser()
     parser.add_option( '-i','--input', dest='INPUT',)
     parser.add_option( '-b','--bond',action='store_true',default=False)
+    parser.add_option( '-l','--log',action='store_true',default=False)
     parser.add_option( '-c','--charge',action='store_true',default=False)
     parser.add_option( '-n','--noncell',action='store_true',default=False)
+    parser.add_option( '--cmax',)
+    parser.add_option( '--cmin',)
     options, args = parser.parse_args()
 
     if options.INPUT: inpname = options.INPUT
@@ -269,38 +349,48 @@ def options():
         else:
             inpname = inpname0
 
-    return inpname,options.bond,options.charge,options.noncell
-
+    return inpname,\
+            options.bond,\
+            options.log,\
+            options.charge,\
+            options.noncell,\
+            options.cmax,options.cmin
 
 ################################################################################
 if __name__ == '__main__':
 
-    readfile,OPT_BOND,OPT_CHARGE,OPT_CELL = options()
+    readfile,OPT_BOND,OPT_LOG,OPT_CHARGE,OPT_CELL,CMAX,CMIN = options()
 
     # wxPython の基本インスタンスの生成
 #   app = wx.App(True,None)
     app = wx.PySimpleApp()
 
+    # 入出力&モード確認
     print "INPUT file name    :",readfile
     print "plot BOND Mode     :",OPT_BOND
     print "plot without cell  :",OPT_CELL
+    if OPT_CHARGE:
+        print "plot charge        : charge"
+    else:
+        print "plot charge        : ABS(charge)"
+    if CMAX: print "charge MAX         :",CMAX
+    if CMIN: print "charge MIN         :",CMIN
+    print "-----------------------------------"
 
     # POSCAR/CONTCAR 読み込み
     poscar = SAE.ReadPoscar(readfile)
     potcar = SAE.ReadVaspPotcar()
     acf = SAE.ReadVaspAcf(poscar=poscar,potcar=potcar)
 
-    # POTCAR 読み込み
-
     # 結晶描画フレーム(vpython) & 描画メッソド
-    crystal = CrystalMaker(poscar)
+    crystal = CrystalMaker(poscar,origin=[-0.5,-0.5,0],times=[2,2,2])
     crystal.plot_atoms()
-    crystal.plot_bader(acf)
+    if OPT_CHARGE:     crystal.plot_bader(acf,mode='CHARGE',cmax=CMAX,cmin=CMIN)
+    if not OPT_CHARGE: crystal.plot_bader(acf,cmax=CMAX,cmin=CMIN)
+    if OPT_BOND:       crystal.plot_bonds()
+    if not OPT_CELL:   crystal.plot_unit_cell()
 
-    if OPT_BOND: crystal.plot_bonds()
-    if not OPT_CELL: crystal.plot_unit_cell()
 
 #   time.sleep(1)
 #   os.system("screencapture screen.png")
-
 #   app.MainLoop()

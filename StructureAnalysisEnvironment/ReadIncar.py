@@ -112,7 +112,7 @@ class ReadIncar(object):
                 self.ibrion = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
             # LAECHG
-            if bool(ibrion_reg.match(self.datlines[i])):
+            if bool(laechg_reg.match(self.datlines[i])):
                 self.laechg = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
     def get_title(self):
@@ -169,6 +169,9 @@ class ReadIncar(object):
             else:
                 self.ibrion = -1
         return self.ibrion
+
+    def get_laechg(self):
+        return self.laechg
 
 ################################################################################
 if __name__ == '__main__':

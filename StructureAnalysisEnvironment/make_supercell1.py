@@ -30,15 +30,15 @@
 #   1st version
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -70,7 +70,7 @@ def make_supercell1(super_x,super_y,super_z,\
     ## super index
     ##
     super= int(super_x)*int(super_y)*int(super_z)
-    
+
     ###############################################
     ## super cell 作成用のベクトルを作る
     ##
@@ -86,27 +86,27 @@ def make_supercell1(super_x,super_y,super_z,\
                #print nsv, " ", n,l,m," ",sv[nsv,1]
                #print nsv, " ", n,l,m," ",sv[nsv,2]
                 nsv += 1
-    
-    
+
+
     ###############################################
     ## スーパーセルの内部座標作成
     ##
    #sp = zeros((natom*super,3)) # super cell position 保存用のvector
    #ion_sp= zeros(natom*super)  # super cell 通し番号に対する原子種番号保存index
    #ion_local_sp = zeros(natom*super) # ion_local[j] の super cell index 対応版
-    
+
     # super cell の内部座標を作る
     j=-1
     nsp=-1
     for k in range(nion):
         for kk in range(int(atoms[k])):
-    
+
             j += 1
-    
+
             for nsv in range(super):
                 nsp += 1
                 nsp_ = natom*nsv+j
-    
+
                 sp[nsp,0] = position[j,0] + sv[nsv,0]
                 sp[nsp,1] = position[j,1] + sv[nsv,1]
                 sp[nsp,2] = position[j,2] + sv[nsv,2]
@@ -115,22 +115,22 @@ def make_supercell1(super_x,super_y,super_z,\
                 fix_sp[nsp,0] = fix[j,0]
                 fix_sp[nsp,1] = fix[j,1]
                 fix_sp[nsp,2] = fix[j,2]
-    
+
                 # 元セルの通し番号を与えると、原子種番号を返す
                 ion_sp[nsp] = ion[j]
                 ion_local_sp[nsp] = ion_local[j]
 
 
                 sp_j[nsp] = j
-   
+
                ## for TEST print
                #x=sp[nsp,0]
                #y=sp[nsp,1]
                #z=sp[nsp,2]
                #print " %d,%d,  %d,%d,%s, %d,%d, %d  %s %12.8f %12.8f %12.8f" \
                #        %(j,nsp, k,ion_local_sp[nsp],atoms_index[k],  ion[j],ion_sp[nsp], kk,"  ",x,y,z)
-    
-    
+
+
     ## 元index と super index の対応を見る(テストプリント)
     #for k in range(nsp):
     #    print int(k), int(sp_j[k])

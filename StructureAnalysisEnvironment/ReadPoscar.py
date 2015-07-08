@@ -34,27 +34,32 @@
 #
 ################################################################################
 #
-# 基本構造情報読み込み Method
+# 1) 基本構造情報読み込み Method : get_*()
 #
-#   get_title()
-#   get_scale()
-#   get_t()
-#   get_vasp_version()
-#   get_atoms()
-#   get_atoms_index()
-#   get_atoms_index_j()
-#   get_nion()
-#   get_natom()
-#   get_ion()
-#   get_ion_local()
-#   get_selective()
-#   get_direct()
-#   get_position()
-#   get_fix()
+# 2) 並進ベクトル回転Method
+#     conv_rot_euler(self,alpha,beta,gamma)
 #
-#   conv_rot_euler(self,alpha,beta,gamma)
+# 3) POSCAR print method
+#     print_poscar()
+#
+# 4) conv Direct --> Cartesian
+#     conv_direct2car()
+#
+# 5) makes SuperCell method
+#     conv_supercell()
 #
 ################################################################################
+#
+# 2015.07.08
+#  supercell 対応で sp_j 変数をインスタンス変数化で追加
+#
+# 2015.07.08
+#   method に print_poscar
+#             conv_direct2car
+#             conv_supercell
+#
+#   を追加。
+#   本格的に ReadPoscar クラスで閉じて仕事できるようにした
 #
 # 2015.07.06
 #  ReadPoscar class のリファクタ
@@ -117,6 +122,7 @@ class ReadPoscar(object):
         self.datlines, self.num = SAE.read_dataline(POSCAR)
 
         self.system = self.datlines[0]
+        self.title = self.system
         self.scale = float(self.datlines[1])
 
         ###############################################
@@ -399,6 +405,117 @@ class ReadPoscar(object):
 
         return R_t,R_position
 
+    ############################################################################
+    # direct to cartesian method
+    def conv_direct2car(self, ABS=None):
+
+        if ABS is not None:
+            ABS=False
+        else:
+            if isinstance( ABS, str ):
+                if ABS == 'vasp' or ABS == 'VASP':
+                    ABS=True
+
+        self.scale, self.direct = SAE.conv_direct2car0(\
+                ABS,\
+                self.scale,\
+                self.t,\
+                self.natom,\
+                self.direct,\
+                self.position)
+
+    ############################################################################
+    # print POSCAR
+    def print_poscar(self, outname='POSCAR', STD=True ):
+
+        SAE.print_poscar(\
+                outname,STD,\
+                self.title,\
+                self.scale,\
+                self.natom,\
+                self.nion,\
+                self.selective,\
+                self.direct,\
+                self.vasp_version,\
+                self.t,\
+                self.atoms,\
+                self.atoms_index,\
+                self.position,\
+                self.fix)
+
+    ############################################################################
+    # スーパーセル作成 Method
+    # 関数版を持ってきただけのやっつけ対応
+    def conv_supercell(self,times=(1,1,1)):
+
+        super_x = int(times[0])
+        super_y = int(times[1])
+        super_z = int(times[2])
+
+        # direct --> cartesian
+        if self.direct:
+            ABS=True
+            self.scale,self.direct = SAE.conv_direct2car0(
+                    ABS,\
+                    self.scale,\
+                    self.t,\
+                    self.natom,\
+                    self.direct,\
+                    self.position)
+
+        # super 用の配列
+        supers         = super_x*super_y*super_x
+        sv             = np.zeros((supers,3))             # (super) t
+        sp             = np.zeros((self.natom*supers,3))  # (super) position
+        ion_sp         = np.zeros(self.natom*supers)      # (super) ion
+        ion_local_sp   = np.zeros(self.natom*supers)      # (super) ion_local
+        fix_sp         = np.zeros((self.natom*supers,3),dtype='S') # (super) fix
+        sp_j           = np.zeros(self.natom*supers)      # super cell と orijinal cell の対応
+
+        # super 用の内部座標作成
+        SAE.make_supercell1(
+                super_x,\
+                super_y,\
+                super_z,\
+                self.t,\
+                self.natom,\
+                self.nion,\
+                self.atoms,\
+                self.ion,\
+                self.ion_local,\
+                self.position,\
+                sv,\
+                ion_sp,\
+                ion_local_sp,\
+                sp_j,\
+                sp,\
+                self.fix,\
+                fix_sp)
+
+        # super 用の基本並進ベクトル/原子種数を作る
+        SAE.make_supercell_param(\
+                super_x,super_y,super_z,\
+                self.nion,\
+                self.atoms,\
+                self.t)
+
+        self.natom = self.natom*supers
+
+        # cartesian --> direct
+        if not self.direct:
+            self.scale, self.direct = SAE.conv_car2direct(\
+                    self.scale,\
+                    self.t,\
+                    self.natom,\
+                    self.direct,\
+                    sp)
+
+        self.ion = ion_sp
+        self.ion_local = ion_local_sp
+        self.position = sp
+        self.fix = fix_sp
+        self.sp_j = sp_j  # super cell と orijinal cell の対応
+                          # super の通し番号を与えると元cellの通し番号を与える)
 
 ################################################################################
 if __name__ == '__main__':
