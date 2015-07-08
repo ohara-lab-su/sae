@@ -286,30 +286,26 @@ class CrystalMaker(object):
 
             # 原子の色設定(RGB)を適当に自動化
             if mode == 'ABS':
-               #bader_abs_color  = abs(acf.bader[i])/abs(acf.max_bader)
-                bader_abs_color  = abs(acf.bader[int(self.cell.sp_j[i])])/abs(acf.max_bader)
+                if CMAX:
+                    bader_abs_color  = abs(acf.bader[int(self.cell.sp_j[i])])/abs(float(CMAX))
+                else:
+                    bader_abs_color  = abs(acf.bader[int(self.cell.sp_j[i])])/abs(acf.max_bader)
                 atom.red   = bader_abs_color
                 atom.green = 0
                 atom.blue  = 0
             else:
-               #if 0 < acf.bader[i]: # 電荷が正(増える): 負の価数
                 if 0 < acf.bader[self.cell.sp_j[i]]: # 電荷が正(増える): 負の価数
                     if CMAX:
-                       #bader_abs_color = abs(acf.bader[i])/abs(float(CMAX))
                         bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/abs(float(CMAX))
                     else:
-                       #bader_abs_color = abs(acf.bader[i])/charge_max
                         bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/charge_max
                     atom.red   = bader_abs_color
                     atom.green = 0
                     atom.blue  = 0
-               #elif 0 > acf.bader[i]: # 電荷が負(減る) : 正の価数
                 elif 0 > acf.bader[self.cell.sp_j[i]]: # 電荷が負(減る) : 正の価数
                     if CMIN:
-                       #bader_abs_color = abs(acf.bader[i])/abs(float(CMIN))
                         bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/abs(float(CMIN))
                     else:
-                       #bader_abs_color = abs(acf.bader[i])/charge_max
                         bader_abs_color = abs(acf.bader[int(self.cell.sp_j[i])])/charge_max
                     atom.red   = 0
                     atom.green = 0
