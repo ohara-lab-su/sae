@@ -1,28 +1,29 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# POSCAR $B$NFbIt:BI8$r(B cartesian $B7O$+$i(B direct $B7O$XJQ49(B
+# POSCAR の内部座標を cartesian 系から direct 系へ変換
 #
-# [in]     scale          : $B4pK\JB?J$K$+$+$k%9%1!<%k(B($BJQ49A0(B)
+# [in]     scale          : 基本並進にかかるスケール(変換前)
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
 # [in]     natom          : number of atom
-# [in]     direct         : $BF~NO$N%b!<%I(B($BF~NO$,(Bdirect$B$J$i$P0BA4$N$?$a$K;_$a$k(B)
+# [in]     direct         : 入力のモード(入力がdirectならば安全のために止める)
 #
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
 #
-# [return] direct         : direct = True ($BJQ49$r$7$?$N$G(B direct $B$O(B True)
-# [return] scale          : $B$J$K$+$d$C$?(B sale $B$rJV$9(B($B2?$+$OL$<BAu(B)
+# [return] direct         : direct = True (変換をしたので direct は True)
+# [return] scale          : なにかやった sale を返す(何かは未実装)
 #
 ################################################################################
 #
 # 2015.06.17
-#  conv_car2direct1() $BLa$jCM$,0[$J$k$@$1$N%P!<%8%g%s$rDI2C(B
+#  conv_car2direct1() 戻り値が異なるだけのバージョンを追加
 #
 # 2014.11.04
 #   bug fix
@@ -97,7 +98,7 @@ def conv_car2direct(scale,t,natom,direct,position):
     return [scale,direct]
 
 
-# conv_car2direct() $B$HF1$8$G!"La$jCM$,0[$J$k$@$1(B
+# conv_car2direct() と同じで、戻り値が異なるだけ
 def conv_car2direct1(scale,t,natom,direct,position):
 
     if direct:

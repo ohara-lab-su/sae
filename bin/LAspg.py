@@ -1,21 +1,22 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# sets.in (HiLPAW) $BFI$_9~$_%k!<%A%s$N4pK\(B
+# sets.in (HiLPAW) 読み込みルーチンの基本
 #
-# $B72O@BP1~HG(B($B;n83Cf(B)
+# 群論対応版(試験中)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                 
-__maintainer__ = "Kengo NAKADA"                                                 
-__credits__    = ["Kengo NAKADA"]                                               
-__email__      = "kengo.nakada@gmail.com"                                       
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                 
-__license__    = "MIT"                                                          
-#                                                                                         
-__status__     = "alpha"                                                        
-__version__    = "0.0.1"                                                        
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -26,13 +27,13 @@ import optparse
 import math
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE 
+import StructureAnalysisEnvironment as SAE
 import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
 
-    cname = 'sets.in'    
+    cname = 'sets.in'
 
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     # constant
     PI = math.pi
 
-    # sets.in $BFI$_9~$_$N=`Hw(B&$BA0CJ3,(B
+    # sets.in 読み込みの準備&前段階
     lattices0 = []
     lattices0.extend(SAE.read_sets_param())
 
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     sg_position  = np.zeros((sg_natom,3),dtype=float)
     kpoints = np.zeros(3,dtype=int)
 
-    # sets.in $BFI$_9~$_(B
+    # sets.in 読み込み
     title,nspin,kinfo = SAE.read_sets(cname,lattices,nion,\
                                   sg_atoms,sg_atoms_index,sg_position,kpoints)
 
@@ -86,30 +87,30 @@ if __name__ == '__main__':
     lattice_beta = lattices[4]
     lattice_gamma = lattices[5]
 
-    # spgrdata $B$rFI$_9~$s$G(B $B@8@.85(B/$B3J;R$N7?(B/SpaceGroup $BHV9fEy$N>pJs$r%2%C%H(B
+    # spgrdata を読み込んで 生成元/格子の型/SpaceGroup 番号等の情報をゲット
     gen_type = []
     gen = []
     spg_n, spg_type, spg_ngen = SGE.read_spgrdata(spg_name,gen_type,gen)
 
-    # $B72$NL>A0$+$i3J;R$N7?$rF~<j(B($B3J;R$N>pJs$H$NL7=b$N%A%'%C%/(B)
+    # 群の名前から格子の型を入手(格子の情報との矛盾のチェック)
     system = SGE.get_system(lattices,spg_name,spg_type)
 
 
-    # TPMT $B9TNs(B: $B3J;R$N7?(B, BRMT = TCMT * TPMT
+    # TPMT 行列: 格子の型, BRMT = TCMT * TPMT
     TPMT = np.zeros((3,3))
     SGE.get_tpmt(system,TPMT)
 
-    # TCMT $B9TNs(B: $B%3%s%Y%s%7%g%J%k$J4pK\JB?J%Y%/%H%k(B, BRMT = TCMT * TPMT
+    # TCMT 行列: コンベンショナルな基本並進ベクトル, BRMT = TCMT * TPMT
     TCMT = np.zeros((3,3))
     SGE.get_tcmt(lattices,TCMT)
 
-    # BRMT $B9TNs(B: $B%W%j%_%F%#%V$J%;%k$N4pK\JB?J%Y%/%H%k(B(POSCAR$B$G$N(BT$B%Y%/%H%k$N$3$H(B)
+    # BRMT 行列: プリミティブなセルの基本並進ベクトル(POSCARでのTベクトルのこと)
     BRMT = np.dot(TCMT,TPMT)
 
-    # TCMT ($B%3%s%Y%s%7%g%J%k(B) $B$N5U3J;R(B
+    # TCMT (コンベンショナル) の逆格子
     TIMT = np.linalg.inv(TCMT.T)*2*PI
 
-    # RBMT ($B%W%j%_%F%#%V(B) $B$N5U3J;R(B
+    # RBMT (プリミティブ) の逆格子
     RCMT = np.linalg.inv(BRMT.T)*2*PI
 
 
@@ -150,7 +151,7 @@ if __name__ == '__main__':
     print ""
 
 
-    # $B@8@.85$K$h$k%3%s%Y%s%7%g%J%k4pK\JB?J(B(TCMT)$B%Y%/%H%k$NA`:n(B
+    # 生成元によるコンベンショナル基本並進(TCMT)ベクトルの操作
     for ge in range(spg_ngen):
         for i in range(3):
             TAUROT = np.zeros((3,spg_n))
@@ -165,13 +166,13 @@ if __name__ == '__main__':
 
 #   for i in range(sg_natom):
 #       print " %14.8f %14.8f %14.8f" % (car[i,0],car[i,1],car[i,2])
-   
+
 
     # rotation[0] Oh cubic (48)
     # rotation[1] D6h hexagonal (24)
     # rotation[2] D3h rhombohedral (12)
 
-    # $B>.8}B?H~IW(B, $BA+0\6bB0$N%P%s%IM}O@(B, p93
+    # 小口多美夫, 遷移金属のバンド理論, p93
     rotation_xyz = np.array([
                  [['+x','+y','+z'],
                   ['-x','-y','+z'], ['+x','-y','-z'], ['-x','+y','-z'],
@@ -282,7 +283,7 @@ if __name__ == '__main__':
 #   print rotation[0][0]  # Oh (E)
 #   print rotation[0][0][0]  # Oh (E) x
 
-#   # sets.in $B=q$-9~$_(B
+#   # sets.in 書き込み
 #  #cname='sets.in_out'
    #STD=False
     STD=True

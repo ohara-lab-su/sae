@@ -1,22 +1,23 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B%3%a%s%H%"%&%H(B(#) $BBP1~$N%j!<%I(B($B%"%[;EMM(B)
+# コメントアウト(#) 対応のリード(アホ仕様)
 #
 ################################################################################
 #
 # 2014.11.05 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -28,7 +29,7 @@ from copy import deepcopy
 comment_reg = re.compile('^#.*',re.IGNORECASE)
 
 ########################################
-## find_list $B$O(B1$B<!85G[Ns(B
+## find_list は1次元配列
 ##
 def read_list1(name,find_list):
 
@@ -51,13 +52,13 @@ def read_list1(name,find_list):
         if not bool(comment_reg.match(datalines[i])):
             tmp = datalines[i].split()
             find_list[j] = tmp[0]
-            j += 1        
+            j += 1
 
     nlist = j
-    return nlist    
+    return nlist
 
 ########################################
-## find_list $B$O(B3$B<!85G[Ns(B(num,atom,radius)
+## find_list は3次元配列(num,atom,radius)
 ##
 def read_list3(name,find_list):
 
@@ -75,7 +76,7 @@ def read_list3(name,find_list):
         if not bool(comment_reg.match(datalines[i])):
             tmp = datalines[i].split()
             if not int(len(tmp)) >= 3:
-                sys.exit(name+" Format Error: datalines < 3 ") 
+                sys.exit(name+" Format Error: datalines < 3 ")
 
             find_list[j,0] = tmp[0]
             find_list[j,1] = tmp[1]
@@ -83,10 +84,10 @@ def read_list3(name,find_list):
             j += 1
 
     nlist = j
-    return nlist    
+    return nlist
 
 ########################################
-## find_list $B$O(B4$B<!85G[Ns(B(atom,data_x,data_y,data_z)
+## find_list は4次元配列(atom,data_x,data_y,data_z)
 ##
 def read_list4(name,find_list):
 
@@ -104,7 +105,7 @@ def read_list4(name,find_list):
         if not bool(comment_reg.match(datalines[i])):
             tmp = datalines[i].split()
             if not int(len(tmp)) >= 4:
-                sys.exit(name+" Format Error: datalines < 4 ") 
+                sys.exit(name+" Format Error: datalines < 4 ")
 
             find_list[j,0] = tmp[0]
             find_list[j,1] = tmp[1]
@@ -113,5 +114,5 @@ def read_list4(name,find_list):
             j += 1
 
     nlist = j
-    return nlist    
+    return nlist
 

@@ -19,7 +19,7 @@
 #  Vplot_band.py と同等のものを PROCAR から作成
 #  ---> Vplot_com_band.py と暫定的に名前を変えて、そのバージョンを保存
 #
-# 2015.01.29 startup 
+# 2015.01.29 startup
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -126,20 +126,20 @@ def options():
                         default=False,
                         dest='PRO_FLAG',
     )
-    ###########################################                                 
-    # Parameters  
+    ###########################################
+    # Parameters
     parser.add_option(  '--emin',
                         dest='EMIN',
-    ) 
+    )
     parser.add_option(  '--emax',
                         dest='EMAX',
-    ) 
+    )
     parser.add_option(  '--band',
                         dest='BAND',
-    ) 
+    )
     parser.add_option(  '--atom',
                         dest='ATOM',
-    ) 
+    )
     options,  args = parser.parse_args()
 
 
@@ -185,8 +185,8 @@ if __name__ == '__main__':
         print "SPD MODE   :",SPD_FLAG
 
     # 基本インスタンス生成
-    procar = SAE.ReadProcar(procarname)
-    kpoints = SAE.ReadKpoints(kpointsname) 
+    procar = SAE.ReadVaspProcar(procarname)
+    kpoints = SAE.ReadVaspKpoints(kpointsname)
 
     # バンドの基本情報取得
 #   TITLE = doscar.get_title()
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     # K点のゾーン情報(KPOINTS & OUTCAR)
     kpoints_array = kpoints.get_kpoints_array()
     num_kpoints_line = kpoints.get_num_kpoints_line()
-    div_kpoints_line = kpoints.get_div_kpoints_line() 
+    div_kpoints_line = kpoints.get_div_kpoints_line()
     zone_ratio = kpoints.get_kpoints_vector_ratio(outcarname)
 
     # データーのチェック
@@ -222,7 +222,7 @@ if __name__ == '__main__':
         sys.exit("STOP: NKPTS inconsistence")
 
     ############################################################################
-    # E-fermi は DOSCAR から取得する(DOSCARがない場合はOUTCARから)              
+    # E-fermi は DOSCAR から取得する(DOSCARがない場合はOUTCARから)
     # K点情報はバンドの計算のOUTCARが必須
     # E-fermi情報は SCF 計算の DOSCAR(E-fermi が欲しい)
     #
@@ -235,7 +235,7 @@ if __name__ == '__main__':
             class_name ='ReadOutcar'
             optname = outcarname
             print 'EFERMI(OUT):',
-                                                                                    
+
         module_name = 'StructureAnalysisEnvironment'
 
         module = __import__(module_name, globals(), locals(), [class_name], -1)
@@ -246,7 +246,7 @@ if __name__ == '__main__':
         TITLE = kinstance.get_title()
         print efermi
     else:
-        dos = SAE.ReadDoscar(doscarname)
+        dos = SAE.ReadVaspDoscar(doscarname)
         TITLE = dos.get_title()
         efermi = dos.get_efermi()
         print 'EFERMI(DOS):',
@@ -267,10 +267,10 @@ if __name__ == '__main__':
     if os.path.exists(symdatname) or os.path.exists(symdatname+".gz"):
         print "SYM.DAT    :", symdatname
 
-        sym = SAE.ReadSymdat(symdatname)
+        sym = SAE.ReadVaspSymdat(symdatname)
         num_symlines = sym.get_num_symlines()
         symlines = sym.get_symlines()
-    
+
         for i in range(num_symlines):
             print "  ",symlines[i]
 
@@ -288,9 +288,9 @@ if __name__ == '__main__':
                 % ( kpoints_array[i,0],kpoints_array[i,1],kpoints_array[i,2] )
         if not i % 2 == 0:
             print ""
- 
+
     for i in range(num_kpoints_line):
-        print " line %d : %10.7f " % ( i, zone_ratio[i] ) 
+        print " line %d : %10.7f " % ( i, zone_ratio[i] )
 
 
     ############################################################################
@@ -385,7 +385,7 @@ if __name__ == '__main__':
         # バンドの重ね書きプロット
         for ispin in range(istart,iend):
             for iband in range(NBANDS):
-    
+
                 # Y 軸の作成,eigenval(NBANDS,NKPTS,NSPIN), NKPTS の分割プロット
                 startx = i*div_kpoints_line
                 endx = startx+div_kpoints_line-1
@@ -492,7 +492,7 @@ if __name__ == '__main__':
                 else:
                    sizex_dos1 = sizex_dos/2
             else:
-                sizex_dos1 = sizex_dos    
+                sizex_dos1 = sizex_dos
             plt.axes([orgx,orgy, sizex_dos1, sizey])
             if UP_FLAG or DOWN_FLAG:
                 pass
@@ -532,7 +532,7 @@ if __name__ == '__main__':
 
                     plt.plot(Y,ENG,color=c)
 
-                
+
             # 目盛の調整
             plt.yticks([])
 #      #    plt.xticks(range(1,4))

@@ -8,6 +8,10 @@
 #
 ################################################################################
 #
+# 2015.07.22
+#  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
+#  どちらでも動作するように変更。
+#
 # 2015.07.01
 #  平均化ルーチンで重み(平均する際に割る数)を引数に追加
 #
@@ -41,18 +45,21 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 class ReadFdmConv(object):
 
-    def __init__(self,cname,conv_suffix='_conv.txt'):
+    def __init__(self,cname,suffix='_conv.txt',weight=1.0):
 
-        self.datlines,self.num = SAE.read_dataline(cname+conv_suffix)
+        if not os.path.exists(cname+suffix):
+            cname = cname.replace(suffix,'')
+
+        self.datlines,self.num = SAE.read_dataline(cname+suffix)
 
         self.name = cname
-        self.conv_suffix = conv_suffix
+        self.conv_suffix = suffix
         self.eng = np.zeros(self.num-1)
         self.xas = np.zeros(self.num-1)
 
         for i in range(1,self.num):
             self.eng[i-1] = float(self.datlines[i].split()[0])
-            self.xas[i-1] = float(self.datlines[i].split()[1])
+            self.xas[i-1] = float(self.datlines[i].split()[1])/weight
 
     def get_eng(self):
         return self.eng

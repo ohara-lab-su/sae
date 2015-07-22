@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
@@ -6,7 +7,7 @@
 #
 # MXEI Vplot
 #
-#  MXEI $B$N7k2L$r(B matplotlib $B$G%W%m%C%H(B
+#  MXEI の結果を matplotlib でプロット
 #
 ################################################################################
 #
@@ -14,17 +15,17 @@
 #  == None --> is None
 #
 # 2015.06.15
-#   *.dat $B%U%!%$%kL>$H(B systemname $B$,0[$J$k$H$-$N<+F0=hM}$rDI2C(B
+#   *.dat ファイル名と systemname が異なるときの自動処理を追加
 #
 # 2015.03.13
-#   MD$B%k!<%W$,ESCf$G=*$o$C$F$$$k$H$-(B(DFTSCF$B%U%!%$%k$,B8:_$9$k$H$-(B)$B$NBP1~(B
+#   MDループが途中で終わっているとき(DFTSCFファイルが存在するとき)の対応
 #
 # 2015.03.12
-#  *.out $B$,=PNO$5$l$kA0$N(B $B7W;;ESCf$N%U%!%$%k(B *.DFTSCF $B$NFI$_9~$_$KBP1~(B
+#  *.out が出力される前の 計算途中のファイル *.DFTSCF の読み込みに対応
 #
 # 2015.02.24
 #  startup
-#  ReadMxOut $B%/%i%9$rMQ$$$k7A$G:n@.(B
+#  ReadMxOut クラスを用いる形で作成
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -61,14 +62,14 @@ if __name__ == '__main__':
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    # $B%G%U%)%k%HL>$h$j:GE,$J%G%U%)%k%H%U%!%$%kL>$N?dDj%k!<%A%s(B
+    # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(mxname):
-        name0 = SAE.find_datfile('dat')  # *.dat $B$O$+$J$i$:$"$k$N$G$=$l$r%H%j%,!<$K(B
+        name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
         if not name0 is None:
             name = name0
             mxname = name+suffix
 
-    # $B%*%W%7%g%s$G%U%!%$%kL>$rF~NO$7$?;~(B
+    # オプションでファイル名を入力した時
     if options.INPUT:
         mxname = options.INPUT
         name = re.sub('\.out$','',mxname)
@@ -81,8 +82,8 @@ if __name__ == '__main__':
     mxname = name+suffix
 
 
-    # *.out $B$,B8:_$7$J$$$H$-!"$+$D(B *.dat $B%U%!%$%k$,B8:_$9$k$H$-(B
-    # dat $B%U%!%$%k$NCf?H$rFI$s$G(B systemname (*.out)$B$r8!:w$9$k(B
+    # *.out が存在しないとき、かつ *.dat ファイルが存在するとき
+    # dat ファイルの中身を読んで systemname (*.out)を検索する
     if not os.path.exists(name+'.out'):
         if os.path.exists(name+'.dat'):
             dat = SAE.ReadMxDat(name+'.dat')
@@ -92,7 +93,7 @@ if __name__ == '__main__':
         else:
             sys.exit("STOP: "+name+'.out and '+name+'.dat file not found.')
 
-    # $B7W;;ESCf$G$N(B DFTSCF $B%U%!%$%kFI$_9~$_(B or $BDL>o$N(B *.out $B%U%!%$%kFI$_9~$_(B
+    # 計算途中での DFTSCF ファイル読み込み or 通常の *.out ファイル読み込み
     module_name = 'StructureAnalysisEnvironment'
     if not os.path.exists(mxname):
         mxname = name+'.DFTSCF'
@@ -124,7 +125,7 @@ if __name__ == '__main__':
            #print x[i], y[i]
             i+=1
 
-    # MD$B%k!<%W$,ESCf$G=*$o$C$F$$$k$H$-(B(DFTSCF$B%U%!%$%k$,B8:_$9$k$H$-(B)
+    # MDループが途中で終わっているとき(DFTSCFファイルが存在するとき)
     if FLAG_DFTSCF:
         md = n_ion_loop
         for scf in range(uele_index[md]):
@@ -137,13 +138,13 @@ if __name__ == '__main__':
     # matplotlib
 
     plt.rcParams['font.family'] = 'Times New Roman'
-    plt.rcParams['font.size']         = 20  # $B%i%Y%kEy$N%U%)%s%H%5%$%:(B
-    plt.rcParams['legend.fontsize']   = 18  # $B%l%8%'%s%I$N%U%)%s%H%5%$%:(B
-    plt.rcParams['axes.linewidth']    = 1.5 # $B<4$NB@$5$r@_Dj!#L\@9$j$OJQ$o$i$J$$(B
+    plt.rcParams['font.size']         = 20  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize']   = 18  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']    = 1.5 # 軸の太さを設定。目盛りは変わらない
 
-#   plt.figure(figsize=($B2#(B, $B=D(B), dpi=$B2rA|EY(B, facecolor=$BGX7J?'(B)
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 
-    plt.axes([ 0.130,0.130, 0.80,0.80 ])   # $B86E@(B(x,y), $BI}(B(x,y)
+    plt.axes([ 0.130,0.130, 0.80,0.80 ])   # 原点(x,y), 幅(x,y)
 
     plt.plot(x,y, color="red", linewidth=2, label='Total Energy')
     plt.ylabel("Band Energy [Hartree]", fontsize=20 )

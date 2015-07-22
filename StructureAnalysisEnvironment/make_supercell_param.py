@@ -1,22 +1,23 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B%9!<%Q!<%;%kMQ$N(B
-#     1) $B4pK\JB?J%Y%/%H%k(B
-#     2) $B86;R<o?t(B
+# スーパーセル用の
+#     1) 基本並進ベクトル
+#     2) 原子種数
 #
-# $B$r:n@.$9$k%b%8%e!<%k(B
+# を作成するモジュール
 #
 # [in]      super_x
 # [in]      super_y
 # [in]      super_z
 #
-# [in/out] atoms[i]   : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
+# [in/out] atoms[i]   : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
 #
-# [in]     nion       : $B86;R<o$N?t(B
-# [in/out] atoms[i]   : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
+# [in]     nion       : 原子種の数
+# [in/out] atoms[i]   : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
 #
-# [in/out] t[3,3]     :  $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]     :  基本並進ベクトル(注意:配列内indexは0から)
 #                              x   y   z
 #                        t1 = a11 a21 a31
 #                        t2 = a12 a22 a32
@@ -27,15 +28,15 @@
 # 2014.10.31
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -44,17 +45,17 @@ from numpy import *
 
 def make_supercell_param(super_x,super_y,super_z,nion,atoms,t):
 
-    t[0,0] = t[0,0]*super_x # t1_x 
-    t[1,0] = t[1,0]*super_y # t1_y 
-    t[2,0] = t[2,0]*super_z # t1_z 
+    t[0,0] = t[0,0]*super_x # t1_x
+    t[1,0] = t[1,0]*super_y # t1_y
+    t[2,0] = t[2,0]*super_z # t1_z
 
-    t[0,1] = t[0,1]*super_x # t2_x 
-    t[1,1] = t[1,1]*super_y # t2_y 
-    t[2,1] = t[2,1]*super_z # t2_z 
+    t[0,1] = t[0,1]*super_x # t2_x
+    t[1,1] = t[1,1]*super_y # t2_y
+    t[2,1] = t[2,1]*super_z # t2_z
 
-    t[0,2] = t[0,2]*super_x # t3_x 
-    t[1,2] = t[1,2]*super_y # t3_y 
-    t[2,2] = t[2,2]*super_z # t3_z 
+    t[0,2] = t[0,2]*super_x # t3_x
+    t[1,2] = t[1,2]*super_y # t3_y
+    t[2,2] = t[2,2]*super_z # t3_z
 
     for j in range(nion):
         atoms[j] = int(atoms[j])*super_x*super_y*super_z

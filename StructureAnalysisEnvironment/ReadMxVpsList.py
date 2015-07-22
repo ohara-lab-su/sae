@@ -12,15 +12,15 @@
 # 2015.02.10 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -31,13 +31,13 @@ import re
 
 
 ################################################################################
-class ReadVpsList(object):
+class ReadMxVpsList(object):
 
     def __init__(self,name):
 
         if not os.path.exists(name):
             sys.exit("STOP: "+name+" not found")
-   
+
         try:
             tmp = open(name)
             datalist = tmp.read()
@@ -64,8 +64,8 @@ class ReadVpsList(object):
             if not bool(comment_reg.match(self.datalines[i])):
                 tmp = self.datalines[i].split()
                 if not int(len(tmp)) >= 4:
-                    sys.exit(self.name+" Format Error: datalines < 4 ") 
-    
+                    sys.exit(self.name+" Format Error: datalines < 4 ")
+
                 self.list_data.append([tmp[0],tmp[1],tmp[2],tmp[3]])
                 j += 1
         self.nlist = j
@@ -115,7 +115,7 @@ if __name__ == '__main__':
         sys.exit("STOP: "+VPSLIST+" file not found")
 
     # vps and pao 情報リスト読み込み(OpenMX非公式ファイル)
-    vpsdata = ReadVpsList(vpslistpath)
+    vpsdata = ReadMxVpsList(vpslistpath)
 
     num,symbol,cutoff,vps_orbit = vpsdata.get_vps_name('C')
     opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
 
 #   nlist,list_data = vpsdata.get_list()
-    
+
 #   print nlist
 #   for i in range(nlist):
 #       print list_data[i]

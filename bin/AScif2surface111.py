@@ -4,8 +4,8 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #  read POSCAR  using ASE
 #
-#  $B0lHL2=$7$F$$$J$$!J$9$kI,MW$bL5$$(B)
-#  (111)$BLL:n@.(B $B%5%s%W%k(B
+#  一般化していない（する必要も無い)
+#  (111)面作成 サンプル
 #
 # surface(lattice, indices, layers, vacuum=0.0, )
 #

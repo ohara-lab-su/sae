@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# PWscf *.out --> CONTCAR(POSCAR) $BJQ49=PNO(B
+# PWscf *.out --> CONTCAR(POSCAR) 変換出力
 #
-# $B9=B$4KOB$N(B final $B$@$1$rH4$-=P$9(B
+# 構造緩和の final だけを抜き出す
 #
 ################################################################################
 #
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     print "INPUT  :",output_name
     print "OUTPUT :",output_name+'.CONTCAR'+'.vasp'
 
-    # $B=EMW(B) vasprun $BMQ$K4pK\JB?J%Y%/%H%k$r$9$1!<$k$9$k(B
+    # 重要) vasprun 用に基本並進ベクトルをすけーるする
     t = t*scale
 
     SAE.print_vasprun0(

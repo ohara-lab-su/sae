@@ -37,7 +37,6 @@ __version__    = "0.0.2"
 
 import os
 import sys
-import optparse
 import gzip
 import xml.etree.ElementTree as ET
 
@@ -50,7 +49,7 @@ import numpy as np
 
 
 ################################################################################
-class ReadVasprun(object):
+class ReadVaspVasprun(object):
 
     def __init__(self,name='vasprun.xml'):
 
@@ -441,6 +440,7 @@ class ReadVasprun(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     # Default & OptionParser
    #XMLFILE = options()
     XMLFILE = "vasprun.xml"  # default name
@@ -453,7 +453,7 @@ if __name__ == '__main__':
     if len(args) > 0: XMLFILE=args[0]
 
     # vasprun.xml parse
-    vasprun = ReadVasprun(XMLFILE)
+    vasprun = ReadVaspVasprun(XMLFILE)
 
     nion = vasprun.get_nion()
     natom = vasprun.get_natom()

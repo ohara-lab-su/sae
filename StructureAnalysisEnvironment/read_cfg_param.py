@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# *.cfg $B%U%!%$%kFI$_9~$_$N$?$a$N=`Hw4X?t(B
+# *.cfg ファイル読み込みのための準備関数
 #
 # [in/out] cname    : *.cfg filename
 #
@@ -13,15 +14,15 @@
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -44,16 +45,16 @@ def read_cfg_param(cname):
     datfile = tmp.read()
     tmp.close()
     datlines = datfile.split('\n')
-    
+
     ###############################################
     ## Read Header
     ##
     a = datlines[7].split()
     natom = int(a[0])
-    
+
     a = datlines[8].split()
     nion = int(a[0])
-    
+
     return [natom,nion]
 
 

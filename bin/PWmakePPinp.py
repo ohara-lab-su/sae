@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-#   UPF $B7A<0$N(B PP $B%U%!%$%k$+$i(B <PP_INPUTFILE> </PP_INPUTFILE> $B$r5[$$=P$9(B
+#   UPF 形式の PP ファイルから <PP_INPUTFILE> </PP_INPUTFILE> を吸い出す
 #
 ################################################################################
 #
@@ -29,8 +29,8 @@ import re
 #import numpy as np
 
 #import glob
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE                                            
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################

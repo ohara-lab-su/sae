@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# PWscf *.out --> CONTCAR(POSCAR) $BJQ49=PNO(B
+# PWscf *.out --> CONTCAR(POSCAR) 変換出力
 #
-# $B9=B$4KOB$N(B final $B$@$1$rH4$-=P$9(B
+# 構造緩和の final だけを抜き出す
 #
 ################################################################################
 #

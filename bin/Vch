@@ -61,13 +61,12 @@ if __name__ == '__main__':
     if not os.path.exists('POTCAR'): sys.exit("STOP: POTCAR not found")
 
     # Read INCAR file
-    incar = SAE.ReadIncar()
+    incar = SAE.ReadVaspIncar()
 
     if incar.ispin > 1:
-        print "ISPIN =",incar.ispin
         print ""
+        print "ISPIN =",incar.ispin
 
-    print "ISMEAR =",incar.ismear
     print ""
     print "ISMEAR =",incar.ismear
     print "SIGMA  =",incar.sigma
@@ -81,7 +80,7 @@ if __name__ == '__main__':
     print "EDIFFG = ",incar.ediffg
 
 
-    kpoints = SAE.ReadKpoints()
+    kpoints = SAE.ReadVaspKpoints()
     kx,ky,kz = kpoints.get_kpoints()
     print ""
     print "Kx     = ",kx
@@ -89,7 +88,7 @@ if __name__ == '__main__':
     print "Kz     = ",kz
 
     if incar.nsw > 0:
-        poscar = SAE.ReadPoscar()
+        poscar = SAE.ReadVaspPoscar()
         poscar.get_selective()
         print ""
         if poscar.selective:
@@ -103,4 +102,7 @@ if __name__ == '__main__':
         print "NGXF   = ",incar.ngxf
         print "NGYF   = ",incar.ngyf
         print "NGZF   = ",incar.ngzf
+
+    print ""
+    print "NPAR   = ",incar.npar
 

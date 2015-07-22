@@ -1,13 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # OpenMX3.7
 #
 # MXEE
-# VEE $B$H;w$?$h$&$J%;%s%9(B
-#  ($B%$%*%s%9%F%C%W$4$H$N(BSCF$B$N(BEnergy $B$b4^$a$F=PNO$9$k(B)
-#  OpexnMX $B$@$H(B
+# VEE と似たようなセンス
+#  (イオンステップごとのSCFのEnergy も含めて出力する)
+#  OpexnMX だと
 #
 ################################################################################
 #
@@ -15,14 +16,14 @@
 #  == None --> is None
 #
 # 2015.06.15
-#   *.dat $B%U%!%$%kL>$H(B systemname $B$,0[$J$k$H$-$N<+F0=hM}$rDI2C(B
+#   *.dat ファイル名と systemname が異なるときの自動処理を追加
 #
 # 2015.03.12
-#  *.out $B$,=PNO$5$l$kA0$N(B $B7W;;ESCf$N%U%!%$%k(B *.DFTSCF $B$NFI$_9~$_$KBP1~(B
+#  *.out が出力される前の 計算途中のファイル *.DFTSCF の読み込みに対応
 #
 # 2015.02.24
 #  startup
-#  ReadMxOut $B%/%i%9$rMQ$$$k7A$G:n@.(B
+#  ReadMxOut クラスを用いる形で作成
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -60,18 +61,18 @@ if __name__ == '__main__':
     )
     options,  args = parser.parse_args()
 
-    # $B%G%U%)%k%HL>$h$j:GE,$J%G%U%)%k%H%U%!%$%kL>$N?dDj%k!<%A%s(B
-    # dat $B%U%!%$%kA\:w(B
+    # デフォルト名より最適なデフォルトファイル名の推定ルーチン
+    # dat ファイル捜索
     if not os.path.exists(mxname):
         try:
-            name0 = SAE.find_datfile('dat')  # *.dat $B$O$+$J$i$:$"$k$N$G$=$l$r%H%j%,!<$K(B
+            name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
             if not name0 == None:
                 name = name0
                 mxname = name+suffix
         except:
             pass
 
-    # $B%*%W%7%g%s$G%U%!%$%kL>$rF~NO$7$?;~(B
+    # オプションでファイル名を入力した時
     if options.INPUT:
         mxname = options.INPUT
         name = re.sub('\.out$','',mxname)
@@ -83,8 +84,8 @@ if __name__ == '__main__':
 
     mxname = name+suffix
 
-    # *.out $B$,B8:_$7$J$$$H$-!"$+$D(B *.dat $B%U%!%$%k$,B8:_$9$k$H$-(B
-    # dat $B%U%!%$%k$NCf?H$rFI$s$G(B systemname (*.out)$B$r8!:w$9$k(B
+    # *.out が存在しないとき、かつ *.dat ファイルが存在するとき
+    # dat ファイルの中身を読んで systemname (*.out)を検索する
     if not os.path.exists(name+'.out'):
         if os.path.exists(name+'.dat'):
             dat = SAE.ReadMxDat(name+'.dat')
@@ -94,7 +95,7 @@ if __name__ == '__main__':
         else:
             sys.exit("STOP: "+name+'.out and '+name+'.dat file not found.')
 
-    # $B7W;;ESCf$G$N(B DFTSCF $B%U%!%$%kFI$_9~$_(B or $BDL>o$N(B *.out $B%U%!%$%kFI$_9~$_(B
+    # 計算途中での DFTSCF ファイル読み込み or 通常の *.out ファイル読み込み
     module_name = 'StructureAnalysisEnvironment'
     if not os.path.exists(mxname):
         mxname = name+'.DFTSCF'

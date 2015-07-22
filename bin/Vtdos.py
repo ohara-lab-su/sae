@@ -20,7 +20,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -34,24 +34,24 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
 
     name = 'DOSCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
-                                                                                
+
     if len(args) > 0:
         name=args[0]
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     name = options()
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(name)
+    dos = SAE.ReadVaspDoscar(name)
 
     # set output device
     out = sys.stdout

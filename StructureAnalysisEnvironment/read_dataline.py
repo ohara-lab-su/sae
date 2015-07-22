@@ -1,25 +1,26 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # read_dataline(name)
 #
-#  name $B%U%!%$%k(B or name.gz $B%U%!%$%k$rFI$_9~$s$G(B
-#  datlines[num] $BG[Ns$KJ|$j9~$`4X?t(B
-#  $BG[Ns?t(B num $B$*$h$S!"(Bdatalines $BG[Ns$rLa$jCM$K$9$k(B
+#  name ファイル or name.gz ファイルを読み込んで
+#  datlines[num] 配列に放り込む関数
+#  配列数 num および、datalines 配列を戻り値にする
 #
 ################################################################################
 #
 # 2015.06.18
-#  $B%3%a%s%H%"%&%HBP1~HG$rJ#?t$N%3%a%s%H(B(# or !)$B$K%"%C%W%G!<%H(B
+#  コメントアウト対応版を複数のコメント(# or !)にアップデート
 #
 # 2015.05.08
-#  $B%3%a%s%H%"%&%HBP1~HG(B read_datline1 $B$r:n@.(B
-#    nline $B$r%+%&%s%H?t$b!"(Bdataline $B$X$bJ|$j9~$_$b(B $B%3%a%s%H%"%&%H$O=|$/(B
+#  コメントアウト対応版 read_datline1 を作成
+#    nline をカウント数も、dataline へも放り込みも コメントアウトは除く
 #
 # 2015.02.25
 #   startup
-#   $B$o$j$HB?MQ$9$k$N$G(B class $B$N%3%s%9%H%i%/%?ItJ,$+$iJ,N%(B
-#   $B4X?t$G8F$S=P$9$h$&$K$9$k(B
+#   わりと多用するので class のコンストラクタ部分から分離
+#   関数で呼び出すようにする
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -65,7 +66,7 @@ def read_dataline(name):
     return datlines,num
 
 ################################################################################
-# $B%3%a%s%H%"%&%HBP1~HG(B
+# コメントアウト対応版
 def read_dataline1(name):
 
     import re

@@ -27,7 +27,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.3"
 ################################################################################
@@ -40,20 +40,20 @@ import re
 #import xml.etree.ElementTree as ET
 
 import numpy as np
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #from copy import deepcopy
 
 ################################################################################
-class ReadXdat(object):
+class ReadVaspXdat(object):
 
     def __init__(self,name):
 
-        self.num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')         
-        self.selective_reg = re.compile('^S.*',re.IGNORECASE)                            
-        self.direct_reg = re.compile('^D.*',re.IGNORECASE)                               
-        self.car_reg = re.compile('^C.*',re.IGNORECASE)   
+        self.num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
+        self.selective_reg = re.compile('^S.*',re.IGNORECASE)
+        self.direct_reg = re.compile('^D.*',re.IGNORECASE)
+        self.car_reg = re.compile('^C.*',re.IGNORECASE)
 
         ###############################################
         ## Open POSCAR file
@@ -63,7 +63,7 @@ class ReadXdat(object):
             GZIP=True
         else:
             sys.exit("STOP: "+name+" or "+name+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(name+".gz")
@@ -75,9 +75,9 @@ class ReadXdat(object):
             sys.exit("STOP: "+name+" does'nt open")
         finally:
             tmp.close()
-    
+
         self.datlines = datfile.split('\n')
-    
+
         ###############################################
         ## get VASP version, atoms and index
         i=5
@@ -89,7 +89,7 @@ class ReadXdat(object):
             atoms_index=list(atoms)
             i += 1
             atoms = self.datlines[i].split()
-        
+
         ###############################################
         ## get number of atoms
         self.nion=int(len(atoms))
@@ -134,26 +134,26 @@ class ReadXdat(object):
         t1_x = float(v[0])
         t1_y = float(v[1])
         t1_z = float(v[2])
-                                                                                    
+
         v = self.datlines[3].split()
         t2_x = float(v[0])
         t2_y = float(v[1])
         t2_z = float(v[2])
-                                                                                    
+
         v = self.datlines[4].split()
         t3_x = float(v[0])
         t3_y = float(v[1])
         t3_z = float(v[2])
-                                                                                    
-        self.t = np.zeros((3,3))                                                            
+
+        self.t = np.zeros((3,3))
         self.t[0,0] = t1_x
         self.t[1,0] = t1_y
         self.t[2,0] = t1_z
-                                                                                    
+
         self.t[0,1] = t2_x
         self.t[1,1] = t2_y
         self.t[2,1] = t2_z
-                                                                                    
+
         self.t[0,2] = t3_x
         self.t[1,2] = t3_y
         self.t[2,2] = t3_z
@@ -213,7 +213,7 @@ class ReadXdat(object):
                 i += 1
                 tmp = self.datlines[i].split()
                 self.selective = True
-            else:                                                                   
+            else:
                #print "selective False"
                 self.selective = False
 
@@ -257,7 +257,7 @@ class ReadXdat(object):
 if __name__ == '__main__':
 
     name = 'XDATCAR'
-    xdat = ReadXdat(name)
+    xdat = ReadVaspXdat(name)
 
     nion = xdat.get_nion()
     natom = xdat.get_natom()
@@ -277,9 +277,9 @@ if __name__ == '__main__':
     print "title :",title
     print "scale :",scale
 
-    print "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])              
-    print "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])              
-    print "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])    
+    print "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
+    print "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
+    print "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
 
     if vasp == 5:
         print "",

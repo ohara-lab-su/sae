@@ -47,10 +47,15 @@
 *.energy*
 *.gnuplot*
 *.dos*
+*.out
 _*.py
 _*
 *_
+wycoff
+spgrdata
 atomdata
+atomdens
+generator
 POSCAR*
 POTCAR*
 CONTCAR*
@@ -59,6 +64,9 @@ INCAR*
 BASIS_SET
 GTH_POTENTIALS
 update.csh
+xsets
+src/
+source*
 SAE
 SAE_dev
 SAE_my

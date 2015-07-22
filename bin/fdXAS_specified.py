@@ -83,6 +83,11 @@ if __name__ == '__main__':
 
     plt.axes([orgx,orgy,xsize,ysize])
 
+#    #######################################################
+#    nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+#    plt.plot(nor.eng,nor.nor,color='blue',linewidth=1,label='exp.')
+#    #######################################################
+
 #   E_edge   = 8979.0
     E_edge   = 0.0
     E_fermi  = -5.41217
@@ -91,7 +96,6 @@ if __name__ == '__main__':
 
     conv = SAE.ReadFdmConv('R3.0/Au',suffix)
     plt.plot(conv.eng+E_edge,conv.xas,linewidth=2,label='XAS')
-
 
     plt.ticklabel_format(axis='x',useOffset=False)
     plt.xlabel("Energy above Fermi [eV]")
@@ -102,6 +106,15 @@ if __name__ == '__main__':
 
     leg = plt.legend(fontsize=12,loc='lower right')
     leg.get_frame().set_alpha(0.5)
+
+#   plt.yticks([])
+#   plt.xlabel("")
+
+#   plt.xlim( xmax=12100 )
+#   plt.xlim( xmin=11900 )
+
+#   plt.xlim( xmax=200 )
+#   plt.xlim( xmin=-10 )
 
     plt.savefig("XAS.eps")
     plt.savefig("XAS.pdf")

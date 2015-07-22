@@ -10,10 +10,10 @@
 #
 ################################################################################
 #
-# 2015.01.28                                                                    
-#  title の取得における末尾までの空白削除を追加 
+# 2015.01.28
+#  title の取得における末尾までの空白削除を追加
 #
-# 2015.01.27 startup 
+# 2015.01.27 startup
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -22,7 +22,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.2"
 ################################################################################
@@ -31,13 +31,12 @@ import sys
 import os
 import re
 import gzip
-import optparse
 import numpy as np
 
 #from copy import deepcopy
 
 ################################################################################
-class ReadEigenval(object):
+class ReadVaspEigenval(object):
 
     def __init__(self,name):
 
@@ -47,7 +46,7 @@ class ReadEigenval(object):
             GZIP=True
         else:
             sys.exit("STOP: "+name+" or "+name+".gz file not found")
-    
+
         try:
             if GZIP:
                 tmp = gzip.open(name+".gz")
@@ -59,7 +58,7 @@ class ReadEigenval(object):
             sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
         finally:
             tmp.close()
-    
+
         self.datlines = datfile.split('\n')
 
     # DOSCAR & EIGENVAL 共通フォーマット(0-4)
@@ -169,22 +168,23 @@ class ReadEigenval(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'EIGENVAL'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
-                                                                                
+
     if len(args) > 0:
         name=args[0]
 
-    band = ReadEigenval(name)
+    band = ReadVaspEigenval(name)
 
     NATOM = band.get_natom()
     TITLE = band.get_title()
@@ -221,4 +221,4 @@ if __name__ == '__main__':
     print eigen_max,eigen_min
 
 ################################################################################
-     
+

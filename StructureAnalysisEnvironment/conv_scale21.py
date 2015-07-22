@@ -1,35 +1,36 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# POSCAR $B$N4pK\JB?J%Y%/%H%k$N%9%1!<%j%s%0$r(B 1.0 $B$K$9$k(B
+# POSCAR の基本並進ベクトルのスケーリングを 1.0 にする
 #
-#    1) VASP $B$N(B car mode $B$O%9%1!<%k$7$F$J$$$N$GFbIt:BI8$K$O1F6A$r<u$1$J$$(B
-#    2) direce mode $B$G$O$=$b$=$b%9%1!<%k%U%!%/%?!<$KFbIt:BI8$O1F6A$O<u$1$J$$(B
+#    1) VASP の car mode はスケールしてないので内部座標には影響を受けない
+#    2) direce mode ではそもそもスケールファクターに内部座標は影響は受けない
 #
-#      --> $BJB?J%Y%/%H%k$@$1%9%1!<%k$9$k(B
-#          $BFbIt:BI8$O%9%1!<%k$7$J$$(B
+#      --> 並進ベクトルだけスケールする
+#          内部座標はスケールしない
 #
-# [in]     scale0         : $B4pK\JB?J$K$+$+$k%9%1!<%k(B($BJQ49A0(B)
+# [in]     scale0         : 基本並進にかかるスケール(変換前)
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
-# [return] scale          : $B0l1~(B scale = 1.0 $B$rJV$7$F$*$/(B
-#                           $B$=$b$=$b$3$N%k!<%A%s$N;HMQA0Ds$,(B scale 1.0 $B$rJV$9$3$H$"$k(B
+# [return] scale          : 一応 scale = 1.0 を返しておく
+#                           そもそもこのルーチンの使用前提が scale 1.0 を返すことある
 #
 ################################################################################
 #
 # 2015.02.27
-#  conv_scale21  ($B5l%P!<%8%g%s(B,$B$=$N$^$^(B)
-#  conv_scale21r ($B?7%P!<%8%g%s(B,$BLa$jCMHG(B)
+#  conv_scale21  (旧バージョン,そのまま)
+#  conv_scale21r (新バージョン,戻り値版)
 #
 # 2015.02.27
-#  $B0z?t$G$O$J$/La$jCM$GCM$rJV$9F1L>$N4X?t$r:n@.(B
-#   $B0z?t(B/$BLa$jCM$r(B conv_direct2car_return $B$HF10l$N$b$N$K$9$k(B
-#   $B$?$@$7!"(BABS $B$O30$9(B
+#  引数ではなく戻り値で値を返す同名の関数を作成
+#   引数/戻り値を conv_direct2car_return と同一のものにする
+#   ただし、ABS は外す
 #
 # 2014.11.04 1st
 #
@@ -53,7 +54,7 @@ __version__    = "0.0.2"
 #import numpy as np
 
 ################################################################################
-# $B0z?tHG(B
+# 引数版
 def conv_scale21(scale0,t):
 
     ##
@@ -69,19 +70,19 @@ def conv_scale21(scale0,t):
     t3_y = t[1,2]
     t3_z = t[2,2]
 
-             
+
     ###############################################
-    ## $B4pK\JB?J%Y%/%H%k$r%9%1!<%k$7$F$*$/(B
-    ## --> scale=1.0 $B$H$9$k$?$a(B
+    ## 基本並進ベクトルをスケールしておく
+    ## --> scale=1.0 とするため
     ##
     t1_x = t1_x*scale0
     t1_y = t1_y*scale0
     t1_z = t1_z*scale0
-    
+
     t2_x = t2_x*scale0
     t2_y = t2_y*scale0
     t2_z = t2_z*scale0
-    
+
     t3_x = t3_x*scale0
     t3_y = t3_y*scale0
     t3_z = t3_z*scale0
@@ -105,8 +106,8 @@ def conv_scale21(scale0,t):
 
 
 ################################################################################
-# $BLa$jCMHG(B
-#  $BLa$jCM$O(B conv_direct2car_return $B$H$[$\F10l(B
+# 戻り値版
+#  戻り値は conv_direct2car_return とほぼ同一
 #
 def conv_scale21r(scale0,t,natom,direct,position):
 

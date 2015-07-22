@@ -1,30 +1,31 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# OUTCAR $BFI$_9~$_(B, ION-LOOP $BKh$N86;R0LCV(B(&$BNO(B)$BFI$_9~$_@lMQ(B
-#   
-# [in]     canme  : OUTCAR$B$NL>A0(B
-# [in]     natom  : $BAm86;R?t(B
-# [return] nloop  : LOOP$B?t(B
+# OUTCAR 読み込み, ION-LOOP 毎の原子位置(&力)読み込み専用
+#
+# [in]     canme  : OUTCARの名前
+# [in]     natom  : 総原子数
+# [return] nloop  : LOOP数
 #
 ################################################################################
 #
 # 2015.01.09
-#   $B05=L%U%!%$%kBP1~HG$X(B
+#   圧縮ファイル対応版へ
 #
 # 2014.?? startup
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.2"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.2"
 ################################################################################
 
 import sys
@@ -59,33 +60,33 @@ def read_outcar_position(cname,natom,nloop,position_loop,force_loop):
 
     num = len(datlines) -1
 
-    nion_reg    = re.compile('.*NIONS = '        ,re.IGNORECASE)    
+    nion_reg    = re.compile('.*NIONS = '        ,re.IGNORECASE)
     tforce_reg  = re.compile('.*TOTAL-FORCE'     ,re.IGNORECASE)
     tvector_reg = re.compile('.*Lattice vectors:',re.IGNORECASE)
     a_reg       = re.compile('.*ALAT       ='    ,re.IGNORECASE)
     potcar_reg  = re.compile('.*POTCAR:'         ,re.IGNORECASE)
 
-    # POSCAR $B$rFI$_9~$`$N$HF1Ey$N>pJs!\%"%k%U%!$r(B OUTCAR $B$+$iFI$_9~$`(B
-    n_local = 0 
+    # POSCAR を読み込むのと同等の情報＋アルファを OUTCAR から読み込む
+    n_local = 0
     for i in range(num):
 
-        # $B86;R$N<oN`?t(BNION*2
+        # 原子の種類数NION*2
         if bool(potcar_reg.match(datlines[i])):
            #print datlines[i]
             n_local += 1
 
-        # $B86;R$NAm?t(B (NATOM)
+        # 原子の総数 (NATOM)
         if bool(nion_reg.match(datlines[i])):
             lines = datlines[i].split()
             natom_local=int(lines[11])
 
-        # $B%9%1!<%k%U%!%/%?!<(B
+        # スケールファクター
         if bool(a_reg.match(datlines[i])):
             tmp = datlines[i].split()
             scale_local=float(tmp[2])
            #print scale_local
 
-        # $B4pK\JB?J%Y%/%H%k(B
+        # 基本並進ベクトル
         if bool(tvector_reg.match(datlines[i])):
             t1_local = filter(lambda w: len(w) > 0, re.split(r'\s|"|,|\)|\(|=', datlines[i+2]))
             t1_x_local=float(t1_local[1])/scale_local
@@ -106,7 +107,7 @@ def read_outcar_position(cname,natom,nloop,position_loop,force_loop):
     if natom != natom_local:
         sys.exit("OUTCAR is inconsistent with POSCAR")
 
-    # $B86;R$KF/$/NO(B($B$*$h$S%9%F%C%W$4$H$N:BI8$NFI$_9~$_(B
+    # 原子に働く力(およびステップごとの座標の読み込み
     loop = 0
     for i in range(num):
         if bool(tforce_reg.match(datlines[i])):
@@ -121,4 +122,4 @@ def read_outcar_position(cname,natom,nloop,position_loop,force_loop):
             loop += 1
 
 ################################################################################
-     
+

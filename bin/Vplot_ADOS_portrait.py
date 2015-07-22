@@ -33,7 +33,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -47,8 +47,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 #import matplotlib.cm as cm
@@ -59,7 +59,7 @@ def options():
 
     dname = 'DOSCAR'
     oname = 'OUTCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-d','--doscar',
                         dest='DOSCAR',
@@ -89,7 +89,7 @@ def options():
                       dest='YMAX',
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.DOSCAR:
         dname=options.DOSCAR
 
@@ -109,18 +109,18 @@ if __name__ == '__main__':
 
     TDOS_FLAG=True
 
-    if OPT_EMAX:                                                                
-                print "Emax=",OPT_EMAX                                                  
-    if OPT_EMIN:                                                                
-                print "Emin=",OPT_EMIN                                                  
-    if OPT_YMAX:                                                                
-                print "Ymax=",OPT_YMAX  
+    if OPT_EMAX:
+                print "Emax=",OPT_EMAX
+    if OPT_EMIN:
+                print "Emin=",OPT_EMIN
+    if OPT_YMAX:
+                print "Ymax=",OPT_YMAX
 
     # set output device
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(dname)
+    dos = SAE.ReadVaspDoscar(dname)
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
@@ -162,14 +162,14 @@ if __name__ == '__main__':
     for ion in range(NION):
         # spin を逆から回す(先に描いものが下側に描画されるので)
         for spin in range(NSPIN-1,-1,-1):
-   
-            if NSPIN == 1:
-                print "ion = ",ion+1,atoms[ion] 
-            else:
-                print "ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion] 
 
-            atom = str(atoms[ion]) 
-    
+            if NSPIN == 1:
+                print "ion = ",ion+1,atoms[ion]
+            else:
+                print "ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion]
+
+            atom = str(atoms[ion])
+
             ########################################################################
             plt.axes([ orgx,orgy, 0.80, size ])
 
@@ -185,21 +185,21 @@ if __name__ == '__main__':
             if TDOS_FLAG:
                 TDOS = dos.get_tdos(spin)
                 plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
-    
+
             c = "red"
             ADOS = dos.get_ldos_ion(0,ion,spin)
             plt.plot(ENG-EFERMI,ADOS, linestyle=":", color=c, linewidth=2, label=atom+'-s')
-                                                                                
+
             c = "green"
             ADOS = dos.get_ldos_ion(1,ion,spin)
             plt.plot(ENG-EFERMI,ADOS, linestyle="-", color=c, linewidth=2, label=atom+'-p')
-    
+
             c = "blue"
             ADOS = dos.get_ldos_ion(2,ion,spin)
             plt.plot(ENG-EFERMI,ADOS, linestyle="--", color=c, linewidth=2, label=atom+'-d')
-                        
+
             ########################################################################
-  
+
             # DOSのY軸(DOS軸)原点をセットする(稀に必須)
             if NSPIN == 1:
                 xmin,xmax,ymin,ymax = plt.axis()
@@ -219,36 +219,36 @@ if __name__ == '__main__':
                 plt.xlim( xmin=int(OPT_EMIN) )
             if OPT_YMAX:
                 plt.ylim( ymax=int(OPT_YMAX) )
-   
+
             # title,label,xticks
             # 一番上
             if ion == (NION-1) and spin == 0:
-               plt.title(TITLE,fontsize=16) 
+               plt.title(TITLE,fontsize=16)
 
             # 一番下以外
-            if ion != 0: 
-                plt.xticks([]) 
+            if ion != 0:
+                plt.xticks([])
 
             # 一番下
             if NSPIN == 1:
                 if ion == 0:
-                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 ) 
-                    yl = plt.ylabel("DOS/eV", fontsize=16 ) 
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
+                    yl = plt.ylabel("DOS/eV", fontsize=16 )
             if NSPIN == 2:
                 if ion == 0 and spin == 0:
-                    plt.xticks([]) 
+                    plt.xticks([])
                 if ion == 0 and spin == 1:
-                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 ) 
-                    yl = plt.ylabel("DOS/eV", fontsize=16 ) 
-    
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
+                    yl = plt.ylabel("DOS/eV", fontsize=16 )
+
             # EF0
             plt.axvline(x=0,color="black",linewidth=1)
-    
+
             # 凡例BOX
             if spin == 0:
                 leg = plt.legend(fontsize=12)   # 凡例Box
                 leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
-    
+
     ############################################################################
 
 #   plt.xlim([-10,10])
@@ -257,12 +257,12 @@ if __name__ == '__main__':
     if LANDSCAPE_FLAG:
         plt.savefig("ADOS.eps")
         plt.savefig("ADOS.pdf")
-        plt.savefig("ADOS.png") 
+        plt.savefig("ADOS.png")
     else:
 #       plt.savefig("ADOS_portrait.eps",orientation = 'portrait',papertype = 'a4')
         plt.savefig("ADOS_portrait.eps",orientation = 'portrait')
         plt.savefig("ADOS_portrait.pdf",orientation = 'portrait')
-        plt.savefig("ADOS_portrait.png",orientation = 'portrait') 
+        plt.savefig("ADOS_portrait.png",orientation = 'portrait')
 
     if not NO_WINDOW_FLAG:
         plt.show()

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # PWScf (Quantum ESPRESSO 5..x )
-# dos $B4XO"=PNO(B $B%U%!%$%k(B( dos.x projwfc.x $B=PNO%U%!%$%k(B $BFI$_9~$_(B)
+# dos 関連出力 ファイル( dos.x projwfc.x 出力ファイル 読み込み)
 #
 #
 ################################################################################
@@ -27,7 +28,6 @@ import sys
 import os
 import glob
 import re
-import optparse
 import numpy as np
 
 import StructureAnalysisEnvironment as SAE
@@ -47,28 +47,28 @@ class ReadPwPdos(object):
         else:
             self.ispin = 1
 
-        # $B<B:]$K7W;;$7$F$$$k(B pdos $B%U%!%$%k$N<hF@(B
+        # 実際に計算している pdos ファイルの取得
         pdos_list = glob.glob(prefix+'.pdos.pdos_atm#*')
         if len(pdos_list) < 1:
             sys.exit("STOP: "+prefix+".pdos.pdos_atm#* file not found")
 
-        # $B7W;;$7$F$$$k(B pdos $B%U%!%$%k$N86;R$N<oN`HV9f$N$_$r<hF@(B
+        # 計算している pdos ファイルの原子の種類番号のみを取得
         atom_ls = []
         for f in pdos_list:
             tmp = re.sub(prefix+'.pdos.pdos_atm#','',f)
             atom = int(re.sub('\(.*','', tmp))
             atom_ls.append(atom)
 
-        # $B=EJ#$7$F$$$k(B pdos $B%U%!%$%k$N86;R<oHV9f$r:o=|(B($B=gHV$OJQ99$7$J$$(B)
+        # 重複している pdos ファイルの原子種番号を削除(順番は変更しない)
         atom_list = []
         for x in atom_ls:
             if x not in atom_list:
                 atom_list.append(x)
 
-        # $B%f%K!<%/$O86;R<oHV9f$N?t$+$iA486;R?t$r3NJ](B
+        # ユニークは原子種番号の数から全原子数を確保
         self.natom = len(atom_list)
 
-        # $B<B:]$K7W;;$7$F$$$k3F86;RKh$K7W;;$7$F$$$k(Bl$B$N:GBgCM$r<hF@$9$k(B
+        # 実際に計算している各原子毎に計算しているlの最大値を取得する
         lmax_list = []
         for atom in atom_list:
             tmp = glob.glob(prefix+'.pdos.pdos_atm#'+str(atom)+'(*')
@@ -81,18 +81,18 @@ class ReadPwPdos(object):
        #print len(lmax_list), lmax_list
 
         ################
-        # LDOS $B<}G<$K;H$&G[Ns$N3NJ](B($B86;R<oKh(B),$BG[Ns$N(B l_max $B$O8GDj$K$9$k(B
+        # LDOS 収納に使う配列の確保(原子種毎),配列の l_max は固定にする
         l_max = 4 # s,p,d,f
         self.ldos = np.zeros((self.nedos,l_max,self.natom,self.ispin))
 
         ################
-        # PDOS $B<}G<$K;H$&G[Ns$N3NJ](B
+        # PDOS 収納に使う配列の確保
         lm_max = 1+3+5+7 # s+p+d+f
         self.pdos = np.zeros((self.nedos,lm_max,self.natom,self.ispin))
         self.eng = np.zeros((self.nedos,self.natom))
 
         ########################################################################
-        # $B86;R<o$N%k!<%W(B
+        # 原子種のループ
         i = 0
         for atom in atom_list:
 
@@ -105,7 +105,7 @@ class ReadPwPdos(object):
                     sys.exit("STOP: "+pfiles)
                 pname = pfiles[0]
 
-                # $B86;R<o!\50F;$K$*$1$k%G!<%?FI$_9~$_(B
+                # 原子種＋軌道におけるデータ読み込み
                 data,nline = SAE.read_dataline1(pname)
                 if nline != self.nedos:
                     sys.exit("STOP: Contradiction Number of Data Line :"+pname)
@@ -133,6 +133,8 @@ class ReadPwPdos(object):
 
 ################################################################################
 def options():
+
+    import optparse
 
     prefix = 'Fe'
     parser = optparse.OptionParser()

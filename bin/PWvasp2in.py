@@ -65,7 +65,7 @@ def options():
         outbase=re.sub('\.inp$','',options.OUTPUT)
         outinp=outbase+inpsuffix
 
-    # $B%*%W%7%g%sL5$70z?t$N;~$O3HD%;R<+F0:o=|$rIU$1$:$K$=$N$^$^%U%!%$%kL>$H$9$k(B
+    # オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
     if len(args) >0:
         poscarname=args[0]
 
@@ -99,8 +99,8 @@ if __name__ == '__main__':
     poscarname,outbase,inpsuffix,OPT_STD = options()
 
     ############################################################################
-    # POSCAR $BFI$_9~$_(B
-    poscar = SAE.ReadPoscar(poscarname)
+    # POSCAR 読み込み
+    poscar = SAE.ReadVaspPoscar(poscarname)
 
     vasp = poscar.get_vasp_version()
     if vasp < 5:

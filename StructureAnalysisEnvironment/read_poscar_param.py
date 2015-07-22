@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# POSCAR $BFI$_9~$_$N$?$a$N;vA0=`Hw4X?t(B
+# POSCAR 読み込みのための事前準備関数
 #
 # [in/out] POSCAR   : POSCAR file name
 #
@@ -13,20 +14,20 @@
 ################################################################################
 #
 # 2015.01.21
-#  GZIP $BBP1~HG(B
+#  GZIP 対応版
 #
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.2"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.2"
 ################################################################################
 
 import sys
@@ -91,7 +92,7 @@ def read_poscar_param(POSCAR):
     #for j in range(len(atoms)):
     #    print atoms[j],
     #print ""
-    
+
     ###############################################
     ## get number of atoms
     ##

@@ -1,23 +1,24 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# sets.in (HiLAPW) $BFI$_9~$_MQ$N%k!<%A%s(B
+# sets.in (HiLAPW) 読み込み用のルーチン
 #
 ################################################################################
 #
-# 2014.11.26 
+# 2014.11.26
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -28,7 +29,7 @@ import os
 
 ################################################################################
 #
-# [in]     cname       : sets.in $B$NL>A0(B
+# [in]     cname       : sets.in の名前
 #
 # [in/out] lattices[0] : lattice a
 #                  [1] : lattice b
@@ -38,10 +39,10 @@ import os
 #                  [5] : gamma
 #
 # [in/out] nion                    : Number of ion
-# [in/out] sg_atoms[nion]          : $B86;R$N<oN`HV9f$rM?$($k$H86;R$N?t$rM?$($k(B (sg$BHG(B)
-# [in/out] sg_atoms_index[nion]    : $B86;R$N<oN`HV9f$rM?$($k$H85AG5-9f$rM?$($k(B (sg$BHG(B)
+# [in/out] sg_atoms[nion]          : 原子の種類番号を与えると原子の数を与える (sg版)
+# [in/out] sg_atoms_index[nion]    : 原子の種類番号を与えると元素記号を与える (sg版)
 #
-# [in/out] sg_position[sg_natom,3] : $B86;R<o(B,$B86;R<oFb(Blocal-site, x,y,z $B:BI8(B
+# [in/out] sg_position[sg_natom,3] : 原子種,原子種内local-site, x,y,z 座標
 #
 # [in/out] kpoints(3)      : kx,ky,kz
 #
@@ -65,19 +66,17 @@ def read_sets(cname,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kpoints):
     tmp.close()
     setslines = setsfile.split('\n')
 
-    title = setslines[0]     
+    title = setslines[0]
     nspin = setslines[2]
     sgn   = setslines[4]
 
-    tmp = setslines[5].split()
-    lattice_a = tmp[0]
-    lattice_b = tmp[1]
-    lattice_c = tmp[2]
+    lattice_a = setslines[5].split()[0]
+    lattice_b = setslines[5].split()[1]
+    lattice_c = setslines[5].split()[2]
 
-    tmp = setslines[6].split()
-    alpha = tmp[0]
-    beta  = tmp[1]
-    gamma = tmp[2]
+    alpha = setslines[6].split()[0]
+    beta  = setslines[6].split()[1]
+    gamma = setslines[6].split()[2]
 
     lattices[0] = lattice_a
     lattices[1] = lattice_b
@@ -85,7 +84,7 @@ def read_sets(cname,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kpoints):
     lattices[3] = alpha
     lattices[4] = beta
     lattices[5] = gamma
-   
+
     nion  = int(setslines[8])
 
     sg_natom       = 0

@@ -39,7 +39,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.1.0"
 ################################################################################
@@ -53,8 +53,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -65,7 +65,7 @@ def options():
 
     dname = 'DOSCAR'
     oname = 'OUTCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-d','--doscar',
                         dest='DOSCAR',
@@ -112,24 +112,24 @@ def options():
     )
     parser.add_option(  '--emax',
                       dest='EMAX',
-    )                                                                           
+    )
     parser.add_option(  '--emin',
                       dest='EMIN',
     )
     parser.add_option(  '--ymax',
                       dest='YMAX',
-    )                                                                           
+    )
     parser.add_option(  '--atom',
                       dest='ATOM',
-    )                                                                           
+    )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.DOSCAR:
         dname=options.DOSCAR
-                                                                                
+
     if options.OUTCAR:
         oname=options.OUTCAR
-                                                                                
+
 
     return [dname,oname,\
             options.NOWINDOW,options.LANDSCAPE,\
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(dname)
+    dos = SAE.ReadVaspDoscar(dname)
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
@@ -190,11 +190,11 @@ if __name__ == '__main__':
     if LORBIT <= 10:
         sys.exit("STOP: LORIBT="+str(LORBIT))
 
-    # makes instance ( Read OUTCAR )                                            
+    # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
         FLAG_OUTCAR=True
-        outcar = SAE.ReadOutcar(oname)                                              
-        NION = outcar.get_nion()                                                    
+        outcar = SAE.ReadVaspOutcar(oname)
+        NION = outcar.get_nion()
         atoms = outcar.get_atoms_index()
         atoms_j = outcar.get_atoms_j()
         point_sym = outcar.get_point_symmetry()
@@ -346,7 +346,7 @@ if __name__ == '__main__':
                     plt.ylim([0,ymax])
                 if spin == 1:
                     plt.ylim([ymax,0])
-        
+
             ################################################################
             # title,label,xticks 処理
             # 一番上
@@ -360,13 +360,13 @@ if __name__ == '__main__':
             # 一番下
             if NSPIN == 1:
                 if blk == (nblock -1):
-                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 ) 
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
                     yl = plt.ylabel("DOS/eV", fontsize=16)
             if NSPIN == 2:
                 if blk == (nblock -1) and spin == 0:
                     plt.xticks([])
                 if blk == (nblock -1) and spin == 1:
-                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 ) 
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
                     yl = plt.ylabel("DOS/eV", fontsize=16)
 
             if OPT_EMAX:
@@ -379,8 +379,8 @@ if __name__ == '__main__':
             if spin == 0:
                 leg = plt.legend(fontsize=9)   # 凡例Box
                 leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
-    
-    
+
+
     ############################################################################
 
 
@@ -390,11 +390,11 @@ if __name__ == '__main__':
     if LANDSCAPE_FLAG:
         plt.savefig("PDOS"+str(atom+1)+".eps")
         plt.savefig("PDOS"+str(atom+1)+".pdf")
-        plt.savefig("PDOS"+str(atom+1)+".png") 
+        plt.savefig("PDOS"+str(atom+1)+".png")
     else:
         plt.savefig("PDOS"+str(atom+1)+".eps",orientation = 'portrait')
         plt.savefig("PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
-        plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait') 
+        plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait')
 
     if not NO_WINDOW_FLAG:
         plt.show()

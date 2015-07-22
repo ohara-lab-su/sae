@@ -1,30 +1,31 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# *.dat (RMC_POT) $B%U%!%$%kFI$_9~$_!"(Bdensity $B$r=q$-$J$*$7$F(B *.dat $B=PNO$9$k(B
+# *.dat (RMC_POT) ファイル読み込み、density を書きなおして *.dat 出力する
 #
-# $B$[$\:FMxMQ$G$-$J$$(B $B!J$7$K$/$$!KFC2=7?%"%[%k!<%A%s(B (2014.11.07)
+# ほぼ再利用できない （しにくい）特化型アホルーチン (2014.11.07)
 #
-# [in]     STD     : $BI8=`=PNO$9$k$+$I$&$+$N%U%i%0(B
-# [in]     datname : $BFI$_9~$`!"4pK\$H$J$k(B *.dat $B%U%!%$%k(B   
-# [in]     outname : $B=PNO$9$k(B *.dat $B%U%!%$%kL>(B
+# [in]     STD     : 標準出力するかどうかのフラグ
+# [in]     datname : 読み込む、基本となる *.dat ファイル
+# [in]     outname : 出力する *.dat ファイル名
 #
-# [in]     density : $B?7$7$$(B density $B$NCM(B
+# [in]     density : 新しい density の値
 #
 ################################################################################
 #
 # 2014.10.11.07 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -44,7 +45,7 @@ def change_density(STD,datname,outname,density):
 
     datlines = datfile.split('\n')
     nline = len(datlines)
-    
+
     header = datlines[0]
     lines = datlines[1].split()
     n = len(lines)
@@ -66,6 +67,6 @@ def change_density(STD,datname,outname,density):
         print >> out, datlines[i].rstrip()
 
     out.close
-    
+
     return
 

@@ -22,15 +22,15 @@
 #         ---> ハードリンクにしておく(メインマシン上では)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -286,7 +286,7 @@ print >> sets, "-----nspin"
 print >> sets, "1"
 print >> sets, "-----space group"
 print >> sets, "P1"
-print >> sets, " ",t1_x," ",t2_y," ",t3_z
+print >> sets, " ",t1_x*scale," ",t2_y*scale," ",t3_z*scale
 print >> sets, " 90.0 90.0 90.0"
 print >> sets, "-----atoms"
 print >> sets, "   ", nion

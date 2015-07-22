@@ -18,10 +18,10 @@ __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #import sys
@@ -29,8 +29,8 @@ import optparse
 #import xml.etree.ElementTree as ET
 
 #import numpy as np
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import os
 #import re
@@ -38,23 +38,23 @@ import StructureAnalysisEnvironment as SAE
 
 
 ################################################################################
-def options():                                                                  
-                                                                                
+def options():
+
     XDATCAR = "XDATCAR"
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=XDATCAR,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         XDATCAR=options.INPUT
-                                                                                
+
     if len(args) > 0:
         XDATCAR=args[0]
-                                                                                
+
     return XDATCAR
 
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
 #   name = 'XDATCAR'
     name = options()
-    xdat = SAE.ReadXdat(name)
+    xdat = SAE.ReadVaspXdat(name)
 
     nion = xdat.get_nion()
     natom = xdat.get_natom()

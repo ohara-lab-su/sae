@@ -1,32 +1,33 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # find_suffix(name)
 #
-# $B4pK\;EMM(B
-#    find_datfile.py $B$N5U(B
-#    $BFCDj$N%U%!%$%kL>$r0z$$$?$i(B suffix $B$$$m$$$m$rC5$7$F$/$l$k(B
+# 基本仕様
+#    find_datfile.py の逆
+#    特定のファイル名を引いたら suffix いろいろを探してくれる
 #
 #    >ls case.dos*
 #    case.dos1
 #    case.dos2
 #      .
 #      .
-#    find_datfile() $B$H0[$J$j!"$3$A$i$O:G=i$+$iJ#?t%U%!%$%k$,A0Ds(B
+#    find_datfile() と異なり、こちらは最初から複数ファイルが前提
 #
 # find_suffix1(name)              # ls name*
 # find_suffix2(head,tail)         # ls head*tail
 # find_suffix3(head,tail,delete)  # ls head* | sed 's/delete//'
-#                                 # tail $B$,(B None $B$N$H$-$O(B tail $B$r(B delete $B$H$7$FF0:n(B
+#                                 # tail が None のときは tail を delete として動作
 #
 ################################################################################
 #
 # 2015.03.27
-#  spin + ev $B$N$H$-$K(B suffix3 $B$,@5$7$/F0$$$F$$$J$$%P%0$r=$@5(B
+#  spin + ev のときに suffix3 が正しく動いていないバグを修正
 #
 # 2015.03.25
-#  tail $B$,(B None $B$N$H$-$N=hM}$rDI2C(B
+#  tail が None のときの処理を追加
 #
 # 2015.03.24
 #   startup

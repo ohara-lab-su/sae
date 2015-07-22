@@ -1,51 +1,52 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $BC10LK&$+$i$NItJ,E*$J9=B$Cj=P%3!<%I$NA0>%@o(B
-#   $BItJ,6u4V$N86;R?t3NG'%k!<%A%s(B
+# 単位胞からの部分的な構造抽出コードの前哨戦
+#   部分空間の原子数確認ルーチン
 #
-# [in/out] scale          : $B%9%1!<%k%U%!%/%?!<(B
+# [in/out] scale          : スケールファクター
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                 x   y   z
 #                           t1 = a11 a21 a31
 #                           t2 = a12 a22 a32
 #                           t3 = a13 a23 a33
 #
-# [in]     natom          : $B$b$H$NFbIt:BI87O$G$NAm86;R?t(B
+# [in]     natom          : もとの内部座標系での総原子数
 #
-# [in/out] direct         : $BFbIt:BI87O$N5-=R$,(B direct $B$+(B cartesian $B$+!)(B
+# [in/out] direct         : 内部座標系の記述が direct か cartesian か？
 #
-# [in/out] position[*,3]  : $BFbIt:BI8(B
-#                           ($BCm0U(B:VASP $B7A<0$,G0F,$J$N$G(B cartesian $B$G$b(B
-#                                 scale $B$G(B scale $B$7$F$J$$:BI87O(B)
+# [in/out] position[*,3]  : 内部座標
+#                           (注意:VASP 形式が念頭なので cartesian でも
+#                                 scale で scale してない座標系)
 #
-# [in/out] c1(x,y,z)      : $B%j!<%8%g%s86E@(Bc1
-# [in/out] c2(x,y,z)      : $B%j!<%8%g%s86E@(Bc2
-#                           ($BCm0U(B) $B85$N(B direct,scale $B;X<($K4p$E$$$F:BI87O$NJQ49$r?o;~9T$&(B
+# [in/out] c1(x,y,z)      : リージョン原点c1
+# [in/out] c2(x,y,z)      : リージョン原点c2
+#                           (注意) 元の direct,scale 指示に基づいて座標系の変換を随時行う
 #
 # [return] scale
 # [return] direct
-# [return] extract_natom  : $BCj=P$7$?86;R$N?t(B
+# [return] extract_natom  : 抽出した原子の数
 #
 #
 ################################################################################
 #
 # 2015.02.16
-#  import $B$NL>A06u4V$rJQ99(B
+#  import の名前空間を変更
 #
 # 2014.11.12 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #import sys
@@ -53,12 +54,12 @@ __version__    = "0.0.1"
 
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 def extract_struct_param(scale,t,natom,direct,position,c0,c1):
 
-    # $B%j!<%8%g%sA*Br$N:BI87O$NJQ49(B
+    # リージョン選択の座標系の変換
     t1_x = t[0,0]
     t1_y = t[1,0]
     t1_z = t[2,0]
@@ -81,15 +82,15 @@ def extract_struct_param(scale,t,natom,direct,position,c0,c1):
     c1_new[1] = ( t1_y*c1[0] + t2_y*c1[1] + t3_y*c1[2] )*scale
     c1_new[2] = ( t1_z*c1[0] + t2_z*c1[1] + t3_z*c1[2] )*scale
 
-    # cartesian$B7O$XJQ49(B
+    # cartesian系へ変換
     if direct:
         ABS=False
         scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
 
-    # $B@dBP:BI87O$XJQ49(B
+    # 絶対座標系へ変換
     SAE.conv_car2carABS(scale,t,natom,direct,position)
 
-    # $B%j!<%8%g%sFb$N86;RC5:w(B(c$B<4$N%j!<%8%g%s$N$_(B)
+    # リージョン内の原子探索(c軸のリージョンのみ)
     j=0
     for i in range(natom):
         if position[i,2] >= c0_new[2] and position[i,2] <= c1_new[2]:

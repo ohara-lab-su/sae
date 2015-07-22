@@ -36,7 +36,6 @@ import sys
 import os
 import gzip
 #import re
-import optparse
 #import numpy as np
 
 #from copy import deepcopy
@@ -45,7 +44,7 @@ import optparse
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadSymdat(object):
+class ReadVaspSymdat(object):
 
     def __init__(self,name):
 
@@ -85,6 +84,7 @@ class ReadSymdat(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'sym.dat'
 
     parser = optparse.OptionParser()
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     if options.INPUT: name=options.INPUT
     if len(args) > 0: name=args[0]
 
-    sym = ReadSymdat(name)
+    sym = ReadVaspSymdat(name)
 
     num_symlines = sym.get_num_symlines()
     symlines = sym.get_symlines()

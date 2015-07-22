@@ -19,8 +19,8 @@
 #
 ################################################################################
 #
-# 2015.01.29                                                                    
-#    Y軸(DOS軸) の下限の設定のバグを修正 
+# 2015.01.29
+#    Y軸(DOS軸) の下限の設定のバグを修正
 #
 # 2015.01.14
 #    SPIN 対応版,option EMAX,EMIN,YMAX 対応
@@ -49,7 +49,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.5"
 ################################################################################
@@ -63,8 +63,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -75,7 +75,7 @@ def options():
 
     dname = 'DOSCAR'
     oname = 'OUTCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-d','--doscar',
                         dest='DOSCAR',
@@ -92,21 +92,21 @@ def options():
     )
     parser.add_option(  '--emax',
                       dest='EMAX',
-    )                                                                           
+    )
     parser.add_option(  '--emin',
                       dest='EMIN',
     )
     parser.add_option(  '--ymax',
                       dest='YMAX',
-    )                                                                           
+    )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.DOSCAR:
         dname=options.DOSCAR
-                                                                                
+
     if options.OUTCAR:
         oname=options.OUTCAR
-                                                                                
+
     plot_atoms=[]
     if len(args) > 0:
         for i in range(0,len(args)):
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(dname)
+    dos = SAE.ReadVaspDoscar(dname)
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
@@ -155,11 +155,11 @@ if __name__ == '__main__':
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
 
-    # makes instance ( Read OUTCAR )                                            
+    # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
         FLAG_OUTCAR=True
-        outcar = SAE.ReadOutcar(oname)                                              
-        NION = outcar.get_nion()                                                    
+        outcar = SAE.ReadVaspOutcar(oname)
+        NION = outcar.get_nion()
         atoms = outcar.get_atoms_index()
         atoms_j = outcar.get_atoms_j()
 #       for atom in range(NATOM):
@@ -182,15 +182,15 @@ if __name__ == '__main__':
     ############################################################################
     for spin in range(NSPIN):
 
-        if NSPIN == 1:                                                          
-            plt.axes([ 0.130,0.130, 0.80,0.80 ])  # 一段組の原点(x,y), 幅(x,y)  
-            plt.title(TITLE)                                                    
-        if NSPIN == 2:                                                          
-            if spin == 0:                                                       
+        if NSPIN == 1:
+            plt.axes([ 0.130,0.130, 0.80,0.80 ])  # 一段組の原点(x,y), 幅(x,y)
+            plt.title(TITLE)
+        if NSPIN == 2:
+            if spin == 0:
                 plt.axes([ 0.130,0.530, 0.80,0.40 ])  # 二段組の上側(y幅半分) up-spin
-                plt.title(TITLE)                                                
-            if spin == 1:                                                       
-                plt.axes([ 0.130,0.130, 0.80,0.40 ])  # 二段組の下段( down-spin ) 
+                plt.title(TITLE)
+            if spin == 1:
+                plt.axes([ 0.130,0.130, 0.80,0.40 ])  # 二段組の下段( down-spin )
 
         j=0
         for atom in plot_atoms:
@@ -218,8 +218,8 @@ if __name__ == '__main__':
 #           plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
             plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
 
-            # autumn, bone, cool, copper, flag, gray, hot, hsv,                     
-            # jet, pink, prism, spring, summer, winter, spectral  
+            # autumn, bone, cool, copper, flag, gray, hot, hsv,
+            # jet, pink, prism, spring, summer, winter, spectral
 
             c = cm.prism(float(j)/(NATOM*3))
             LDOS = dos.get_ldos(0,atom,spin)
@@ -236,8 +236,8 @@ if __name__ == '__main__':
             plt.plot(ENG-EFERMI,LDOS, linestyle="--", color=c, linewidth=2, label=atom_label+'-d')
             j += 1
 
-            # Y軸の調整                                                             
-            plt.ylim( ymin=0 ) 
+            # Y軸の調整
+            plt.ylim( ymin=0 )
 
         if spin == 0:
             yl = plt.ylabel("DOS/eV", fontsize=20 )
@@ -253,16 +253,16 @@ if __name__ == '__main__':
             if spin == 0:
                 plt.xticks([])
             if spin == 1:
-                # y 軸反転                                                              
-                xmin,xmax,ymin,ymax = plt.axis()                                        
-                plt.ylim([ymax,0])  
+                # y 軸反転
+                xmin,xmax,ymin,ymax = plt.axis()
+                plt.ylim([ymax,0])
 
         # EF0
         plt.axvline(x=0,color="black",linewidth=1)
 
     ############################################################################
 
-    plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 ) 
+    plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
 
     leg = plt.legend(fontsize=12)   # 凡例Box
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
@@ -272,7 +272,7 @@ if __name__ == '__main__':
 
     plt.savefig("LDOS.eps")
     plt.savefig("LDOS.pdf")
-    plt.savefig("LDOS.png") 
+    plt.savefig("LDOS.png")
 
     if not NO_WINDOW_FLAG:
         plt.show()

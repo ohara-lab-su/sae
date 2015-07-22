@@ -42,10 +42,10 @@ import sys
 #import gzip
 #import numpy as np
 
-import optparse 
+import optparse
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         print "GAMMA(DEG) :",gamma
 
     # makes instance
-    poscar = SAE.ReadPoscar(poscarname)
+    poscar = SAE.ReadVaspPoscar(poscarname)
 
     title = poscar.get_title()
     scale = poscar.get_scale()
@@ -132,9 +132,9 @@ if __name__ == '__main__':
 #   print >> out, title
     if DEBUG:
         print >> out, " ",scale
-        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])              
-        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])              
-        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])    
+        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
+        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
+        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
         print >> out, ""
 #
 #   if vasp >= 5:
@@ -173,13 +173,13 @@ if __name__ == '__main__':
     title0= "alpha="+str(alpha)+", beta="+str(beta)+", gamma="+str(gamma)
 
     # オイラー角で回した時の基本並進ベクトル
-    t,position = poscar.conv_rot_euler(alpha,beta,gamma)  
+    t,position = poscar.conv_rot_euler(alpha,beta,gamma)
 
     print >> out, title+": "+title0
     print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])              
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])              
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])    
+    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
+    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
+    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
 
     if vasp >= 5:
         print >> out, " ",

@@ -138,7 +138,7 @@ def options():
 if __name__ == '__main__':
 
     inpname,outname,super_x,super_y,super_z = options()
-    poscar = SAE.ReadPoscar(inpname)
+    poscar = SAE.ReadVaspPoscar(inpname)
     poscar.conv_supercell(times=(super_x,super_y,super_z))
     poscar.print_poscar(outname,STD=True)
     poscar.print_poscar(outname,STD=False)

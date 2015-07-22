@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ################################################################################
-# PDB to FDMNES crystal $B>pJs(B
+# PDB to FDMNES crystal 情報
 #  using ASE version
 #
 ################################################################################
@@ -99,7 +99,7 @@ def write_fdmnes(name='POSCAR.pdb',atoms=None,STD=True,MOL=False):
 
     nat = len(atoms.get_positions())
 
-    # PDB $B%U%!%$%kCf$N(BCRYST1$B%?%0$N%A%'%C%/(B
+    # PDB ファイル中のCRYST1タグのチェック
     if MOL:
         print >> out, " molecule"
     else:

@@ -1,13 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # PWScf (Quantum ESPRESSO 5..x )
-# dos $B4XO"=PNO(B $B%U%!%$%k(B( dos.x projwfc.x $B=PNO%U%!%$%k(B $BFI$_9~$_(B)
+# dos 関連出力 ファイル( dos.x projwfc.x 出力ファイル 読み込み)
 #
-# $B@5D>$J(Bgnuplot$B7A<0$J$N$G!"(Bmatplotlib $B$+$i;H$&$H$-$O(B numpy $B$G%9%i%$%9$9$k(B
-# $B$@$1$J$N$@$,!":#$^$G$N(B plot $B%W%m%0%i%`$+$i$N8F$S=P$7$H$N8_49$N$?$a$K(B
-# Method $B2=$9$k(B
+# 正直なgnuplot形式なので、matplotlib から使うときは numpy でスライスする
+# だけなのだが、今までの plot プログラムからの呼び出しとの互換のために
+# Method 化する
 #
 ################################################################################
 #

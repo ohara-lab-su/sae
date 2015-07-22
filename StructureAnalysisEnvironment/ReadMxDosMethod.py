@@ -6,8 +6,8 @@
 # OpenMX 3.7
 # ReadMxDosMethod.py
 #
-#  TDOS $B$H(B PDOS $B$G$N%/%i%9J,N%$N$?$a6&DL$9$k(BMethod$B4X78$r(B superclass $B$H$7$F(B
-#  $BJ,N%!&:F@_7W$7$?(B
+#  TDOS と PDOS でのクラス分離のため共通するMethod関係を superclass として
+#  分離・再設計した
 #
 #    ReadMxDosMethod.py (superclass)
 #                                 ---> ReadMxTdos.py
@@ -15,19 +15,19 @@
 #
 ################################################################################
 #
-#  get_ispin()   : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
-#  get_natom()   : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
-#  get_title()   : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_ispin()   : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_natom()   : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_title()   : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
 #
 #  get_emax()
 #  get_emin()
 #  get_nedos()
 #
-#  get_efermi() $B%@%_!<(B
-#  get_lorbit() $B%@%_!<(B
+#  get_efermi() ダミー
+#  get_lorbit() ダミー
 #
-#  get_nion()    : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
-#  get_atoms_j() : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_nion()    : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_atoms_j() : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
 #
 ################################################################################
 #
@@ -36,23 +36,23 @@
 #  get_inttdos() ---> move ReadMxTdos
 #
 # 2015.02.26
-#  get_atoms_j()  : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
-#  get_nion()     : *.out *.dat $BFI$_9~$_(B (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_atoms_j()  : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
+#  get_nion()     : *.out *.dat 読み込み (ReadMxOut, ReadMxDat, ReadMxDatMethod)
 #
 # 2015.02.25
-#  Method $B$NB?$/$r(B SuperClass $B2=(B
-#  ReadMxDosMethod.py --($B7Q>5(B)--- ReadMxDos.py -($BL>A0JQ99(B)-> ReadMxTdos.py
-#                     --($B7Q>5(B)-----------------------------> ReadMxPdos.py
+#  Method の多くを SuperClass 化
+#  ReadMxDosMethod.py --(継承)--- ReadMxDos.py -(名前変更)-> ReadMxTdos.py
+#                     --(継承)-----------------------------> ReadMxPdos.py
 #
 # 2015.02.25
-#  OpenMX $BMQ$N(B DOS/PDOS $BMQ$N(B superclass $B$K:n@.$7$?(B method $B$rJ,N%!"7Q>52=(B
+#  OpenMX 用の DOS/PDOS 用の superclass に作成した method を分離、継承化
 #
 # 2015.02.25
-#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  $B$N<BAuEy(B
+#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  の実装等
 #
 # 2015.02.24
 #    startup
-#    $B<g$K(B ReadMxDat, ReadMxDatMethod $B$N@0Hw(B
+#    主に ReadMxDat, ReadMxDatMethod の整備
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -82,7 +82,7 @@ import numpy as np
 class ReadMxDosMethod(object):
 
     ###################################
-    # *.out or *.dat $B$+$i(B ISPIN $B>pJs$rFI$_9~$`(B( out $BM%@h(B )
+    # *.out or *.dat から ISPIN 情報を読み込む( out 優先 )
     def get_ispin(self):
         module_name = 'StructureAnalysisEnvironment'
         if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
@@ -103,7 +103,7 @@ class ReadMxDosMethod(object):
         return self.ispin
 
     ###################################
-    # *.out or *.dat $B$+$i(B NATOM $B>pJs$rFI$_9~$`(B( out $BM%@h(B )
+    # *.out or *.dat から NATOM 情報を読み込む( out 優先 )
     def get_natom(self):
         module_name = 'StructureAnalysisEnvironment'
         if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
@@ -124,7 +124,7 @@ class ReadMxDosMethod(object):
         return self.natom
 
     ###################################
-    # *.out or *.dat $B$+$i(B TITLE $B>pJs$rFI$_9~$`(B( out $BM%@h(B )
+    # *.out or *.dat から TITLE 情報を読み込む( out 優先 )
     def get_title(self):
 
         module_name = 'StructureAnalysisEnvironment'
@@ -147,20 +147,20 @@ class ReadMxDosMethod(object):
 
 
     ###################################
-    # EMAX ($B%(%M%k%.!<8GM-CM$N:GBgCM(B)
+    # EMAX (エネルギー固有値の最大値)
     def get_emax(self):
         NEDOS = self.get_nedos()
         self.EMAX = float(self.datlines[NEDOS-1].split()[0])
         return self.EMAX
 
     ###################################
-    # EMAX ($B%(%M%k%.!<8GM-CM$N:G>.CM(B)
+    # EMAX (エネルギー固有値の最小値)
     def get_emin(self):
         self.EMIN = float(self.datlines[0].split()[0])
         return self.EMIN
 
     ###################################
-    # NEDOS (DOS$B$NJ,3d?t(B, OpenMX$B$N(B*.DOS.Tetrahedron $B$G$O%U%!%$%k$N9T?t$KAjEv(B)
+    # NEDOS (DOSの分割数, OpenMXの*.DOS.Tetrahedron ではファイルの行数に相当)
     def get_nedos(self):
         return self.num
 
@@ -173,7 +173,7 @@ class ReadMxDosMethod(object):
         pass
 
     ###################################
-    # Energy $B8GM-CM(B($B$3$N>l9g$O(BDOS$B$NJ,3dCM(B)
+    # Energy 固有値(この場合はDOSの分割値)
     def get_eng(self):
         NEDOS = self.get_nedos()
         eng = np.zeros((NEDOS))
@@ -183,7 +183,7 @@ class ReadMxDosMethod(object):
         return self.ENG
 
     ###################################
-    # ION $B$N?t$r5a$a$k(B ( *.out or *.dat $B$+$iFI$_9~$`(B)
+    # ION の数を求める ( *.out or *.dat から読み込む)
     def get_nion(self):
         module_name = 'StructureAnalysisEnvironment'
         if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
@@ -204,7 +204,7 @@ class ReadMxDosMethod(object):
         return self.NION
 
     ###################################
-    # atoms_j $B$r5a$a$k(B ( *.out or *.dat $B$+$iFI$_9~$`(B)
+    # atoms_j を求める ( *.out or *.dat から読み込む)
     def get_atoms_j(self):
         module_name = 'StructureAnalysisEnvironment'
         if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
@@ -225,31 +225,31 @@ class ReadMxDosMethod(object):
         return self.atoms_j
 
 
-#   ReadMxPdos.py $B$G<BAu(B
+#   ReadMxPdos.py で実装
 #   def get_pdos(self,lm=0,atom=0,spin=0):
 #       pass
 
-#   ReadMxPdos.py $B$G<BAu(B
+#   ReadMxPdos.py で実装
 #   def get_pdos_all(self):
 #       pass
 
-#   ReadMxPdos.py $B$G<BAu(B
+#   ReadMxPdos.py で実装
 #   def get_ldos(self,l=0,atom=0,spin=0):
 #       pass
 
-#   ReadMxPdos.py $B$G<BAu(B
+#   ReadMxPdos.py で実装
 #   def get_ldos_all(self):
 #       pass
 
-# ReadMxPdos() $B$K$F<BAu(B
+# ReadMxPdos() にて実装
 #   def get_tdos_spd(self,l=0,spin=0):
 #       pass
 
-# ReadMxPdos() $B$K$F<BAu(B
+# ReadMxPdos() にて実装
 #   def get_ldos_ion(self,l=0,ion=0,spin=0):
 #       pass
 
-# ReadMxPdos() $B$K$F<BAu(B
+# ReadMxPdos() にて実装
 #   def get_ldos_ion_all(self):
 #       pass
 

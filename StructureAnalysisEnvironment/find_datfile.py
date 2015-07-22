@@ -1,44 +1,45 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # find_datfile(suffix)
 #
-#  $B;XDj(Bsuffix$B$N%U%!%$%k$,%+%l%s%H$K0l$D$N;~$O$=$N%U%!%$%kL>$rJV$9%k!<%A%s$X(B
-#  $BJQ99(B
+#  指定suffixのファイルがカレントに一つの時はそのファイル名を返すルーチンへ
+#  変更
 #
-#  $BCm0U(B) suffix $B$K$O(B . $B$OIU$+$J$$$GF~NO(B
-#        $B$b$7(B . $B$,IU$$$F$$$?$i<+F0$G0lEY(B . $B$rMn$H$9(B
+#  注意) suffix には . は付かないで入力
+#        もし . が付いていたら自動で一度 . を落とす
 #
 ################################################################################
 #
 # 2015.05.21
-#  find_datfile() $B$ND6%7%s%W%kHG(B find_datfile1() $B$rDI2C(B
+#  find_datfile() の超シンプル版 find_datfile1() を追加
 #
 # 2015.03.16
-#  $B%i%$%V%i%j$H$7$F$G$O$J$/<B9T%W%m%0%i%`$H$7$F$_$?$H$-$K!"0z?t=hM}$r(B
-#  $B$7$F$J$+$C$?$N$G=$@5(B
+#  ライブラリとしてではなく実行プログラムとしてみたときに、引数処理を
+#  してなかったので修正
 #
 # 2015.03.10
-#  $BJ#?t%U%!%$%k$rE;$a$FJV$9%P!<%8%g%s(B find_datfiles() $B$rDI2C(B
+#  複数ファイルを纏めて返すバージョン find_datfiles() を追加
 #
 # 2015.03.03
-#  $B3HD%;R$N<+F0(B . $B:o=|!uDI2C%k!<%A%s$K%P%0$rH/8+$7$?$N$GD>$7$?(B
+#  拡張子の自動 . 削除＆追加ルーチンにバグを発見したので直した
 #
 # 2015.03.03
-#  $BJ#?t$N(B suffix $B%U%!%$%k$,M-$k$H$-$K(B return $B$9$kJQ?t$r(B None $B$GJV$9$h$&$K$7$?(B
+#  複数の suffix ファイルが有るときに return する変数を None で返すようにした
 #
 # 2015.03.03
-#  $B0z?t$N(B suffix $B$K(B . $B$r$D$1$F$bF1$8$h$&$KF0:n$9$k$h$&$K2~JQ(B
+#  引数の suffix に . をつけても同じように動作するように改変
 #
 # 2015.02.26
-#  $B;XDj(Bsuffix$B$N%U%!%$%k$,%+%l%s%H$K0l$D$N;~$O$=$N%U%!%$%kL>$rJV$9%k!<%A%s$X(B
-#  $BJQ99(B
+#  指定suffixのファイルがカレントに一つの時はそのファイル名を返すルーチンへ
+#  変更
 #
 # 2015.02.26
 #   startup
-#    openmx.dat $B%U%!%$%k$,%+%l%s%H%G%#%l%/%H%j$K0l$D$N>l9g$O(B
-#    $B%U%!%$%kL>(B($B$3$N>l9g(B openmx ) $B$r<hF@$7$FJV$94X?t(B
+#    openmx.dat ファイルがカレントディレクトリに一つの場合は
+#    ファイル名(この場合 openmx ) を取得して返す関数
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -61,8 +62,8 @@ import glob
 import optparse
 
 ################################################################################
-# suffix $B$,(B dot $BIU$-$@$C$?$H$-$O(B dot $B$r:o=|$7$F$+$i(B *.suffix $B$rC5$9(B
-# $BJ#?t8+$D$1$?;~$*$h$S8+$D$1$J$+$C$?;~$O(B None $B$rJV$9(B
+# suffix が dot 付きだったときは dot を削除してから *.suffix を探す
+# 複数見つけた時および見つけなかった時は None を返す
 #
 def find_datfile(suffix):
 
@@ -75,7 +76,7 @@ def find_datfile(suffix):
     return datname
 
 ################################################################################
-# suffix $B$KBP$7$F$N;v8e=hM}$r$;$:$K(B *suffix $B$rC5$9(B
+# suffix に対しての事後処理をせずに *suffix を探す
 #
 def find_datfile1(tail):
 
@@ -87,7 +88,7 @@ def find_datfile1(tail):
     return datname
 
 ################################################################################
-#  *.suffix $B$rC5$9!JJ#?t%U%!%$%k$rJV$9(B)
+#  *.suffix を探す（複数ファイルを返す)
 #
 def find_datfiles(suffix):
 

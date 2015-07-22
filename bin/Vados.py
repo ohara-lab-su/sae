@@ -26,7 +26,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -40,24 +40,24 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
 
     name = 'DOSCAR'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
-                                                                                
+
     if len(args) > 0:
         name=args[0]
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(name)
+    dos = SAE.ReadVaspDoscar(name)
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
@@ -86,9 +86,9 @@ if __name__ == '__main__':
 
     ENG = dos.get_eng()
 
-    # makes instance ( Read OUTCAR )                                            
-    outcar = SAE.ReadOutcar(oname)                                              
-    NION = outcar.get_nion()             
+    # makes instance ( Read OUTCAR )
+    outcar = SAE.ReadVaspOutcar(oname)
+    NION = outcar.get_nion()
 
 # 最初からごつい構造体を返すMethodを作っておく(超高速) --> おすすめ
     ADOS_ALL = dos.get_ldos_ion_all()
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         INTTDOS = dos.get_inttdos(spin)
 
 # 毎回Method を呼ぶ --> 非常に時間が掛かるのでお薦めしない
-# NATOM/NEDOS loop 前に一度行列を作っておくと少しはマシ(下記)  
+# NATOM/NEDOS loop 前に一度行列を作っておくと少しはマシ(下記)
 #       ADOS_ALL = np.zeros((3,NION,NSPIN,NEDOS))
 #       for l in range(0,3):
 #           for ion in range(NION):

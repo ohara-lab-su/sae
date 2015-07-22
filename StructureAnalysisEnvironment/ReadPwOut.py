@@ -1,20 +1,21 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # PWScf (Quantum ESPRESSO 5..x )
-# scf.out $B%U%!%$%k(B( pw.x $B=PNO%U%!%$%k(B $BFI$_9~$_(B)
+# scf.out ファイル( pw.x 出力ファイル 読み込み)
 #
-# 1) pw.x $B=PNO%U%!%$%kL>$NBh0l8uJd$r(B scf.out $B$H$9$k(B
+# 1) pw.x 出力ファイル名の第一候補を scf.out とする
 #
 ################################################################################
 #
 # 2015.05.13
-#  position_loop $B$NG[Ns9=B$$r=$@5(B(ReadMd.py, ReadVapsrun.py $B8_49(B)
-#  force_loop $B$NG[Ns9=B$$r=$@5(B
+#  position_loop の配列構造を修正(ReadMd.py, ReadVapsrun.py 互換)
+#  force_loop の配列構造を修正
 #
 # 2015.05.13
-#  force $BBP1~(B
+#  force 対応
 #
 # 2015.05.08 startup
 #
@@ -75,7 +76,7 @@ class ReadPwOut(object):
                 if ibrva != 0:
                     sys.exit("STOP: ibrva != 0 ")
 
-            # scale $B%U%!%/%?!<$O(B angstrom $B$K$9$k(B
+            # scale ファクターは angstrom にする
             if bool(scale_reg.match(line)):
                 scale0 = float(line.split()[4])
                 if line.split()[5] == 'a.u.':
@@ -98,7 +99,7 @@ class ReadPwOut(object):
                 else:
                     self.ispin = 2
 
-            # $B<B:]$K%k!<%W$7$??t$r%+%&%s%H(B
+            # 実際にループした数をカウント
             if bool(ion_loop_reg.match(line)):
                 self.n_ion_loop += 1
 
@@ -115,8 +116,8 @@ class ReadPwOut(object):
         np.array(self.toten_ion)
 
     #############################################################################
-    # atoms[i]       : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N?t$rJV$9(B
-    # atoms_index[i] : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N85AG5-9f$rJV$9(B
+    # atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+    # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
     def get_atoms_index(self):
 
         species_v_reg = re.compile('.*atomic species.*valence')
@@ -129,11 +130,11 @@ class ReadPwOut(object):
         return self.atoms_index
 
     #############################################################################
-    # $BCm0U(B)
-    # atoms_index $B$N=gHV$G(Bcoordinate$B$,A4$FJB$s$G$$$k$H2>Dj$9$k$H$-$N(B atoms
+    # 注意)
+    # atoms_index の順番でcoordinateが全て並んでいると仮定するときの atoms
     #
-    # atoms[i]       : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N?t$rJV$9(B
-    # atoms_index[i] : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N85AG5-9f$rJV$9(B
+    # atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+    # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
     def get_atoms(self):
 
         self.get_atoms_index()
@@ -151,7 +152,7 @@ class ReadPwOut(object):
                             self.atoms[k] += 1
         return self.atoms
 
-    # ReadVasprun.py $B8_49(B
+    # ReadVasprun.py 互換
     def get_types(self):
         self.get_atoms()
         self.get_atoms_index()
@@ -159,8 +160,8 @@ class ReadPwOut(object):
         return [TYPES]
 
     ############################################################################
-    # natom $B$^$G$NDL$7HV9f$G86;R<o$rJV$9(B($B85AG5-9f$G$O$J$/$F86;R$N<oN`HV9f$rJV$9(B)
-    def get_atoms_j(self):  # ReadOutcar.py $B8_49(B, ReadMxDatMethod.py $B8_49(B
+    # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号を返す)
+    def get_atoms_j(self):  # ReadOutcar.py 互換, ReadMxDatMethod.py 互換
 
         self.get_atoms()
         self.atoms_j = np.zeros(self.natom,dtype=int)
@@ -173,9 +174,9 @@ class ReadPwOut(object):
         return self.atoms_j
 
     #############################################################################
-    # natom $B$^$G$NDL$7HV9f$G86;R<o$N5-9f$rJV$9(B
-    # $BA4%k!<%W9=B$$G40A4$KF1$8$J$N$G0l2s8+$D$1$?$i(Bbreak$B$9$k(B
-    def get_atoms_index_j(self): # ReadMd, ReadPoscar, ReadPwIn $B8_49(B
+    # natom までの通し番号で原子種の記号を返す
+    # 全ループ構造で完全に同じなので一回見つけたらbreakする
+    def get_atoms_index_j(self): # ReadMd, ReadPoscar, ReadPwIn 互換
 
         position_reg = re.compile('.*ATOMIC_POSITIONS.*',re.IGNORECASE)
         self.atoms_index_j = []
@@ -189,7 +190,7 @@ class ReadPwOut(object):
         return self.atoms_index_j
 
     #############################################################################
-    # ReadPoscar.py $B$G$N=hM}$K=`$:$k9=B$(B
+    # ReadPoscar.py での処理に準ずる構造
     def get_t(self):
 
         self.t = np.zeros((3,3))
@@ -249,7 +250,7 @@ class ReadPwOut(object):
         return self.position
 
     #############################################################################
-    def get_position_loop(self): # ReadMd.py, ReadVasprun.py $B8_49(B
+    def get_position_loop(self): # ReadMd.py, ReadVasprun.py 互換
 
         ion_loop_reg = re.compile('.*ATOMIC_POSITIONS.*')
        #self.position_loop = np.zeros((self.natom,3,self.n_ion_loop))
@@ -270,7 +271,7 @@ class ReadPwOut(object):
         return self.position_loop
 
     #############################################################################
-    def get_force_loop(self): # ReadMd.py, ReadVasprun.py $B8_49(B
+    def get_force_loop(self): # ReadMd.py, ReadVasprun.py 互換
 
        #self.force_loop = np.zeros((self.natom,3,self.n_ion_loop))
         self.force_loop = np.zeros((self.n_ion_loop,self.natom,3))
@@ -318,11 +319,11 @@ class ReadPwOut(object):
         return self.n_ion_loop
 
     ############################################################################
-    # ion loop $BKh$N(B Total Energy
-    def get_toten_ion(self):  # ReadOutcar.py $B8_49(B
+    # ion loop 毎の Total Energy
+    def get_toten_ion(self):  # ReadOutcar.py 互換
         return self.toten_ion
 
-    def get_energy_loop(self): # ReadVasprun.py / ReadMd.py $B8_49(B
+    def get_energy_loop(self): # ReadVasprun.py / ReadMd.py 互換
         return self.toten_ion
 
 ################################################################################

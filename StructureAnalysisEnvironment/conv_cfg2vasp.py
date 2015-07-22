@@ -1,29 +1,30 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# RMC_POT $B7A<0$N:BI87O$+$i(BVASP$B7A<0$N:BI87O$XJQ49(B
-#   VASP $B0J30$G$bF1$8!"(Bcartesian $B7O$NJB?J!uFbIt:BI87O(B
-#   $B4pK\JB?J%Y%/%H%k!uFbIt:BI8(B
-#   scale factor $B$O<+F0E*$K(B 1.0 $B$K$J$k(B( 1.0 $B$H$7$F$$$k(B)
+# RMC_POT 形式の座標系からVASP形式の座標系へ変換
+#   VASP 以外でも同じ、cartesian 系の並進＆内部座標系
+#   基本並進ベクトル＆内部座標
+#   scale factor は自動的に 1.0 になる( 1.0 としている)
 #
-#   RMC_POT $B7A<0$O(B direct mode $B$N$_(B($B$N$O$:(B)
+#   RMC_POT 形式は direct mode のみ(のはず)
 #
 # [in]     scale          : scale
 # [in]     natom          : number of atom
 #
-# [in]     direct         : Direct $B%b!<%I$N$_BP1~$J$N$OA0Ds$J$N$GI,MW$J$$(B
-#                           $B$?$@$7!"B>$N%i%$%V%i%j$H$N@09g@-$N$?$a$K$3$N0z?t$rF~$l$k(B
+# [in]     direct         : Direct モードのみ対応なのは前提なので必要ない
+#                           ただし、他のライブラリとの整合性のためにこの引数を入れる
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
 #
 # [return] scale          : scale
-# [return] direct         : Direct mode $B$O(B Trune $B$rJV$9(B($B0l1~(B)
+# [return] direct         : Direct mode は Trune を返す(一応)
 #
 ################################################################################
 #
@@ -31,15 +32,15 @@
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -72,15 +73,15 @@ def conv_cfg2vasp(scale,t,natom,direct,position):
     t1_x = t1_x*2
     t1_y = t1_y*2
     t1_z = t1_z*2
-    
+
     t2_x = t2_x*2
     t2_y = t2_y*2
     t2_z = t2_z*2
-    
+
     t3_x = t3_x*2
     t3_y = t3_y*2
     t3_z = t3_z*2
-    
+
     x_offset=0.5
     y_offset=0.5
     z_offset=0.5
@@ -90,18 +91,18 @@ def conv_cfg2vasp(scale,t,natom,direct,position):
         position[i,0] = position[i,0]/2 + x_offset
         position[i,1] = position[i,1]/2 + y_offset
         position[i,2] = position[i,2]/2 + z_offset
-  
-    t[0,0] = t1_x 
-    t[1,0] = t1_y 
-    t[2,0] = t1_z 
-                  
-    t[0,1] = t2_x 
-    t[1,1] = t2_y 
-    t[2,1] = t2_z 
-                  
-    t[0,2] = t3_x 
-    t[1,2] = t3_y 
-    t[2,2] = t3_z 
+
+    t[0,0] = t1_x
+    t[1,0] = t1_y
+    t[2,0] = t1_z
+
+    t[0,1] = t2_x
+    t[1,1] = t2_y
+    t[2,1] = t2_z
+
+    t[0,2] = t3_x
+    t[1,2] = t3_y
+    t[2,2] = t3_z
 
     scale = scale
     direct = True

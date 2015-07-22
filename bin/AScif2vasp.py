@@ -4,7 +4,8 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #  using ASE
 #
-#  format='cif' で読み込んで froamt='vasp' で書き込み
+#  read: format='cif'
+#  write: format='vasp'
 #
 ################################################################################
 

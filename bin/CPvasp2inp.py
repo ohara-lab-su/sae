@@ -117,7 +117,7 @@ if __name__ == '__main__':
     poscarname,outbase,inpsuffix,OPT_STD,OPT_INP = options()
 
     ## POSCAR 読み込み
-    poscar = SAE.ReadPoscar(poscarname)
+    poscar = SAE.ReadVaspPoscar(poscarname)
 
     vasp = poscar.get_vasp_version()
     if vasp < 5:

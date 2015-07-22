@@ -63,7 +63,7 @@ class ReadVaspAcf(object):
         line_reg = re.compile('.*-------.*')
 
         ###################################
-        ## get Barder ($B@8(B) Charge
+        ## get Barder (生) Charge
         self.charge = np.zeros(self.natom)
         self.bader = np.zeros(self.natom)
         i = 2

@@ -1,33 +1,35 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 #
 # 2014.11.18
 #
 #  RcollSplit_nonSplit.py
-#    1) *.cfg $B%U%!%$%k$r(B LOOP $BKh$KJ,3d$5$;$:$K!"G[Ns$K$^$H$a$FJ|$j9~$`J}<0$KJQ99(B
-#    2) $B4X?t2=(B&$BJ,N%(B
+#    1) *.cfg ファイルを LOOP 毎に分割させずに、配列にまとめて放り込む方式に変更
+#    2) 関数化&分離
 #
 # 2014.10.01 - 2014.10.28
 #   RcollSplit.py
 #     split *_coll.cfg and convert VASP format
-#     $B%k!<%W$4$H$K%U%!%$%kJ,3d$9$kJ}<0$GL5M}$d$j=PNO(B
-#  
+#     ループごとにファイル分割する方式で無理やり出力
+#
 #     2014.10.28
-#         $B0z?t=hM}$N%P%0$r=$@5(B
-#    
+#         引数処理のバグを修正
+#
 #     2014.10.09
-#         $B0z?t=hM}(B($BF~NO%U%!%$%kL>$NF~NO(B)
-#    
+#         引数処理(入力ファイル名の入力)
+#
 #     2014.10.01
 #         1st version
-#  
+#
 ###################################################################################
 
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import sys
 #import os
@@ -41,16 +43,16 @@ if __name__ == '__main__':
 
     cname='igzo_coll'
 
-    # *_coll.cfg (RMC_POT) $B%U%!%$%kFI$_9~$_=`Hw(B
+    # *_coll.cfg (RMC_POT) ファイル読み込み準備
     nloop,natom,nion = SAE.read_cfg_coll_param(cname)
 
-    # *_coll.cfg (RMC_POT) $B%U%!%$%kFI$_9~$_=`Hw(B
-    t             = np.zeros((3,3))              # $B4pK\JB?J%Y%/%H%k(B
-   #atoms         = np.zeros((nion),dtype='S2')  # $B86;R<oKh$N86;R$N?t$NJ]B8(B
-    atoms         = np.zeros((nion),dtype=int)   # $B86;R<oKh$N86;R$N?t$NJ]B8(B
-    atoms_site    = np.zeros((natom),dtype=int)  # $B86;R$NDL$7HV9f$KBP$7$F$N%5%$%HHV9f$NJ]B8(B
-    position_loop = np.zeros((nloop,natom,3))    # $B86;R0LCV(B(loop,$BA486;R$N%$%s%G%C%/%9(B)
+    # *_coll.cfg (RMC_POT) ファイル読み込み準備
+    t             = np.zeros((3,3))              # 基本並進ベクトル
+   #atoms         = np.zeros((nion),dtype='S2')  # 原子種毎の原子の数の保存
+    atoms         = np.zeros((nion),dtype=int)   # 原子種毎の原子の数の保存
+    atoms_site    = np.zeros((natom),dtype=int)  # 原子の通し番号に対してのサイト番号の保存
+    position_loop = np.zeros((nloop,natom,3))    # 原子位置(loop,全原子のインデックス)
 
-    # *_coll.cfg (RMC_POT) $B%U%!%$%kFI$_9~$_(B
+    # *_coll.cfg (RMC_POT) ファイル読み込み
     SAE.read_cfg_coll(cname,nloop,t,natom,nion,atoms,atoms_site,position_loop)
 

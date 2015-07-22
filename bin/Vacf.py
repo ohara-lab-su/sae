@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     name = options()
 
-    poscar = SAE.ReadPoscar(name)
+    poscar = SAE.ReadVaspPoscar(name)
     potcar = SAE.ReadVaspPotcar()
     acfdat = SAE.ReadVaspAcf(poscar=poscar,potcar=potcar,acf='ACF.dat')
     acfdat.get_max_bader()

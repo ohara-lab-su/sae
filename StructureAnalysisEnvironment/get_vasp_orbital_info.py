@@ -1,21 +1,22 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# VASP$B$N(B LORBIT 11 $B$GF0$+$7$?;~$N(B lm $BHV9f$+$i50F;L>$r<h$j=P$9$@$1$N4X?t(B
+# VASPの LORBIT 11 で動かした時の lm 番号から軌道名を取り出すだけの関数
 #
 # [in]  lm
 # [return] orbital
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 #
 # 2015.01.15 startup
@@ -44,6 +45,6 @@ def get_vasp_orbital_info(lm):
             'd_x2-y2',
             ]
 
-    orbital = orbital_list[lm]    
+    orbital = orbital_list[lm]
 
     return orbital

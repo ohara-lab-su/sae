@@ -1,23 +1,24 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # make_supercell1
-# $B%9!<%Q!<%;%k:n@.%k!<%A%s(B
-#    $BFbIt:BI8%9!<%Q!<%;%k2=(B
-#    FIX$B>pJs%9!<%Q!<%;%k2=(B (for VASP) <-- make_supercell0 $B$N%U%)!<%9>pJs(B(VASP)$BBP1~HG(B
+# スーパーセル作成ルーチン
+#    内部座標スーパーセル化
+#    FIX情報スーパーセル化 (for VASP) <-- make_supercell0 のフォース情報(VASP)対応版
 #
-#  ($BCm0U(B) $BBP>N@-$K$h$C$F86;R$KF/$/NO$N0\F0$NM-L5(B(FIX)$B$rA*Br$7$F$$$k$o$1$G$O$J$$(B
-#         $BC1=c$KF10l$N%9!<%Q!<%]%8%7%g%s$K$"$k86;R$N(BFIX$B$rF1$8$K$7$F$$$k$@$1(B
-#         $BCm0U$,I,MW$G$"$k!#(B
+#  (注意) 対称性によって原子に働く力の移動の有無(FIX)を選択しているわけではない
+#         単純に同一のスーパーポジションにある原子のFIXを同じにしているだけ
+#         注意が必要である。
 #
 # [in]      super_x
 # [in]      super_y
 # [in]      super_z
 #
-# [in/out]  sp [natom*super,3]          : SuPer cell position $BJ]B8MQ$N(Bverctor
-# [in/out]  ion_sp [natom*super]        : SP$B%;%k$NDL$7HV9f$KBP$9$kEE;R<gHV9fJ]B8(Bindex
-# [in/out]  ion_local_sp [natom*super]   : ion_local[j] $B$N(B super cel index $BBP1~HG(B
-# [in/out]  sp_j [natom*super]          : $BDL$7HV9f$NBP1~(B( $B85$N%;%k(B <---> SP$B%;%k(B )
+# [in/out]  sp [natom*super,3]          : SuPer cell position 保存用のverctor
+# [in/out]  ion_sp [natom*super]        : SPセルの通し番号に対する電子主番号保存index
+# [in/out]  ion_local_sp [natom*super]   : ion_local[j] の super cel index 対応版
+# [in/out]  sp_j [natom*super]          : 通し番号の対応( 元のセル <---> SPセル )
 #
 # [in/out]  fix [natom,3]
 # [in/out]  fix [natom*supr,3]
@@ -25,8 +26,8 @@
 ################################################################################
 #
 # 2014.10.31
-#   make_supercell0.py $B%Y!<%9(B
-#   $B%U%)!<%9>pJsBP1~HG(B(for VASP)
+#   make_supercell0.py ベース
+#   フォース情報対応版(for VASP)
 #   1st version
 #
 ################################################################################
@@ -66,13 +67,13 @@ def make_supercell1(super_x,super_y,super_z,\
     t3_z = t[2,2]
 
     ###############################################
-    ## $B%9!<%Q!<%;%k:n@.MQ$N=`Hw(B
+    ## スーパーセル作成用の準備
     ## super index
     ##
     super= int(super_x)*int(super_y)*int(super_z)
 
     ###############################################
-    ## super cell $B:n@.MQ$N%Y%/%H%k$r:n$k(B
+    ## super cell 作成用のベクトルを作る
     ##
    #sv = zeros((super,3)) # super cell vector
     nsv = 0
@@ -89,13 +90,13 @@ def make_supercell1(super_x,super_y,super_z,\
 
 
     ###############################################
-    ## $B%9!<%Q!<%;%k$NFbIt:BI8:n@.(B
+    ## スーパーセルの内部座標作成
     ##
-   #sp = zeros((natom*super,3)) # super cell position $BJ]B8MQ$N(Bvector
-   #ion_sp= zeros(natom*super)  # super cell $BDL$7HV9f$KBP$9$k86;R<oHV9fJ]B8(Bindex
-   #ion_local_sp = zeros(natom*super) # ion_local[j] $B$N(B super cell index $BBP1~HG(B
+   #sp = zeros((natom*super,3)) # super cell position 保存用のvector
+   #ion_sp= zeros(natom*super)  # super cell 通し番号に対する原子種番号保存index
+   #ion_local_sp = zeros(natom*super) # ion_local[j] の super cell index 対応版
 
-    # super cell $B$NFbIt:BI8$r:n$k(B
+    # super cell の内部座標を作る
     j=-1
     nsp=-1
     for k in range(nion):
@@ -111,12 +112,12 @@ def make_supercell1(super_x,super_y,super_z,\
                 sp[nsp,1] = position[j,1] + sv[nsv,1]
                 sp[nsp,2] = position[j,2] + sv[nsv,2]
 
-                # $B86;R$KF/$/NO$NM-L5$K$h$k0\F0%Q%i%a!<%?!<$N(B super cell $B2=(B
+                # 原子に働く力の有無による移動パラメーターの super cell 化
                 fix_sp[nsp,0] = fix[j,0]
                 fix_sp[nsp,1] = fix[j,1]
                 fix_sp[nsp,2] = fix[j,2]
 
-                # $B85%;%k$NDL$7HV9f$rM?$($k$H!"86;R<oHV9f$rJV$9(B
+                # 元セルの通し番号を与えると、原子種番号を返す
                 ion_sp[nsp] = ion[j]
                 ion_local_sp[nsp] = ion_local[j]
 
@@ -131,7 +132,7 @@ def make_supercell1(super_x,super_y,super_z,\
                #        %(j,nsp, k,ion_local_sp[nsp],atoms_index[k],  ion[j],ion_sp[nsp], kk,"  ",x,y,z)
 
 
-    ## $B85(Bindex $B$H(B super index $B$NBP1~$r8+$k(B($B%F%9%H%W%j%s%H(B)
+    ## 元index と super index の対応を見る(テストプリント)
     #for k in range(nsp):
     #    print int(k), int(sp_j[k])
     #

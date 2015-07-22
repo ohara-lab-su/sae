@@ -1,16 +1,17 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-#  MD(xyz) $B7A<0$NFI$_9~$_(B class
+#  MD(xyz) 形式の読み込み class
 #
 #   read_md.py
-#     def read_md3(): $B:BI8(B(x,y,z) + $B%U%)!<%9(B(x,y,z) + Energy $B7A<0$KBP1~(B
-#   $B$r%Y!<%9$H$7$F:n@.(B
+#     def read_md3(): 座標(x,y,z) + フォース(x,y,z) + Energy 形式に対応
+#   をベースとして作成
 #
-#   $B%(%M%k%.!<$N<hF@$K4X$7$F$O(B OpenMX $B$N(B *.md $B7A<0$,G0F,(B
-#   $B$?$@$7!"$=$l0J30$O4pK\E*$K$O(B *.xyz (*.md) $B7A<0$K=`$8$F$$$k$N$G!"(B
-#   ReadMd.py $B$NL>A0$N$^$^$K$7$F$*$/(B ( $B$f$($K(B ReadMxMd.py $B$H$O$7$J$$(B)
+#   エネルギーの取得に関しては OpenMX の *.md 形式が念頭
+#   ただし、それ以外は基本的には *.xyz (*.md) 形式に準じているので、
+#   ReadMd.py の名前のままにしておく ( ゆえに ReadMxMd.py とはしない)
 #
 ################################################################################
 #
@@ -35,12 +36,12 @@
 #   == None --> is None
 #
 # 2015.06.26
-#  get_position() $BDI2C(B: get_position_loop $B$N(B loop=0 $B$N$_BP1~(B
+#  get_position() 追加: get_position_loop の loop=0 のみ対応
 #
 # 2015.03.03
 #  get_temp(), get_temp_given()
 #
-#     OpenMX *.md $B7A<0(B: Temperature, Given Temp $B5[$$=P$7BP1~(B
+#     OpenMX *.md 形式: Temperature, Given Temp 吸い出し対応
 #
 # 2015.02.13 1st
 #
@@ -71,7 +72,7 @@ import StructureAnalysisEnvironment as SAE
 class ReadMd(object):
 
     ###############################################
-    # MD $B%U%!%$%kFI$_9~$_(B
+    # MD ファイル読み込み
     def __init__(self,cname):
 
         if os.path.exists(cname):
@@ -94,16 +95,16 @@ class ReadMd(object):
             tmp.close()
 
         self.datlines = datfile.split('\n')
-        self.num =len(self.datlines)-1   # $B%H!<%?%k$N9T?t(B
+        self.num =len(self.datlines)-1   # トータルの行数
 
     ###############################################
     # NATOM
     def get_natom(self):
-        self.natom=int(self.datlines[0])  # $BAm86;R?t(B
+        self.natom=int(self.datlines[0])  # 総原子数
         return self.natom
 
     ###############################################
-    # LOOP $B?t(B (ION$B%k!<%W?t(B)
+    # LOOP 数 (IONループ数)
     def get_nloop(self):
         natom = self.get_natom()
         j = 0
@@ -114,7 +115,7 @@ class ReadMd(object):
 
         return self.nloop
 
-    # $B8_49(B
+    # 互換
     def get_n_ion_loop(self):
         self.nloop = self.get_nloop()
         return self.nloop
@@ -132,8 +133,8 @@ class ReadMd(object):
         return self.atoms_index_j
 
     ###############################################
-    # atoms_index($B5<;w(B)$B:n@.(B
-    #    $BO"B3$7$FF1<o$N85AG5-9f$,JB$s$G$$$k$H$-$OF1$8(Bion-type$B$H$9$k(B
+    # atoms_index(擬似)作成
+    #    連続して同種の元素記号が並んでいるときは同じion-typeとする
     def get_atoms_index(self):
         natom = self.get_natom()
         atoms_index_j = self.get_atoms_index_j()
@@ -154,8 +155,8 @@ class ReadMd(object):
         return self.atoms_index
 
     ###############################################
-    # nion($B5<;w(B)$B:n@.(B
-    #    $BO"B3$7$FF1<o$N85AG5-9f$,JB$s$G$$$k$H$-$OF1$8(Bion-type$B$H$9$k(B
+    # nion(擬似)作成
+    #    連続して同種の元素記号が並んでいるときは同じion-typeとする
     def get_nion(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
@@ -176,8 +177,8 @@ class ReadMd(object):
         return self.nion
 
     ###############################################
-    # atoms($B5<;w(B)$B:n@.(B
-    #    $BO"B3$7$FF1<o$N85AG5-9f$,JB$s$G$$$k$H$-$OF1$8(Bion-type$B$H$9$k(B
+    # atoms(擬似)作成
+    #    連続して同種の元素記号が並んでいるときは同じion-typeとする
     def get_atoms(self):
         nion = self.get_nion()
         nloop = self.get_nloop()
@@ -207,7 +208,7 @@ class ReadMd(object):
         return self.atoms
 
     ###############################################
-    # $B%G!<%?!<FI$_9~$_(B
+    # データー読み込み
     def get_energy_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
@@ -229,7 +230,7 @@ class ReadMd(object):
         return self.energy_loop
 
     ###############################################
-    # position_loop $B%G!<%?!<FI$_9~$_(B
+    # position_loop データー読み込み
     def get_position_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
@@ -264,7 +265,7 @@ class ReadMd(object):
         return self.position_loop
 
     ###############################################
-    # position (initial) $B%G!<%?!<FI$_9~$_(B
+    # position (initial) データー読み込み
     def get_position(self,loop=0):
 
         natom = self.get_natom()
@@ -280,7 +281,7 @@ class ReadMd(object):
 
 
     ###############################################
-    # position_loop $B%G!<%?!<FI$_9~$_(B
+    # position_loop データー読み込み
     def get_selective(self):
 
         i = 2
@@ -294,7 +295,7 @@ class ReadMd(object):
         return self.selective
 
     ###############################################
-    # force_loop $B%G!<%?!<FI$_9~$_(B
+    # force_loop データー読み込み
     def get_force_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
@@ -318,7 +319,7 @@ class ReadMd(object):
 
 
     ###############################################
-    # OpenMX *.md $B7A<0(B, MD $B%b!<%I(B
+    # OpenMX *.md 形式, MD モード
     def get_temp_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()
@@ -340,7 +341,7 @@ class ReadMd(object):
         return self.temp_loop
 
     ###############################################
-    # OpenMX *.md $B7A<0(B, MD $B%b!<%I(B
+    # OpenMX *.md 形式, MD モード
     def get_temp_given_loop(self):
         natom = self.get_natom()
         nloop = self.get_nloop()

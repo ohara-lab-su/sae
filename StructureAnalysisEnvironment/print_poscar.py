@@ -1,37 +1,38 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# POSCAR $B=q$-9~$_(B
-#   VASP4/VASP5/force/direct/car , VASP $B7A<0%U%kBP1~HG(B
+# POSCAR 書き込み
+#   VASP4/VASP5/force/direct/car , VASP 形式フル対応版
 #
 #
-# [in] cname              : STD=False $B$N$H$-$N=PNO%U%!%$%kL>(B
-# [in] STD                : $B7k2L=PNO$,(Bstdout$B$N$H$-$O(B STD=True
+# [in] cname              : STD=False のときの出力ファイル名
+# [in] STD                : 結果出力がstdoutのときは STD=True
 #
-# [in] title              : $B%?%$%H%k(B
-# [in] scale              : $B3J;RDj?t(B($B%9%1!<%k%U%!%/%?!<(B)
+# [in] title              : タイトル
+# [in] scale              : 格子定数(スケールファクター)
 # [in] natom              : number of atom
 # [in] nion               : number of ion
 # [in] selective          : selective mode
 # [in] direct             : direct or cartesian
-# [in] VASP               : VASP $B$N%P!<%8%g%s(B
+# [in] VASP               : VASP のバージョン
 #
-# [in/out] t[3,3]         :  $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         :  基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
-# [in/out] atoms[i]       : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
-# [in/out] atoms_index[i] : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N85AG5-9f$rJV$9(B
+# [in/out] atoms[i]       : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# [in/out] atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
 #
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
-# [in/out] fix[j,3]       : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$G(BForce$B$N(BFix/non-Fix $B;XDj(B
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
+# [in/out] fix[j,3]       : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定
 #
 ################################################################################
 #
 # 2015.07.08
-#  stdout $B$N(B close $B$r=$@5(B
+#  stdout の close を修正
 #
 # 2014.10.30/31 1st
 #

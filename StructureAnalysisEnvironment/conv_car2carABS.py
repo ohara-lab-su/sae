@@ -1,47 +1,48 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# scale $B%U%!%/%?!<%U%j!<(B(VASP$B7A<0(B) $B$N(B cartesian $B7A<0$+$i(B
-# scale $B$G%9%1!<%k$7$?(B cartesian $B7A<0(B(scale=1.0) $B$XJQ49$9$k(B
+# scale ファクターフリー(VASP形式) の cartesian 形式から
+# scale でスケールした cartesian 形式(scale=1.0) へ変換する
 #
-#  1) $B%9%1!<%k%U%!%/%?!<(B $B$r(B 1 $B$K$9$k(B
-#  2) $BFbIt:BI8$b%9%1!<%k(B($B@dBP:BI87O(B)
+#  1) スケールファクター を 1 にする
+#  2) 内部座標もスケール(絶対座標系)
 #
 #
-# [in]     scale0         : $B4pK\JB?J$K$+$+$k%9%1!<%k(B($BJQ49A0(B)
+# [in]     scale0         : 基本並進にかかるスケール(変換前)
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
 # [in]     natom          : number of atom
-# [in]     direct         : $BF~NO$N%b!<%I(B($B$b$7(B Car $B$J$i$P0BA4$N$?$a$K;_$a$k(B)
+# [in]     direct         : 入力のモード(もし Car ならば安全のために止める)
 #
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
-#                           ABS $B$,(B True $B0J30$O(B VASP $B7A<0(B
-#                           $B$D$^$j!"(Bscale $B$G%9%1!<%k$7$J$$FbIt:BI87O<0(B
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
+#                           ABS が True 以外は VASP 形式
+#                           つまり、scale でスケールしない内部座標系式
 #
-# [return] scale          : $B4pK\JB?J$K$+$+$k%9%1!<%k(B
+# [return] scale          : 基本並進にかかるスケール
 #
 ################################################################################
 #
 # 2015.03.09
-#  $BLa$jCM$N%k!<%k$rJQ99$7$?%P!<%8%g%s(B conv_car2carABS1 $B$rMQ0U(B
+#  戻り値のルールを変更したバージョン conv_car2carABS1 を用意
 #
 # 2014.11.12 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -69,24 +70,24 @@ def conv_car2carABS(scale0,t,natom,direct,position):
     t3_y = t[1,2]
     t3_z = t[2,2]
 
-    # $B%9%1!<%k%U%!%/%?!<$r(B 1.0 $B$K$9$k(B
+    # スケールファクターを 1.0 にする
     scale = 1.0
 
-    # $BFbIt:BI8$N%9%1!<%k(B
+    # 内部座標のスケール
     for j in range(natom):
             position[j,0] = position[j,0]*scale0
             position[j,1] = position[j,1]*scale0
             position[j,2] = position[j,2]*scale0
 
-    # $B4pK\JB?J%Y%/%H%k$N%9%1!<%k(B
+    # 基本並進ベクトルのスケール
     t1_x = t1_x*scale0
     t1_y = t1_y*scale0
     t1_z = t1_z*scale0
-    
+
     t2_x = t2_x*scale0
     t2_y = t2_y*scale0
     t2_z = t2_z*scale0
-    
+
     t3_x = t3_x*scale0
     t3_y = t3_y*scale0
     t3_z = t3_z*scale0
@@ -123,25 +124,25 @@ def conv_car2carABS1(scale0,t,natom,direct,position):
     t3_y = t[1,2]
     t3_z = t[2,2]
 
-    # $B%9%1!<%k%U%!%/%?!<$r(B 1.0 $B$K$9$k(B
+    # スケールファクターを 1.0 にする
     scale = 1.0
 
-    # $BFbIt:BI8$N%9%1!<%k(B
+    # 内部座標のスケール
     p = np.zeros((natom,3))
     for j in range(natom):
             p[j,0] = position[j,0]*scale0
             p[j,1] = position[j,1]*scale0
             p[j,2] = position[j,2]*scale0
 
-    # $B4pK\JB?J%Y%/%H%k$N%9%1!<%k(B
+    # 基本並進ベクトルのスケール
     t1_x = t1_x*scale0
     t1_y = t1_y*scale0
     t1_z = t1_z*scale0
-    
+
     t2_x = t2_x*scale0
     t2_y = t2_y*scale0
     t2_z = t2_z*scale0
-    
+
     t3_x = t3_x*scale0
     t3_y = t3_y*scale0
     t3_z = t3_z*scale0

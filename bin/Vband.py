@@ -9,7 +9,7 @@
 #
 ################################################################################
 #
-# 2015.01.27 startup 
+# 2015.01.27 startup
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -18,7 +18,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -32,8 +32,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
@@ -41,17 +41,17 @@ def options():
     name = 'EIGENVAL'
     out1 = 'band1.dat'
     out2 = 'band2.dat'
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=name,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
-                                                                                
+
     if len(args) > 0:
         name=args[0]
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
     name,out1,out2 = options()
 
-    band = SAE.ReadEigenval(name)
+    band = SAE.ReadVaspEigenval(name)
 
     NATOM = band.get_natom()
     TITLE = band.get_title()
@@ -102,4 +102,4 @@ if __name__ == '__main__':
         out.close()
 
 ################################################################################
-     
+

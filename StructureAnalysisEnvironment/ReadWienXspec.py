@@ -8,17 +8,24 @@
 #
 ################################################################################
 #
+# 2015.07.22
+#  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
+#  どちらでも動作するように変更。
+#
+# 2015.07.22
+#  インスタンス変数重視の体制へ変更
+#
 # 2015.06.30
 #   == None --> is None
 #
 # 2015.04.06
-#  .xspec $B$N%X%C%@$rJV$9$h$&$K$7$?(B
+#  .xspec のヘッダを返すようにした
 #
 # 2015.04.06
-#  suffix $B$r0z?t$GM?$($k$h$&$K(B($B%*%W%7%g%J%k(B)$B$7$?!#(B
+#  suffix を引数で与えるように(オプショナル)した。
 #
 # 2015.03.30
-#  get_ymax_xas() $BDI2C(B
+#  get_ymax_xas() 追加
 #
 # 2015.03.28(sat)
 #  startup
@@ -49,13 +56,14 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 class ReadWienXspec(object):
 
-    ############################################################################
-    ## init
     def __init__(self,case='case',spin=None,suffix='.xspec'):
 
-#       suffix = '.xspec'
         if spin is None:
             spin = ''
+
+        if not os.path.exists(case+suffix):
+            case = case.replace(suffix,'')
+
         self.datlines,self.num = SAE.read_dataline(case+suffix+spin)
 
         self.head = []
@@ -67,6 +75,8 @@ class ReadWienXspec(object):
 
         self.eng = []
         self.xas  = []
+        self.s = 0.0
+        self.g = 0.0
 
         for i in range(self.num):
             line = self.datlines[i]
@@ -80,13 +90,20 @@ class ReadWienXspec(object):
                 self.eng.append(float(line.split()[0]))
                 self.xas.append(float(line.split()[1]))
 
+        self.eng = np.array(list(self.eng))
         self.xas = np.array(list(self.xas))
+
+        self.gamma = self.g
+        self.ymax_xas = max(self.xas)
+        self.xasmax = self.ymax_xas
+        self.emax = max(self.eng)
+        self.emin = min(self.eng)
 
     def get_head(self):
         return self.head
 
     def get_eng(self):
-        self.eng = np.array(self.eng)
+       #self.eng = np.array(self.eng)
         return self.eng
 
     def get_xas(self):
@@ -94,15 +111,15 @@ class ReadWienXspec(object):
         return self.xas
 
     def get_ymax_xas(self):
-        self.ymax_xas = max(self.xas)
+       #self.ymax_xas = max(self.xas)
         return self.ymax_xas
 
     def get_emin(self):
-        self.emin = min(self.eng)
+       #self.emin = min(self.eng)
         return self.emin
 
     def get_emax(self):
-        self.emax = max(self.eng)
+       #self.emax = max(self.eng)
         return self.emax
 
     def get_s(self):

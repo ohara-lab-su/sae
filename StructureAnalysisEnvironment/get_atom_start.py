@@ -1,30 +1,31 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 #
-# $BF~NO$7$?86;R<o$NDL$7HV9f$N2<8B$H>e8B$rJV$9(B
-# $BF~NO$9$k86;R<o$N<oJLHV9f$O(B 1 $B$+$i%9%?!<%H(B
+# 入力した原子種の通し番号の下限と上限を返す
+# 入力する原子種の種別番号は 1 からスタート
 #
-# $B0l1~(BVASP(POSCAR) $BMQ$@$,!"(Bion[j] $B$N%U%)!<%^%C%H$,6&DL$J$i$PA4$F$N%W%m%0%i%`$G;H$($k(B
+# 一応VASP(POSCAR) 用だが、ion[j] のフォーマットが共通ならば全てのプログラムで使える
 #
-# [in]     atom1   : $B86;R<o$N<oJLHV9f!J(BPOSCAR $B$N<oJLHV9f(B: 1$B$+$i;O$^$k(B--> $B%5%$%HHV9f(B)
-# [in]     nion    : $B86;R$N<oN`?t(B
+# [in]     atom1   : 原子種の種別番号（POSCAR の種別番号: 1から始まる--> サイト番号)
+# [in]     nion    : 原子の種類数
 #
-# [in/out] atoms[i]: $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
+# [in/out] atoms[i]: 原子の種類番号(max=nion)を与えると、その原子種の数を返す
 #
 # [return] start
 # [return] end
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys

@@ -4,27 +4,27 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # OpenMX 3.7
-# ReadMxDos.py ==> ReadMxTdos.py ($BL>A0JQ99(B) 2015.02.25 09:46
+# ReadMxDos.py ==> ReadMxTdos.py (名前変更) 2015.02.25 09:46
 #
 #  *.Dos.Tetrahedron
 #
-# $B9=B$$H@_7W$N4pK\J}?K(B
+# 構造と設計の基本方針
 #
-#    1) OpenMX $B$O7W;;8e$N;v8e=hM}$G(B DOS/PDOS $B$,@8@.$5$l$k(B
-#    2) $B40A4$K(B DOS(totalDOS) $B$N%U%!%$%k$H(B PDOS(LDOS,PDOS)$B$N%U%!%$%k$OJL%U%!%$%k(B
-#       $BJL$N%W%m%0%i%`@8@.<j=g$G:n$i$l$k(B
+#    1) OpenMX は計算後の事後処理で DOS/PDOS が生成される
+#    2) 完全に DOS(totalDOS) のファイルと PDOS(LDOS,PDOS)のファイルは別ファイル
+#       別のプログラム生成手順で作られる
 #
-#    (1)$B$H(B(2)$B$N$?$a$K!"(BReadMxDos $B%/%i%9$H(B ReadMxPdos $B%/%i%9$rJ,N%$7$?$[$&$,(B
-#    $B7k2LE*$KJXMx$G$"$k$HH=CG$9$k(B
+#    (1)と(2)のために、ReadMxDos クラスと ReadMxPdos クラスを分離したほうが
+#    結果的に便利であると判断する
 #
-#    $B9M$($i$l$k;H$$J}$O(B
-#      A) DOS $B$N7W;;$@$1$7$F(B TDOS($BK\5$$G(BTDOS$B$N$_(B) $B%W%m%C%H(B
-#      B)  DOS/PDOS $B$N7W;;$r$7$F>\:Y$K%W%m%C%H(B ($B$$$D$b$N(B TDOS, LDOS, PDOS $B%W%m%C%H(B)
+#    考えられる使い方は
+#      A) DOS の計算だけして TDOS(本気でTDOSのみ) プロット
+#      B)  DOS/PDOS の計算をして詳細にプロット (いつもの TDOS, LDOS, PDOS プロット)
 #
-#     ===> $B#2$D$N;H$$J}$KJL$l$k(B ($B%G!<%?!<%U%!%$%k(B/$B9=B$$bJL(B)
-#          $B#2$D0J>e$KBg$-$/JL$l$?%G!<%?!<9=B$BN(B
+#     ===> ２つの使い方に別れる (データーファイル/構造も別)
+#          ２つ以上に大きく別れたデーター構造体
 #
-#     ===> $B#2$DJL$N%/%i%9$K$9$k$Y$-(B($B$?$@$7!"(BMethod $B$NB?$/$O7Q>5$9$k$3$H$rA0Ds(B)
+#     ===> ２つ別のクラスにするべき(ただし、Method の多くは継承することを前提)
 #          ReadMxDosMethod.py (superclass)
 #                                       ---> ReadMxTdos.py
 #                                       ---> ReadMxPdos.py
@@ -32,28 +32,28 @@
 ################################################################################
 #
 # 2015.02.27
-#   !!!!!!! OpenMX $B$N(B down-spin $B$N(B TDOS $BCM$OIi$NId9f$,IU$$$F$$$k(B !!!!!!
-#   $B5$$,IU$+$J$/$F$+$J$j%O%^$C$?(B
+#   !!!!!!! OpenMX の down-spin の TDOS 値は負の符号が付いている !!!!!!
+#   気が付かなくてかなりハマった
 #
-#   get_tdos() $B$GG[Ns$KJ|$j9~$`:]$KCM$r@5$KLa$7$F$*$/(B
-#
-# 2015.02.25
-#  get_tdos(), get_inttdos() method $B$r(B ReadMxDosMethod class $B$+$i(B
-#  ReadMxTdos class $B$X0\F0!"@0M}(B
+#   get_tdos() で配列に放り込む際に値を正に戻しておく
 #
 # 2015.02.25
-#  $B6&DL$9$k(B Class $B$r(B ReadMxDosMethod $B$K(B superclass $B$H$7$FJ|$jEj$2(B
-#  $B8=B8$9$k(B ReadMxDos $B%/%i%9$O(B ReadMxTdos $B$KJQ99$7$?(B
+#  get_tdos(), get_inttdos() method を ReadMxDosMethod class から
+#  ReadMxTdos class へ移動、整理
 #
 # 2015.02.25
-#  OpenMX $BMQ$N(B DOS/PDOS $BMQ$N(B superclass $B$K:n@.$7$?(B method $B$rJ,N%!"7Q>52=(B
+#  共通する Class を ReadMxDosMethod に superclass として放り投げ
+#  現存する ReadMxDos クラスは ReadMxTdos に変更した
 #
 # 2015.02.25
-#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  $B$N<BAuEy(B
+#  OpenMX 用の DOS/PDOS 用の superclass に作成した method を分離、継承化
+#
+# 2015.02.25
+#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  の実装等
 #
 # 2015.02.24
 #    startup
-#    $B<g$K(B ReadMxDat, ReadMxDatMethod $B$N@0Hw(B
+#    主に ReadMxDat, ReadMxDatMethod の整備
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -83,7 +83,7 @@ import StructureAnalysisEnvironment as SAE
 class ReadMxTdos(SAE.ReadMxDosMethod):
 
     ###################################
-    # $B%$%s%9%?%s%9:n@.(B
+    # インスタンス作成
     def __init__(self,name,suffix):
 
         dosname = name+suffix
@@ -112,8 +112,8 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
         self.num = len(self.datlines) -1
 
     ###################################
-    # TDOS ( *.DOS.Tetrahedron ) $BFI$_9~$_(B
-    # ($BCm0U(B) OpenMX $B$N(B down-spin $B$N(B TDOS $BCM$OIi$NId9f$,IU$$$F$$$k(B
+    # TDOS ( *.DOS.Tetrahedron ) 読み込み
+    # (注意) OpenMX の down-spin の TDOS 値は負の符号が付いている
     def get_tdos(self,spin=0):
 
         NSPIN = self.get_ispin()
@@ -138,7 +138,7 @@ class ReadMxTdos(SAE.ReadMxDosMethod):
         return self.TDOS
 
     ###################################
-    # INTTDOS ( *.DOS.Tetrahedron ) $BFI$_9~$_(B
+    # INTTDOS ( *.DOS.Tetrahedron ) 読み込み
     def get_inttdos(self,spin=0):
 
         NSPIN = self.get_ispin()
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     parser.add_option(  '-i','--input', dest='INPUT',)
     options, args = parser.parse_args()
 
-    # 'openmx' $B$h$j:GE,$J%G%U%)%k%H%U%!%$%kL>$N?dDj%k!<%A%s(B
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):
         try:
             options.INPUT = SAE.find_datfile('out')

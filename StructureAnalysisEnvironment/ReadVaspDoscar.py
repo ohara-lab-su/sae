@@ -124,7 +124,6 @@ import sys
 import os
 import gzip
 import re
-import optparse
 import numpy as np
 
 #from copy import deepcopy
@@ -133,7 +132,7 @@ import numpy as np
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadDoscar(object):
+class ReadVaspDoscar(object):
 
     def __init__(self,name):
 
@@ -655,6 +654,7 @@ class ReadDoscar(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'DOSCAR'
 
     parser = optparse.OptionParser()
@@ -670,7 +670,7 @@ if __name__ == '__main__':
     if len(args) > 0:
         name=args[0]
 
-    dos = ReadDoscar(name)
+    dos = ReadVaspDoscar(name)
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()

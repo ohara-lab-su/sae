@@ -1,35 +1,36 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $BFI$_9~$_$N;vA0=`Hw$N%"%[%k!<%A%s(B
+# 読み込みの事前準備のアホルーチン
 #
-# [in]     cname : MD $B%U%!%$%k(B( xyz $B7A<0(B ) $B%U%!%$%kL>(B
+# [in]     cname : MD ファイル( xyz 形式 ) ファイル名
 #
-# [return] natom : ($B%;%kFb(B)$B%H!<%?%k$N86;R?t(B
-# [return] nloop : $B%H!<%?%k$N%k!<%W?t(B
+# [return] natom : (セル内)トータルの原子数
+# [return] nloop : トータルのループ数
 #
 ################################################################################
 #
 #
 # 2015.02.12
-#  $B:Y$+$$%P%0$N=$@5(B
+#  細かいバグの修正
 #
 # 2015.01.07
-#  xyz + $B%U%)!<%9(B or xyz $B$NH=Dj$N$?$a$K9T?t$rJV$9(B nlist $B$rDI2C(B
-#  --> $B$7$?$1$I$9$0$K%3%a%s%H%"%&%H$7$?(B($BI,MW$J$$(B)
+#  xyz + フォース or xyz の判定のために行数を返す nlist を追加
+#  --> したけどすぐにコメントアウトした(必要ない)
 #
 # 2014.11.18 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.3"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.3"
 ################################################################################
 
 import sys
@@ -58,19 +59,19 @@ def read_md_param(cname):
 
 
     ###############################################
-    ## DATA $B$N%+%&%s%H(B
+    ## DATA のカウント
     ##
-    total_line=len(datlines)-1   # $B%H!<%?%k$N9T?t(B
-    natom     =int(datlines[0])  # $BAm86;R?t(B
+    total_line=len(datlines)-1   # トータルの行数
+    natom     =int(datlines[0])  # 総原子数
 
-    # loop $B?t$N%+%&%s%H!J%"%[%k!<%W!K(B
+    # loop 数のカウント（アホループ）
     j=0
     step = natom+2
     for i in range(0,total_line,step):
         j += 1
     nloop = j
 
-#   # $B%3%a%s%H9T$r$9$Y$F%9%-%C%W$7$F%j!<%I(B($B%F%9%H(B,$B$$$m$$$m3NG'(B)
+#   # コメント行をすべてスキップしてリード(テスト,いろいろ確認)
 #   i=0
 #   for l in range(nloop):
 #       i = i+2

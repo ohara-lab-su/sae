@@ -39,8 +39,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
@@ -51,8 +51,8 @@ def options():
     defaultver='13'
 
     defaultcut='5.0'
-                                                                                
-    # オプション処理                                                            
+
+    # オプション処理
     parser = optparse.OptionParser()
     parser.add_option( '-a','--atom',
                         dest='ATOM',
@@ -142,9 +142,9 @@ if __name__ == '__main__':
         for i in range(len(paolist)):
             print paolist[i]
 
-#   vps = SAE.ReadVps(fullname)
+#   vps = SAE.ReadMxVps(fullname)
 #   electron = vps.get_valence_electron()
 
-        
+
 ################################################################################
-     
+

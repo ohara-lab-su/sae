@@ -1,27 +1,28 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# list $BFI$_9~$_$N;vA0=`Hw(B
-#   ($BCm0U(B) $B%3%a%s%H9T$@$m$&$,$J$s$@$m$&$,!"0l9T$H$7$F%+%&%s%H$9$k(B
+# list 読み込みの事前準備
+#   (注意) コメント行だろうがなんだろうが、一行としてカウントする
 #
-# [in] cname      : $BFI$_9~$_%U%!%$%kL>(B
+# [in] cname      : 読み込みファイル名
 #
-# [return] nlist : $B%j%9%H?t(B
+# [return] nlist : リスト数
 #
 ################################################################################
 #
 # 2014.11.05 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -46,4 +47,4 @@ def read_list_param(name):
     datlines = datalist.split('\n')
     nlist=int(len(datlines)) -1
 
-    return nlist    
+    return nlist

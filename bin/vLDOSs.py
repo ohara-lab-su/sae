@@ -100,19 +100,19 @@ if __name__ == '__main__':
     plt.axes([ orgx,orgy, xsize, ysize ])
 
     #####################################################
-    dos = SAE.ReadDoscar('05_layer/relax/DOSCAR')
+    dos = SAE.ReadVaspDoscar('05_layer/relax/DOSCAR')
     eng = dos.get_eng() - dos.get_efermi()
     tdos = dos.get_tdos()
     ldos = dos.get_ldos(orbit,atom,spin)
     plt.plot(eng,tdos, linewidth=1, label='total 05-layer')
 
-    dos = SAE.ReadDoscar('06_layer/relax/DOSCAR')
+    dos = SAE.ReadVaspDoscar('06_layer/relax/DOSCAR')
     eng = dos.get_eng() - dos.get_efermi()
     tdos = dos.get_tdos()
     ldos = dos.get_ldos(orbit,atom,spin)
     plt.plot(eng,tdos, linewidth=1, label='total 06-layer')
 
-    dos = SAE.ReadDoscar('07_layer/relax/DOSCAR')
+    dos = SAE.ReadVaspDoscar('07_layer/relax/DOSCAR')
     eng = dos.get_eng() - dos.get_efermi()
     tdos = dos.get_tdos()
     ldos = dos.get_ldos(orbit,atom,spin)

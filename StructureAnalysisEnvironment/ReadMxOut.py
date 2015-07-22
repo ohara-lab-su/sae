@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # OpenMX3.7
-# *.out $B%U%!%$%k(B $BFI$_9~$_(B ReadMxOut
+# *.out ファイル 読み込み ReadMxOut
 #
 #  ReadMxDatMethod
 #              ---> ReadMxOut
@@ -12,10 +13,10 @@
 ################################################################################
 #
 # 2015.02.26
-#  sample $B%3!<%I$K$*$$$F(B name $B$H(B suffix $B$rJ,N%(B($B:#8e$N4pK\J}?K(B)
+#  sample コードにおいて name と suffix を分離(今後の基本方針)
 #
 # 2015.02.26  ReadMxOut.get_uele()
-#   ReadMxOut.get_uele() $B$N%G!<%?!<<hF@J}K!$rJQ99(B
+#   ReadMxOut.get_uele() のデーター取得方法を変更
 #
 #                   SCF history at MD= 1
 # ***********************************************************
@@ -36,24 +37,24 @@
 #    SCF=   2  NormRD=  1.399483389381  Uele= -72.777436036187
 #
 #
-#  $BF1$8(B MD $B%9%F%C%W(B(MD=1)$B$G(B SCF $B%k!<%W$,J#?t$"$k%1!<%9$,H/@8$7$?(B
-#  Davi $B%k!<%W$H(B RMM-DIIS $B%k!<%W$+!)(B
+#  同じ MD ステップ(MD=1)で SCF ループが複数あるケースが発生した
+#  Davi ループと RMM-DIIS ループか？
 #
-#  $B$3$N=hM}$NBP1~$N$?$a$K4pK\J}?K$H$7$F(B
+#  この処理の対応のために基本方針として
 #
-#    (0) ReadMdOut.get_n_ion_loop() $B$N%+%&%s%H?t$OJQ99$7$J$$(B
-#        --> MD=1 $B$,Fs2s8=$l$F$b(B MD $B%k!<%W$O(B 1 $B$H$9$k(B($B8=9T(B)$B$^$^(B
-#    (1) $B7k2LE*$K(B ReadMdOut.get_uele() $B$N=$@5$GBP1~$9$k(B
-#        --> MD=1 $B$,Fs2s8=$l$?$i(B $B0lEYL\$N(B MD=1 $B$rGK4~$9$k(B
+#    (0) ReadMdOut.get_n_ion_loop() のカウント数は変更しない
+#        --> MD=1 が二回現れても MD ループは 1 とする(現行)まま
+#    (1) 結果的に ReadMdOut.get_uele() の修正で対応する
+#        --> MD=1 が二回現れたら 一度目の MD=1 を破棄する
 #
-# ------------------------------- superclass $B$K(Bmethod$B$r0\9T(B/$B7Q>52=(B
+# ------------------------------- superclass にmethodを移行/継承化
 # 2015.02.24
-#  *.dat $B$r(B superclass$B2=$7$?$3$H$G(B *.out (ReadMxOut)$B$N=EJ#(B method $B$r@0M}@0F\(B
+#  *.dat を superclass化したことで *.out (ReadMxOut)の重複 method を整理整頓
 #
 # 2015.02.24
 #  1st time
-#    $B$H$j$"$($:(B Utot $B$H(B Uele $B$N(B ION $B%9%F%C%W$4$H$H(B SCF $BKh$N7k2L$r(B
-#    $B@0M}$7$FCj=P$9$k$@$1$N%/%i%9(B/$B%a%C%=%I$r$H$j$"$($:=`Hw(B
+#    とりあえず Utot と Uele の ION ステップごとと SCF 毎の結果を
+#    整理して抽出するだけのクラス/メッソドをとりあえず準備
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -106,9 +107,9 @@ class ReadMxOut(SAE.ReadMxDatMethod):
         self.num = len(self.datlines) -1
 
     ###################################
-    # $B%$%*%s%k!<%W$N?t(B
-    # SCF MD=* $B9`L\$N(B * $B$N:GBgCM$r0z$-H4$/(B
-    # $BF10l(B MD=* $BHV9f$,O"B3$7$F8=$l$F$b4X78$J$/(B * $B$N:GBg$r<h$k(B
+    # イオンループの数
+    # SCF MD=* 項目の * の最大値を引き抜く
+    # 同一 MD=* 番号が連続して現れても関係なく * の最大を取る
     def get_n_ion_loop(self):
         md_text = '.*SCF.*MD='
         md_reg = re.compile(md_text)
@@ -123,7 +124,7 @@ class ReadMxOut(SAE.ReadMxDatMethod):
         return self.n_ion_loop
 
     ###################################
-    # $B%$%*%s%k!<%WKh$N(B Total Energy
+    # イオンループ毎の Total Energy
     def get_utot(self):
         n_ion_loop = self.get_n_ion_loop()
         self.utot = np.zeros((n_ion_loop))
@@ -136,7 +137,7 @@ class ReadMxOut(SAE.ReadMxDatMethod):
         return self.utot
 
     ###################################
-    # SCF$B%k!<%W$N:GBg?t(B
+    # SCFループの最大数
     def get_max_n_scf(self):
         scf_txt = '.*SCF='
         scf_reg = re.compile(scf_txt)
@@ -149,8 +150,8 @@ class ReadMxOut(SAE.ReadMxDatMethod):
         return self.max_n_scf
 
     ###################################
-    # $B%$%*%s%k!<%WKh$N$5$i$K(BSCF$B%k!<%W$4$H$N(B Uele(band$B%(%M%k%.!<(B) $B$NCj=P(B
-    # $BF10l(B MD=* $BHV9f$,8=$l$?;~$O:G8e$N(B SCF $B%k!<%W$N$_$r<h$j=P$9(B
+    # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
+    # 同一 MD=* 番号が現れた時は最後の SCF ループのみを取り出す
     def get_uele(self):
 
         md_start_txt = '.*SCF.*at MD='
@@ -166,13 +167,13 @@ class ReadMxOut(SAE.ReadMxDatMethod):
 
         i=0
         while 1:
-            # MD= $B9T$r8+$D$1$?$i%9%?!<%H(B
+            # MD= 行を見つけたらスタート
             if bool(md_start_reg.match(self.datlines[i])):
                 md = int(re.sub(md_start_txt,'',self.datlines[i])) - 1
-                # SCF$B9T$,;O$^$k$^$G%8%c%s%W(B
+                # SCF行が始まるまでジャンプ
                 while not bool(scf_reg.match(self.datlines[i])): i +=1
                 scf = 0
-                # SCF $B9T$,$"$k4V$@$1FI$_9~$_(B
+                # SCF 行がある間だけ読み込み
                 while bool(scf_reg.match(self.datlines[i])):
                     uele0 = float(re.sub(scf_reg,'',self.datlines[i]))
                    #print md,scf,uele0

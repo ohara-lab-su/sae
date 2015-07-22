@@ -106,14 +106,11 @@ import sys
 import re
 #import gzip
 import numpy as np
-
-import optparse
-
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadPoscar(object):
+class ReadVaspPoscar(object):
 
     ###############################################
     ## init and Read POSCAR
@@ -204,7 +201,7 @@ class ReadPoscar(object):
         ## get ion (makes index)
         ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
         ##
-        self.ion = np.zeros(self.natom)
+        self.ion = np.zeros(self.natom,dtype=int)
         tmp = -1
         for j in range(self.nion):
             local = -1
@@ -217,7 +214,7 @@ class ReadPoscar(object):
         ###############################################
         ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
         ##
-        self.ion_local = np.zeros(self.natom)
+        self.ion_local = np.zeros(self.natom,dtype=int)
         tmp = -1
         for j in range(self.nion):
             local = -1
@@ -464,13 +461,13 @@ class ReadPoscar(object):
                     self.position)
 
         # super 用の配列
-        supers         = super_x*super_y*super_x
-        sv             = np.zeros((supers,3))             # (super) t
-        sp             = np.zeros((self.natom*supers,3))  # (super) position
-        ion_sp         = np.zeros(self.natom*supers)      # (super) ion
-        ion_local_sp   = np.zeros(self.natom*supers)      # (super) ion_local
-        fix_sp         = np.zeros((self.natom*supers,3),dtype='S') # (super) fix
-        sp_j           = np.zeros(self.natom*supers)      # super cell と orijinal cell の対応
+        supers = super_x*super_y*super_x
+        sv = np.zeros((supers,3))                          # (super) t
+        sp = np.zeros((self.natom*supers,3))               # (super) position
+        ion_sp = np.zeros(self.natom*supers)               # (super) ion
+        ion_local_sp = np.zeros(self.natom*supers)         # (super) ion_local
+        fix_sp = np.zeros((self.natom*supers,3),dtype='S') # (super) fix
+        sp_j  = np.zeros(self.natom*supers)                # super cell と orijinal cell の対応
 
         # super 用の内部座標作成
         SAE.make_supercell1(
@@ -520,6 +517,7 @@ class ReadPoscar(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'POSCAR'
     parser = optparse.OptionParser()
     parser.add_option( '-i','--input',

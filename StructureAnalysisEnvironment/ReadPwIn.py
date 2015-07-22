@@ -1,15 +1,16 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # PWScf (Quantum ESPRESSO 5..x )
-# scf.in $B%U%!%$%k(B( pw.x $BF~NO%U%!%$%k(B $BFI$_9~$_(B)
+# scf.in ファイル( pw.x 入力ファイル 読み込み)
 #
-# 1) pw.x $BF~NO%U%!%$%kL>$NBh0l8uJd$r(B scf.in $B$H$9$k(B
-# 2) ibrav = 0 $B$N$_BP1~(B (2015.05.12)
-# 3) $B%?%0L>$HCM$N4V$N6h@Z$j$N(B = ($B%$%3!<%k(B) $B$K$OI,$:%9%Z!<%9$,F~$k;v$,A0Ds(B
-# 4) CELL_PARAMETERS $B$O(B {alat} $B$,A0Ds(B
-# 5) ATOMIC_POSITIONS $B$O(B {crystal} $B$,A0Ds(B
+# 1) pw.x 入力ファイル名の第一候補を scf.in とする
+# 2) ibrav = 0 のみ対応 (2015.05.12)
+# 3) タグ名と値の間の区切りの = (イコール) には必ずスペースが入る事が前提
+# 4) CELL_PARAMETERS は {alat} が前提
+# 5) ATOMIC_POSITIONS は {crystal} が前提
 #
 ################################################################################
 #
@@ -95,7 +96,7 @@ class ReadPwIn(object):
                 self.prefix = str(tmp.strip())
 
     ############################################################################
-    # ReadPoscar.py $B$G$N(B t $B$K=`$:$k9=B$(B
+    # ReadPoscar.py での t に準ずる構造
     def get_t(self):
         self.t = np.zeros((3,3))
         cell_reg = re.compile('.*CELL_PARAMETERS.*',re.IGNORECASE)
@@ -158,8 +159,8 @@ class ReadPwIn(object):
         return self.atoms
 
     ############################################################################
-    # natom $B$^$G$NDL$7HV9f$G86;R<o$rJV$9(B($B85AG5-9f$G$O$J$/$F86;R$N<oN`HV9f$rJV$9(B)
-    def get_atoms_j(self):  # ReadOutcar.py $B8_49(B, ReadMxDatMethod.py $B8_49(B
+    # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号を返す)
+    def get_atoms_j(self):  # ReadOutcar.py 互換, ReadMxDatMethod.py 互換
 
         self.get_atoms()
         self.atoms_j = np.zeros(self.natom,dtype=int)
@@ -172,8 +173,8 @@ class ReadPwIn(object):
         return self.atoms_j
 
     ############################################################################
-    # natom $B$^$G$NDL$7HV9f$G86;R<o$N5-9f$rJV$9(B
-    def get_atoms_index_j(self): # ReadMd, ReadPoscar, $B8_49(B
+    # natom までの通し番号で原子種の記号を返す
+    def get_atoms_index_j(self): # ReadMd, ReadPoscar, 互換
 
         position_reg = re.compile('.*ATOMIC_POSITIONS.*',re.IGNORECASE)
         self.atoms_index_j = []

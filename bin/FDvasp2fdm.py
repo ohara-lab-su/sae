@@ -1,12 +1,13 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
-# VASP to FDMNES crystal $B>pJs(B
+# VASP to FDMNES crystal 情報
 #
 # using ASE version
 #
-# ($BCm0U(B)
-#  1) ASE $B$N%k!<%A%s(B(cellconst) $B$r;H$C$F$$$k(B
-#  2) ASE $B$N(Bmodule $B$r8F$S=P$7$F$$$k(B
+# (注意)
+#  1) ASE のルーチン(cellconst) を使っている
+#  2) ASE のmodule を呼び出している
 #
 ################################################################################
 #

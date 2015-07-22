@@ -55,11 +55,8 @@ def options():
             name0 = name
     name = name0
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name
 
@@ -85,18 +82,30 @@ if __name__ == '__main__':
 
 
     #######################################################
-    conv = SAE.ReadFdmConv('Au_conv.txt')
 #   conv = SAE.ReadFdmConv('Au_conv_Fermi.txt')
-    nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
     #######################################################
 
+    E_edge = 0.0
 
-    times = 35
-    plt.plot(conv.eng,conv.xas*times,color='red',linewidth=1,label='FDM Green R3')
+#   times = 35
+    times = 1.0
+    ###########################################################################
+    conv = SAE.ReadFdmConv('Au',suffix='_conv.txt')
+    plt.plot(conv.eng+E_edge,conv.xas*times,color='red',linewidth=1,label='FDM Green R3')
+
+    ###########################################################################
+    nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
     plt.plot(nor.eng,nor.nor,color='blue',linewidth=1,label='exp.')
 #   plt.plot(nor.eng - nor.e0 ,nor.nor,color='blue',linewidth=1,label='exp.')
 
-    plt.xlabel("Energy above Fermi [eV]")
+    timesP = 1.0
+#   ###########################################################################
+#   pw = SAE.ReadPwXanes('xanes.dat')
+#   plt.plot(pw.eng+E_edge,pw.xas*timesP,color='green',linewidth=1,label='PWSCF fch')
+
+
+#   plt.xlabel("Energy above Fermi [eV]")
+    plt.xlabel("Photon Energy [eV]")
     plt.ylabel("Absorption [arb. unit]")
 
 #   plt.axvline(x=0,color='black',linewidth=1)

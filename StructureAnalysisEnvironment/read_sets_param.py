@@ -1,23 +1,24 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# sets.in (HiLAPW) $BFI$_9~$_$N;vA0=`Hw(B
+# sets.in (HiLAPW) 読み込みの事前準備
 #
 ################################################################################
 #
 # 2014.11.25/26 1st version
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -28,11 +29,11 @@ import os
 
 ################################################################################
 #
-# [return] sgn_index   : $B6u4V72$NL>A0(B
-# [return] nion        : $B%5%$%H?t(B
-# [return] sg_natom    : $BA486;R?t(B($B6u4V72$rMQ$$$?;~$NFHN)%5%$%HFb$NA486;R?t(B)
+# [return] sgn_index   : 空間群の名前
+# [return] nion        : サイト数
+# [return] sg_natom    : 全原子数(空間群を用いた時の独立サイト内の全原子数)
 #
-# [return] sg_atoms[]  : $B%5%$%HKh$N86;R?t(B(matrix)
+# [return] sg_atoms[]  : サイト毎の原子数(matrix)
 #
 ################################################################################
 def read_sets_param(cname='sets.in'):
@@ -70,7 +71,7 @@ def read_sets_param(cname='sets.in'):
 
 #   for j in range(len(sg_atoms_index)):
 #       print sg_atoms_index[j], sg_atoms[j]
-            
+
     return sgn_index,nion,sg_natom,sg_atoms
 
 
@@ -78,7 +79,7 @@ def read_sets_param(cname='sets.in'):
 ################################################################################
 if __name__ == '__main__':
 
-    # sets.in $BFI$_9~$_$N=`Hw(B&$BA0CJ3,(B
+    # sets.in 読み込みの準備&前段階
     lattices0 = []
     lattices0.extend(read_sets_param())
 

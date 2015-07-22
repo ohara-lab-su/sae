@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # OpenMX3.7
-# *.DFTSCF $B%U%!%$%k(B $BFI$_9~$_(B
+# *.DFTSCF ファイル 読み込み
 #
 #  ReadMxDatMethod -- ReadMxOut -- ReadMxDftscf
 #                  -- ReadMxDat
@@ -15,25 +16,25 @@
 #
 # 2015.03.13
 #  get_uele()
-#  ION$B%k!<%W$,ESCf$G=*N;$7$?;~$N:G8e$N(BSCF$B%k!<%W$N>pJs$rG[Ns$KJ|$j9~$`$h$&$KJQ99(B
+#  IONループが途中で終了した時の最後のSCFループの情報を配列に放り込むように変更
 #
 # 2015.03.13
 #  get_uele()
-#    MD$BFb$N(B SCF $B%k!<%W$,?M>/$J$/I=<($5$l$k%P%0$rH/8+!u=$@5(B
+#    MD内の SCF ループが人少なく表示されるバグを発見＆修正
 #
 # 2015.03.12
 #  get_uele()
-#   ION$B%k!<%W$,(B0$B$N$H$-!J0l2sL\$N(BSCF$B%k!<%W$N;~(B)
-#    $B7k2L$rESCf$G$b=q$-$@$9$h$&$K=$@5(B
+#   IONループが0のとき（一回目のSCFループの時)
+#    結果を途中でも書きだすように修正
 #
 # 2015.03.12
 #   startup
 #
-#   $B%*!<%P!<%i%$%H$9$k$b$N(B
+#   オーバーライトするもの
 #     get_n_ion_loop()
 #     get_uele()
 #
-#   $B%G!<%?!<$,ESCf$G;_$^$C$F$$$F$b(B MD $B%k!<%WEy$N>pJs$r@5$7$/FI$a$k$h$&$K=$@5(B
+#   データーが途中で止まっていても MD ループ等の情報を正しく読めるように修正
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -66,9 +67,9 @@ class ReadMxDftscf(SAE.ReadMxOut):
         self.datlines, self.num = SAE.read_dataline(cname)
 
     ###################################
-    # ($B=*N;$7$?(B)$B%$%*%s%k!<%W$N?t(B
-    #  ION$B%k!<%W$,=*N;$7$?$"$H$N(B Total energy $B=PNO$N9`L\$r%+%&%s%H$9$k(B
-    #  SCF$B%k!<%W$,ESCf$N(BION$B%k!<%W$O%+%&%s%H$7$J$$(B
+    # (終了した)イオンループの数
+    #  IONループが終了したあとの Total energy 出力の項目をカウントする
+    #  SCFループが途中のIONループはカウントしない
     def get_n_ion_loop(self):
         md_text = '.*Total energy.*at MD ='
         md_reg = re.compile(md_text)
@@ -84,8 +85,8 @@ class ReadMxDftscf(SAE.ReadMxOut):
 
 
     ###################################
-    # $B%$%*%s%k!<%WKh$N$5$i$K(BSCF$B%k!<%W$4$H$N(B Uele(band$B%(%M%k%.!<(B) $B$NCj=P(B
-    # $BF10l(B MD=* $BHV9f$,8=$l$?;~$O:G8e$N(B SCF $B%k!<%W$N$_$r<h$j=P$9(B
+    # イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
+    # 同一 MD=* 番号が現れた時は最後の SCF ループのみを取り出す
     def get_uele(self):
 
         md_start_txt = '.*SCF.*at MD='
@@ -104,13 +105,13 @@ class ReadMxDftscf(SAE.ReadMxOut):
             i=0
             md=0
             while 1:
-                # MD= $B9T$r8+$D$1$?$i%9%?!<%H(B
+                # MD= 行を見つけたらスタート
                 if bool(md_start_reg.match(self.datlines[i])):
                    #md = int(re.sub(md_start_txt,'',self.datlines[i])) - 1
-                    # SCF$B9T$,;O$^$k$^$G%8%c%s%W(B
+                    # SCF行が始まるまでジャンプ
                     while not bool(scf_reg.match(self.datlines[i])): i +=1
                     scf = 0
-                    # SCF $B9T$,$"$k4V$@$1FI$_9~$_(B
+                    # SCF 行がある間だけ読み込み
                     while bool(scf_reg.match(self.datlines[i])):
                         uele0 = float(re.sub(scf_reg,'',self.datlines[i]))
                        #print " %d %d %15.12f" %( md,scf,uele0 )
@@ -123,7 +124,7 @@ class ReadMxDftscf(SAE.ReadMxOut):
                     md += 1
                 i += 1
                 if md == n_ion_loop:
-                    # $B:G8e$N(BMD$B%k!<%W$G(B SCF $B$,=*N;$7$F$J$$ESCf$N(BSCF$B>pJs(B
+                    # 最後のMDループで SCF が終了してない途中のSCF情報
                     while 1:
                         if bool(md_start_reg.match(self.datlines[i])):
                             while not bool(scf_reg.match(self.datlines[i])): i +=1
@@ -140,7 +141,7 @@ class ReadMxDftscf(SAE.ReadMxOut):
                         i += 1
                     break
         else:
-            # MD $B%k!<%W$,0lEY$b=*N;$7$?$3$H$,$J$$$H$-$N=hM}(B
+            # MD ループが一度も終了したことがないときの処理
             i=0
             uele0 = []
             while 1:
@@ -168,17 +169,17 @@ if __name__ == '__main__':
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    # $B%G%U%)%k%HL>$h$j:GE,$J%G%U%)%k%H%U%!%$%kL>$N?dDj%k!<%A%s(B
+    # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(mxname):
         try:
-            name0 = SAE.find_datfile('dat')  # *.dat $B$O$+$J$i$:$"$k$N$G$=$l$r%H%j%,!<$K(B
+            name0 = SAE.find_datfile('dat')  # *.dat はかならずあるのでそれをトリガーに
             if not name0 is None:
                 name = name0
                 mxname = name+suffix
         except:
             pass
 
-    # $B%*%W%7%g%s$G%U%!%$%kL>$rF~NO$7$?;~(B
+    # オプションでファイル名を入力した時
     if options.INPUT:
         mxname = options.INPUT
         name = re.sub('\.out$','',mxname)
@@ -190,7 +191,7 @@ if __name__ == '__main__':
 
     mxname = name+suffix
 
-    # $B7W;;ESCf$G$N(B DFTSCF $B%U%!%$%kFI$_9~$_(B
+    # 計算途中での DFTSCF ファイル読み込み
     if not os.path.exists(mxname):
         suffix = '.DFTSCF'
         mxname = name+suffix
@@ -212,7 +213,7 @@ if __name__ == '__main__':
             for scf in range(uele_index[md]):
                 print "    scf=%d, Uele = %15.12f" %(scf+1,uele[md,scf])
            #print " Utot = %15.12f" %(utot[md])
-        # $B7W;;ESCf$N:G8e$N(BSCF$B%k!<%W$rI=<((B
+        # 計算途中の最後のSCFループを表示
         md = n_ion_loop
         print "***************** md = ",md+1,'**********************'
         for scf in range(uele_index[md]):

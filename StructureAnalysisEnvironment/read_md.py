@@ -1,64 +1,65 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-#  MD(xyz) $B7A<0$NFI$_9~$_(B
-#   def read_md3(): $B:BI8(B(x,y,z) + $B%U%)!<%9(B(x,y,z) + Energy $B7A<0$KBP1~(B
-#   def read_md2(): $B:BI8(B(x,y,z) + $B%U%)!<%9(B(x,y,z) $B7A<0$KBP1~(B
-#   def read_md():  xyz $B>pJs$NFI$_9~$_(B
+#  MD(xyz) 形式の読み込み
+#   def read_md3(): 座標(x,y,z) + フォース(x,y,z) + Energy 形式に対応
+#   def read_md2(): 座標(x,y,z) + フォース(x,y,z) 形式に対応
+#   def read_md():  xyz 情報の読み込み
 #
 #
-# [in]     cname         : MD $B%U%!%$%k(B( xyz $B7A<0(B ) $B%U%!%$%kL>(B
-# [in]     nloop         : $B%H!<%?%k$N%k!<%W?t(B
-# [in/out] atoms_index_j : atoms_index ($B%5%$%HHV9f$G85AG5-9f$rJV$9(B) $B$NA486;RHV9fHG(B
-#                        : $BA4DL$7HV9f$+$i85AGL>$rJV$9(B
-# [in/out] position_loop : $B%k!<%W$4$H$N86;R0LCV(B
-# [in/out] force_loop    : $B%k!<%W$4$H$N%U%)!<%9(B
+# [in]     cname         : MD ファイル( xyz 形式 ) ファイル名
+# [in]     nloop         : トータルのループ数
+# [in/out] atoms_index_j : atoms_index (サイト番号で元素記号を返す) の全原子番号版
+#                        : 全通し番号から元素名を返す
+# [in/out] position_loop : ループごとの原子位置
+# [in/out] force_loop    : ループごとのフォース
 #
-# [return] natom : ($B%;%kFb(B)$B%H!<%?%k$N86;R?t(B
-# [return] nlist : xyz+$B%U%)!<%9$N9T?t(B ($B%U%)!<%9$NM-L5$NH=DjMQ(B)
+# [return] natom : (セル内)トータルの原子数
+# [return] nlist : xyz+フォースの行数 (フォースの有無の判定用)
 #
 ################################################################################
 #
 # 2015.01.08
-#   OpenMX $B$GEG=P$5$l$k(B md $B7A<0(B $B:BI8(B(xyz) + $B%U%)!<%9(B(xyz) + Energy
-#   $B$KBP1~$7$?(B read_md3() $B$rMQ0U(B
+#   OpenMX で吐出される md 形式 座標(xyz) + フォース(xyz) + Energy
+#   に対応した read_md3() を用意
 #
 #   read_md3()
-#      natom $B$@$1$G$O$J$/(B nion $B5Z$S(B atoms atoms_index $B>pJs$b<hF@$9$k(B
+#      natom だけではなく nion 及び atoms atoms_index 情報も取得する
 #
-#      $B4pK\J}?K$H$7$F(B
-#      nion $B$O(B($B2>(B)$B$J$N$G!"F1$885AG5-9f$,B3$$$F$?$iF10l(Btype $B$H$7$F$/$/$k(B
-#      $BF1$885AG5-9f$,O"B3$7$F$$$F(B $BJL(B type $B$N>l9g$O86M}E*$K6hJL$9$k>pJs$,(B
-#      MD$B%U%!%$%k$K$OB8:_$7$F$J$$$N$G!"D|$a$k(B
+#      基本方針として
+#      nion は(仮)なので、同じ元素記号が続いてたら同一type としてくくる
+#      同じ元素記号が連続していて 別 type の場合は原理的に区別する情報が
+#      MDファイルには存在してないので、諦める
 #
-#      --> nion $B:n@.(B
-#      --> atoms ($B%$%*%s(B(type)$BKh$N86;R?t(B
-#      --> atoms_index ($B%$%*%s(B(type)$BKh$N85AG5-9f(B)
+#      --> nion 作成
+#      --> atoms (イオン(type)毎の原子数
+#      --> atoms_index (イオン(type)毎の元素記号)
 #
-#   read_md(), read_md1() $B$GLa$jCM(B nloop $B$rGQ;_$7$?(B
-#   read_md(), read_md1() $B$G0z?t(B natom $B$rGQ;_$7$?(B
+#   read_md(), read_md1() で戻り値 nloop を廃止した
+#   read_md(), read_md1() で引数 natom を廃止した
 #
 # 2015.01.07
-#   read_md2(): $B:BI8(B(x,y,z) + $B%U%)!<%9(B(x,y,z) $B7A<0$KBP1~(B
+#   read_md2(): 座標(x,y,z) + フォース(x,y,z) 形式に対応
 #
 # 2014.11.18 1st
-#   read_md():  xyz $B>pJs$NFI$_9~$_(B
+#   read_md():  xyz 情報の読み込み
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014-2015, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.3"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014-2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.3"
 ################################################################################
 
 import sys
-import optparse 
+import optparse
 import os
 #import re
 #from numpy import *
@@ -87,11 +88,11 @@ def read_md(cname,nloop,atoms_index_j,position_loop):
     tmp.close()
     datlines = datfile.split('\n')
 
-#   total_line=len(datlines)-1   # $B%H!<%?%k$N9T?t(B
-    natom     =int(datlines[0])  # $BAm86;R?t(B
+#   total_line=len(datlines)-1   # トータルの行数
+    natom     =int(datlines[0])  # 総原子数
 
     ###############################################
-    # $B%G!<%?!<FI$_9~$_(B
+    # データー読み込み
     i=0
     for l in range(nloop):
         i = i+2
@@ -128,11 +129,11 @@ def read_md2(cname,nloop,atoms_index_j,position_loop,force_loop):
     tmp.close()
     datlines = datfile.split('\n')
 
-#   total_line=len(datlines)-1   # $B%H!<%?%k$N9T?t(B
-    natom     =int(datlines[0])  # $BAm86;R?t(B
+#   total_line=len(datlines)-1   # トータルの行数
+    natom     =int(datlines[0])  # 総原子数
 
     ###############################################
-    # $B%G!<%?!<FI$_9~$_(B
+    # データー読み込み
     i=0
     for l in range(nloop):
         i = i+2
@@ -173,11 +174,11 @@ def read_md3(cname,nloop,atoms_index_j,position_loop,force_loop):
     tmp.close()
     datlines = datfile.split('\n')
 
-#   total_line=len(datlines)-1   # $B%H!<%?%k$N9T?t(B
-    natom     =int(datlines[0])  # $BAm86;R?t(B
+#   total_line=len(datlines)-1   # トータルの行数
+    natom     =int(datlines[0])  # 総原子数
 
     ###############################################
-    # $B%G!<%?!<FI$_9~$_(B
+    # データー読み込み
     i=0
     energy_loop = np.zeros(nloop)
     atoms_index = []
@@ -254,25 +255,25 @@ if __name__ == '__main__':
 
     MD = "co.md"  # default name
 #   MD = "C60_position.xyz"
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=MD,
     )
-    options,  args = parser.parse_args()                                        
-                                                                                
+    options,  args = parser.parse_args()
+
     if options.INPUT:
         MD=options.INPUT
-                                                                                
+
     if len(args) > 0:
         MD=args[0]
-                                                                                
-    # MD(xyz) $B%U%!%$%k$N;vA0FI$_9~$_(B
+
+    # MD(xyz) ファイルの事前読み込み
     nloop,natom = SAE.read_md_param(MD)
 
-    # MD(xyz) $B%U%!%$%k$N;vA0=`Hw(B
-    atoms_index_j  = np.zeros((natom),dtype='S2')  # $BDL$7HV9f(B(max=atom)$B$G85AGL>(B($B5-9f(B)$B$rJ]B8$9$k(B
+    # MD(xyz) ファイルの事前準備
+    atoms_index_j  = np.zeros((natom),dtype='S2')  # 通し番号(max=atom)で元素名(記号)を保存する
     position_loop = np.zeros((nloop,natom,3))
     force_loop = np.zeros((nloop,natom,3))
 
@@ -295,7 +296,7 @@ if __name__ == '__main__':
             else:
                 print "   setp=",l
 
-            for j in range(natom):                                                  
+            for j in range(natom):
                 print " %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f" \
                       % ( atoms_index_j[j],\
                           position_loop[l,j,0],\
@@ -305,27 +306,27 @@ if __name__ == '__main__':
                           force_loop[l,j,1],\
                           force_loop[l,j,2] )
     else:
-        for l in range(nloop):                                                      
+        for l in range(nloop):
             print natom
             print "   setp=",l
-            for j in range(natom):                                                  
+            for j in range(natom):
                 print " %3s %12.8f %12.8f %12.8f " \
                       % ( atoms_index_j[j],\
                           position_loop[l,j,0],\
                           position_loop[l,j,1],\
                           position_loop[l,j,2] )
-    
+
 
 ## for read_md2
 #
-#   # MD(xyz) $B%U%!%$%kFI$_9~$_(B + Force $BBP1~(B
+#   # MD(xyz) ファイル読み込み + Force 対応
 #   natom,nlist = \
 #           read_md2(MD,nloop,atoms_index_j,position_loop,force_loop)
 
 #   if nlist >= 7:
-#       for l in range(nloop):                                                      
-#           print "------- LOOP "+str(l)+" ------"                                  
-#           for j in range(natom):                                                  
+#       for l in range(nloop):
+#           print "------- LOOP "+str(l)+" ------"
+#           for j in range(natom):
 #               print " %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f" \
 #                     % ( atoms_index_j[j],\
 #                         position_loop[l,j,0],\
@@ -335,13 +336,13 @@ if __name__ == '__main__':
 #                         force_loop[l,j,1],\
 #                         force_loop[l,j,2] )
 #   else:
-#       for l in range(nloop):                                                      
-#           print "------- LOOP "+str(l)+" ------"                                  
-#           for j in range(natom):                                                  
+#       for l in range(nloop):
+#           print "------- LOOP "+str(l)+" ------"
+#           for j in range(natom):
 #               print " %3s %12.8f %12.8f %12.8f " \
 #                     % ( atoms_index_j[j],\
 #                         position_loop[l,j,0],\
 #                         position_loop[l,j,1],\
 #                         position_loop[l,j,2] )
-#   
+#
 

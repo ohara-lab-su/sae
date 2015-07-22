@@ -1,26 +1,27 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B86;RHV9f$b$7$/$O85AG5-9f$rEO$9$H86;RNL$rJV$9%k!<%A%s(B
+# 原子番号もしくは元素記号を渡すと原子量を返すルーチン
 #
-# atomic_weight.list $B%U%!%$%k$,I,MW(B
+# atomic_weight.list ファイルが必要
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 #
 # 2015.02.21 (sun)
 #   startup
-#   get_atomic_radius.py $B$r%Y!<%9(B($B$[$H$s$I$=$N$^$^(B)
+#   get_atomic_radius.py をベース(ほとんどそのまま)
 #
 ################################################################################
 
@@ -28,14 +29,14 @@ import os
 import re
 
 import numpy as np
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
-### $B86;RHV9f$+$i86;RNL$rJV$9(B
+### 原子番号から原子量を返す
 def get_atomic_weight0(num):
 
-    name='atomic_weight.list' 
+    name='atomic_weight.list'
     libpath = re.sub('__init__.pyc','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
@@ -57,10 +58,10 @@ def get_atomic_weight0(num):
     return weight
 
 
-### $B85AG5-9f$+$i86;RNL$rJV$9(B
+### 元素記号から原子量を返す
 def get_atomic_weight1(atom):
 
-    name='atomic_weight.list' 
+    name='atomic_weight.list'
     libpath = re.sub('__init__.pyc','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
@@ -82,10 +83,10 @@ def get_atomic_weight1(atom):
     return weight
 
 
-#### $B85AG5-9f$+$i86;RHV9f$rJV$9(B
+#### 元素記号から原子番号を返す
 def get_atomic_number1(atom):
 
-    name='atomic_radius.list' 
+    name='atomic_radius.list'
     libpath = re.sub('__init__.pyc','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name

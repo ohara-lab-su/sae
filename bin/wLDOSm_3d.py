@@ -3,7 +3,7 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# LDOS.py 
+# LDOS.py
 #
 # Vplot_LDOSm.py (2015.04.22 ベース)
 # Simple 化 nonmag版
@@ -149,7 +149,7 @@ if __name__ == '__main__':
         dname = dname+'/DOSCAR'
         print "DOSCAR: ",dname
 
-        dos = SAE.ReadDoscar(dname)
+        dos = SAE.ReadVaspDoscar(dname)
         eng = dos.get_eng() - dos.get_efermi()
         ldos = dos.get_tdos(spin)
        #ldos = dos.get_ldos(orbit,atom,spin)

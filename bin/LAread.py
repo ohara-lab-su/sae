@@ -1,22 +1,22 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# sets.in (HiLPAW) $BFI$_9~$_%k!<%A%s$N4pK\(B
+# sets.in (HiLPAW) 読み込みルーチンの基本
 #
-# $B$?$@FI$s$GF1$8$b$N$rEG$-=P$9$@$1(B
+# ただ読んで同じものを吐き出すだけ
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #import sys
@@ -30,7 +30,7 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 def options():
 
-    cname = 'sets.in'    
+    cname = 'sets.in'
 
     return cname
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     cname = options()
 
-    # sets.in $BFI$_9~$_$N=`Hw(B&$BA0CJ3,(B
+    # sets.in 読み込みの準備&前段階
     lattices0 = []
     lattices0.extend(SAE.read_sets_param())
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     sg_position     = np.zeros((sg_natom,3),dtype=float)
     kpoints         = np.zeros(3,dtype=int)
 
-    # sets.in $BFI$_9~$_(B
+    # sets.in 読み込み
     title,nspin,kinfo = SAE.read_sets(cname,lattices,nion,\
                                   sg_atoms,sg_atoms_index,sg_position,kpoints)
 
@@ -64,8 +64,8 @@ if __name__ == '__main__':
 #       print " %8.6f %8.6f %8.6f " % (sg_position[i,0],
 #                                      sg_position[i,1],
 #                                      sg_position[i,2])
-                
-    # sets.in $B=q$-9~$_(B
+
+    # sets.in 書き込み
    #cname='sets.in_out'
    #STD=False
     STD=True

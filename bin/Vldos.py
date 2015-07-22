@@ -87,7 +87,7 @@ if __name__ == '__main__':
     name = options()
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(name)
+    dos = SAE.ReadVaspDoscar(name)
 
     # set output device
     out = sys.stdout

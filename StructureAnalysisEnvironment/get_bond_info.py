@@ -1,38 +1,39 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 #
-# $BF~NO$7$?86;R<oHV9f(B($B%5%$%HHV9f(B) $BDL$7$N%\%s%I$r>pJs$rJV$9(B
-# $BF~NO$9$k86;R<oHV9f$O(B 1 $B$+$i%9%?!<%H(B
+# 入力した原子種番号(サイト番号) 通しのボンドを情報を返す
+# 入力する原子種番号は 1 からスタート
 #
-# [in] atom1          : $B%\%s%I$r9M$($k86;R(B1
-# [in] atom2          : $B%\%s%I$r9M$($k86;R(B2 (atom1-atom2$B$N%\%s%I$r9M$($k(B)
-# [in] distance       : $B%\%s%I$H$_$J$95wN%(B
+# [in] atom1          : ボンドを考える原子1
+# [in] atom2          : ボンドを考える原子2 (atom1-atom2のボンドを考える)
+# [in] distance       : ボンドとみなす距離
 #
-# [in] nion           : $B86;R$N<oN`?t(B
-# [in] position       : $B%;%k$NFbIt:BI8(B($B@dBP:BI8$KJQ49$7$F$"$k$N$,A0Ds(B)
+# [in] nion           : 原子の種類数
+# [in] position       : セルの内部座標(絶対座標に変換してあるのが前提)
 #
-# [return] num        : $B%\%s%I?t(B
+# [return] num        : ボンド数
 #
-# [in/out] bond1[num] : $B%\%s%I$7$F$$$k86;R$NDL$7HV9f$,5-=R$5$l$F$$$k(B
-# [in/out] bond2[num] : $B%\%s%I$7$F$$$k86;R$NDL$7HV9f$,5-=R$5$l$F$$$k(B
-# [in/out] bondr[num] : $B%\%s%I$7$F$$$k5wN%(B
+# [in/out] bond1[num] : ボンドしている原子の通し番号が記述されている
+# [in/out] bond2[num] : ボンドしている原子の通し番号が記述されている
+# [in/out] bondr[num] : ボンドしている距離
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 #
 # 2015.02.16
-#   import $B$NL>A06u4V$rJQ99(B
-#   $BL5BL$J(B import $B$NGQ;_(B
+#   import の名前空間を変更
+#   無駄な import の廃止
 #
 ################################################################################
 
@@ -41,26 +42,26 @@ __version__    = "0.0.1"
 #import re
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ####################################################
-## distance$B$G(Batom1$B$H(Batom2$B$,%\%s%I$7$F$$$k?t$rJV$9(B
-## $B%>!<%s%P%&%s%@%j!<$rD6$($J$$(B
+## distanceでatom1とatom2がボンドしている数を返す
+## ゾーンバウンダリーを超えない
 ##
 def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
 
-    # $BF~NO86;R(B atom1 $B$N86;R<o$r3NG'(B
+    # 入力原子 atom1 の原子種を確認
 #   atom1   = 1
 #   atom2   = 4
 
-    # $BF~NO$7$?86;R<o$NDL$7HV9f$N2<8B$H>e8B$rJV$9(B
-    # $BF~NO$9$k86;R<o$N<oJLHV9f$O(B 1 $B$+$i%9%?!<%H(B
+    # 入力した原子種の通し番号の下限と上限を返す
+    # 入力する原子種の種別番号は 1 からスタート
     start1,end1 = SAE.get_atom_start(atom1,nion,atoms)
     if atom1 != atom2:
         start2,end2 = SAE.get_atom_start(atom2,nion,atoms)
 
-    # $BF~NO$7$?86;R$N%5%$%HFb%k!<%W$rDL$7HV9f$G5-=R(B
+    # 入力した原子のサイト内ループを通し番号で記述
     atom1_0 = atom1 -1
    #for i in range(int(atoms[atom1_0])):
        #print i
@@ -76,7 +77,7 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
                   x2 = position[j,0]
                   y2 = position[j,1]
                   z2 = position[j,2]
-    
+
                   r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
                   r1 = np.sqrt(r0)
                   if r1 < distance:
@@ -91,7 +92,7 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
                   x2 = position[j,0]
                   y2 = position[j,1]
                   z2 = position[j,2]
-    
+
                   r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
                   r1 = np.sqrt(r0)
                   if r1 < distance:
@@ -101,27 +102,27 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
 
 
 ####################################################
-## distance$B$G(Batom1$B$H(Batom2$B$,%\%s%I$7$F$$$k?t$rJV$9(B
-## $B%>!<%s%P%&%s%@%j!<$rD6$($J$$(B
+## distanceでatom1とatom2がボンドしている数を返す
+## ゾーンバウンダリーを超えない
 ##
-## $BCm0U(B) $B0z?t$N(B ion $B$O%G%P%C%0MQ(B(print$BMQ(B)
-##       $B$=$l0J30$G$O%k!<%A%s$NCf$G$O;H$o$J$$$N$G4pK\$O>J$$$F$*$/(B
-## 
+## 注意) 引数の ion はデバッグ用(print用)
+##       それ以外ではルーチンの中では使わないので基本は省いておく
+##
 def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bond1,bond2):
 #def get_bond_info(atom1,atom2,distance,nion,ion,atoms,atoms_index,position,bondr,bond1,bond2):
 
-    # $BF~NO86;R(B atom1 $B$N86;R<o$r3NG'(B
+    # 入力原子 atom1 の原子種を確認
 #   atom1   = 1
 #   atom2   = 4
 
-    # $BF~NO$7$?86;R<o$NDL$7HV9f$N2<8B$H>e8B$rJV$9(B
-    # $BF~NO$9$k86;R<o$N<oJLHV9f$O(B 1 $B$+$i%9%?!<%H(B
+    # 入力した原子種の通し番号の下限と上限を返す
+    # 入力する原子種の種別番号は 1 からスタート
     start1,end1 = SAE.get_atom_start(atom1,nion,atoms)
     if atom1 != atom2:
         start2,end2 = SAE.get_atom_start(atom2,nion,atoms)
-    
 
-    # $BF~NO$7$?86;R$N%5%$%HFb%k!<%W$rDL$7HV9f$G5-=R(B
+
+    # 入力した原子のサイト内ループを通し番号で記述
     atom1_0 = atom1 -1
    #for i in range(int(atoms[atom1_0])):
        #print i
@@ -137,7 +138,7 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
                     x2 = position[j,0]
                     y2 = position[j,1]
                     z2 = position[j,2]
-    
+
                     r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
                     r1 = np.sqrt(r0)
                     if r1 < distance:
@@ -161,7 +162,7 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
                    x2 = position[j,0]
                    y2 = position[j,1]
                    z2 = position[j,2]
-    
+
                    r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
                    r1 = np.sqrt(r0)
                    if r1 < distance:
@@ -174,4 +175,4 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
                        bond2[num] = j
                        num += 1
 
- 
+

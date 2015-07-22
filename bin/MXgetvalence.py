@@ -38,8 +38,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             name = name+SUFFIX
             fullname = data+'/VPS/'+name+'.vps'
 
-    vps = SAE.ReadVps(fullname)
+    vps = SAE.ReadMxVps(fullname)
     electron = vps.get_valence_electron()
 
     print 'DATAPATH        :',data
@@ -124,6 +124,6 @@ if __name__ == '__main__':
     print 'VPS             :',name
     print 'PATH            :',fullname
     print 'num of electron :',electron
-        
+
 ################################################################################
-     
+

@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B86;RHV9f$b$7$/$O85AG5-9f$rEO$9$H86;RH>7B$rJV$9%k!<%A%sEy(B
-# ($B$$$5$5$+%k!<%A%sA4BN$N4pK\%;%s%9$,8E$$$N$G07$$$K$/$$(B)
+# 原子番号もしくは元素記号を渡すと原子半径を返すルーチン等
+# (いささかルーチン全体の基本センスが古いので扱いにくい)
 #
-# $B%+%l%s%H$K(B atomic_radius.list $B%U%!%$%k$,I,MW(B
+# カレントに atomic_radius.list ファイルが必要
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -19,10 +20,10 @@ __version__    = "0.0.1"
 ################################################################################
 #
 # 2015.05.19
-#  $B86;RHV9f$+$i85AG5-9f$rJV$9%k!<%A%s$rDI2C(B
+#  原子番号から元素記号を返すルーチンを追加
 #
 # 2015.02.16
-#  import $B$NL>A06u4V$rJQ99(B
+#  import の名前空間を変更
 #
 ################################################################################
 
@@ -34,7 +35,7 @@ import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 
-### $B86;RHV9f$+$i86;RH>7B$rJV$9(B
+### 原子番号から原子半径を返す
 def get_atomic_radius0(num):
 
     name='atomic_radius.list'
@@ -57,7 +58,7 @@ def get_atomic_radius0(num):
 
     return radius
 
-### $B85AG5-9f$+$i86;RH>7B$rJV$9(B
+### 元素記号から原子半径を返す
 def get_atomic_radius1(atom):
 
     name='atomic_radius.list'
@@ -80,7 +81,7 @@ def get_atomic_radius1(atom):
 
     return radius
 
-### $B85AG5-9f$+$i86;RHV9f$rJV$9(B
+### 元素記号から原子番号を返す
 def get_atomic_number1(atom):
 
     name='atomic_radius.list'
@@ -103,7 +104,7 @@ def get_atomic_number1(atom):
 
     return num
 
-### $B86;RHV9f$+$i85AG5-9f$rJV$9(B
+### 原子番号から元素記号を返す
 def get_atomic_symbol0(num):
 
     name='atomic_radius.list'

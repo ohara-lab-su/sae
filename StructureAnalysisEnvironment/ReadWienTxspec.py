@@ -12,7 +12,7 @@
 #   == None --> is None
 #
 # 2015.04.06
-#  suffix $B$rJQ992DG=$K$7$?(B($B0JA0$N$^$^$G$b;H$($k(B)
+#  suffix を変更可能にした(以前のままでも使える)
 #
 # 2015.03.28(sat)
 #  startup

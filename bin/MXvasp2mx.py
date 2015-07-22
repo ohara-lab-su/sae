@@ -6,25 +6,25 @@
 #   convert VASP POSCAR to OpenMX *.dat
 #   for OpenMX 3.7.*
 #
-# [$BI,?\%/%i%9(B]
+# [必須クラス]
 #
 #  ReadPoscar.py
 #  ReadVps.py
 #  ReadVpsList.py
 #
-#  $B<B9T$K$O(BPAO $B$H(B VPS $B$N>pJs0lMw$rI,?\$H$9$k(B
+#  実行にはPAO と VPS の情報一覧を必須とする
 #
-#    $B>pJs0lMw%U%!%$%k(B
+#    情報一覧ファイル
 #    openmx_defaults_vpsdata
 #
-#       1) $B%+%l%s%H$r%5!<%A(B
-#       2) $B%[!<%`D>2<$N(B DFT_DATA13 $B%G%#%l%/%H%j$r%5!<%A(B
-#       3) ../DFT_DATA13 $B%G%#%l%/%H%j$r%5!<%A(B
-#       4) ~/openmx1/ $B%G%#%l%/%H%j$r%5!<%A(B
+#       1) カレントをサーチ
+#       2) ホーム直下の DFT_DATA13 ディレクトリをサーチ
+#       3) ../DFT_DATA13 ディレクトリをサーチ
+#       4) ~/openmx1/ ディレクトリをサーチ
 #
-#    vpsdata $B%U%!%$%k$rH/8+$7$?$iFI$_9~$`(B
-#    vapdata $B%U%!%$%k$NCf?H$O(B PAO $B$N50F;>pJs$*$h$S(B VPS $B>pJs$G(B
-#    $B85AG5-9f$+$i:GDc8BF0$/%G%U%)%k%H$N(B PAO/VPS $B>pJs$r0z$CD%$k$?$a$KMQ$$$k(B
+#    vpsdata ファイルを発見したら読み込む
+#    vapdata ファイルの中身は PAO の軌道情報および VPS 情報で
+#    元素記号から最低限動くデフォルトの PAO/VPS 情報を引っ張るために用いる
 #
 ################################################################################
 #
@@ -32,85 +32,85 @@
 #  == None --> is None
 #
 # 2016.06.19
-#  simple_v1 $B$X$H8E$$%P!<%8%g%s$r%V%i%s%A(B($B<B<A%P%C%/%"%C%W(B)
-#   $B:#8e$N(B master $BHG$O(B INCAR $B$d(B KPOINTS $B$d(B OUTCAR $B$J$I$rFI$_9~$s$G(B
-#   $B$J$k$Y$/$=$N$^$^(B VASP $B$N7W;;$HF1$8>r7o$K$J$k(B *.dat $B$r<+F0:n@.$9$k(B
-#   $BJ}8~@-$X%4!<%8%c%9$K$9$k(B
+#  simple_v1 へと古いバージョンをブランチ(実質バックアップ)
+#   今後の master 版は INCAR や KPOINTS や OUTCAR などを読み込んで
+#   なるべくそのまま VASP の計算と同じ条件になる *.dat を自動作成する
+#   方向性へゴージャスにする
 #
 # 2015.02.27
 #
-#   hexagonal $B7O$G$N%P%0(B (cubic $B$G$O4pK\JB?J$OBP>]$J$N$G$3$NLdBjH/@8$7$J$$(B)
+#   hexagonal 系でのバグ (cubic では基本並進は対象なのでこの問題発生しない)
 #
-#     1) $B%i%$%V%i%j2=$r$7$?$H$-$K4pK\JB?J%Y%/%H%k$rI=<($9$kItJ,$G(B
-#        $B9TNs$rE>CO$7$FI=<($7$F$$$?%_%9(B
+#     1) ライブラリ化をしたときに基本並進ベクトルを表示する部分で
+#        行列を転地して表示していたミス
 #
-#   cartesina $B%b!<%I$G$N%P%0(B(FRAC$B$O%@%$%l%/%H$J$N$G$3$NLdBj$,H/@8$7$J$+$C$?(B)
+#   cartesina モードでのバグ(FRACはダイレクトなのでこの問題が発生しなかった)
 #
-#     2) OpenMX $B$N(B cartesian $B%b!<%I$O(B scale=1.0 $B$G$5$i$KFbIt:BI8$r4pK\JB?J$G(B
-#        $B:F%9%1!<%k$9$kI,MW$,$"$k(B
-#
-# 2015.02.27
-#
-#  $BJQ497O$NItJ,$r(B conv_direct2car $B4X?t$r:FMxMQ(B
-#  *) $BLa$jCMHG$H$7$F:n$j$J$*$7$?(B
-#
-#   conv_scale21r        (scale$B%U%!%/%?!<$r(B1.0$B$K$9$k(B-->$B4pK\JB?J$K2!$7IU$1$k(B)
-#   conv_direct2car1     ($BFbIt:BI8$r%9%1!<%k$7$J$$(B VASP $B$N0UL#$G$N(B Car $B:BI8(B)
-#   conv_direct2carABS1  ($B@dBPCMHG(B,$B0lHLE*$J0UL#$G$N(B Car $B:BI82=(B)
-#
-#   --> $B$=$l$>La$jCMHG$H$7$?(B
+#     2) OpenMX の cartesian モードは scale=1.0 でさらに内部座標を基本並進で
+#        再スケールする必要がある
 #
 # 2015.02.27
-#  $BJQ49%P%0H/3P!":F%A%'%C%/(B
+#
+#  変換系の部分を conv_direct2car 関数を再利用
+#  *) 戻り値版として作りなおした
+#
+#   conv_scale21r        (scaleファクターを1.0にする-->基本並進に押し付ける)
+#   conv_direct2car1     (内部座標をスケールしない VASP の意味での Car 座標)
+#   conv_direct2carABS1  (絶対値版,一般的な意味での Car 座標化)
+#
+#   --> それぞ戻り値版とした
+#
+# 2015.02.27
+#  変換バグ発覚、再チェック
 #   1) IGZO (sc) vasp direct    --> dat [OK]
 #   2) IGZO (sc) vasp cartesian --> dat [OK]
 #   3) Cu   (fcc) vasp direct   --> dat [OK]
 #   4) graphene (hex) vasp direct   --> dat [Error]
 #
 # 2015.02.27
-#  $BF~NO3HD%;R$N<+F0H=JL%k!<%A%sDI2C(B
+#  入力拡張子の自動判別ルーチン追加
 #
-#  -o $B%*%W%7%g%s$G$N%U%!%$%kL>F~NO$G(B *.dat $B3HD%;R$rIU$1$?$$$?;~$O(B
-#  $BFbItE*$K$O<+F0$G3HD%;R$rMn$H$9$h$&$K$9$k!J:G=*E*$J=PNO$O3HD%;RM-$j!K(B
-#  $B$?$@$7!"%*%W%7%g%sL5$7$N0z?t$G%U%!%$%kL>$r;XDj$7$?;~$O%U%!%$%kL>$N(B
-#  $B<+F0:o=|$J$7$G!"$=$N$^$^=hM}$9$k(B
-#
-# 2015.02.24
-#   $B4pK\JB?J%Y%/%H%k$K(B scale factor $B$,$+$+$C$F$J$+$C$?$N$G=$@5(B
-#   OpenMX $B$O(B scale factor $B$O(B transition vector $BFbIt$K$+$+$C$F$$$k(B
+#  -o オプションでのファイル名入力で *.dat 拡張子を付けたいた時は
+#  内部的には自動で拡張子を落とすようにする（最終的な出力は拡張子有り）
+#  ただし、オプション無しの引数でファイル名を指定した時はファイル名の
+#  自動削除なしで、そのまま処理する
 #
 # 2015.02.24
-#   -o $B%*%W%7%g%sDI2C(B
+#   基本並進ベクトルに scale factor がかかってなかったので修正
+#   OpenMX は scale factor は transition vector 内部にかかっている
 #
 # 2015.02.24
-#  ReadPoscar.get_fix() $B$,(B numpy $B%*%V%8%'%/%H$G%-%c%i%/%?!<;XDj$G:n$C$F$$$?(B
-#  $B$N$K9g$o$;$F(B print $B$9$k;~$N=PNO$r(B %s $B$KJQ99$7$J$*$7$?!#!JJQ99K:$l$F$$$?(B)
-#   ---> $B$3$NJQ99$=$N$b$N$,%_%9(B
-#         VASP $B$N(B F $B$H(B T $B7A<0$G$N=PNO$r$d$a$F(B OpenMX $B$N(B 1 0 $B7A<0$N=PNO$X(B
-#         $BJQ99$7$?(B
+#   -o オプション追加
 #
 # 2015.02.24
-#   vasp $B$N%P!<%8%g%s%A%'%C%/$N0LCV$rJQ99(B($B$$$^$^$G$@$H0UL#$r$J$7$F$J$+$C$?(B)
+#  ReadPoscar.get_fix() が numpy オブジェクトでキャラクター指定で作っていた
+#  のに合わせて print する時の出力を %s に変更しなおした。（変更忘れていた)
+#   ---> この変更そのものがミス
+#         VASP の F と T 形式での出力をやめて OpenMX の 1 0 形式の出力へ
+#         変更した
+#
+# 2015.02.24
+#   vasp のバージョンチェックの位置を変更(いままでだと意味をなしてなかった)
 #
 # 2015.02.18
-#   get_position() $B$N0z?t$rJQ99$7$F$$$?$N$rK:$l$F$$$?$N$G(B
-#   get_fix() $B$H(B get_position() $B$KJ,N%(B
+#   get_position() の引数を変更していたのを忘れていたので
+#   get_fix() と get_position() に分離
 #
 # 2015.02.10
 #
-#  $BA4LLE*$K2~=$(B
+#  全面的に改修
 #
-#    0) POSCAR $BFI$_9~$_$rD>@\<B9T$+$i(B ReadPoscar $B%/%i%98F$S=P$7$XJQ99(B
+#    0) POSCAR 読み込みを直接実行から ReadPoscar クラス呼び出しへ変更
 #
-#    1) VPS and PAO $B%j%9%H0lMw$+$i$=$l$>$l$N>pJs$r%2%C%H$9$k%/%i%98F$S=P$7(B
+#    1) VPS and PAO リスト一覧からそれぞれの情報をゲットするクラス呼び出し
 #
-#    2) $B85AGL>$+$i(B valence.electron $B$N?t$r(B VPS $B%U%!%$%k$+$iFI$_<h$j!"=PNO$9$k(B
-#       $B%G%U%)%k%H%]%F%s%7%c%k$O(B PBE $B$G(B DFT_DATA13 $B$H$9$k(B
-#       non-mag $BHG(B
+#    2) 元素名から valence.electron の数を VPS ファイルから読み取り、出力する
+#       デフォルトポテンシャルは PBE で DFT_DATA13 とする
+#       non-mag 版
 #
-#    3) $B85AGL>$+$i(B PAO $B%U%!%$%k0lMw$r<hF@(B
-#        $B$=$NCf$NCf4V$N%+%C%H%*%UD9$N%U%!%$%k$r%A%g%$%9$9$k7A$G0l1~%8%'%M%l!<%H(B
-#        $B$9$k(B
+#    3) 元素名から PAO ファイル一覧を取得
+#        その中の中間のカットオフ長のファイルをチョイスする形で一応ジェネレート
+#        する
 #
 # 2014.06.20
 #   based on Vdirect2car.pl (and ReadPOSCAR.py)
@@ -153,7 +153,7 @@ def options():
     parser.add_option( '-d','--direct', action='store_true', dest='FRAC',)
     options, args = parser.parse_args()
 
-    # VASP $BF~NO%U%!%$%kL>$N<+F0<hF@(B
+    # VASP 入力ファイル名の自動取得
     if not os.path.exists(poscarname):
         poscarname0 = SAE.find_datfile('vasp')
         if poscarname0 is None:
@@ -166,10 +166,10 @@ def options():
     if options.OUTPUT:
         datname=options.OUTPUT
 
-    # $B$b$73HD%;R(B .dat $B$,$D$$$F$$$?$i$=$l$r>C$9(B
+    # もし拡張子 .dat がついていたらそれを消す
     datname=re.sub('\.dat','',datname)
 
-    # $B%*%W%7%g%sL5$70z?t$N;~$O3HD%;R<+F0:o=|$rIU$1$:$K$=$N$^$^%U%!%$%kL>$H$9$k(B
+    # オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
     if len(args) >0:
        #print "POSCAR:",args[0]
         poscarname=args[0]
@@ -188,9 +188,9 @@ if __name__ == '__main__':
 
 
     ############################################################################
-    ## VASP $B$N>pJsFI$_9~$_!"(BPOSCAR $BFI$_9~$_(B
+    ## VASP の情報読み込み、POSCAR 読み込み
     ##
-    poscar = SAE.ReadPoscar(poscarname)
+    poscar = SAE.ReadVaspPoscar(poscarname)
     print "Read VASP POSCAR = "+poscarname
 
    #title = poscar.get_title()
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 
 
     ############################################################################
-    ## VASP $B$N>pJsFI$_9~$_!"(BINCAR $BFI$_9~$_(B or OUTCAR $BFI$_9~$_(B
+    ## VASP の情報読み込み、INCAR 読み込み or OUTCAR 読み込み
     ##
     if os.path.exists('INCAR'):
 
@@ -248,17 +248,17 @@ if __name__ == '__main__':
         print ""
 
     ############################################################################
-    ## VASP $B$N>pJsFI$_9~$_!"(BKPOINTS
+    ## VASP の情報読み込み、KPOINTS
     ##
     if os.path.exists('KPOINTS'):
-        kpoints = SAE.ReadKpoints('KPOINTS')
+        kpoints = SAE.ReadVaspKpoints('KPOINTS')
         KP = kpoints.get_kpoints_array()
         kx = KP[0:0]
         ky = KP[0:1]
         kz = KP[0:2]
 
     ############################################################################
-    ## OpenMX Version $B%A%'%C%/(B & DATAPATH $B4D6-JQ?t$N3NG'(B
+    ## OpenMX Version チェック & DATAPATH 環境変数の確認
     ##
     version_FLAG=False
     if sys.version_info[0] >= 2 and sys.version_info[1] >= 7:
@@ -272,7 +272,7 @@ if __name__ == '__main__':
         sys.exit()
 
     ############################################################################
-    ## $B%G!<%?!<%U%!%$%k%Q%9$H%G%U%)%k%H(BPAO/VPS $B>pJs$N%;%C%H(B
+    ## データーファイルパスとデフォルトPAO/VPS 情報のセット
     ##
     VPSLIST = 'openmx_defaults_vpsdata'
     DFT_DATA = 'DFT_DATA13'
@@ -281,20 +281,20 @@ if __name__ == '__main__':
     pot = 'PBE'
     ver = '13'
 
-    # ../DFT_DATA $B$,B8:_$7$J$$;~$O(B $B4D6-JQ?t(B DATAPATH $B$rA*Br(B
+    # ../DFT_DATA が存在しない時は 環境変数 DATAPATH を選択
     if not os.path.exists(data):
         data = DATAPATH
     print "DATA PATH ",data
 
 
-    # VPS $B5Z$S(B PAO $B$N%Q%9@_Dj(B
+    # VPS 及び PAO のパス設定
     vpspath = data+'/VPS/'
     paopath = data+'/PAO/'
 
 
     ############################################################################
-    ## VPSLIST $B$N%U%!%$%k>l=j3NG'(B
-    ##   $B85AG5-9f$+$i(BPAO$B$H(BVPS$B>pJs$r<h$j=P$9$?$a$N%j%9%H$NB8:_$7$F$$$k>l=jC5$7(B
+    ## VPSLIST のファイル場所確認
+    ##   元素記号からPAOとVPS情報を取り出すためのリストの存在している場所探し
     ##
     HOMEPATH=os.environ.get('HOME',"")
     if os.path.exists(VPSLIST):
@@ -310,7 +310,7 @@ if __name__ == '__main__':
 
 
     ############################################################################
-    ## OpenMX(*.dat) $B=PNO%U%!%$%kL>$r%;%C%H(B
+    ## OpenMX(*.dat) 出力ファイル名をセット
     ##
     OUT=datname
     datfile = open(OUT+'.dat','w')
@@ -319,8 +319,8 @@ if __name__ == '__main__':
         sys.stdout = datfile
 
     ############################################################################
-    ## $B:BI87O$r(B Cartesian $B$KJQ49(B
-    ##    (non FRAC $B%b!<%I$O(B Cartesian, $BBP$7$F(BFRAC $B$O(Bdirect-mode
+    ## 座標系を Cartesian に変換
+    ##    (non FRAC モードは Cartesian, 対してFRAC はdirect-mode
     ##
    #if direct and not OPT_FRAC:
    #    car_x = np.zeros(natom)
@@ -339,25 +339,25 @@ if __name__ == '__main__':
         scale,t,natom,direct,position = \
                 SAE.conv_direct2carABS1(scale,t,natom,direct,position)
 
-    # scale factor $B$r(B1$B$KJQ99(B($BFbIt:BI8$b%9%1!<%k(B)
+    # scale factor を1に変更(内部座標もスケール)
     scale,t,natom,direct,position = \
             SAE.conv_scale21r(scale,t,natom,direct,position)
 
     ############################################################################
-    # VPS $B$H(B PAO $B$N>pJs%j%9%H$N%$%s%9%?%s%9@8@.(B
-    vpslist = SAE.ReadVpsList(vpslistpath)
+    # VPS と PAO の情報リストのインスタンス生成
+    vpslist = SAE.ReadMxVpsList(vpslistpath)
 
 
     ############################################################################
-    # VPS $B$N>pJs$+$i(B valence electron $B$NEE;R?t$r%2%C%H$9$k(B
-    #   1) potential $B$H(B database $B$N%P!<%8%g%s(B $B$+$iN`?d$9$k(B
-    #   2) $B%U%!%$%k$,B8:_$7$J$$;~$O(B S (soft) , H (hard) $B$r2>Dj$7$F$_$k(B
+    # VPS の情報から valence electron の電子数をゲットする
+    #   1) potential と database のバージョン から類推する
+    #   2) ファイルが存在しない時は S (soft) , H (hard) を仮定してみる
     #
     electron = np.zeros(natom)
     for j in range(natom):
 
         num,symbol,cutoff,vps_orbit = vpslist.get_vps_name(atoms_index_j[j])
-        opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff $BL>$+$i1Q?tJ8;z$N$_<h$j=P$9(B
+        opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
         fullname = vpspath+symbol+'_'+pot+ver+opt+'.vps'
 
        #fullname = vpspath+atoms_index_j[i]+'_'+pot+ver+'.vps'
@@ -369,8 +369,8 @@ if __name__ == '__main__':
        #    if not os.path.exists(fullname):
        #        sys.exit("STOP: VPS file not found")
 
-        vpsfile = SAE.ReadVps(fullname)
-        electron[j] = vpsfile.get_valence_electron() / 2.0 # $B=i4|$J$N$GHs<'@-$r2>Dj(B
+        vpsfile = SAE.ReadMxVps(fullname)
+        electron[j] = vpsfile.get_valence_electron() / 2.0 # 初期なので非磁性を仮定
 
 
     ############################################################################
@@ -404,9 +404,9 @@ if __name__ == '__main__':
         atom = re.sub('_.*','',atoms_index[i])
         atoms_index[i]=atom
 
-        ## VPS $B$H(B PAO $B$N>pJs%j%9%H$+$i(B PAO $B$H(B VPS $B$N>pJs%2%C%H(B
+        ## VPS と PAO の情報リストから PAO と VPS の情報ゲット
         num,symbol,cutoff,vps_orbit = vpslist.get_vps_name(atoms_index[i])
-        opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff $BL>$+$i1Q?tJ8;z$N$_<h$j=P$9(B
+        opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
 
         vps_name = symbol+cutoff+'-'+vps_orbit
         vps_file = vpspath+symbol+'_'+pot+ver+opt+'.vps'

@@ -1,23 +1,24 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # VASP
-# OSZICAR $BFI$_9~$_(B ($BHFMQ(B,$B$=$NB>(B)
+# OSZICAR 読み込み (汎用,その他)
 #
 ################################################################################
 #
 # 2015.02.24
-#  get_iter_num() --> get_n_ion_loop() $BJQ99(B
+#  get_iter_num() --> get_n_ion_loop() 変更
 #
 # 2015.01.29
-#  get_tmod() $B$NL>>N$r(B get_md_mode() $B$XJQ99(B
-#  (ReadOutcar.get_tmode() ==> ReadOutcar.get_md_mode() $B$X$NJQ99$K9g$o$;$?(B)
+#  get_tmod() の名称を get_md_mode() へ変更
+#  (ReadOutcar.get_tmode() ==> ReadOutcar.get_md_mode() への変更に合わせた)
 #
 # 2015.01.26 startup
 #
-#   temperature $B$H(B etotal $B$N%2%C%H(B
-#   IBRION $B%2%C%H(B method $BDI2C(B
+#   temperature と etotal のゲット
+#   IBRION ゲット method 追加
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -35,14 +36,13 @@ import sys
 import gzip
 import os
 import re
-import optparse
 import numpy as np
 
 #import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadOszicar(object):
+class ReadVaspOszicar(object):
 
     def __init__(self,cname):
 
@@ -68,8 +68,8 @@ class ReadOszicar(object):
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) -1
 
-    # get_n_ion_loop ($B5lL>(B) get_iter_num
-    # $B<B:]$K7W;;$7$?(B ION iter $B?t$r%2%C%H$9$k(B
+    # get_n_ion_loop (旧名) get_iter_num
+    # 実際に計算した ION iter 数をゲットする
     def get_n_ion_loop(self):
         iter_reg = re.compile('.*F=',re.IGNORECASE)
         for i in range(self.num):
@@ -80,7 +80,7 @@ class ReadOszicar(object):
         return self.n_ion_loop
 
     # get_md_mode
-    # IBRION=0 or $B$=$l0J30$NH=Dj(B
+    # IBRION=0 or それ以外の判定
     def get_md_mode(self):
         iter_reg = re.compile('.*T=')
         self.md_FLAG = False
@@ -124,6 +124,7 @@ class ReadOszicar(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'OSZICAR'
 
     parser = optparse.OptionParser()
@@ -133,7 +134,7 @@ if __name__ == '__main__':
     if options.INPUT: name=options.INPUT
     if len(args) > 0: name=args[0]
 
-    oszicar = ReadOszicar(name)
+    oszicar = ReadVaspOszicar(name)
 
     n_ion_loop = oszicar.get_n_ion_loop()
     md_mode = oszicar.get_md_mode()

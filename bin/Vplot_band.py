@@ -6,8 +6,8 @@
 # Vplot_band.py
 #
 #  vplot_band.pl モドキ(習作)
-#  オプション指定により vplot_band.pl, vplot_band_index.pl, vplot_band_both.pl  
-#  の機能を'ほぼ'全て兼ねる 
+#  オプション指定により vplot_band.pl, vplot_band_index.pl, vplot_band_both.pl
+#  の機能を'ほぼ'全て兼ねる
 #
 ################################################################################
 #
@@ -26,18 +26,18 @@
 #  Vplot_band_single.py の機能をほぼ再実装
 #
 # 問題点)
-#   1) １つ目のzone の右側の ticks 
+#   1) １つ目のzone の右側の ticks
 #   2) zone の重なりの感じが微妙(結局常に線を二重に描いている)
 #
 # 2015.01.28 restart
 #   multi-plot 方式での開発を停止して Vplot_band_single.py
-#   (single plot 方式)でひと通り開発したので、もういちど 
+#   (single plot 方式)でひと通り開発したので、もういちど
 #   mutiplot 形式へ復帰(ゾーンの長さ変更機能を手にするために)
 #
 # 2015.01.28 stop
 #  mutiplot 軽しいの開発を一旦停止
 #
-# 2015.01.27 startup 
+# 2015.01.27 startup
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -46,7 +46,7 @@ __credits__    = ["Kengo NAKADA"]
 m_mmail__      = "kmngo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.0.6"
 ################################################################################
@@ -197,13 +197,13 @@ if __name__ == '__main__':
     if DOWN_FLAG:
         print "DOWN_FLAG  :",DOWN_FLAG
     if OPT_BAND:
-        print "BAND       :",OPT_BAND 
+        print "BAND       :",OPT_BAND
     if DOS_FLAG:
         print "WRITE DOS  :",DOS_FLAG
 
     # 基本インスタンス生成
-    band = SAE.ReadEigenval(eigenname)
-    kpoints = SAE.ReadKpoints(kpointsname) 
+    band = SAE.ReadVaspEigenval(eigenname)
+    kpoints = SAE.ReadVaspKpoints(kpointsname)
 
     # バンドの基本情報取得
     NATOM = band.get_natom()
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # K点のゾーン情報
     kpoints_array = kpoints.get_kpoints_array()
     num_kpoints_line = kpoints.get_num_kpoints_line()
-    div_kpoints_line = kpoints.get_div_kpoints_line() 
+    div_kpoints_line = kpoints.get_div_kpoints_line()
     zone_ratio = kpoints.get_kpoints_vector_ratio(outcarname)  # OUTCAR
 
     # データーのチェック
@@ -233,7 +233,7 @@ if __name__ == '__main__':
         sys.exit("STOP: NKPTS inconsistence")
 
     ############################################################################
-    # E-fermi は DOSCAR から取得する(DOSCARがない場合はOUTCARから)              
+    # E-fermi は DOSCAR から取得する(DOSCARがない場合はOUTCARから)
     # K点情報はバンドの計算のOUTCARが必須
     # E-fermi情報は SCF 計算の DOSCAR(E-fermi が欲しい)
     #
@@ -248,15 +248,15 @@ if __name__ == '__main__':
             print 'EFERMI(OUT):',
 
         module_name = 'StructureAnalysisEnvironment'
-    
+
         module = __import__(module_name, globals(), locals(), [class_name], -1)
         klass = getattr(module,class_name)
-    
+
         efermifile = klass(optname)
         efermi = efermifile.get_efermi()
         print efermi
     else:
-        dos = SAE.ReadDoscar(doscarname)
+        dos = SAE.ReadVaspDoscar(doscarname)
         efermi = dos.get_efermi()
         print 'EFERMI(DOS):',
         print efermi
@@ -267,10 +267,10 @@ if __name__ == '__main__':
     if os.path.exists(symdatname) or os.path.exists(symdatname+".gz"):
         print "SYM.DAT    :", symdatname
 
-        sym = SAE.ReadSymdat(symdatname)
+        sym = SAE.ReadVaspSymdat(symdatname)
         num_symlines = sym.get_num_symlines()
         symlines = sym.get_symlines()
-    
+
         for i in range(num_symlines):
             print "  ",symlines[i]
 
@@ -288,9 +288,9 @@ if __name__ == '__main__':
                 % ( kpoints_array[i,0],kpoints_array[i,1],kpoints_array[i,2] )
         if not i % 2 == 0:
             print ""
- 
+
     for i in range(num_kpoints_line):
-        print " line %d : %10.7f " % ( i, zone_ratio[i] ) 
+        print " line %d : %10.7f " % ( i, zone_ratio[i] )
 
 
     ############################################################################
@@ -386,7 +386,7 @@ if __name__ == '__main__':
         # バンドの重ね書きプロット
         for ispin in range(istart,iend):
             for iband in range(NBANDS):
-    
+
                 # Y 軸の作成,eigenval(NBANDS,NKPTS,NSPIN), NKPTS の分割プロット
                 startx = i*div_kpoints_line
                 endx = startx+div_kpoints_line-1
@@ -398,7 +398,7 @@ if __name__ == '__main__':
                     else:
                         Y[k] = eigenval[iband,j,ispin] - efermi
                     k += 1
-   
+
                 # 線の色の調整
                 alpha=1
                 if ispin == 0:
@@ -451,7 +451,7 @@ if __name__ == '__main__':
                 else:
                    sizex_dos1 = sizex_dos/2
             else:
-                sizex_dos1 = sizex_dos    
+                sizex_dos1 = sizex_dos
             plt.axes([orgx,orgy, sizex_dos1, sizey])
             if UP_FLAG or DOWN_FLAG:
                 pass

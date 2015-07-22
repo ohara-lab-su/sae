@@ -1,16 +1,17 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # CPfindINP
 #
-#  $B;XDj(Bsuffix$B$N%U%!%$%k$,%+%l%s%H$K0l$D$N;~$O$=$N%U%!%$%kL>$rJV$9%k!<%A%s$X(B
-#  $BJQ99(B
+#  指定suffixのファイルがカレントに一つの時はそのファイル名を返すルーチンへ
+#  変更
 #
 ################################################################################
 #
 # 2015.03.16
-#  $B%i%$%V%i%j$N(B find_datfile.py $B$rD6$D;H$&$N$rJQ99$7$F!"(BCP2K $B@lMQ7?$KJQ99(B
+#  ライブラリの find_datfile.py を超つ使うのを変更して、CP2K 専用型に変更
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -32,8 +33,8 @@ __version__    = "0.0.6"
 #import glob
 import optparse
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 if __name__ == '__main__':

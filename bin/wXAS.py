@@ -59,10 +59,13 @@ if __name__ == '__main__':
 
     if OPT_EMAX:
                 print "Emax=",OPT_EMAX
+                OPT_EMAX=float(OPT_EMAX)
     if OPT_EMIN:
                 print "Emin=",OPT_EMIN
+                OPT_EMIN=float(OPT_EMIN)
     if OPT_YMAX:
                 print "Ymax=",OPT_YMAX
+                OPT_YMAX=float(OPT_YMAX)
 
     ############################################################################
     # matplotlib

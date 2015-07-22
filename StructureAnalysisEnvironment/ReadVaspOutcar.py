@@ -1,143 +1,144 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # VASP
-# OUTCAR $BFI$_9~$_(B ($BHFMQ(B,$B$=$NB>(B)
-#   $B>pJs$O$9$Y$F(B return $B$GJV$9(B
+# OUTCAR 読み込み (汎用,その他)
+#   情報はすべて return で返す
 #
 ################################################################################
-# $B6&DL4pK\JQ?t(B
+# 共通基本変数
 #
-# atoms[i]          : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
-# atoms_index[i]    : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N85AG5-9f$rJV$9(B
-# atoms_index_j[i]  : $BDL$7HV9f(B(max=natom)$B$rM?$($k$H!"86;R<o$N85AG5-9f$rJV$9(B
-# ion[j]            : $BDL$7HV9f(B(max=natom)$B$rM?$($k$H86;R$N<oN`HV9f$rJV$9(B
-# ion_local[j]      : $BDL$7HV9f(B(max=natom)$B$rM?$($k$H%5%$%HFb$N%m!<%+%kDL$7HV9f$rJV$9(B
+# atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+# atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+# ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す
+# ion_local[j]      : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
 #
-# position[j,3]     : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
-# fix[j,3]          : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$G(BForce$B$N(BFix/non-Fix $B;XDj(B
+# position[j,3]     : 通し番号(max=natom)とx,y,z 指定で内部座標
+# fix[j,3]          : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定
 #
-# title             : $B%?%$%H%k(B
-# scale             : $B3J;RDj?t(B($B%9%1!<%k%U%!%/%?!<(B)
+# title             : タイトル
+# scale             : 格子定数(スケールファクター)
 # selective         : selective mode
 # direct            : direct or cartesian
 #
 ################################################################################
 #
 # 2015.06.15
-#  nbands $B5Z$S(B natom $B$N(B $BFI$_9~$_$G$NJ#?t$N(B Dimension of array $B$,$"$C$?$H$-$K(B
-#  $B:G=i$N(B dim. of array $B$N$_M-8z$K$9$k$h$&$KJQ99!J(B OUTCAR $B=PNO$N%P%0BP1~(B)
+#  nbands 及び natom の 読み込みでの複数の Dimension of array があったときに
+#  最初の dim. of array のみ有効にするように変更（ OUTCAR 出力のバグ対応)
 #
 # 2015.06.15
 #
-#  OUTCAR $B=PNO$N%P%0$r$&$1$F!"(BNION $B$,(B 10 $B0J>e$J$i$P4V0c$C$?=PNO$N2DG=@-$,$"$k$N$G(B
-#  vasprun.xml $B$+$i$NFI$_9~$_$K@Z$jBX$($kMM$K$9$k(B(vasprun.xml $B$,$b$7$"$l$P(B)
+#  OUTCAR 出力のバグをうけて、NION が 10 以上ならば間違った出力の可能性があるので
+#  vasprun.xml からの読み込みに切り替える様にする(vasprun.xml がもしあれば)
 #
 # 2015.06.15
 #
-#  atoms_index_j() $B<BAu(B
+#  atoms_index_j() 実装
 #
 # 2015.06.15
 #
-#  VASP $B$N(B OUTCR $B$N=PNO$K%P%0$rH/8+(B ( ions per type $B$,@5$7$$=PNO$r$5$l$J$$(B )
+#  VASP の OUTCR の出力にバグを発見 ( ions per type が正しい出力をされない )
 #
-#  ION $B$N(B TYPE $B$,$a$C$A$cB?$$$HESCf$^$G$7$+(B ions per type $B$K=PNO$5$l$J$$(B
-#  $BA4It$G(B 10 $B<oN`$N86;R$^$G(B
-#  $B7W;;<+BN$OFbIt$G$7$C$+$j$d$C$F$$$k$h$&$J$N$@$,!"(BOUTCAR $B$N=PNO$,ESCf(B
-#  vasprun.xml $B$O@5>o(B
+#  ION の TYPE がめっちゃ多いと途中までしか ions per type に出力されない
+#  全部で 10 種類の原子まで
+#  計算自体は内部でしっかりやっているようなのだが、OUTCAR の出力が途中
+#  vasprun.xml は正常
 #
 # 2015.06.15
 #
-#   OUTCAR $BCf$KJ#?tHx(B Dimension of array $B9`L\$,=P$F$/$k$3$H$,$"$k(B
+#   OUTCAR 中に複数尾 Dimension of array 項目が出てくることがある
 #     ex. monoclinic ZrO2 (111) surface
-#   vasprun.xml $B$r8+$F$$$k$H(B $B:G=i$K=P$F$-$?%b%N$,@52r!)$C$]$$$N$G(B
-#   $BFsEYL\0J9_$OFI$^$J$$$h$&$K$9$k(B
+#   vasprun.xml を見ていると 最初に出てきたモノが正解？っぽいので
+#   二度目以降は読まないようにする
 #
 # 2015.06.15
 #
-#  master $B$r(B version 0.1.00 $B$X%"%C%W%G!<%H(B
-#  $B!J5l%P!<%8%g%s$O(B old_class_method $B$H$7$F%V%i%s%A$7$F$*$/(B)
+#  master を version 0.1.00 へアップデート
+#  （旧バージョンは old_class_method としてブランチしておく)
 #
-#  class $B$N;H$$J}$r(B2015$BG/CfHG$G$NJ}K!O@$XA4LLE*$K%"%C%W%G!<%H(B
-#  ($B$$$/$D$+$N%P%0$N9S$$D>$7$G%3!<%I$rFI$_D>$9$?$a$N%"%C%W%G!<%H$G$b$"$k(B)
+#  class の使い方を2015年中版での方法論へ全面的にアップデート
+#  (いくつかのバグの荒い直しでコードを読み直すためのアップデートでもある)
 #
-#  $B%/%i%9$N%j%U%!%/%?%j%s%0(B
+#  クラスのリファクタリング
 #
-#  $B%Q!<%9$NJ}K!O@$H$7$F$O$`$7$m%/%i%9$r;H$o$:$K0l3g=hM}$7$F$$$?;~Be$K6a$$(B
-#  method $B$H(B constracta $B$G$N=hM}$NHfN($r(B constracta $BHf=E$rB?$/$7$F!"$[$H$s$I(B
-#  constracta $B$G0l3g=hM}$r$9$k!#(Bmethod $B$O(B get_* $B%"%/%;%9$N$?$a$NN)$A0LCV!#(B
-#  $B%7%s%W%k2=$,L\E*!#(B--> 2015$BCf4|$@$H$=$N%P%i%s%9$NJ}$,<+J,$NCf$G$N<gN.(B
+#  パースの方法論としてはむしろクラスを使わずに一括処理していた時代に近い
+#  method と constracta での処理の比率を constracta 比重を多くして、ほとんど
+#  constracta で一括処理をする。method は get_* アクセスのための立ち位置。
+#  シンプル化が目的。--> 2015中期だとそのバランスの方が自分の中での主流
 #
-#  $B$?$@$7!"B.EY$,CY$$!J$?$V$s<:GT!K!"(BDOS $B$J$I$N%G!<%?!<%Q!<%9$@$H(B constracta
-#  $B=E;k$NJ}$,$+$J$j9bB.$J$N$@$,!"G|Bg$J%F%-%9%H$r@55,I=8=$GKh2s%^%C%A$9$k$N$O(B
-#  $B$?$V$s%"%[!#85$KLa$9I,MW$,$"$k$+$b$7$l$J$$!#(B
+#  ただし、速度が遅い（たぶん失敗）、DOS などのデーターパースだと constracta
+#  重視の方がかなり高速なのだが、莫大なテキストを正規表現で毎回マッチするのは
+#  たぶんアホ。元に戻す必要があるかもしれない。
 #
 ################################################################################
 #
 # 2015.02.24
-#  method $BL>%k!<%kJQ99$KH<$$(B get_iter_num() --> get_n_ion_loop()
+#  method 名ルール変更に伴い get_iter_num() --> get_n_ion_loop()
 #
 # 2015.01.31
-#  title $B<hF@$K$*$1$kKvHx$^$G$N6uGr:o=|$rDI2C(B(ReadDoscar$B$K=`$:$k(B)
+#  title 取得における末尾までの空白削除を追加(ReadDoscarに準ずる)
 #
 # 2015.01.29
-#  get_nkpts() $BDI2C(B
-#  get_nbands() $BDI2C(B
-#  get_title() $BDI2C(B
+#  get_nkpts() 追加
+#  get_nbands() 追加
+#  get_title() 追加
 #
 # 2015.01.29
-#   get_tmode() $B$NL>A0$r(B get_md_mode $B$KJQ99(B($B0UL#$N$"$kL>A0$K$7$?(B)
-#   ReadOszicar.get_tmode() $B$bF1MM$K(B ReadOszicar.get_md_mode() $B$XJQ99(B
+#   get_tmode() の名前を get_md_mode に変更(意味のある名前にした)
+#   ReadOszicar.get_tmode() も同様に ReadOszicar.get_md_mode() へ変更
 #
 # 2015.01.29
-#   get_kpoints_type() method $B$,(B KPOINTS $B$,(B auto mesh $B$@$H(B
-#   $B@8@.$5$l$J$$!J86M}E*$K@8@.$7$J$$(B)$B;v$K5$$,$D$$$?$N$G!"(B
-#   KPOINTS auto mesh $B$N$H$-$O(B disable $B$K$9$k(B
+#   get_kpoints_type() method が KPOINTS が auto mesh だと
+#   生成されない（原理的に生成しない)事に気がついたので、
+#   KPOINTS auto mesh のときは disable にする
 #
 #   get_kpoints_mode()
-#   $B>e5-$N%U%i%0$r<hF@$9$k(B
-#   ReadKpoints.get_kpoints_mode() $B$H4pK\8_49(B($B$^$@<BAu<+BN$O0lIt$N%U%i%0$N$_(B)
+#   上記のフラグを取得する
+#   ReadKpoints.get_kpoints_mode() と基本互換(まだ実装自体は一部のフラグのみ)
 #
-#     OUTCAR $B$N(B KPOINTS $B%;%C%7%g%s$+$i(B KPOINTS $B%U%!%$%k$NFbMF(B($BF0:n%b!<%I(B)$B$NN`?d(B
-#     $B$+$J$jL$40@.!#(BSCF $B$G$N%*!<%H(Bmesh $B$H(B band $B$G$N(B line-mode $B$N6hJL$/$i$$(B
+#     OUTCAR の KPOINTS セッションから KPOINTS ファイルの内容(動作モード)の類推
+#     かなり未完成。SCF でのオートmesh と band での line-mode の区別くらい
 #     def get_kpoints_mode(self):
 #
 # 2015.01.29
-#   get_atoms_index $B$GMQ$$$F$$$k(B OUTCAR $B$+$N(B PP $B>pJsF~<j$K;H$C$F$$$k(B
-#   VRHFIN $B$O(B NWRITE 2 $B0J>e$G$J$$$H5-=R$5$l$J$$$?$a(B
-#   POTCAR: $B%?%0$+$i(B PP $B>pJs$rF~<j$9$kJ}?K$X(B method $B$rJQ99(B
-#   $B5l(Bmethod $B$O(B get_atoms_index0 $B$HL?L>JQ99$7$F;D$9(B
+#   get_atoms_index で用いている OUTCAR かの PP 情報入手に使っている
+#   VRHFIN は NWRITE 2 以上でないと記述されないため
+#   POTCAR: タグから PP 情報を入手する方針へ method を変更
+#   旧method は get_atoms_index0 と命名変更して残す
 #
 # 2015.01.29
-#   NWRITE $B$rJV$9(Bmethod , get_nwrite()
+#   NWRITE を返すmethod , get_nwrite()
 #
 # 2015.01.28
-#   # Fermi Leve $B$r%2%C%H(B E-fermi $B$+$i(B
+#   # Fermi Leve をゲット E-fermi から
 #   def get_efermi(self):
 #
 # 2015.01.27
-#   $B5U3J;R$N>pJs$r5[$$=P$9(Bmethod$B$rDI2C(B
+#   逆格子の情報を吸い出すmethodを追加
 #
 # 2015.01.26
-#   ISYM =0 $B$N;~$N=hM}$N$?$a$K(B get_isym $B%a%=%C%I$rDI2C$7(B,
-#   get_pint_sym method $B$r=$@5$7$?(B
+#   ISYM =0 の時の処理のために get_isym メソッドを追加し,
+#   get_pint_sym method を修正した
 #
-#   IBRION $B%2%C%H(B method $BDI2C(B
+#   IBRION ゲット method 追加
 #
-#   $B<B:]$K7W;;$7$?(B ion_loop $B?t$r%2%C%H$9$k(Bmethod (get_iter_num)$BDI2C(B
+#   実際に計算した ion_loop 数をゲットするmethod (get_iter_num)追加
 #
-#   ETOTAL (MD$B%b!<%I(B FreeEnergy + EKIN ) $B%2%C%H(B method
-#   free energy TOTEN $B%2%C%H(B method
+#   ETOTAL (MDモード FreeEnergy + EKIN ) ゲット method
+#   free energy TOTEN ゲット method
 #
 # 2015.01.15
-#   $B7k>=E@72$r5[$$=P$9(Bmethod$B$rDI2C(B
+#   結晶点群を吸い出すmethodを追加
 #
 # 2015.01.13
-#   nion, atoms, atoms_index $BBP1~(B
+#   nion, atoms, atoms_index 対応
 #
 # 2015.01.09
-#   startup, $B05=L%U%!%$%kBP1~HG(B
+#   startup, 圧縮ファイル対応版
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -155,14 +156,13 @@ import sys
 #import gzip
 import os
 import re
-import optparse
 import numpy as np
 
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadOutcar(object):
+class ReadVaspOutcar(object):
 
 
     def __init__(self,cname):
@@ -199,21 +199,21 @@ class ReadOutcar(object):
             if bool(title_reg.match(self.datlines[i])):
                 self.title = re.sub(' *$','',self.datlines[i][9:])
 
-            # nkpts ($BJ#?t$N(B dim. of array $B9`L\$,$"$C$?$H$-$K:G=i$N$_M-8z(B)
+            # nkpts (複数の dim. of array 項目があったときに最初のみ有効)
             if bool(nkpts_reg.match(self.datlines[i])):
                 try:
                     self.nkpts = self.nkpbs
                 except:
                     self.nkpts = int(self.datlines[i].split()[3])
 
-            # natom ( VASP $B8x<0$G$O(B NSIONS $B$KAjEv(B , $BJ#?t$N(B dim. $BBP1~(B)
+            # natom ( VASP 公式では NSIONS に相当 , 複数の dim. 対応)
             if bool(nions_reg.match(self.datlines[i])):
                 try:
                     self.natom = self.natom
                 except:
                     self.natom = int(self.datlines[i].split()[11])
 
-            # nbands ($BJ#?t$N(B dim. of array $B9`L\$,$"$C$?$H$-$K:G=i$N$_M-8z(B)
+            # nbands (複数の dim. of array 項目があったときに最初のみ有効)
             if bool(nbands_reg.match(self.datlines[i])):
                 try:
                     self.nbands = self.nbands
@@ -244,18 +244,18 @@ class ReadOutcar(object):
             if bool(nwrite_reg.match(self.datlines[i])):
                 self.nwrite = int(self.datlines[i].split()[2])
 
-            # nion ( VASP $B8x<0$G$O(B TYPES $B$KAjEv(B )
+            # nion ( VASP 公式では TYPES に相当 )
             if bool(ion_type_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
                 self.nion = len(tmp)-4
 
-            # atoms[i] : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H$=$N86;R<o$N?t$rJV$9(B
+            # atoms[i] : 原子の種類番号(max=nion)を与えるとその原子種の数を返す
             if bool(ion_type_reg.match(self.datlines[i])):
                 for ion in range(self.nion):
                     self.atoms.append(int(self.datlines[i].split()[4+ion]))
 
-            # current $B$N(B iter number $B$r%2%C%H(B($B:G8e$K$OA4(BIter$BHV9f$,F~$k(B)
-            # get_n_ion_loop ($B5lL>(B) get_iter_num
+            # current の iter number をゲット(最後には全Iter番号が入る)
+            # get_n_ion_loop (旧名) get_iter_num
             if bool(iter_reg.match(self.datlines[i])):
                 self.n_ion_loop = int(self.datlines[i].split()[2].replace('(',''))
 
@@ -317,21 +317,21 @@ class ReadOutcar(object):
 
 
     ############################################################################
-    ## $B5U3J;R%Y%/%H%k$r5[$$=P$9(B
+    ## 逆格子ベクトルを吸い出す
     ##         x   y   z
     ##   t1 = t11 t21 t31
     ##   t2 = t12 t22 t32
     ##   t3 = t13 t23 t33
     ##
-    ## $BK\Mh$N4pK\JB?J%Y%/%H%k$NDj5A$O(B
+    ## 本来の基本並進ベクトルの定義は
     ##       t1  t2   t3
     ##   x = t11 t12 t13
     ##   y = t21 t22 t23
     ##   z = t31 t32 t33
     ##
-    ## >> $B@5>o$J(Bmatrix$B$NE:;z$H$OE>CV$7$?E:;z$H$J$k$,!"(B
-    ##    $B@5$7$$(Bmatrix$B$NE:;z$G8+D>$9$H$-$K@5$7$$JB?J%Y%/%H%k$K$J$k$?$a$G$"$k(B
-    ##    VASP $B$NF~NO(B($BI=<((B)$B7A<0$,=D2#5U$J$?$a(B
+    ## >> 正常なmatrixの添字とは転置した添字となるが、
+    ##    正しいmatrixの添字で見直すときに正しい並進ベクトルになるためである
+    ##    VASP の入力(表示)形式が縦横逆なため
     ##
     def get_reciprocal_t_init(self):
         return self.rec_t
@@ -357,11 +357,11 @@ class ReadOutcar(object):
     def get_nsw(self):
         return self.nsw
 
-    def get_natom(self): # $BCm0U(B) VASP $B8x<0$G$O(B NIONS $B$KAjEv(B
+    def get_natom(self): # 注意) VASP 公式では NIONS に相当
         return self.natom
 
-    def get_nion(self): # $BCm0U(B) VASP $B8x<0$G$O(B TYPES $B$KAjEv(B
-        if self.nion >= 10: # OUTCAR$B=PNO%P%0BP:v(B
+    def get_nion(self): # 注意) VASP 公式では TYPES に相当
+        if self.nion >= 10: # OUTCAR出力バグ対策
             if os.path.exists('vasprun.xml'):
                 vrun = SAE.ReadVasprun()
                 self.nion = vrun.get_nion()
@@ -370,7 +370,7 @@ class ReadOutcar(object):
         return self.nion
 
     def get_atoms(self):
-        if self.nion >= 10: # OUTCAR$B=PNO%P%0BP:v(B
+        if self.nion >= 10: # OUTCAR出力バグ対策
             if os.path.exists('vasprun.xml'):
                 vrun = SAE.ReadVasprun()
                 self.atoms = vrun.get_atoms()
@@ -395,8 +395,8 @@ class ReadOutcar(object):
         return self.efermi
 
 
-    # OUTCAR $B$N(B KPOINTS $B%;%C%7%g%s$+$i(B KPOINTS $B%U%!%$%k$NFbMF(B($BF0:n%b!<%I(B)$B$NN`?d(B
-    # $B$+$J$jL$40@.!#(BSCF $B$G$N%*!<%H(Bmesh $B$H(B band $B$G$N(B line-mode $B$N6hJL$/$i$$(B
+    # OUTCAR の KPOINTS セッションから KPOINTS ファイルの内容(動作モード)の類推
+    # かなり未完成。SCF でのオートmesh と band での line-mode の区別くらい
     def get_kpoints_mode(self):
         auto_FLAG = False
         line_FLAG = False
@@ -417,9 +417,9 @@ class ReadOutcar(object):
         return self.FLAGS
 
 
-    # $BF~NO$5$l$?(B KPOINTS $B$N:BI87A<0$r%2%C%H(B(cartesian or reciprocal)
-    # $B$b$7(B band-mode(line-mode) $B$G$J$$$N$J$i$P!"(BAutomatic $B%b!<%I$J$i$P(B
-    # Automatic $B$HJV$9(B
+    # 入力された KPOINTS の座標形式をゲット(cartesian or reciprocal)
+    # もし band-mode(line-mode) でないのならば、Automatic モードならば
+    # Automatic と返す
     def get_kpoints_type(self):
         kpoints_reg = re.compile('.*KPOINTS:.*')
         for i in range(self.num):
@@ -432,8 +432,8 @@ class ReadOutcar(object):
         return self.kpoints_type
 
 
-    # atoms_index (My$BG[Ns(B) $B$N>pJs$r0z$CD%$k(BMethod
-    # VRHFIN $B$G$O$J$/(B POTCAR: $B$+$i(B PP $B$N86;R<o>pJs$r0z$CD%$k(B
+    # atoms_index (My配列) の情報を引っ張るMethod
+    # VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
     def get_atoms_index(self):
         NION = self.get_nion()
         self.atoms_index = []
@@ -454,14 +454,14 @@ class ReadOutcar(object):
         return self.atoms_index
 
 
-    # atoms_index (My$BG[Ns(B) $B$N>pJs$r0z$CD%$k(BMethod
-    # $BL>>N$r(B get_atoms_index0 $B$HJQ99(B (NWRITE =2 $B0J>e$G$J$$$HF0:n$7$J$$(B)
+    # atoms_index (My配列) の情報を引っ張るMethod
+    # 名称を get_atoms_index0 と変更 (NWRITE =2 以上でないと動作しない)
     def get_atoms_index0(self):
         NION = self.get_nion()
         self.atoms_index = []
         j = 0
 
-        # $BCm0U(B)  NWRITE $B$,(B 2(default) $B0J>e$G$J$$$H(B VRHFIN $B9`L\$,=P$F$3$J$$(B
+        # 注意)  NWRITE が 2(default) 以上でないと VRHFIN 項目が出てこない
         vrhfin_reg = re.compile('.*VRHFIN =',re.IGNORECASE)
         for i in range(self.num):
             if bool(vrhfin_reg.match(self.datlines[i])):
@@ -475,7 +475,7 @@ class ReadOutcar(object):
 
         return self.atoms_index
 
-    # atoms_j (My$BG[Ns(B),natom$B$^$G$NDL$7HV9f$G86;R$N<oN`$rJV$9(BMethod
+    # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
     def get_atoms_j(self):
         natom = self.get_natom()
         nion = self.get_nion()
@@ -503,7 +503,7 @@ class ReadOutcar(object):
         return atoms_index_j
 
     # get_mode
-    # IBRION=0 or $B$=$l0J30(B
+    # IBRION=0 or それ以外
     def get_md_mode(self):
         IBRION = self.get_ibrion()
         if IBRION == 0:
@@ -512,7 +512,7 @@ class ReadOutcar(object):
             self.MD_FLAG = False
         return self.MD_FLAG
 
-    # MD-mode $B$N$H$-$K(B temperature $B$r%2%C%H$9$k(B
+    # MD-mode のときに temperature をゲットする
     def get_temperature(self):
         IBRION = self.get_ibrion()
         if IBRION == 0:
@@ -531,8 +531,8 @@ class ReadOutcar(object):
 
         return self.temperature
 
-    # MD-mode $B$N$H$-$K(B ETOTAL $B$r%2%C%H$9$k(B
-    # ($BHs(BMD$B$N$H$-$O(B free energy TOTEN$B$rJV$9(B)
+    # MD-mode のときに ETOTAL をゲットする
+    # (非MDのときは free energy TOTENを返す)
     def get_etotal(self):
         IBRION = self.get_ibrion()
         if IBRION == 0:
@@ -553,8 +553,8 @@ class ReadOutcar(object):
         return self.ETOTAL
 
 
-    # OUTCAR $B$+$i(B $B7k>=E@72$r5[$$=P$9(B
-    # ISYM=0 $B$N$H$-$O(B off $B$rJV$9(B
+    # OUTCAR から 結晶点群を吸い出す
+    # ISYM=0 のときは off を返す
     def get_point_symmetry(self):
         ISYM = self.get_isym()
         if ISYM != 0:
@@ -575,6 +575,7 @@ class ReadOutcar(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'OUTCAR'
 
     parser = optparse.OptionParser()
@@ -584,7 +585,7 @@ if __name__ == '__main__':
     if options.INPUT: name=options.INPUT
     if len(args) > 0: name=args[0]
 
-    outcar = ReadOutcar(name)
+    outcar = ReadVaspOutcar(name)
     NION = outcar.get_nion()
     NSPIN = outcar.get_ispin()
     LORBIT = outcar.get_lorbit()

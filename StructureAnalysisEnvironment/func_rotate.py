@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B2sE>4X78$N4X?t(B
+# 回転関係の関数
 #
 ################################################################################
 #
@@ -27,16 +28,16 @@ import numpy as np
 #from copy import deepcopy
 
 ################################################################################
-# $B1~MQ72O@(B p.122 - p123
+# 応用群論 p.122 - p123
 def rotate_z(deg):
     r = np.radians(float(deg))
     C = np.cos(r)
     S = np.sin(r)
-    # z$B<4<~$j$N2sE>9TNs(B
-    R_z = np.matrix((                                                       
-        ( C, -S, 0),                                                         
-        ( S,  C, 0),                                                         
-        ( 0,  0, 1)                                                          
+    # z軸周りの回転行列
+    R_z = np.matrix((
+        ( C, -S, 0),
+        ( S,  C, 0),
+        ( 0,  0, 1)
     ))
     return R_z
 
@@ -44,11 +45,11 @@ def rotate_y(deg):
     r = np.radians(float(deg))
     C = np.cos(r)
     S = np.sin(r)
-    # z$B<4<~$j$N2sE>9TNs(B
-    R_y = np.matrix((                                                       
-        ( C,  0, S),                                                         
-        ( 0,  1, 0),                                                         
-        (-S,  0, C)                                                          
+    # z軸周りの回転行列
+    R_y = np.matrix((
+        ( C,  0, S),
+        ( 0,  1, 0),
+        (-S,  0, C)
     ))
     return R_y
 

@@ -1,58 +1,59 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# POSCAR $BFI$_9~$_(B
+# POSCAR 読み込み
 #
-#   1) $B;vA0$K(B read_parm_poscar() $B$r<B9T$7$F(B natom $B$H(B nion $B$N<hF@(B
+#   1) 事前に read_parm_poscar() を実行して natom と nion の取得
 #   2) atoms[natom], atoms_index[natom], ion[nion], ion_local[nion]
-#      $B$r0z?t$H$7$FMQ0U(B
+#      を引数として用意
 #
-# [in]     POSCAR         : $BFI$_9~$_%U%!%$%k(B(POSCAR$B7A<0(B)
-# [in]     VASP           : VASP$B$N%P!<%8%g%s(B
-#          
-# [in/out] t[3,3]         :  $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
-#                            POSCAR $BF~NO7A<0(B
+# [in]     POSCAR         : 読み込みファイル(POSCAR形式)
+# [in]     VASP           : VASPのバージョン
+#
+# [in/out] t[3,3]         :  基本並進ベクトル(注意:配列内indexは0から)
+#                            POSCAR 入力形式
 #
 #                                  x   y   z
 #                            t1 = a11 a21 a31  ! lattice vector t1
 #                            t2 = a12 a22 a32  ! lattice vector t2
 #                            t3 = a13 a23 a33  ! lattice vector t3
-# $BCm0U(B) 
-#         t($B4pK\JB?J9TNs(B)
+# 注意)
+#         t(基本並進行列)
 #                                 t11, t12, t13
 #                                 t21, t22, t23
 #                                 t31, t32, t33
-#          
-# [in/out] atoms[i]       : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
-# [in/out] atoms_index[i] : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"86;R<o$N85AG5-9f$rJV$9(B
-# [in/out] ion[j]          : $BDL$7HV9f(B(max=natom)$B$rM?$($k$H86;R$N<oN`HV9f$rJV$9(B
-# [in/out] ion_local[j]    : $BDL$7HV9f(B(max=natom)$B$rM?$($k$H%5%$%HFb$N%m!<%+%kDL$7HV9f$rJV$9(B
 #
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
-# [in/out] fix[j,3]       : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$G(BForce$B$N(BFix/non-Fix $B;XDj(B
+# [in/out] atoms[i]       : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# [in/out] atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+# [in/out] ion[j]          : 通し番号(max=natom)を与えると原子の種類番号を返す
+# [in/out] ion_local[j]    : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
 #
-# [return] title          : $B%?%$%H%k(B
-# [return] scale          : $B3J;RDj?t(B($B%9%1!<%k%U%!%/%?!<(B)
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
+# [in/out] fix[j,3]       : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定
+#
+# [return] title          : タイトル
+# [return] scale          : 格子定数(スケールファクター)
 # [return] selective      : selective mode
 # [return] direct         : direct or cartesian
 #
 ################################################################################
 #
 # 2015.01.20
-#  gzip $BBP1~HG(B
+#  gzip 対応版
 #
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.2"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.2"
 ################################################################################
 
 import sys
@@ -105,26 +106,26 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     t1_x = float(v[0])
     t1_y = float(v[1])
     t1_z = float(v[2])
-    
+
     v = datlines[3].split()
     t2_x = float(v[0])
     t2_y = float(v[1])
     t2_z = float(v[2])
-    
+
     v = datlines[4].split()
     t3_x = float(v[0])
     t3_y = float(v[1])
     t3_z = float(v[2])
-    
+
    #t = zeros((3,3))
     t[0,0] = t1_x
     t[1,0] = t1_y
     t[2,0] = t1_z
-    
+
     t[0,1] = t2_x
     t[1,1] = t2_y
     t[2,1] = t2_z
-    
+
     t[0,2] = t3_x
     t[1,2] = t3_y
     t[2,2] = t3_z
@@ -143,7 +144,7 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     else:
         sys.exit("Error: unknown VASP format")
 
-    
+
     ###############################################
     ## get number of atoms
     ##
@@ -178,8 +179,8 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     selective_reg = re.compile('^S.*',re.IGNORECASE)
     direct_reg = re.compile('^D.*',re.IGNORECASE)
     car_reg = re.compile('^C.*',re.IGNORECASE)
-    
-    
+
+
     ###############################################
     ## get atomc coordinate mode
     ##
@@ -197,7 +198,7 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
         else:
            #print "selective False"
             selective = False
-    
+
         if bool(num_reg.match(tmp[0])):
             print tmp[0]
             sys.exit("Format Error")
@@ -207,8 +208,8 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
         elif bool(car_reg.match(tmp[0])):
            #print "Cartesian Mode"
             direct = False
-    
-    
+
+
     ###############################################
     ## get atomic coordinate position
     ##
@@ -226,7 +227,7 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
        #print j,
        #print " %16.12f %16.12f %16.12f" %(position[j,0],position[j,1],position[j,2]),
        #print fix[j,0],fix[j,1],fix[j,2]
-    
+
     return [title,scale,selective,direct]
 
 

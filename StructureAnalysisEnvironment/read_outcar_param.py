@@ -1,25 +1,26 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# OUTCAR $BFI$_9~$_(B, ION-LOOP $BKh$N86;R0LCV(B(&$BNO(B)$BFI$_9~$_@lMQ$N;vA0=`Hw(B
+# OUTCAR 読み込み, ION-LOOP 毎の原子位置(&力)読み込み専用の事前準備
 #
-#  LOOP $B2s?t$r;;=P(B
+#  LOOP 回数を算出
 #
-# [in]     canme  : OUTCAR$B$NL>A0(B
-# [in]     natom  : $BAm86;R?t(B
-# [return] nloop  : LOOP$B?t(B
+# [in]     canme  : OUTCARの名前
+# [in]     natom  : 総原子数
+# [return] nloop  : LOOP数
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -33,39 +34,39 @@ from numpy import *
 ################################################################################
 def read_outcar_param(cname,natom):
 
-    if os.path.exists(cname):                                                   
-        GZIP=False                                                              
-    elif os.path.exists(cname+".gz"):                                           
-        GZIP=True                                                               
-    else:                                                                       
-        sys.exit("STOP: "+cname+" or "+cname+".gz file not found")              
-                                                                                
-    try:                                                                        
-        if GZIP:                                                                
-            tmp = gzip.open(cname+".gz")                                        
-        else:                                                                   
-            tmp = open(cname)                                                   
-        datfile = tmp.read()                                                    
-    except:                                                                     
-        tmp.close()                                                             
-        sys.exit("STOP: "+cname+" or "+cname+".gz does'nt open")                
-    finally:                                                                    
-        tmp.close() 
+    if os.path.exists(cname):
+        GZIP=False
+    elif os.path.exists(cname+".gz"):
+        GZIP=True
+    else:
+        sys.exit("STOP: "+cname+" or "+cname+".gz file not found")
+
+    try:
+        if GZIP:
+            tmp = gzip.open(cname+".gz")
+        else:
+            tmp = open(cname)
+        datfile = tmp.read()
+    except:
+        tmp.close()
+        sys.exit("STOP: "+cname+" or "+cname+".gz does'nt open")
+    finally:
+        tmp.close()
 
     datlines = datfile.split('\n')
 
     num = len(datlines) -1
 
-    nion_reg    = re.compile('.*NIONS = '        ,re.IGNORECASE)    
+    nion_reg    = re.compile('.*NIONS = '        ,re.IGNORECASE)
     tforce_reg  = re.compile('.*TOTAL-FORCE'     ,re.IGNORECASE)
     tvector_reg = re.compile('.*Lattice vectors:',re.IGNORECASE)
     a_reg       = re.compile('.*ALAT       ='    ,re.IGNORECASE)
     potcar_reg  = re.compile('.*POTCAR:'         ,re.IGNORECASE)
 
-    # $BAm86;R?t$N%A%'%C%/(B
+    # 総原子数のチェック
     for i in range(num):
 
-        # $B86;R$NAm?t(B (NATOM)
+        # 原子の総数 (NATOM)
         if bool(nion_reg.match(datlines[i])):
             lines = datlines[i].split()
             natom_outcar=int(lines[11])
@@ -73,7 +74,7 @@ def read_outcar_param(cname,natom):
     if natom != natom_outcar:
         sys.exit("OUTCAR is inconsistent with POSCAR")
 
-    # $B86;R$KF/$/NO(B($B$*$h$S%9%F%C%W$4$H$N:BI8$NFI$_9~$_(B
+    # 原子に働く力(およびステップごとの座標の読み込み
     loop = 0
     for i in range(num):
         if bool(tforce_reg.match(datlines[i])):
@@ -86,4 +87,4 @@ def read_outcar_param(cname,natom):
     return loop
 
 ################################################################################
-     
+

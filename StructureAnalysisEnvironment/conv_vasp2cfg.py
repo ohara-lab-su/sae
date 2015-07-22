@@ -1,26 +1,27 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# VPAS $B7A<0$G$N:BI8$+$i(B RMC_POT $B7A<0$N:BI87O$X$NJQ49(B
-#   $B4pK\JB?J%Y%/%H%k!uFbIt:BI8(B
+# VPAS 形式での座標から RMC_POT 形式の座標系への変換
+#   基本並進ベクトル＆内部座標
 #
-# [in]     scale          : $B%9%1!<%k%U%!%/%?!<(B
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in]     scale          : スケールファクター
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
 # [in]     natom          : number of atom
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
 #
-# [return] scale          : direct mode $B$O(B True $B$rJV$9(B
-# [return] direct         : direct mode $B$O(B True $B$rJV$9(B
+# [return] scale          : direct mode は True を返す
+# [return] direct         : direct mode は True を返す
 #
 ################################################################################
 #
 # 2015.03.10
-#  $BLa$jCM$H0z?t$r(B1:1$B$K$7$?%P!<%8%g%s$N4X?t$r:n@.(B
+#  戻り値と引数を1:1にしたバージョンの関数を作成
 #   conv_vasp2cfg
 #
 # 2014.10.31 bug fix
@@ -76,28 +77,28 @@ def conv_vasp2cfg(scale0,t,natom,direct,position):
     t3_x = scale0*t3_x / 2.0
     t3_y = scale0*t3_y / 2.0
     t3_z = scale0*t3_z / 2.0
-    
+
     x_offset=0.5
     y_offset=0.5
     z_offset=0.5
-    
+
     for j in range(int(natom)):
         position[j,0] = (position[j,0] - x_offset)*2.0
         position[j,1] = (position[j,1] - y_offset)*2.0
         position[j,2] = (position[j,2] - z_offset)*2.0
        #print " %16.12f %16.12f %16.12f" %(position[j,0],position[j,1],position[j,2])
 
-    t[0,0] = t1_x 
-    t[1,0] = t1_y 
-    t[2,0] = t1_z 
-                  
-    t[0,1] = t2_x 
-    t[1,1] = t2_y 
-    t[2,1] = t2_z 
-                  
-    t[0,2] = t3_x 
-    t[1,2] = t3_y 
-    t[2,2] = t3_z 
+    t[0,0] = t1_x
+    t[1,0] = t1_y
+    t[2,0] = t1_z
+
+    t[0,1] = t2_x
+    t[1,1] = t2_y
+    t[2,1] = t2_z
+
+    t[0,2] = t3_x
+    t[1,2] = t3_y
+    t[2,2] = t3_z
 
     scale  = 1.0
     direct = True
@@ -135,28 +136,28 @@ def conv_vasp2cfg1(scale0,t,natom,direct,position):
     t3_x = scale0*t3_x / 2.0
     t3_y = scale0*t3_y / 2.0
     t3_z = scale0*t3_z / 2.0
-    
+
     x_offset=0.5
     y_offset=0.5
     z_offset=0.5
-    
+
     for j in range(int(natom)):
         position[j,0] = (position[j,0] - x_offset)*2.0
         position[j,1] = (position[j,1] - y_offset)*2.0
         position[j,2] = (position[j,2] - z_offset)*2.0
        #print " %16.12f %16.12f %16.12f" %(position[j,0],position[j,1],position[j,2])
 
-    t[0,0] = t1_x 
-    t[1,0] = t1_y 
-    t[2,0] = t1_z 
-                  
-    t[0,1] = t2_x 
-    t[1,1] = t2_y 
-    t[2,1] = t2_z 
-                  
-    t[0,2] = t3_x 
-    t[1,2] = t3_y 
-    t[2,2] = t3_z 
+    t[0,0] = t1_x
+    t[1,0] = t1_y
+    t[2,0] = t1_z
+
+    t[0,1] = t2_x
+    t[1,1] = t2_y
+    t[2,1] = t2_z
+
+    t[0,2] = t3_x
+    t[1,2] = t3_y
+    t[2,2] = t3_z
 
     scale  = 1.0
     direct = True

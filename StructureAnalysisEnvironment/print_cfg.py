@@ -1,16 +1,17 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# RMC_POT(cfg) $B7A<0$X$N=PNO(B
-#   $BJB?J%Y%/%H%k$dFbIt:BI8$O;vA0$K(B RMC_POT(cfg)$B7A<0$K$7$F$*$/I,MW$,$"$k(B
-#   $BJQ49$O(B conv_vasp2cfg() $B$K$F9T$&(B
+# RMC_POT(cfg) 形式への出力
+#   並進ベクトルや内部座標は事前に RMC_POT(cfg)形式にしておく必要がある
+#   変換は conv_vasp2cfg() にて行う
 #
-# [in] cname              : STD=False $B$N$H$-$N=PNO%U%!%$%kL>(B
-# [in] STD                : $B7k2L=PNO$,(Bstdout$B$N$H$-$O(B STD=True
+# [in] cname              : STD=False のときの出力ファイル名
+# [in] STD                : 結果出力がstdoutのときは STD=True
 #
-# [in] title              : $B%?%$%H%k(B
+# [in] title              : タイトル
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
@@ -19,23 +20,23 @@
 #
 # [in]     natom          : number of atom
 # [in]     nion           : number of atom
-# [in/out] atoms[i]       : $B86;R$N<oN`HV9f(B(max=nion)$B$rM?$($k$H!"$=$N86;R<o$N?t$rJV$9(B
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
+# [in/out] atoms[i]       : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
 #
 ################################################################################
 #
 # 2014.10.30/31 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -61,8 +62,8 @@ def print_cfg(cname,STD,title,t,natom,nion,atoms,position):
 
     ###############################################
     ## write cfg (RMC_POT) file
-    
-    
+
+
     ## open cfg files
     ##
     if STD:
@@ -74,7 +75,7 @@ def print_cfg(cname,STD,title,t,natom,nion,atoms,position):
     print >> cfg, cname
     print >> cfg, ""
     print >> cfg, ""
-    
+
     moves = 0
     tried = 0
     accepted = 0
@@ -93,16 +94,16 @@ def print_cfg(cname,STD,title,t,natom,nion,atoms,position):
     print >> cfg, "        ","  %13.9f %13.9f %13.9f" %(t2_x,t2_y,t2_z)
     print >> cfg, "        ","  %13.9f %13.9f %13.9f" %(t3_x,t3_y,t3_z)
     print >> cfg, ""
-    
+
     for j in range(int(nion)):
         print >> cfg, "        ",atoms[j]," ","molecules of types  ",j+1
         print >> cfg, "        ","1"     ," ","atomic sites"
         print >> cfg, "        ","     ","0.000000   0.000000   0.000000"
         print >> cfg, ""
-    
+
     for j in range(natom):
         print >> cfg, "%15.12f %15.12f %15.12f" %(position[j,0],position[j,1],position[j,2])
-    
-    
+
+
     cfg.close()
 

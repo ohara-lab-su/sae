@@ -1,31 +1,32 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B%9!<%Q!<%;%k:n@.%k!<%A%s(B (zone$B6-3&=hM}@lMQ(B)
+# スーパーセル作成ルーチン (zone境界処理専用)
 #
-#  $B%>!<%s6-3&$N$_(B
-#     1) 3x3x3 $B%9!<%Q!<%;%k$N$_(B
-#     2) $B4pK\JB?J%Y%/%H%k86E@$GA}$d$9$N$G$O$J$/$F!"(B-1,0,1 $BG\$NHO0O$GBg$-$/$7$?(B
+#  ゾーン境界のみ
+#     1) 3x3x3 スーパーセルのみ
+#     2) 基本並進ベクトル原点で増やすのではなくて、-1,0,1 倍の範囲で大きくした
 #
-# [in/out]  sp(natom*super,3)          : SuPer cell position $BJ]B8MQ$N(Bverctor
-# [in/out]  ion_sp(natom*super)        : SP$B%;%k$NDL$7HV9f$KBP$9$k86;R<oHV9fJ]B8(Bindex
-# [in/out]  ion_local_sp(natom*super)  : ion_local[j] $B$N(B super cel index $BBP1~HG(B
-# [in/out]  sp_j(natom*super)          : $BDL$7HV9f$NBP1~(B( $B85$N%;%k(B <---> SP$B%;%k(B )
+# [in/out]  sp(natom*super,3)          : SuPer cell position 保存用のverctor
+# [in/out]  ion_sp(natom*super)        : SPセルの通し番号に対する原子種番号保存index
+# [in/out]  ion_local_sp(natom*super)  : ion_local[j] の super cel index 対応版
+# [in/out]  sp_j(natom*super)          : 通し番号の対応( 元のセル <---> SPセル )
 #
 ################################################################################
 #
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -49,29 +50,29 @@ def make_supercell_zb(t,natom,nion,atoms,ion,ion_local,position,sv,ion_sp,ion_lo
     t3_z = t[2,2]
 
     ###############################################
-    ## $B%9!<%Q!<%;%k:n@.MQ$N=`Hw(B
+    ## スーパーセル作成用の準備
     ## super index
     ##
    #super_x=int(times[0])
    #super_y=int(times[1])
    #super_z=int(times[2])
-    
-    super_x=3   ## $B%>!<%s%P%&%s%@%j!<$r$9$Y$F%+%P!<$9$k$?$a$N(B 3x3x3 $B%;%k(B
-    super_y=3   ## $B2?$b9M$($J$1$l$P(B 3x3x3 $B$,%Y%9%H(B($B8GDjCM$H$9$k(B)
-    super_z=3   ## $B$3$3$rJQ99$7$?;~$O2<5-$N(B for in in range(*) $B$NHO0O(B(*)
-                ## $B$r=$@5$7$J$$$H0UL#$OL5$$(B
-                ## 3x3x3 $B$rA[Dj$7!"(B-1,0,1 $B$^$G$NHO0O$rA[Dj$7$F$$$k!#(B
-    
+
+    super_x=3   ## ゾーンバウンダリーをすべてカバーするための 3x3x3 セル
+    super_y=3   ## 何も考えなければ 3x3x3 がベスト(固定値とする)
+    super_z=3   ## ここを変更した時は下記の for in in range(*) の範囲(*)
+                ## を修正しないと意味は無い
+                ## 3x3x3 を想定し、-1,0,1 までの範囲を想定している。
+
     super=int(super_x*super_y*super_z)
-    
-    
+
+
     ###############################################
-    ## super cell $B:n@.MQ$N%Y%/%H%k$r:n$k(B
+    ## super cell 作成用のベクトルを作る
     ##
-    ## Find $B@lMQ(B
-    ## $B%P%&%s%@%j!<$G$N@\B3$N$?$a$K(B
-    ## 3x3x3 $B$rA[Dj$7$F(B -1,0,1 $B$^$G$NHO0O$G:n$k(B
-    ## Find $B0J30$K$b(B 3x3x3 $B$H$7$F$O0l1~$=$N$^$^;H$($k(B
+    ## Find 専用
+    ## バウンダリーでの接続のために
+    ## 3x3x3 を想定して -1,0,1 までの範囲で作る
+    ## Find 以外にも 3x3x3 としては一応そのまま使える
     ##
    #sv = zeros((super,3)) # super cell vector
     nsv = 0
@@ -88,47 +89,47 @@ def make_supercell_zb(t,natom,nion,atoms,ion,ion_local,position,sv,ion_sp,ion_lo
                #print nsv, " ", n,l,m," ",sv[nsv,1]
                #print nsv, " ", n,l,m," ",sv[nsv,2]
                 nsv += 1
-    
-    
+
+
     ###############################################
-    ## $B%9!<%Q!<%;%k$NFbIt:BI8:n@.(B
+    ## スーパーセルの内部座標作成
     ##
-   #sp = zeros((natom*super,3)) # super cell position $BJ]B8MQ$N(Bvector
-   #ion_sp= zeros(natom*super)  # SP$B%;%k$NDL$7HV9f$KBP$9$k86;R<oHV9fJ]B8(Bindex
-   #ion_local_sp = zeros(natom*super) # ion_local[j] $B$N(B super cell index $BBP1~HG(B
-   #sp_j = zeros(natom*super)  # $BDL$7HV9f$NBP1~(B( $B85$N%;%k(B <---> $B%9!<%Q!<%;%k(B )
-    
-    # super cell $B$NFbIt:BI8$r:n$k(B
+   #sp = zeros((natom*super,3)) # super cell position 保存用のvector
+   #ion_sp= zeros(natom*super)  # SPセルの通し番号に対する原子種番号保存index
+   #ion_local_sp = zeros(natom*super) # ion_local[j] の super cell index 対応版
+   #sp_j = zeros(natom*super)  # 通し番号の対応( 元のセル <---> スーパーセル )
+
+    # super cell の内部座標を作る
     j=-1
     nsp=-1
     for k in range(nion):
         for kk in range(int(atoms[k])):
-    
+
             j += 1
-    
+
             for nsv in range(super):
                 nsp += 1
                 nsp_ = natom*nsv+j
-    
+
                 sp[nsp,0] = position[j,0] + sv[nsv,0]
                 sp[nsp,1] = position[j,1] + sv[nsv,1]
                 sp[nsp,2] = position[j,2] + sv[nsv,2]
-    
-                # $B85%;%k$NDL$7HV9f$rM?$($k$H!"86;R<oHV9f$rJV$9(B
+
+                # 元セルの通し番号を与えると、原子種番号を返す
                 ion_sp[nsp] = ion[j]
                 ion_local_sp[nsp] = ion_local[j]
-    
+
                 sp_j[nsp] = j
-    
+
     #          # TEST print
     #           x=sp[nsp,0]
     #           y=sp[nsp,1]
     #           z=sp[nsp,2]
     #           print " %d,%d,  %d,%d,%s, %d,%d, %d  %s %12.8f %12.8f %12.8f" \
     #                   %(j,nsp, k,ion_local_sp[nsp],atoms_index[k],  ion[j],ion_sp[nsp], kk,"  ",x,y,z)
-    
-    
-    ## $B85(Bindex $B$H(B super index $B$NBP1~$r8+$k(B($B%F%9%H%W%j%s%H(B)
+
+
+    ## 元index と super index の対応を見る(テストプリント)
     #for k in range(nsp):
     #    print int(k), int(sp_j[k])
     #
@@ -154,8 +155,8 @@ def make_supercell_zb(t,natom,nion,atoms,ion,ion_local,position,sv,ion_sp,ion_lo
     #
     #for j in range(natom*super):
     #    print "  %12.8f  %12.8f  %12.8f "  %(sp[j,0], sp[j,1], sp[j,2])
-    
-    
+
+
     #################################################
     ### TEST: write original cell
     ###

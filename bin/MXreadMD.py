@@ -1,18 +1,19 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-#  MD(xyz) $B7A<0$NFI$_9~$_(B($B%F%9%H(B)
-#   OpenMX $B$N(B *.md $B=PNO%U%!%$%k(B($B$*$h$SHFMQ(B xyz(md) $B7A<0(B)
+#  MD(xyz) 形式の読み込み(テスト)
+#   OpenMX の *.md 出力ファイル(および汎用 xyz(md) 形式)
 #
-# [in]     cname         : MD $B%U%!%$%k(B( xyz $B7A<0(B ) $B%U%!%$%kL>(B
-# [in]     loop:         : $B%H!<%?%k$N%k!<%W?t(B
-# [in]     natom         : $B%H!<%?%k$N86;R?t(B
-# [in/out] atoms_index_j : atoms_index ($B%5%$%HHV9f$G85AG5-9f$rJV$9(B) $B$NA486;RHV9fHG(B
-#                        : $BA4DL$7HV9f$+$i85AGL>$rJV$9(B
+# [in]     cname         : MD ファイル( xyz 形式 ) ファイル名
+# [in]     loop:         : トータルのループ数
+# [in]     natom         : トータルの原子数
+# [in/out] atoms_index_j : atoms_index (サイト番号で元素記号を返す) の全原子番号版
+#                        : 全通し番号から元素名を返す
 #
-# [return] natom : ($B%;%kFb(B)$B%H!<%?%k$N86;R?t(B
-# [return] nloop : $B%H!<%?%k$N%k!<%W?t(B
+# [return] natom : (セル内)トータルの原子数
+# [return] nloop : トータルのループ数
 #
 ################################################################################
 #
@@ -20,16 +21,16 @@
 #  == None --> is None
 #
 # 2015.06.16
-#   *.md $B%U%!%$%k<+F0<hF@%k!<%A%s$rDI2C(B
+#   *.md ファイル自動取得ルーチンを追加
 #
 # 2015.01.07
-#   MXreadMD.py $B$KJ,N%@0M}(B
+#   MXreadMD.py に分離整理
 #
 # 2015.01.07
-#   Library: read_md2(): $B:BI8(B(x,y,z) + $B%U%)!<%9(B(x,y,z) $B7A<0$KBP1~(B
+#   Library: read_md2(): 座標(x,y,z) + フォース(x,y,z) 形式に対応
 #
 # 2014.11.18 1st
-#   Library: read_md():  xyz $B>pJs$NFI$_9~$_(B
+#   Library: read_md():  xyz 情報の読み込み
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -58,14 +59,14 @@ import StructureAnalysisEnvironment as SAE
 if __name__ == '__main__':
 
     name = 'openmx'
-    suffix = 'md'  # dot $B$rIU$1$J$$(B
+    suffix = 'md'  # dot を付けない
     MD = name+'.'+suffix
 
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',dest='INPUT', )
     options,  args = parser.parse_args()
 
-    # $B%G%U%)%k%HL>$h$jE,@Z$J%G%U%)%k%H%U%!%$%kL>$N?dDj%k!<%A%s(B
+    # デフォルト名より適切なデフォルトファイル名の推定ルーチン
     if not os.path.exists(MD):
         name0 = SAE.find_datfile('md')
         if not name0 is None:
@@ -78,18 +79,18 @@ if __name__ == '__main__':
     if len(args) > 0:
         MD=args[0]
 
-    # MD(xyz) $B%U%!%$%k$N;vA0FI$_9~$_(B
+    # MD(xyz) ファイルの事前読み込み
     nloop,natom = SAE.read_md_param(MD)
 
-    # MD(xyz) $B%U%!%$%k$N;vA0=`Hw(B
-    atoms_index_j  = np.zeros((natom),dtype='S2')  # $BDL$7HV9f(B(max=atom)$B$G85AGL>(B($B5-9f(B)$B$rJ]B8$9$k(B
+    # MD(xyz) ファイルの事前準備
+    atoms_index_j  = np.zeros((natom),dtype='S2')  # 通し番号(max=atom)で元素名(記号)を保存する
     position_loop = np.zeros((nloop,natom,3))
     force_loop = np.zeros((nloop,natom,3))
 
     print "NLOOP :",nloop
     print "NATOM :",natom
 
-    # MD(xyz) $B%U%!%$%kFI$_9~$_(B + Force $BBP1~(B
+    # MD(xyz) ファイル読み込み + Force 対応
     natom,nlist = \
             SAE.read_md2(MD,nloop,atoms_index_j,position_loop,force_loop)
 

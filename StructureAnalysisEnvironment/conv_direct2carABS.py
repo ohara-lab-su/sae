@@ -1,53 +1,54 @@
+# -*- coding: utf-8 -*-
 ##################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# POSCAR $B$NFbIt:BI8$r(B direct $B7O$+$i(B cartesian $B7O$XJQ49(B
-#  ABS$B%b!<%IBP1~HG(B($BKX$I$*$/$i$f$-(B)
+# POSCAR の内部座標を direct 系から cartesian 系へ変換
+#  ABSモード対応版(殆どおくらゆき)
 #
-#  ($BCm0U(B) scale $B%U%!%/%?!<$5$(Cm0U$9$l$P(B POSCAR(VASP) $B0J30$G$b;H$($k(B
+#  (注意) scale ファクターさえ注意すれば POSCAR(VASP) 以外でも使える
 #
 #
 # [in]  ABS
-#           True  : 1) $B%9%1!<%k%U%!%/%?!<$r(B1 $B$K$9$k(B
-#                   2) $BFbIt:BI8$b%9%1!<%k(B($B@dBP:BI87O(B)
+#           True  : 1) スケールファクターを1 にする
+#                   2) 内部座標もスケール(絶対座標系)
 #
-#           False : VASP $B$N(B cartesian mode
-#                   1) $BJB?J%Y%/%H%k$O%9%1!<%k$7$J$$(B($BJL$K$7$F$b9=$o$J$$$N$@$,(B)
-#                   2) $BFbIt:BI8$O%9%1!<%k$7$J$$(B($B$3$l$r%9%1!<%k$7$?$i(BVASP$B$G$O%@%a(B)
+#           False : VASP の cartesian mode
+#                   1) 並進ベクトルはスケールしない(別にしても構わないのだが)
+#                   2) 内部座標はスケールしない(これをスケールしたらVASPではダメ)
 #
 #
-# [in]     scale0         : $B4pK\JB?J$K$+$+$k%9%1!<%k(B($BJQ49A0(B)
+# [in]     scale0         : 基本並進にかかるスケール(変換前)
 #
-# [in/out] t[3,3]         : $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
 #                            t3 = a13 a23 a33
 #
 # [in]     natom          : number of atom
-# [in]     direct         : $BF~NO$N%b!<%I(B($B$b$7(B Car $B$J$i$P0BA4$N$?$a$K;_$a$k(B)
+# [in]     direct         : 入力のモード(もし Car ならば安全のために止める)
 #
-# [in/out] position[j,3]  : $BDL$7HV9f(B(max=natom)$B$H(Bx,y,z $B;XDj$GFbIt:BI8(B
-#                           ABS $B$,(B True $B0J30$O(B VASP $B7A<0(B
-#                           $B$D$^$j!"(Bscale $B$G%9%1!<%k$7$J$$FbIt:BI87O<0(B
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
+#                           ABS が True 以外は VASP 形式
+#                           つまり、scale でスケールしない内部座標系式
 #
-# [return] scale          : $B4pK\JB?J$K$+$+$k%9%1!<%k(B
-# [return] direct         : direct = False ($BJQ49$r$7$?$N$G(B direct $B$O(B False)
+# [return] scale          : 基本並進にかかるスケール
+# [return] direct         : direct = False (変換をしたので direct は False)
 #
 ##################################################################################
 #
 # 2015.02.27
-#   $B0z?tHG(B
-#    conv_direct2car1    (ABS$BHsBP1~2=(B)
-#    conv_direct2carABS1 (ABS$BBP1~(B)
+#   引数版
+#    conv_direct2car1    (ABS非対応化)
+#    conv_direct2carABS1 (ABS対応)
 #
-#   $BBP1~4X78$r$O$C$-$j$9$k$?$a$K(B conv_direct2carABS $B$rB"$+$i=P$9(B
-#   $B5l%P!<%8%g%s$O$=$N$^$^(B conv_direct2carABS
+#   対応関係をはっきりするために conv_direct2carABS を蔵から出す
+#   旧バージョンはそのまま conv_direct2carABS
 #
 # 2014.11.21
-#   ABS $BHsBP1~HG$r(B conv_direct2car $B$H$9$k$?$a$K5lHG$r(B conv_direct2carABS $B$H$9$k(B
-#   $B$=$N$?$a$N%P!<%8%g%s$H$7$F%V%i%s%A(B
-#    ---> $B7k6I$O(B conv_direct2car $B$rMQ$$$F$$$k$N$G$*B"9T$-(B
+#   ABS 非対応版を conv_direct2car とするために旧版を conv_direct2carABS とする
+#   そのためのバージョンとしてブランチ
+#    ---> 結局は conv_direct2car を用いているのでお蔵行き
 #
 # 2014.10.30/31 1st
 #
@@ -78,11 +79,11 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
         sys.exit("STOP(conv_direct2car): current is not Direct.")
 
     ###############################################
-    ## $B:BI87O$r(B 1) direct --> cartesian
-    ##          2) cartesian $B$N$^$^(B
+    ## 座標系を 1) direct --> cartesian
+    ##          2) cartesian のまま
     ##
-    ## $BJQ498e$K(B scale $B$7$F@dBP:BI8$K$9$k(B
-    ## ($BF~NO$,(BAngstrom $B7O$J$N$G(B A $BC10L$K$J$k(B)
+    ## 変換後に scale して絶対座標にする
+    ## (入力がAngstrom 系なので A 単位になる)
     ##
     t1_x = t[0,0]
     t1_y = t[1,0]
@@ -103,13 +104,13 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
         car[j,2] = t1_z*position[j,0] + t2_z*position[j,1] + t3_z*position[j,2]
 
     ###############################################
-    ## scale0 $B$r3]$1$F(B car $B$N@dBP:BI87O$X$J$*$9(B
+    ## scale0 を掛けて car の絶対座標系へなおす
     ## ABS mode:
-    ##     scale=1.0 $B$H$9$k$N$GI,?\:n6H(B ($B@dBP:BI85-=R$N>l9g(B)
+    ##     scale=1.0 とするので必須作業 (絶対座標記述の場合)
     ##
     ## non ABS mode:
-    ##     VASP $BMQ$N(B POSCAR $B$N(B car Mode $B$N>l9g$O(B
-    ##     scale $B$K4X78$J$/FbIt:BI8$O:F%9%1!<%k$O$J$$(B
+    ##     VASP 用の POSCAR の car Mode の場合は
+    ##     scale に関係なく内部座標は再スケールはない
     ##
     if not ABS:
         # for VASP
@@ -126,8 +127,8 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
 
 
     ###############################################
-    ## $B4pK\JB?J%Y%/%H%k$r%9%1!<%k$7$F$*$/(B
-    ## --> scale=1.0 $B$H$9$k$?$a(B
+    ## 基本並進ベクトルをスケールしておく
+    ## --> scale=1.0 とするため
     ##
     if ABS:
         t1_x = t1_x*scale0
@@ -160,7 +161,7 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
 
 
 ################################################################################
-# ABS $BHG(B,$BLa$jCMHG(B
+# ABS 版,戻り値版
 #
 def conv_direct2carABS1(scale0,t,natom,direct,position):
 
@@ -168,11 +169,11 @@ def conv_direct2carABS1(scale0,t,natom,direct,position):
         sys.exit("STOP(conv_direct2car): current is not Direct.")
 
     ###############################################
-    ## $B:BI87O$r(B 1) direct --> cartesian
-    ##          2) cartesian $B$N$^$^(B
+    ## 座標系を 1) direct --> cartesian
+    ##          2) cartesian のまま
     ##
-    ## $BJQ498e$K(B scale $B$7$F@dBP:BI8$K$9$k(B
-    ## ($BF~NO$,(BAngstrom $B7O$J$N$G(B A $BC10L$K$J$k(B)
+    ## 変換後に scale して絶対座標にする
+    ## (入力がAngstrom 系なので A 単位になる)
     ##
     t1_x = t[0,0]
     t1_y = t[1,0]
@@ -193,13 +194,13 @@ def conv_direct2carABS1(scale0,t,natom,direct,position):
         car[j,2] = t1_z*position[j,0] + t2_z*position[j,1] + t3_z*position[j,2]
 
     ###############################################
-    ## scale0 $B$r3]$1$F(B car $B$N@dBP:BI87O$X$J$*$9(B
+    ## scale0 を掛けて car の絶対座標系へなおす
     ## ABS mode:
-    ##     scale=1.0 $B$H$9$k$N$GI,?\:n6H(B ($B@dBP:BI85-=R$N>l9g(B)
+    ##     scale=1.0 とするので必須作業 (絶対座標記述の場合)
     ##
     ## non ABS mode:
-    ##     VASP $BMQ$N(B POSCAR $B$N(B car Mode $B$N>l9g$O(B
-    ##     scale $B$K4X78$J$/FbIt:BI8$O:F%9%1!<%k$O$J$$(B
+    ##     VASP 用の POSCAR の car Mode の場合は
+    ##     scale に関係なく内部座標は再スケールはない
     ##
    #if not ABS:
    #    # for VASP
@@ -217,8 +218,8 @@ def conv_direct2carABS1(scale0,t,natom,direct,position):
 
 
     ###############################################
-    ## $B4pK\JB?J%Y%/%H%k$r%9%1!<%k$7$F$*$/(B
-    ## --> scale=1.0 $B$H$9$k$?$a(B
+    ## 基本並進ベクトルをスケールしておく
+    ## --> scale=1.0 とするため
     ##
    #if ABS:
     t1_x = t1_x*scale0

@@ -4,7 +4,7 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # OpenMX 3.7
-#   ReadMxPdos.py $BL\@9%P%+?)$$%P!<%8%g%s(B($BF0:n$O3d$HB.$$$O$:(B)
+#   ReadMxPdos.py 目盛バカ食いバージョン(動作は割と速いはず)
 #
 #    *.Dos.Tetrahedron.atom*
 #    ReadMxDosMethod.py (superclass)
@@ -12,7 +12,7 @@
 #                                 ---> ReadMxPdos.py
 #
 ################################################################################
-# ReadMxPdos.py $B$GD>@\<BAu$7$F$$$k(BMethod
+# ReadMxPdos.py で直接実装しているMethod
 #
 # get_pdos(lm,atom,spin)
 # get_pdos_all()
@@ -20,65 +20,65 @@
 # get_tdos_spd(l,spin)
 # get_ldos_ion(l,ion,spin)
 #
-# get_ldos_ion_all()        $B%@%_!<(B
+# get_ldos_ion_all()        ダミー
 #
-# get_emax()    : ReadMxTdos $B%$%s%9%?%s%9:n@.(B
-# get_min()     : ReadMxTdos $B%$%s%9%?%s%9:n@.(B
-# get_eng()     : ReadMxTdos $B%$%s%9%?%s%9:n@.(B
-# get_inttdos() : ReadMxTdos $B%$%s%9%?%s%9:n@.(B
+# get_emax()    : ReadMxTdos インスタンス作成
+# get_min()     : ReadMxTdos インスタンス作成
+# get_eng()     : ReadMxTdos インスタンス作成
+# get_inttdos() : ReadMxTdos インスタンス作成
 #
 ################################################################################
 #
 # 2015.02.27
-#   !!!!!!! OpenMX $B$N(B down-spin $B$N(B DOS $BCM$OIi$NId9f$,IU$$$F$$$k(B !!!!!!
-#   $B5$$,IU$+$J$/$F$+$J$j%O%^$C$?(B
+#   !!!!!!! OpenMX の down-spin の DOS 値は負の符号が付いている !!!!!!
+#   気が付かなくてかなりハマった
 #
-#   $B%3%s%9%H%i%/%?$G$NFI$_9~$_$NCJ3,$G(BDOS$B$NCM$r$9$Y$F@5$KLa$7$F$*$/(B
+#   コンストラクタでの読み込みの段階でDOSの値をすべて正に戻しておく
 #
 # 2015.02.25
 #  get_ldos_ion()
 #  get_ldos_ion_all()
-#  $B<BAu=i$a(B (MXplot_ADOS.py $BMQ(B)
+#  実装初め (MXplot_ADOS.py 用)
 #
 # 2015.02.25
-#  ReadMxDosMethod $B$+$i7Q>5$7$F$$$k(B Method $B$K$*$$$F(B
-#  $BF~NO$N%G!<%?!<%U%!%$%k$NET9g(B self.datlines $B$r<h$k%$%s%9%?%s%9JQ?t$O(B
-#  ReadMxPdos $B$G$O$&$^$/;H$($J$$(B
-#     ---> ReadMxPdos $BFb$G(B self.datlines $B$r$&$^$/Dj5A$G$-$J$$$N$G(B
-#          $BK\<AE*$K$OL5M}!"L5M}$d$j2?=h$+$N86;R$N(BPDOS$B%U%!%$%k$rCV$/$3$H$O(B
-#          $B=PMh$k$,8m2r$,@8$8$k2DG=@-$,$"$k!#(B
+#  ReadMxDosMethod から継承している Method において
+#  入力のデーターファイルの都合 self.datlines を取るインスタンス変数は
+#  ReadMxPdos ではうまく使えない
+#     ---> ReadMxPdos 内で self.datlines をうまく定義できないので
+#          本質的には無理、無理やり何処かの原子のPDOSファイルを置くことは
+#          出来るが誤解が生じる可能性がある。
 #
-#  $B$H$j$"$($:8=>u$G$O(B
+#  とりあえず現状では
 #  get_emax()
 #  get_emin()
 #  get_eng()
 #  get_tdos()
 #  get_inttdos()
 #
-#  method $B$O(B ReadMxPdos $BFb$G%*!<%P!<%i%$%H$7$F$*$/(B
-#   ---> ReadMxTdos $B$r8F$S=P$7$F;H$&7A(B
+#  method は ReadMxPdos 内でオーバーライトしておく
+#   ---> ReadMxTdos を呼び出して使う形
 #
 # 2015.02.25
-#  ReadDoscar.py $B$H$[$\F1Ey$NF0:n$r$9$k(B Method $B$r$[$\<BAu(B
+#  ReadDoscar.py とほぼ同等の動作をする Method をほぼ実装
 #
 # 2015.02.25
-#  $B6&DL$9$k(B Class $B$r(B ReadMxDosMethod $B$K(B superclass $B$H$7$FJ|$jEj$2(B
-#  $B8=B8$9$k(B ReadMxDos $B%/%i%9$O(B ReadMxTdos $B$KJQ99$7!"F1MM$K(B ReadMxPdos $B:n@.(B
+#  共通する Class を ReadMxDosMethod に superclass として放り投げ
+#  現存する ReadMxDos クラスは ReadMxTdos に変更し、同様に ReadMxPdos 作成
 #
-#  $B4pK\J}?K$G%3%s%9%H%i%/%?$GA4$F%G!<%?!<FI$_9~$_$J$N$G!"F0:n$O3d$HB.$$$O$:(B
-#  $BL\@9$O%P%+%P%+?)$&!#(B
+#  基本方針でコンストラクタで全てデーター読み込みなので、動作は割と速いはず
+#  目盛はバカバカ食う。
 #
 #
-# ------------------------- ReadMxDosMethod $BJ,N%A0(B
+# ------------------------- ReadMxDosMethod 分離前
 # 2015.02.25
-#  OpenMX $BMQ$N(B DOS/PDOS $BMQ$N(B superclass $B$K:n@.$7$?(B method $B$rJ,N%!"7Q>52=(B
+#  OpenMX 用の DOS/PDOS 用の superclass に作成した method を分離、継承化
 #
 # 2015.02.25
-#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  $B$N<BAuEy(B
+#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  の実装等
 #
 # 2015.02.24
 #    startup
-#    $B<g$K(B ReadMxDat, ReadMxDatMethod $B$N@0Hw(B
+#    主に ReadMxDat, ReadMxDatMethod の整備
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -110,31 +110,31 @@ import StructureAnalysisEnvironment as SAE
 class ReadMxPdos(SAE.ReadMxDosMethod):
 
     ###################################
-    # 0) $B%3%s%9%H%i%/%?$GJ#?t%U%!%$%k$+$i$^$k$4$H%G!<%?9=B$$rG[Ns$KFI$_9~$`(B)
-    # 1) $B7W;;$7$F$$$J$$86;R$b4^$a$F$9$Y$F$N86;R$NG[Ns$rMQ0U(B
-    # 2) LDOS $B$^$G%3%s%9%H%i%/%?$G:n$C$F$7$^$&(B
+    # 0) コンストラクタで複数ファイルからまるごとデータ構造を配列に読み込む)
+    # 1) 計算していない原子も含めてすべての原子の配列を用意
+    # 2) LDOS までコンストラクタで作ってしまう
     #
     def __init__(self,name,suffix):
 
-        # $BJ*<AL>(B
+        # 物質名
         self.name = name
         self.suffix = suffix
 
-        # NSPIN & NATOM $B$r(B *.out $B$b$7$/$O(B *.dat $B$+$iCj=P(B
+        # NSPIN & NATOM を *.out もしくは *.dat から抽出
         NSPIN = self.get_ispin()
         NATOM = self.get_natom()
 
-        # $BFI$_9~$`(BPDOS$B%U%!%$%k$N3NG'(B(1)
-        # $B<B:]$K(BPDOS$B$r7W;;$7$?(Batom$B$NHV9f$rCj=P$9$k(B
+        # 読み込むPDOSファイルの確認(1)
+        # 実際にPDOSを計算したatomの番号を抽出する
         dosname = name+suffix
         pdos_list = glob.glob(dosname+'.atom*')
         if len(pdos_list) < 1:
             sys.exit("STOP: "+dosname+".atom* file not found")
 
-        # NEDOS $B$N;;=P(B
+        # NEDOS の算出
         NEDOS = sum(1 for line in open(pdos_list[0]))
 
-        # $B%$%s%9%?%s%9JQ?t2=(B
+        # インスタンス変数化
         self.NATOM = NATOM
         self.NSPIN = NSPIN
         self.num = NEDOS
@@ -148,14 +148,14 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
             dst = int(re.sub(subtract_name1,'',dst))
             ls.append(dst)
 
-        # $B%j%9%H$N=EJ#9`L\$r:o=|(B
+        # リストの重複項目を削除
         atom_list = sorted(set(ls), key=ls.index)
         if atom_list < 1:
             sys.exit("STOP: Contradiction Number of atoms")
 
         ###################################
-        # ADOS $B<}G<$K;H$&G[Ns(B
-        # *.PDOS.Tetrahedron.atom? $B%U%!%$%k$+$i$N%G!<%?Cj=P(B
+        # ADOS 収納に使う配列
+        # *.PDOS.Tetrahedron.atom? ファイルからのデータ抽出
         self.ados = np.zeros((NEDOS,NATOM,NSPIN))
         self.intados = np.zeros((NEDOS,NATOM,NSPIN))
         for atom in atom_list:
@@ -168,26 +168,26 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
                     self.intados[i,atom-1,ispin] = float(data[i].split()[2+ispin])
 
         ###################################
-        # TDOS_spd $B<}G<$K;H$&G[Ns(B($B86;R<o$4$H$N>pJs$rDY$9$N$G$"$^$j0UL#$OL5$$(B)
+        # TDOS_spd 収納に使う配列(原子種ごとの情報を潰すのであまり意味は無い)
         l_max = 4 #s,p,d,f
         self.tdos_spd = np.zeros((NEDOS,l_max,NSPIN))
         self.inttdos_spd = np.zeros((NEDOS,l_max,NSPIN))
 
         ###################################
-        # LDOS $B<}G<$K;H$&G[Ns(B($B86;R<o$4$H(B)
+        # LDOS 収納に使う配列(原子種ごと)
         l_max = 4 #s,p,d,f
         self.ldos = np.zeros((NEDOS,l_max,NATOM,NSPIN))
         self.intldos = np.zeros((NEDOS,l_max,NATOM,NSPIN))
 
         ###################################
-        # PDOS $B<}G<$K;H$&G[Ns(B($B86;R<o(B,$B50F;$4$H(B)
-        # *.PDOS.Tetrahedron.atom?.* $B%U%!%$%k$N8!:w(B,suffix$BCj=P(B
+        # PDOS 収納に使う配列(原子種,軌道ごと)
+        # *.PDOS.Tetrahedron.atom?.* ファイルの検索,suffix抽出
         lm_max = 1+3+5+7 # s+p+d+f
         self.pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
         self.intpdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
         self.eng  = np.zeros((NEDOS,NATOM))
 
-        # $B86;R<o$N%k!<%W(B
+        # 原子種のループ
         for atom in atom_list:
             base = dosname+'.atom'+str(atom)
 
@@ -337,8 +337,8 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         # 7: dxz
         # 8: dyz
         ##########################
-        # OpenMX $B$NJB$S$r(B VASP $B$NJB$S$KJQ99$9$k(B
-        # $BCm0U(B) $BBP>N@-$,JQ$o$C$?;~$K(B OpenMX $B$NJB$S$,$=$N$^$^$+$I$&$+$OCN$i$J$$(B
+        # OpenMX の並びを VASP の並びに変更する
+        # 注意) 対称性が変わった時に OpenMX の並びがそのままかどうかは知らない
         #       2015.02.26
         #
         # origina
@@ -373,36 +373,36 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         self.intpdos[:,8,:,:] = self.intpdos[:,5,:,:]
 
     ###################################
-    # PDOS (lm,atom,spin $B;XDj(B)
+    # PDOS (lm,atom,spin 指定)
     def get_pdos(self,lm=0,atom=0,spin=0):
         self.pdos0 = self.pdos[:,lm,atom,spin]
         return self.pdos0
 
     ###################################
-    # PDOS $B$rA4It$=$N$^$^JV$9(B
+    # PDOS を全部そのまま返す
     def get_pdos_all(self):
         return self.pdos
 
     ###################################
-    # LDOS (l,atom,spin $B;XDj(B)
+    # LDOS (l,atom,spin 指定)
     def get_ldos(self,l=0,atom=0,spin=0):
         self.ldos0 = self.ldos[:,l,atom,spin]
         return self.ldos0
 
     ###################################
-    # LDOS $B$rA4It$=$N$^$^JV$9(B
+    # LDOS を全部そのまま返す
     def get_ldos_all(self):
         return self.ldos
 
     ###################################
-    # (TDOS_SPD) PDOS $B$N(B spd $B9g7W(B($B86;R>pJs$G(Bsum)
+    # (TDOS_SPD) PDOS の spd 合計(原子情報でsum)
     def get_tdos_spd(self,l=0,spin=0):
         self.tdos_spd0 = self.tdos_spd[:,l,spin]
         return self.tdos_spd0
 
     ###################################
-    # LDOS_ion ($B%5%$%H$4$H$N(BLDOS$B$r<h$k(B), ReadDoscar.get_ldos_ion() $B8_49(B
-    # *.out or *.dat $B$+$i(B atom $B$N(B ion $B>pJs$rFI$_<h$k$N$OI,?\(B
+    # LDOS_ion (サイトごとのLDOSを取る), ReadDoscar.get_ldos_ion() 互換
+    # *.out or *.dat から atom の ion 情報を読み取るのは必須
     def get_ldos_ion(self,l=0,ion=0,spin=0):
 
         NATOM = self.NATOM
@@ -442,7 +442,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         pass
 
     # ReadMxTdos
-    # $B8GM-CM$N:GBg(B(DOS$B$N(BX$B%l%s%8(B)
+    # 固有値の最大(DOSのXレンジ)
     def get_emax(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -452,7 +452,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         return self.EMAX
 
     # ReadMxTdos
-    # $B8GM-CM$N:G>.(B(DOS$B$N(BX$B%l%s%8(B)
+    # 固有値の最小(DOSのXレンジ)
     def get_emin(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -462,7 +462,7 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         return self.EMIN
 
     # ReadMxTdos
-    # $B8GM-CM$N(B(DOS$B$N(BX$B<4(B)
+    # 固有値の(DOSのX軸)
     def get_eng(self):
         suffix_tdos='.DOS.Tetrahedron'
         if os.path.exists(self.name+suffix_tdos) or \
@@ -499,7 +499,7 @@ if __name__ == '__main__':
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    # 'openmx' $B$h$j:GE,$J%G%U%)%k%H%U%!%$%kL>$N?dDj%k!<%A%s(B
+    # 'openmx' より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):
         try:
             options.INPUT = SAE.find_datfile('out')

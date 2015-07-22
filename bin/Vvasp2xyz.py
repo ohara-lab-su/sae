@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
@@ -36,8 +36,8 @@ import re
 #import numpy as np
 
 #import glob
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE                                            
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################
@@ -48,10 +48,10 @@ def options():
     suffix     = '.xyz'
 
     parser = optparse.OptionParser(os.getcwd())
-    parser = optparse.OptionParser()                                            
+    parser = optparse.OptionParser()
 
-    parser.add_option(  '-s','--stdout',                                            
-                       action='store_true',                                        
+    parser.add_option(  '-s','--stdout',
+                       action='store_true',
     )
     parser.add_option( '-i','--input',
                        dest='INPUT',
@@ -59,8 +59,8 @@ def options():
     parser.add_option( '-o','--output',
                        dest='OUTPUT',
     )
-    options, args = parser.parse_args() 
-    
+    options, args = parser.parse_args()
+
     xyzname=re.sub('\.xyz$','',xyzname)
     xyzname=xyzname+suffix
 
@@ -86,8 +86,8 @@ if __name__ == '__main__':
     poscarname,xyzname,suffix,OPT_STD = options()
 
     ## POSCAR 読み込み
-    poscar = SAE.ReadPoscar(poscarname)
-    
+    poscar = SAE.ReadVaspPoscar(poscarname)
+
     vasp = poscar.get_vasp_version()
     if vasp < 5:
         sys.exit("STOP: This script requires VASP5 style POSCAR")
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     direct = poscar.get_direct()
     position = poscar.get_position()
     fix = poscar.get_fix()
-   
+
     ion = poscar.get_ion()
     ion_local = poscar.get_ion_local()
 

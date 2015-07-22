@@ -8,8 +8,8 @@
 ################################################################################
 #
 # 2015.06.18
-#  $B%?%0$,B8:_$7$J$$$H$-$O(B VASP $B%G%U%)%k%H$rJV$9(B
-#  $BCm0U(B) NBANDS $B$O(B INCAR $B$@$1$+$i$G$O%G%U%)%k%HCM$O=P$;$J$$$N$G(B None $B$rJV$9(B
+#  タグが存在しないときは VASP デフォルトを返す
+#  注意) NBANDS は INCAR だけからではデフォルト値は出せないので None を返す
 #
 # 2015.06.18 startup
 #
@@ -37,7 +37,7 @@ import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadIncar(object):
+class ReadVaspIncar(object):
 
     ###############################################
     ## init and Read INCAR
@@ -62,10 +62,17 @@ class ReadIncar(object):
         ngxf_reg = re.compile('.*NGXF',re.IGNORECASE)
         ngyf_reg = re.compile('.*NGYF',re.IGNORECASE)
         ngzf_reg = re.compile('.*NGZF',re.IGNORECASE)
+        npar_reg = re.compile('.*NPAR',re.IGNORECASE)
 
+        # defaults
+        self.sigma = 0.2
         self.ispin = 1
         self.nsw = 0
-        self.laechg = '.FALSE.'
+        self.npar = 1
+        self.laechg = False
+        self.ngxf = None
+        self.ngyf = None
+        self.ngzf = None
 
         for i in range(self.num):
 
@@ -132,6 +139,10 @@ class ReadIncar(object):
             # NGZF
             if bool(ngzf_reg.match(self.datlines[i])):
                 self.ngzf = int(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # NPAR
+            if bool(npar_reg.match(self.datlines[i])):
+                self.npar = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
     def get_title(self):
         self.title = self.title if hasattr(self.__class__.__name__,'title') else 'unknown system'
@@ -228,6 +239,9 @@ if __name__ == '__main__':
     NBANDS = incar.get_nbands()
     ISPIN = incar.get_ispin()
     NELM = incar.get_nelm()
+    NGXF = incar.get_ngxf()
+    NGYF = incar.get_ngyf()
+    NGZF = incar.get_ngyf()
 
 #   print "TITLE  :", TITLE
     print "SYSTEM :", SYSTEM
@@ -240,4 +254,7 @@ if __name__ == '__main__':
     print "NBANDS :", NBANDS
     print "ISPIN  :", ISPIN
     print "NELM   :", NELM
+    print "NGXF   :", NGXF
+    print "NGYF   :", NGYF
+    print "NGZF   :", NGZF
 

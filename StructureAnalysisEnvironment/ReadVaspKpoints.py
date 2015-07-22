@@ -67,14 +67,13 @@ import sys
 import os
 import gzip
 import re
-import optparse
 import numpy as np
 
 #import re
 #from copy import deepcopy
 
 ################################################################################
-class ReadKpoints(object):
+class ReadVaspKpoints(object):
 
     def __init__(self,name='KPOINTS'):
 
@@ -328,6 +327,7 @@ class ReadKpoints(object):
 ################################################################################
 if __name__ == '__main__':
 
+    import optparse
     name = 'KPOINTS'
     outcarname = 'OUTCAR'
 
@@ -342,7 +342,7 @@ if __name__ == '__main__':
 #   if len(args) > 0:
 #       name=args[0]
 
-    kpoints = ReadKpoints(name)
+    kpoints = ReadVaspKpoints(name)
 
 #   auto_FLAG = False  # FLAGS[0]
 #   line_FLAG = False  # FLAGS[1]

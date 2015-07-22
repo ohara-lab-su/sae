@@ -1,17 +1,18 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $B%+!<%F%7%"%s%b!<%I$K$J$C$F$$$kI,MW$,$"$k(B
-#  list_atoms $B$K=>$$86;R$rF0$+$9(B($BC10L$O(B Ang )
+# カーテシアンモードになっている必要がある
+#  list_atoms に従い原子を動かす(単位は Ang )
 #
-#  $BF~NO$O(Bcartesian-$B<B:BI87O(B
-#  $B%W%m%0%i%`Cf$G(B cartesian-position$B7O(B($BFbIt:BI87O(B)$B$KJQ49$9$k(B
-#  $B%9%1!<%k%U%!%/%?!<$O$J$s$G$bNI$$(B(position$B$HF1$8%U%!%/%?!<$G$"$l$PNI$$(B)
+#  入力はcartesian-実座標系
+#  プログラム中で cartesian-position系(内部座標系)に変換する
+#  スケールファクターはなんでも良い(positionと同じファクターであれば良い)
 #
-#  $B86;R0\F0;~$K>WFM$N%A%'%C%/$O$7$F$J$$$N$GCm0U(B
+#  原子移動時に衝突のチェックはしてないので注意
 #
-# [in]     scale          : $B%9%1!<%j%s%0%U%!%/%?!<(B
-# [in/out] t[3,3]         :  $B4pK\JB?J%Y%/%H%k(B($BCm0U(B:$BG[NsFb(Bindex$B$O(B0$B$+$i(B)
+# [in]     scale          : スケーリングファクター
+# [in/out] t[3,3]         :  基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
 #                            t1 = a11 a21 a31
 #                            t2 = a12 a22 a32
@@ -19,8 +20,8 @@
 #
 # [in]     direct          : direct or cartesian
 #
-# [in/out] position(i,3)  : $BFbIt:BI8(B
-# [in/out] move_atoms(i,4) : $B0\F086;R%j%9%H(B($B86;R$NHV9f(B,$B0\F05wN%(BAng_x, Ang_y, Ang_z)
+# [in/out] position(i,3)  : 内部座標
+# [in/out] move_atoms(i,4) : 移動原子リスト(原子の番号,移動距離Ang_x, Ang_y, Ang_z)
 #
 # [return] scale
 #
@@ -29,15 +30,15 @@
 # 2014.11.05 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -46,8 +47,8 @@ import re
 from numpy import *
 
 
-## $B%9%1!<%k%U%!%/%?!<$G%j%9%1!<%k$7$F$$$k(B
-## [$B%+!<%F%7%"%s!\%9%1!<%k%U%!%/%?!<M-$j(B]$B$N>l9g<B:BI82=(B
+## スケールファクターでリスケールしている
+## [カーテシアン＋スケールファクター有り]の場合実座標化
 ##
 def move_atoms1(scale,t,direct,position,nlist,list_atoms):
 
@@ -56,13 +57,13 @@ def move_atoms1(scale,t,direct,position,nlist,list_atoms):
 
     for i in range(nlist):
 
-        # $B<B:BI87O(B list_atom $B$rFbIt:BI87O(B new_{x,y,z} $B$KD>$9$?$a$K(B 1/scale $B$r3]$1$k(B
+        # 実座標系 list_atom を内部座標系 new_{x,y,z} に直すために 1/scale を掛ける
         atom  = int(list_atoms[i,0]) - 1
         new_x =     list_atoms[i,1]/scale
         new_y =     list_atoms[i,2]/scale
         new_z =     list_atoms[i,3]/scale
 
-        # $BFbIt:BI87O(B position + $BFbIt:BI87O(B new_{x,y,z}
+        # 内部座標系 position + 内部座標系 new_{x,y,z}
         position[atom,0] = position[atom,0] + new_x
         position[atom,1] = position[atom,1] + new_y
         position[atom,2] = position[atom,2] + new_z
@@ -70,7 +71,7 @@ def move_atoms1(scale,t,direct,position,nlist,list_atoms):
     return scale
 
 
-## $B%j%9%1!<%k$J$7(B ($B$=$N$^$^(B)
+## リスケールなし (そのまま)
 def move_atoms0(scale,t,direct,position,nlist,list_atoms):
 
     if direct:
@@ -78,13 +79,13 @@ def move_atoms0(scale,t,direct,position,nlist,list_atoms):
 
     for i in range(nlist):
 
-        # $B<B:BI87O(B list_atom $B$rFbIt:BI87O(B new_{x,y,z} $B$KD>$9$?$a$K(B 1/scale $B$r3]$1$k(B
+        # 実座標系 list_atom を内部座標系 new_{x,y,z} に直すために 1/scale を掛ける
         atom  = int(list_atoms[i,0]) - 1
         new_x =     list_atoms[i,1]
         new_y =     list_atoms[i,2]
         new_z =     list_atoms[i,3]
 
-        # $BFbIt:BI87O(B position + $BFbIt:BI87O(B new_{x,y,z}
+        # 内部座標系 position + 内部座標系 new_{x,y,z}
         position[atom,0] = position[atom,0] + new_x
         position[atom,1] = position[atom,1] + new_y
         position[atom,2] = position[atom,2] + new_z

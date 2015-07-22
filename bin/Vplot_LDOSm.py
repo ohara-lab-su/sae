@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     #####################################################
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadDoscar(dname)
+    dos = SAE.ReadVaspDoscar(dname)
 
     nspin = dos.get_ispin()
     natom = dos.get_natom()
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
         FLAG_OUTCAR=True
-        outcar = SAE.ReadOutcar(oname)
+        outcar = SAE.ReadVaspOutcar(oname)
         atoms = outcar.get_atoms_index()
         atoms_j = outcar.get_atoms_j()
 #       for atom in range(natom):

@@ -4,13 +4,13 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # WIEK2k case.scf
-#  $B%(%J%8!<%Q%i%a!<%?!<$N%A%'%C%/$J$I$N$?$a$K!"(B*.scf $B>pJs$rH4$-=P$9$?$a$N(Bclass
+#  エナジーパラメーターのチェックなどのために、*.scf 情報を抜き出すためのclass
 #
-#  *.scf $B%U%!%$%k$O(B *.output0 *.output1 $B$J$I$N>pJs$+$i=EMW$J$b$N$rCj=P$7$?$b$N(B
-#  --> WIEN2k $B$N<B9T%9%/%j%W%H$G:n$i$l$k(B
+#  *.scf ファイルは *.output0 *.output1 などの情報から重要なものを抽出したもの
+#  --> WIEN2k の実行スクリプトで作られる
 #
-#  $BCm0U(B)
-#    scf1 $B%U%!%$%k$O(B ITERATION $B>pJs$,$J$$$N$G$3$N%/%i%9$O;H$($J$$(B
+#  注意)
+#    scf1 ファイルは ITERATION 情報がないのでこのクラスは使えない
 #
 ################################################################################
 #
@@ -69,14 +69,14 @@ class ReadWienScf(object):
         EPH_ITER = []
         SITE = []
         while i < self.num:
-            # ITER $BKh$N6h@Z$j%A%'%C%/(B
+            # ITER 毎の区切りチェック
             if bool(ite_reg.match(self.datlines[i])):
                 E_ATOM = []
                 EPL_ATOM = []
                 EPH_ATOM = []
                 nion = 0
                 while i < self.num:
-                    # ATOMIC SPHEARE DEPENDENT PARAMETERS $B$N%A%'%C%/(B
+                    # ATOMIC SPHEARE DEPENDENT PARAMETERS のチェック
                     if bool(parm_reg.match(self.datlines[i])):
                         SITE.append(self.datlines[i].split()[6])
                         E = []

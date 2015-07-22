@@ -31,8 +31,8 @@ import re
 #import re
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+#import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 #
@@ -43,7 +43,7 @@ import re
 #   name = 'C_PBE13'
 #
 ################################################################################
-class ReadVps(object):
+class ReadMxVps(object):
 
 #   def __init__(self,opts):
     def __init__(self,fullname):
@@ -54,10 +54,10 @@ class ReadVps(object):
 #       ver,\
 #       name = opts
 #       fullname = data+'/VPS/'+name+'.vps'
-    
+
         if not os.path.exists(fullname):
             sys.exit(fullname+' file not found')
-    
+
         try:
             tmp = open(fullname)
             datfile = tmp.read()
@@ -65,7 +65,7 @@ class ReadVps(object):
             sys.exit("STOP: "+fullname+" does'nt open")
         finally:
             tmp.close()
-    
+
         self.datlines = datfile.split('\n')
         self.num = len(self.datlines) - 1
 
@@ -76,7 +76,7 @@ class ReadVps(object):
             if bool(valence_reg.match(self.datlines[i])):
                    electron = float(self.datlines[i].split()[1])
                    break
-    
+
         return  electron
 
 
@@ -92,10 +92,10 @@ if __name__ == '__main__':
     fullname = data+'/VPS/'+name+'.vps'
 #   opts = data, atom, pot, ver, name
 
-    vps = ReadVps(fullname)
+    vps = ReadMxVps(fullname)
     electron = vps.get_valence_electron()
 
     print electron
-        
+
 ################################################################################
-     
+

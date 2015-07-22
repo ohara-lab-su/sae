@@ -1,27 +1,28 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# $BHFMQ%G!<%?!<%j!<%I(B
-#   read_list $B$H$N0c$$$O(B cut $B0z?t$,$"$k$+H]$+(B
+# 汎用データーリード
+#   read_list との違いは cut 引数があるか否か
 #
-# cut $B0z?t(B
-#    $B%G!<%?!<%U%!%$%k$NFI$_9~$_%9%?!<%H9T$r;XDj$G$-$k(B
+# cut 引数
+#    データーファイルの読み込みスタート行を指定できる
 #
 ################################################################################
 #
 # 2014.11.19 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -34,8 +35,8 @@ comment_reg = re.compile('^#.*',re.IGNORECASE)
 
 
 ########################################
-## find_list $B$O(B (dimension)$B<!85G[Ns(B
-## $B9%$-$J<!85$GMxMQ2DG=(B
+## find_list は (dimension)次元配列
+## 好きな次元で利用可能
 ##
 def read_dat(name,dimension,dat,cut):
 
@@ -58,15 +59,15 @@ def read_dat(name,dimension,dat,cut):
         tmp = datalines[i].split()
         for k in range(dimension):
             dat[i,k] = tmp[k]
-        j += 1        
+        j += 1
 
     nlist = j
-    return nlist    
+    return nlist
 
 
 
 ########################################
-## find_list $B$O(B2$B<!85G[Ns(B
+## find_list は2次元配列
 ##
 def read_dat2(name,dat,cut):
 
@@ -87,14 +88,14 @@ def read_dat2(name,dat,cut):
         tmp = datalines[i].split()
         dat[i,0] = tmp[0]
         dat[i,1] = tmp[1]
-        j += 1        
+        j += 1
 
     nlist = j
-    return nlist    
+    return nlist
 
 
 ########################################
-## find_list $B$O(B5$B<!85G[Ns(B
+## find_list は5次元配列
 ##
 def read_dat5(name,dat,cut):
 
@@ -118,10 +119,10 @@ def read_dat5(name,dat,cut):
         dat[i,2] = tmp[2]
         dat[i,3] = tmp[3]
         dat[i,4] = tmp[4]
-        j += 1        
+        j += 1
 
     nlist = j
-    return nlist    
+    return nlist
 
 
 ########################################
@@ -141,7 +142,7 @@ if __name__ == '__main__':
                     fitdat[i,1],    # S(Q) RMC++
                     fitdat[i,2],    # renormalized experimental S(Q)
                     fitdat[i,3],    # original exp. S(Q)
-                    fitdat[i,4] )   # additive backgroupd            
+                    fitdat[i,4] )   # additive backgroupd
 
 
 
