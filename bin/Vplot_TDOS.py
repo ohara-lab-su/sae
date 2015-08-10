@@ -182,19 +182,13 @@ if __name__ == '__main__':
        #plt.xlim([-10,10])
        #plt.ylim([0,2.5])
 
-        if spin == 0:
-            yl = plt.ylabel("DOS/eV", fontsize=20 )
-
-        if OPT_EMAX:
-            plt.xlim( xmax=int(OPT_EMAX) )
-        if OPT_EMIN:
-            plt.xlim( xmin=int(OPT_EMIN) )
-        if OPT_YMAX:
-            plt.ylim( ymax=int(OPT_YMAX) )
+        if spin == 0: yl = plt.ylabel("DOS/eV", fontsize=20 )
+        if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX) )
+        if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN) )
+        if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
         if NSPIN == 2:
-            if spin == 0:
-                plt.xticks([])
+            if spin == 0: plt.xticks([])
             if spin == 1:
                 # y 軸反転
                 xmin,xmax,ymin,ymax = plt.axis()

@@ -25,15 +25,15 @@
 #    startup & complete
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.2"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.2"
 ################################################################################
 
 #import sys
@@ -41,25 +41,25 @@ import os
 #import optparse
 #import re
 
-## ElementTree から lxml へスイッチ (name space は互換のため ET とする)         
-import xml.etree.ElementTree as ET                                             
-#import lxml.etree as ET 
+## ElementTree から lxml へスイッチ (name space は互換のため ET とする)
+#import xml.etree.ElementTree as ET
+import lxml.etree as ET
 
 #import numpy as np
 #from copy import deepcopy
 
 ################################################################################
 #
-#/home/dspace/cr/                                                                
-# ConverterRegister.xml                                                          
-# compdir                                                                        
+#/home/dspace/cr/
+# ConverterRegister.xml
+# compdir
 # data    <------ XMLファイルのパスに合わせてこの下に課題番号をつけてファイルを入れる
-# data_for_analysis                                                              
-# recover.sh                                                                     
-# retrydir                                                                       
-# srcdir  <--- XMLファイルを入れる                                               
-#                                                                                
-#                                                                                
+# data_for_analysis
+# recover.sh
+# retrydir
+# srcdir  <--- XMLファイルを入れる
+#
+#
 #/usr/local/SPring8/ConverterRegister.sh を実行する
 #
 ################################################################################
@@ -79,9 +79,9 @@ dfile_BASE     = '/storage/data/'       # 最後には / を忘れない
 #PLUS           = '/test20150312/Zn-foil'
 PLUS           = '/test20150325/Ni-foil'
 
-#ID             = '2014T1343'                                                             
-ID             = '2014S0000'     # 標準試料                                                        
-#CREATER        = '0001343'      # 高垣                                                         
+#ID             = '2014T1343'
+ID             = '2014S0000'     # 標準試料
+#CREATER        = '0001343'      # 高垣
 CREATER        = '0011765'       # 中田
 
 #RIGHTS_TAG = 'close'    # 個人用(close)
@@ -128,7 +128,7 @@ def makes_xmlfile(name):
             dtype = dtype_PF
         else:
             dtype = dtype_OTHER
-        
+
         sfile = sfile.replace(PWD,'')
         ###############################################
         dfile = dfile_BASE+proposalID.text+PLUS+sfile
@@ -146,8 +146,12 @@ def makes_xmlfile(name):
     tree = ET.ElementTree(bl14b2)
 #   tree.write('data.xml')
 #   tree.write(OUTFILE+'.xml')
-    tree.write(OUTFILE+'.xml', pretty_print=True)
 
+    # for lxml
+#   tree.write(OUTFILE+'.xml', pretty_print=True)
+
+    # for element tree
+    tree.write(OUTFILE+'.xml')
 
 ################################################################################
 if __name__ == '__main__':

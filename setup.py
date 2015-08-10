@@ -2,11 +2,21 @@
 
 # Copyright (C) 2014,2015 K.NAKADA
 # MIT LICENSE
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
+
 
 from setuptools import setup, find_packages
 import glob
 
-version = '0.0.1'
+version = __version__
 
 script =  glob.glob("bin/*.py")
 

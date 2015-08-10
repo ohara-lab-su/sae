@@ -112,7 +112,9 @@ if __name__ == '__main__':
     elif os.path.exists(HOMEPATH+'/openmx1/'+VPSLIST):
         vpslistpath = HOMEPATH+'/openmx1/'+VPSLIST
     else:
-        sys.exit("STOP: "+VPSLIST+" file not found")
+        VPSLIST = 'openmx_defaults_vpsdata.py'
+        if not os.path.exists(VPSLIST):
+            sys.exit("STOP: "+VPSLIST+" file not found")
 
     # vps and pao 情報リスト読み込み(OpenMX非公式ファイル)
     vpsdata = ReadMxVpsList(vpslistpath)

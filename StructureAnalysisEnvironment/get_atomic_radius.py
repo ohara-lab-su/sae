@@ -45,7 +45,9 @@ def get_atomic_radius0(num):
         if os.path.exists( ldir+'/'+name ):
             name=ldir+'/'+name
         else:
-            sys.exit("STOP: "+name+" file not found")
+            name='atomic_radius.list.py'
+            if not os.path.exists(name):
+                sys.exit("STOP: "+name+" file not found")
 
     nlist = SAE.read_list_param(name) # pre read
 
@@ -68,7 +70,12 @@ def get_atomic_radius1(atom):
         if os.path.exists( ldir+'/'+name ):
             name=ldir+'/'+name
         else:
-            sys.exit("STOP: "+name+" file not found")
+            name='atomic_radius.list.py'
+            if not os.path.exists(name):
+                if os.path.exists( ldir+'/'+name ):
+                    name=ldir+'/'+name
+                else:
+                    sys.exit("STOP: "+name+" file not found")
 
     nlist = SAE.read_list_param(name) # pre read
 
@@ -91,7 +98,12 @@ def get_atomic_number1(atom):
         if os.path.exists( ldir+'/'+name ):
             name=ldir+'/'+name
         else:
-            sys.exit("STOP: "+name+" file not found")
+            name='atomic_radius.list.py'
+            if not os.path.exists(name):
+                if os.path.exists( ldir+'/'+name ):
+                    name=ldir+'/'+name
+                else:
+                    sys.exit("STOP: "+name+" file not found")
 
     nlist = SAE.read_list_param(name) # pre read
 
@@ -114,7 +126,12 @@ def get_atomic_symbol0(num):
         if os.path.exists( ldir+'/'+name ):
             name=ldir+'/'+name
         else:
-            sys.exit("STOP: "+name+" file not found")
+            name='atomic_radius.list.py'
+            if not os.path.exists(name):
+                if os.path.exists( ldir+'/'+name ):
+                    name=ldir+'/'+name
+                else:
+                    sys.exit("STOP: "+name+" file not found")
 
     nlist = SAE.read_list_param(name) # pre read
 

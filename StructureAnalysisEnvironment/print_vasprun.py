@@ -11,25 +11,25 @@
 #
 ################################################################################
 #
-# 2015.02.12                                                                    
+# 2015.02.12
 #  incar タグに IBRION (1以上) がないと p4vasp で Relax モードが現れない
 #  無理やり追加
 #
 #  generator タグは特に必要ないのでダミー情報投入を中止
 #
-# 2015.02.12                                                                    
-#  これまで全く表示されていなかったバグは atomstype (ミス) --> atomtype へ      
-#  変更、スペルミスによるものだった                                             
-#  もう一つ、position タグの位置が crystal タグの中だったのも間違い             
-#                                                                               
-#  残る問題は、基本並進(box)と逆格子の基本並進だが、あまり関係ないので          
-#  当面は放っておく                                                             
-#                                                                               
-#  とりあえず機能するバージョンが完成                                           
-#   *.xyz *.md ファイルを vasprun.xml へコンバート                              
-#                                                                               
-# 2015.02.12                                                                    
-#  xml 出力時に改行を入れるために標準の ElementTree から lxml へ変更    
+# 2015.02.12
+#  これまで全く表示されていなかったバグは atomstype (ミス) --> atomtype へ
+#  変更、スペルミスによるものだった
+#  もう一つ、position タグの位置が crystal タグの中だったのも間違い
+#
+#  残る問題は、基本並進(box)と逆格子の基本並進だが、あまり関係ないので
+#  当面は放っておく
+#
+#  とりあえず機能するバージョンが完成
+#   *.xyz *.md ファイルを vasprun.xml へコンバート
+#
+# 2015.02.12
+#  xml 出力時に改行を入れるために標準の ElementTree から lxml へ変更
 #
 # 2015.01.08 16:24
 #  意図したものは全て正しく出来たが・・・情報が足りないっぽくて
@@ -60,15 +60,15 @@
 #    SCF ステップごとの結果は全て無視（記述しない)、そもそも情報がない
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2015, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.4"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.4"
 ################################################################################
 
 #import sys
@@ -77,8 +77,8 @@ import optparse
 #import re
 
 ## ElementTree から lxml へスイッチ (name space は互換のため ET とする)
-#import xml.etree.ElementTree as ET
-import lxml.etree as ET
+import xml.etree.ElementTree as ET
+#import lxml.etree as ET
 
 import numpy as np
 import math
@@ -94,7 +94,7 @@ def print_vasprun0(OUTPUT,title,nloop,\
         natom,nion,atoms,atoms_index,atoms_index_j,\
         t,position_loop,force_loop,energy_loop):
 
-    # constant                                                                  
+    # constant
     PI = math.pi
 
 #   try:
@@ -171,7 +171,7 @@ def print_vasprun0(OUTPUT,title,nloop,\
     field.text = 'valence'
     field = ET.SubElement(array, 'field',{'type':'string'})
     field.text = 'pseudopotential'
-   
+
     # atomsinfo/array[@name='atomtype']/set
     settag = ET.SubElement(array,'set')
     for i in range(nion):
@@ -257,12 +257,12 @@ def print_vasprun0(OUTPUT,title,nloop,\
         v.text = "{0:.8f}".format(t[0,0])+"   "\
                  "{0:.8f}".format(t[1,0])+"   "\
                  "{0:.8f}".format(t[2,0])
-    
+
         v = ET.SubElement(varray, 'v')
         v.text = "{0:.8f}".format(t[0,1])+"   "\
                  "{0:.8f}".format(t[1,1])+"   "\
                  "{0:.8f}".format(t[2,1])
-    
+
         v = ET.SubElement(varray, 'v')
         v.text = "{0:.8f}".format(t[0,2])+"   "\
                  "{0:.8f}".format(t[1,2])+"   "\
@@ -275,12 +275,12 @@ def print_vasprun0(OUTPUT,title,nloop,\
         v.text = "{0:.8f}".format(t_rec[0,0])+"   "\
                  "{0:.8f}".format(t_rec[1,0])+"   "\
                  "{0:.8f}".format(t_rec[2,0])
-    
+
         v = ET.SubElement(varray, 'v')
         v.text = "{0:.8f}".format(t_rec[0,1])+"   "\
                  "{0:.8f}".format(t_rec[1,1])+"   "\
                  "{0:.8f}".format(t_rec[2,1])
-    
+
         v = ET.SubElement(varray, 'v')
         v.text = "{0:.8f}".format(t_rec[0,2])+"   "\
                  "{0:.8f}".format(t_rec[1,2])+"   "\
@@ -380,8 +380,12 @@ def print_vasprun0(OUTPUT,title,nloop,\
 
     tree = ET.ElementTree(modeling)
 #   tree.write(OUTPUT, method="xml")
-    tree.write(OUTPUT, pretty_print=True, method="xml")  # for lxml
 
+    # for lxml
+#   tree.write(OUTPUT, pretty_print=True, method="xml")  # for lxml
+
+    # for element tree
+    tree.write(OUTPUT, method="xml")
 
 ################################################################################
 if __name__ == '__main__':
@@ -393,12 +397,12 @@ if __name__ == '__main__':
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=MD,
-    )                                                                           
+    )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         MD=options.INPUT
-                                                                                
+
     if len(args) > 0:
         MD=args[0]
 
@@ -417,7 +421,7 @@ if __name__ == '__main__':
                 SAE.read_md3(MD,nloop,atoms_index_j,position_loop,force_loop)
 
     # MD(x,y,z) のそれぞれの x,y,z の最大値を取得
-    position_max,position_min = SAE.get_max_md(nloop,natom,position_loop) 
+    position_max,position_min = SAE.get_max_md(nloop,natom,position_loop)
     max_range = abs(position_min)+position_max
 
 #   box_size = max_range*2.0

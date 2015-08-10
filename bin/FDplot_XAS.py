@@ -342,12 +342,9 @@ if __name__ == '__main__':
     leg = plt.legend(loc='lower right')
     leg.get_frame().set_alpha(0.5)
 
-    if OPT_EMAX:
-        plt.xlim( xmax=float(OPT_EMAX))
-    if OPT_EMIN:
-        plt.xlim( xmin=float(OPT_EMIN))
-    if OPT_YMAX:
-        plt.ylim( ymax=float(OPT_YMAX))
+    if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX))
+    if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN))
+    if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX))
 
     xas_xmin,xas_xmax,xas_ymin,xas_ymax = plt.axis()
 
@@ -382,12 +379,9 @@ if __name__ == '__main__':
         leg = plt.legend(loc='upper right')
         leg.get_frame().set_alpha(0.5)
 
-        if OPT_EMAX:
-            plt.xlim( xmax=float(OPT_EMAX))
-        if OPT_EMIN:
-            plt.xlim( xmin=float(OPT_EMIN))
-        if OPT_DMAX:
-            plt.ylim( ymax=float(OPT_DMAX))
+        if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX))
+        if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN))
+        if OPT_DMAX: plt.ylim( ymax=float(OPT_DMAX))
 
     if FLAG_fermi:
         plt.xlabel("Energy above Fermi [eV]")

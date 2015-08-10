@@ -40,6 +40,9 @@ def get_atomic_weight0(num):
     libpath = re.sub('__init__.pyc','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
+        if not os.path.exists(name):
+            name0='atomic_weight.list.py'
+            name=libpath+name0
     else:
         for libpath in os.getenv('PYTHONPATH').split(':'):
             name=libpath+'/'+name
@@ -65,6 +68,9 @@ def get_atomic_weight1(atom):
     libpath = re.sub('__init__.pyc','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
+        if not os.path.exists(name):
+            name0='atomic_weight.list.py'
+            name=libpath+name0
     else:
         for libpath in os.getenv('PYTHONPATH').split(':'):
             name=libpath+'/'+name
@@ -90,6 +96,9 @@ def get_atomic_number1(atom):
     libpath = re.sub('__init__.pyc','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
+        if not os.path.exists(name):
+            name0='atomic_radius.list.py'
+            name=libpath+name0
     else:
         for libpath in os.getenv('PYTHONPATH').split(':'):
             name=libpath+'/'+name

@@ -9,6 +9,10 @@
 #
 ################################################################################
 #
+# 2015.07.23
+#  停止していた開発を再スタート
+#
+#
 # 2015.05.08 startup
 #
 ################################################################################
@@ -40,17 +44,18 @@ class ReadPwPdos(object):
 
         # cname+'pdos.pdos_tot'
         self.datlines,self.num = SAE.read_dataline(prefix+'.pdos.pdos_tot')
-        self.nedos = self.num -1
+        nedos = self.num -1
 
         if len(self.datlines[1].split()) > 3:
-            self.ispin = 2
+            ispin = 2
         else:
-            self.ispin = 1
+            ispin = 1
 
         # 実際に計算している pdos ファイルの取得
         pdos_list = glob.glob(prefix+'.pdos.pdos_atm#*')
         if len(pdos_list) < 1:
             sys.exit("STOP: "+prefix+".pdos.pdos_atm#* file not found")
+        pdos_list.sort()
 
         # 計算している pdos ファイルの原子の種類番号のみを取得
         atom_ls = []
@@ -66,61 +71,220 @@ class ReadPwPdos(object):
                 atom_list.append(x)
 
         # ユニークは原子種番号の数から全原子数を確保
-        self.natom = len(atom_list)
+        natom = len(atom_list)
 
-        # 実際に計算している各原子毎に計算しているlの最大値を取得する
-        lmax_list = []
+        # 原子数の通し番号毎の元素記号を記憶する配列を用意
+        atoms_index_j = []
+        for atom in atom_list:
+            pname = glob.glob(prefix+'.pdos.pdos_atm#'+str(atom)+'*')[0]
+            tmp = re.sub(prefix+'.pdos.pdos_atm#'+str(atom)+'\(','',pname)
+            tmp = re.sub('\)_wfc#.*','',tmp).strip()
+            atoms_index_j.append(tmp)
+
+       ## 実際に計算している各原子毎に計算しているlの最大値を取得する
+       ## 最後の# の番号は軌道番号ではなくて通し番号であることが判明(15.07.22)
+       ## このルーチンは削除
+       #lmax_list = []
+       #for atom in atom_list:
+       #    tmp = glob.glob(prefix+'.pdos.pdos_atm#'+str(atom)+'(*')
+       #    for g in tmp:
+       #        tmp = re.sub(prefix+'.pdos.pdos_atm#','',g)
+       #        lmax = int(re.sub('\(.*' ,'',re.sub('\d*\(.*#','',tmp) ))
+       #    lmax_list.append(lmax)
+       #print "lmax_list: max",len(lmax_list), lmax_list
+
+        l_index_j = []
         for atom in atom_list:
             tmp = glob.glob(prefix+'.pdos.pdos_atm#'+str(atom)+'(*')
+            list_tmp = []
             for g in tmp:
-                tmp = re.sub(prefix+'.pdos.pdos_atm#','',g)
-                lmax = int(re.sub('\(.*' ,'',re.sub('\d*\(.*#','',tmp) ))
-            lmax_list.append(lmax)
+                tmp0 = re.sub(prefix+'.pdos.pdos_atm#','',g)
+                tmp0 = re.sub('\d*\(.*#\d\(','',tmp0)
+                tmp0 = re.sub('\)','',tmp0)
+                list_tmp.append(tmp0)
+            l_index_j.append(list_tmp)
 
-       #print len(atom_list), atom_list
-       #print len(lmax_list), lmax_list
+        l_list = []
+        for i in range(natom):
+            list_tmp = []
+            for j in range(len(l_index_j[i])):
+                l =  l_index_j[i][j]
+                if l == 's': lmax = 0
+                if l == 'p': lmax = 1
+                if l == 'd': lmax = 2
+                if l == 'f': lmax = 3
+                list_tmp.append(lmax)
+            l_list.append(list_tmp)
+
+#       for i in range(len(atom_list)):
+#           print l_index_j[i],l_max_list[i]
+
+#       print "natom:", natom
+#       print "atom_list    : ", atom_list
+#       print "atoms_index_j: ", atoms_index_j
+#       print "l_index_j    : ", l_index_j
+#       print "l_list       : ", l_list
+
 
         ################
         # LDOS 収納に使う配列の確保(原子種毎),配列の l_max は固定にする
         l_max = 4 # s,p,d,f
-        self.ldos = np.zeros((self.nedos,l_max,self.natom,self.ispin))
+        self.ldos_all = np.zeros((nedos,l_max,natom,ispin))
 
         ################
         # PDOS 収納に使う配列の確保
-        lm_max = 1+3+5+7 # s+p+d+f
-        self.pdos = np.zeros((self.nedos,lm_max,self.natom,self.ispin))
-        self.eng = np.zeros((self.nedos,self.natom))
+       #lm_max = 1+3+5+7 # s+p+d+f
+        lm_max = 7 # 軌道成分ごとの lm として保存するので f 軌道の最大値で良い
+        lm_list = [1,3,5,7]
+        self.pdos_all = np.zeros((nedos,l_max,lm_max,natom,ispin))
+        self.eng = np.zeros(nedos)
 
         ########################################################################
         # 原子種のループ
-        i = 0
-        for atom in atom_list:
+        for atom in range(natom):
 
-            for orbit in range(lmax_list[i]):
+            for ll in range(len(l_index_j[atom])):
 
-                pfiles = glob.glob(\
-                        prefix+'.pdos.pdos_atm#'+str(atom)+'(*_wfc#'+str(orbit+1)+'(*'\
-                        )
-                if not len(pfiles) == 1:
-                    sys.exit("STOP: "+pfiles)
-                pname = pfiles[0]
+                l = int(l_list[atom][ll])
+                l_index = l_index_j[atom][ll]
+
+               ## 原子のリスト、原子の持つ軌道番号のリストからファイル名を作成
+               ##
+               #print atoms_index_j[atom],\
+               #        l_list[atom][ll], \
+               #        l_index_list[atom][ll]
+
+                pname = prefix+'.pdos.pdos_atm#'+str(atom+1)+\
+                         '('+atoms_index_j[atom]+')_wfc#'+str(ll+1)+\
+                         '('+l_index+')'
+                print pname
+
+                if not os.path.exists(pname):
+                    sys.exit("STOP: "+pname+" not found")
 
                 # 原子種＋軌道におけるデータ読み込み
                 data,nline = SAE.read_dataline1(pname)
-                if nline != self.nedos:
+                if nline != nedos:
                     sys.exit("STOP: Contradiction Number of Data Line :"+pname)
 
-                print pname
-                if self.ispin == 2:
-                    print atom, orbit+1, ( len(data[0].split()) - self.ispin ) / 2
-                    for spin in range(self.ispin):
-                        for j in range(nline):
-                            self.eng[j] = float(data[j].split()[0])
+               #print atom, l,l_index, len(data[0].split())
+                for spin in range(ispin):
+                    for line in range(nline):
 
-                           #self.ldos[j,0,atom-1,spin] = \
-                           #        float(data[j].split()[0+spin]
+                        self.eng[line] = float(data[line].split()[0])
+                        self.ldos_all[line,l,atom,spin] = \
+                                float(data[line].split()[1+spin])
 
-            i += 1
+                        for lm in range(lm_list[l]):
+                            row = 1 + ispin -1 + ispin + (lm*ispin -1*(ispin-1)) + spin
+                            self.pdos_all[line,l,lm,atom,spin] = \
+                                    float(data[line].split()[row])
+
+        self.nedos = nedos
+        self.ispin = ispin
+        self.natom = natom
+        self.atoms_index_j = atoms_index_j
+        self.l_index_j = l_index_j
+        self.lm_list = lm_list
+
+
+    ############################################################################
+    def get_ldos(self,l=0,atom=0,spin=0):
+
+        if isinstance(l,str):
+            if l == 's':
+                l = 0
+                l_index = 's'
+            if l == 'p':
+                l = 1
+                l_index = 'p'
+            if l == 'd':
+                l = 2
+                l_index = 'd'
+            if l == 'd':
+                l = 3
+                l_index = '4'
+
+        if isinstance(l,int):
+            if l == 0: l_index = 's'
+            if l == 1: l_index = 'p'
+            if l == 2: l_index = 'd'
+            if l == 3: l_index = 'f'
+
+        if isinstance(spin,str):
+            if spin == 'up': spin = 0
+            if spin == 'dn': spin = 1
+            if spin == 'down': spin = 1
+
+        FLAG_CHK=False
+        for chk in self.l_index_j[atom]:
+            if chk == l_index: FLAG_CHK=True
+        if not FLAG_CHK:
+            sys.exit("STOP: "+l_index+"-orbit not calculated")
+
+        if spin > self.ispin-1:
+            sys.exit("STOP: spin = "+str(spin)+" not calculated")
+
+        self.ldos = self.ldos_all[:,l,atom,spin]
+        return self.ldos
+
+
+    ############################################################################
+    # lm は 0 からカウント l=2 のとき、px, py, pz ならば px は lm=0
+    def get_pdos(self,l=0,lm=0,atom=0,spin=0):
+
+        if isinstance(l,str):
+            if l == 's':
+                l = 0
+                l_index = 's'
+            if l == 'p':
+                l = 1
+                l_index = 'p'
+            if l == 'd':
+                l = 2
+                l_index = 'd'
+            if l == 'd':
+                l = 3
+                l_index = '4'
+
+        if isinstance(l,int):
+            if l == 0: l_index = 's'
+            if l == 1: l_index = 'p'
+            if l == 2: l_index = 'd'
+            if l == 3: l_index = 'f'
+
+        if isinstance(spin,str):
+            if spin == 'up': spin = 0
+            if spin == 'dn': spin = 1
+            if spin == 'down': spin = 1
+
+        FLAG_CHK=False
+        for chk in self.l_index_j[atom]:
+            if chk == l_index: FLAG_CHK=True
+        if not FLAG_CHK:
+            sys.exit("STOP: "+l_index+"-orbit not calculated")
+
+        if lm > self.lm_list[l]-1:
+            sys.exit("STOP: "+l_index+"-orbit , lm="+str(lm)+" not calculated")
+
+        if spin > self.ispin-1:
+            sys.exit("STOP: spin = "+str(spin)+" not calculated")
+
+        self.pdos = self.pdos_all[:,l,lm,atom,spin]
+        return self.pdos
+
+    ############################################################################
+    def get_pdos_all(self):
+        return self.pdos_all
+
+    def get_ldos_all(self):
+        return self.ldos_all
+
+    def get_natom(self):
+        return self.natom
+
+    def get_atoms_index_j(self):
+        return self.atoms_index_j
 
     def get_nedos(self):
         return self.nedos
@@ -128,8 +292,6 @@ class ReadPwPdos(object):
     def get_ispin(self):
         return self.ispin
 
-    def get_natom(self):
-        return self.natom
 
 ################################################################################
 def options():
@@ -156,6 +318,28 @@ def options():
 if __name__ == '__main__':
 
     prefix = options()
-    print "PREFIX:",prefix
     dos = ReadPwPdos(prefix)
+
+#   lm_list = [1,3,5,7]
+
+    print "PREFIX       : ", prefix
+    print "NEDOS        : ", dos.nedos
+    print "ispin        : ", dos.ispin
+    print "natom        : ", dos.natom
+    print "atoms_index_j: ", dos.atoms_index_j
+    print "l_index_j    : ", dos.l_index_j
+
+    ENG = dos.eng
+#   LDOSup = dos.get_ldos(l=0,atom=0,spin=0)
+#   LDOSdn = dos.get_ldos(l=0,atom=0,spin=1)
+
+    PDOSup = dos.get_pdos(l=2,lm=2,atom=0,spin=0)
+#   PDOSdn = dos.get_pdos(l=2,lm=2,atom=0,spin=1)
+
+#   for i in range(dos.nedos):
+#       print ENG[i], LDOSup[i], LDOSdn[i]
+
+    for i in range(dos.nedos):
+#       print ENG[i], PDOSup[i], PDOSdn[i]
+        print ENG[i], PDOSup[i]
 
