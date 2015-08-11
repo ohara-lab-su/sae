@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2015.08.10
+#  CR を削除するようにした
+#
 # 2015.06.18
 #  コメントアウト対応版を複数のコメント(# or !)にアップデート
 #
@@ -53,6 +56,7 @@ def read_dataline(name):
             tmp = gzip.open(name+".gz")
         else:
             tmp = open(name)
+#       datfile = tmp.read().replace('\r','')
         datfile = tmp.read()
     except:
         tmp.close()
@@ -62,6 +66,11 @@ def read_dataline(name):
 
     datlines = datfile.split('\n')
     num = len(datlines) -1
+
+    # 配列の各要素から CR を削除
+#   for i in range(num):
+#       print datlines[i]
+#      #datlines[i] = datlines[i].rstrip('r')
 
     return datlines,num
 
@@ -85,6 +94,7 @@ def read_dataline1(name):
             tmp = gzip.open(name+".gz")
         else:
             tmp = open(name)
+#       datfile = tmp.read().replace('\r','')
         datfile = tmp.read()
     except:
         tmp.close()
@@ -94,6 +104,10 @@ def read_dataline1(name):
 
     datalines0 = datfile.split('\n')
     num0 = len(datalines0) -1
+
+#   # 配列の各要素から CR を削除
+#   for i in range(num0):
+#       datalines0[i] = datalines0[i].rstrip('r')
 
     j = 0
     datalines = []

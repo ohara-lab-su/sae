@@ -72,12 +72,14 @@ class ReadFdmInp(object):
         calculation_reg = re.compile('^.*Calculation.*',re.IGNORECASE)
         conv_out_reg = re.compile('^.*Conv_out.*',re.IGNORECASE)
         convolution_reg = re.compile('^.*Convolution.*',re.IGNORECASE)
+        center_abs_reg = re.compile('^.*Center_abs.*',re.IGNORECASE)
 
         self.ispin = 1
         self.allsite = False
         self.energygpho = False
         self.position = []
         self.convolution = False
+        self.center_abs = False
 
         for i in range(self.num):
 
@@ -116,6 +118,10 @@ class ReadFdmInp(object):
             # convolution flag
             if bool(convolution_reg.match(self.datlines[i])):
                 self.convolution = True
+
+            # center_abs flag
+            if bool(center_abs_reg.match(self.datlines[i])):
+                self.center_abs = True
 
             # Absorber
             if bool(absorber_reg.match(self.datlines[i])):

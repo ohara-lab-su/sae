@@ -28,8 +28,9 @@ setup(
 #       package_dir  = {'':'StructureAnalysisEnvironment'},
         version = version,
         author = 'K.NAKADA',
-        author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
+#       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
+        author_email = 'kengo.nakada@gmail.com',
         license = 'MIT',
-#       platforms = ['linux','OSX'],
+#       platforms = ['linux','OSX','Window'],
 )
 

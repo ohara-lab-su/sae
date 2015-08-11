@@ -119,6 +119,8 @@ def options():
 #   parser = optparse.OptionParser()
     parser = argparse.ArgumentParser()
     parser.add_argument(  '-i','--input', dest='INPUT',)
+    parser.add_argument(  '-c','--convolution',)
+    parser.add_argument(  '-t','--text',)
     parser.add_argument(  '--emax',)
     parser.add_argument(  '--emin',)
     parser.add_argument(  '--ymax',)
@@ -141,7 +143,8 @@ def options():
     if not os.path.exists(name):
         name = 'conv.inp'
 
-    return name,options.emax,options.emin,options.ymax,options.dmax,\
+    return name,options.convolution,options.text,\
+            options.emax,options.emin,options.ymax,options.dmax,\
             options.spin,\
             options.fermi,options.nonsubtract,\
             options.broad,options.dos,options.obs,\
@@ -150,10 +153,18 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
 
-    inpname,OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_DMAX,\
+    inpname,convolname,textname,\
+            OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_DMAX,\
             FLAG_SPIN,\
             FLAG_fermi,FLAG_subt,\
             FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE,WEDOS = options()
+
+    if inpname:
+        print "INP name        =",inpname
+    if textname:
+        print "TEXT name       =",textname
+    if convolname:
+        print "Convolution file=",convolname
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
@@ -207,12 +218,22 @@ if __name__ == '__main__':
 
 
     ## 計算結果の読み込み (平均化モード のときは最初に指定したabsorberから)
+    if convolname:
+        cn = convolname
+    else:
+        cn = filout
+
+    if textname:
+        tn = textname
+    else:
+        tn = filout
+
+    txt = SAE.ReadFdm(tn,'.txt')  # Read Edge and Efermi
+    conv = SAE.ReadFdmConv(cn,'_conv.txt')
+
     if AV:
         txt = SAE.ReadFdm(filout+'_'+str(AV[0]),'.txt')
         conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]),'_conv.txt')
-    else:
-        txt = SAE.ReadFdm(filout,'.txt')
-        conv = SAE.ReadFdmConv(filout,'_conv.txt')
 
     ############################################################################
     # 平均化モードのとき txt インスタンスの結果を上書き(平均の結果にする)

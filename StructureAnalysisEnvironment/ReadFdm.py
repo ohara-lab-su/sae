@@ -8,6 +8,10 @@
 #
 ################################################################################
 #
+# 2015.08.11
+#  fdmnes_win64.exe を windows7 で動かした時と windows8 で動かしたときの
+#  動作の違いを吸収するように重名に記述を変更しなおした。
+#
 # 2015.06.23 startup
 #
 ################################################################################
@@ -56,9 +60,12 @@ class ReadFdm(object):
                 break
 
         # 一行目のイコールで結ばれた値=変数名を、動的に変数＝値としてセット
-        for i in range(count,len(self.datlines[0].split())):
-            var = str(self.datlines[0].split()[i].strip()).replace(',','')
-            value = float(self.datlines[0].split()[i-count])
+       #for i in range(count,len(self.datlines[0].split())):
+           #var = str(self.datlines[0].split()[i].strip()).replace(',','')
+           #value = float(self.datlines[0].split()[i-count])
+        for i in range(count,len(self.datlines[0].replace(',',' ').split())):
+            var = str(self.datlines[0].replace(',',' ').split()[i].strip())
+            value = float(self.datlines[0].replace(',',' ').split()[i-count])
             self.__dict__[var] = value
 
         for i in range(2,self.num):
