@@ -290,7 +290,7 @@ class ReadVaspDoscar(object):
             if spin == 'dn': spin=1
             if spin == 'down': spin=1
         self.ldos = self.ldos_all[:,l,atom,spin]
-        return self.LDOS
+        return self.ldos
 
 
     ############################################################################
@@ -343,7 +343,7 @@ class ReadVaspDoscar(object):
         oname='OUTCAR'
 
         import StructureAnalysisEnvironment as SAE
-        outcar = SAE.ReadOutcar(oname)
+        outcar = SAE.ReadVaspOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
         ATOMS_J = outcar.get_atoms_j()
@@ -386,7 +386,7 @@ class ReadVaspDoscar(object):
         oname='OUTCAR'
 
         import StructureAnalysisEnvironment as SAE
-        outcar = SAE.ReadOutcar(oname)
+        outcar = SAE.ReadVaspOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
         ATOMS_J = outcar.get_atoms_j()

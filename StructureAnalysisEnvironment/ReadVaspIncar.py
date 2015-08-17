@@ -226,7 +226,7 @@ if __name__ == '__main__':
     if options.INPUT:
         name = parser.INPUT
 
-    incar = ReadIncar()
+    incar = ReadVaspIncar()
 
     TITLE = incar.get_title()
     SYSTEM = incar.get_system()

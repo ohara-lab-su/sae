@@ -218,8 +218,10 @@ class ReadVaspOutcar(object):
                 try:
                     self.nbands = self.nbands
                 except:
-                    self.nbands = int(self.datlines[i].split()[14])
-
+                    try: # for VASP5
+                        self.nbands = int(self.datlines[i].split()[14])
+                    except: # for VASP4
+                        self.nbands = int(self.datlines[i].split()[8])
             # spin
             if bool(spin_reg.match(self.datlines[i])):
                 self.ispin = int(self.datlines[i].split()[2])

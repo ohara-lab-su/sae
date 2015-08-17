@@ -527,7 +527,7 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
     name = options.INPUT
 
-    poscar = ReadPoscar(name)
+    poscar = ReadVaspPoscar(name)
 
     title = poscar.get_title()
     scale = poscar.get_scale()
