@@ -12,40 +12,17 @@
 #
 #  dos = ReadDoscar(filename)
 #
-#  [Method]
-#
-#   ISPIN = dos.get_ispin()
-#   LORBIT = dos.get_lorbit()
-#   NATOM = dos.get_natom()
-#   TITLE =  dos.get_title()
-#   EMAX = dos.get_emax()
-#   EMIN = dos.get_emin()
-#   NEDOS = dos.get_nedos()
-#   EFERMI = dos.get_efermi()
-#
-#   ENG = dos.get_eng()
-#   TDOS = dos.get_tdos(spin=0)
-#   INTTDOS = dos.get_inttdos(spin=0)
-#   PDOS = dos.get_pdos(lm=0,spin=0)
-#   LDOS = dos.get_ldos(l=0,spin=0)   # LORIBT=11 の時は自動で要素をsumする
-#
-#   get_ldos_all
-#   get_pdos_all
-#
-#   get_tdos_spd
-#   get_ldos_ion
-#
-#  Vldos.py のための準備
-#
-#  拙作 Vldos.pl と同等の機能を python で実装するためのあれこれ
-#  Vldos.pl 機能は単品と言うよりは vplot_DOS 関係で matplotlib を
-#  使いたいのが目的で、そのための実装とする
 #
 # 関連クラス)
 #  ReadEigenval.py
 #  ReadOutcar.py
 #
 ################################################################################
+#
+# 2015.08.17
+#   古いバージョンをブランチ(動作版のバックアップ)
+#   新しいブランチ版はインスタンス重視に切り替える
+#   ---> ほぼ全面書き直し(昔のスタイルに戻る)
 #
 # 2015.06.24
 #  if statement を少し書き直し
@@ -117,419 +94,239 @@ __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.0.11"
+__version__    = "0.1.00"
 ################################################################################
 
-import sys
-import os
-import gzip
+#import sys
+#import os
+#import gzip
 import re
 import numpy as np
 
 #from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadVaspDoscar(object):
 
-    def __init__(self,name):
+    def __init__(self,name='DOSCAR'):
 
-        if os.path.exists(name):
-            GZIP=False
-        elif os.path.exists(name+".gz"):
-            GZIP=True
+        self.datlines, self.num = SAE.read_dataline(name)
+
+        # NATOM, VASP 的には正式には NSIONS に相当
+        self.natom = int(self.datlines[0].split()[0])
+
+        # SYSTEM
+        self.title = re.sub(' *$','', str(self.datlines[4]) )
+
+        self.emax = float(self.datlines[5].split()[0]) # EMAX
+        self.emin = float(self.datlines[5].split()[1]) # EMIN
+        self.nedos = int(self.datlines[5].split()[2]) # NEDOS
+        self.efermi = float(self.datlines[5].split()[3]) # EFERMI
+
+        # DOSCAR のTOTAL-DOS 情報列からspin情報を推測する
+        if len(self.datlines[7].split()) >= 4: # 4列以上だと SPIN ありは確実
+            self.nspin = 2
         else:
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+            self.nspin = 1
 
-        try:
-            if GZIP:
-                tmp = gzip.open(name+".gz")
+        # l 分解 or lm 分解のチェック(一番最後の行でチェックする)
+        if len(self.datlines[6+self.nedos+1].split()) >= 10:
+            self.lorbit = 11  # or 1
+        else:
+            self.lorbit = 10  # or 0
+
+
+        #######################################################################
+        # for DOS , atom と spin は 0 から始める(spin=0 --> up-spin)
+        #
+        l_max = 3
+        if self.lorbit >= 11:
+            lm_max = 9
+        else:
+            lm_max = 3
+
+        self.eng = np.zeros((self.nedos))
+
+        self.tdos_all = np.zeros((self.nedos,self.nspin))
+        self.intdos_all = np.zeros((self.nedos,self.nspin))
+
+        self.pdos_all = np.zeros((self.nedos,lm_max,self.natom,self.nspin))
+        self.ldos_all = np.zeros((self.nedos,l_max,self.natom,self.nspin))
+
+        for i in range(self.nedos):
+            self.eng[i] = float(self.datlines[6+i].split()[0]) # from TDOS
+
+            dos_line = self.datlines[6+i].split()
+
+            if self.nspin >= 2:
+                self.tdos_all[i,0] = float(dos_line[1])  # up-sin
+                self.tdos_all[i,1] = float(dos_line[2])  # down-spin
+                self.intdos_all[i,0] = float(dos_line[3])
+                self.intdos_all[i,1] = float(dos_line[4])
             else:
-                tmp = open(name)
-            datfile = tmp.read()
-        except:
-            tmp.close()
-            sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
-        finally:
-            tmp.close()
+                self.tdos_all[i,0] = float(dos_line[1])
+                self.intdos_all[i,0] = float(dos_line[2])
 
-        self.datlines = datfile.split('\n')
 
-    # DOSCAR のTOTAL-DOS 情報列からspin情報を推測する
+            for atom0 in range(self.natom):
+
+                tmp = self.datlines[6+self.nedos*(atom0+1)+1+i+atom0].split()
+
+                if self.lorbit >= 11:
+                    f = 1
+
+                    ### 0:s
+                    for lm in range(0,1):
+                        for ispin in range(self.nspin):
+                            self.pdos_all[i,lm,atom0,ispin] = float(tmp[f])
+                            self.ldos_all[i,0,atom0,ispin] = \
+                                    self.ldos_all[i,0,atom0,ispin] + float(tmp[f])
+                            f += 1
+
+                    ### 1:p_y,2:p_z,3:p_x
+                    for lm in range(1,4):
+                        for ispin in range(self.nspin):
+                            self.pdos_all[i,lm,atom0,ispin] = float(tmp[f])
+                            self.ldos_all[i,1,atom0,ispin] = \
+                                    self.ldos_all[i,1,atom0,ispin] + float(tmp[f])
+                            f += 1
+
+                    ### 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
+                    for lm in range(4,9):
+                        for ispin in range(self.nspin):
+                            self.pdos_all[i,lm,atom0,ispin] = float(tmp[f])
+                            self.ldos_all[i,2,atom0,ispin] = \
+                                    self.ldos_all[i,2,atom0,ispin] + float(tmp[f])
+                            f += 1
+
+                else:
+                   f = 1
+                   for lm in range(lm_max):
+                       # 0:eng
+                       # 1:lm=0: s
+                       # 2:lm=1: p
+                       # 3:lm=2: d
+                       for ispin in range(self.nspin):
+                           self.pdos_all[i,lm,atom0,ispin] = float(tmp[f])
+                           f += 1
+
+                   self.ldos_all = self.pdos_all
+
+    ############################################################################
     def get_ispin(self):
-        tmp = self.datlines[7].split()
-        if len(tmp) >= 4: # 4列以上だと SPIN ありは確実
-            self.NSPIN = 2
-        else:
-            self.NSPIN = 1
-        return self.NSPIN
+        return self.nspin
 
-    def get_natom(self): # VASP 的には NSIONS に相当
-        tmp = self.datlines[0].split()      # NATOM
-        self.N_ATOM = int(tmp[0])
-        return self.N_ATOM
+    def get_natom(self):
+        return self.natom
 
-    def get_title(self): # VASP 的には SYSTEM に相当かと
-        src = str(self.datlines[4])  # SYSTEM
-        self.SYSTEM = re.sub(' *$','',src)
-        return self.SYSTEM
+    def get_title(self):
+        return self.title
 
-    # EMAX をゲット
+    def get_system(self):
+        return self.title
+
     def get_emax(self):
-        tmp = self.datlines[5].split()
-        self.EMAX = float(tmp[0])  # EMAX
-        return self.EMAX
+        return self.emax
 
-    # EMIN をゲット
     def get_emin(self):
-        tmp = self.datlines[5].split()
-        self.EMIN = float(tmp[1])  # EMIN
-        return self.EMIN
+        return self.emin
 
-    # NEDOS をゲット
     def get_nedos(self):
-        tmp = self.datlines[5].split()
-        self.NEDOS = int(tmp[2])  # NEDOS
-        return self.NEDOS
+        return self.nedos
 
-    # EFERMI をゲット
     def get_efermi(self):
-        tmp = self.datlines[5].split()
-        self.efermi = float(tmp[3])  # EFERMI
         return self.efermi
 
-    # LORBIT ( 10 or 11 を返す: 0 は 10 , 1 は 11 を仮定)
     def get_lorbit(self):
-        NEDOS = self.get_nedos()
-        tmp = self.datlines[6+NEDOS+1].split()
-        if len(tmp) >= 10:
-            self.LORBIT = 11  # or 1
-        else:
-            self.LORBIT = 10  # or 0
+        return self.lorbit
 
-        return self.LORBIT
-
-    # ENG ( by TDOS )
     def get_eng(self):
-        NEDOS = self.get_nedos()
-        eng = np.zeros((NEDOS))
-        for i in range(NEDOS):
-            dos_line = self.datlines[6+i].split()
-            eng[i] = float(dos_line[0])
-
-        self.ENG = eng[:]
-        return self.ENG
+        return self.eng
 
     ############################################################################
-    # TOTAL-DOS
-    # 注意) spin=0 --> up-spin
-    def get_tdos(self,spin=0):
+    def get_ldos_all(self):
+        self.ldos = self.ldos_all
+        return self.ldos
 
-        NSPIN = self.get_ispin()
-        NEDOS = self.get_nedos()
-
-        eng = np.zeros((NEDOS))
-        dos = np.zeros((NEDOS,NSPIN))
-        intdos = np.zeros((NEDOS,NSPIN))
-
-        for i in range(NEDOS):
-            dos_line = self.datlines[6+i].split()
-
-            eng[i] = float(dos_line[0])
-            if NSPIN >= 2:
-                dos[i,0]    = float(dos_line[1])  # up-sin
-                dos[i,1]    = float(dos_line[2])  # down-spin
-                intdos[i,0] = float(dos_line[3])
-                intdos[i,1] = float(dos_line[4])
-            else:
-                dos[i,0]    = float(dos_line[1])
-                intdos[i,0] = float(dos_line[2])
-
-        self.TDOS = dos[:,spin]
-        return self.TDOS
-
-    ############################################################################
-    # INT-TOTAL-DOS
-    # 注意) spin=0 --> up-spin
-    def get_inttdos(self,spin=0):
-
-        NSPIN = self.get_ispin()
-        NEDOS = self.get_nedos()
-
-        eng = np.zeros((NEDOS))
-        dos = np.zeros((NEDOS,NSPIN))
-        intdos = np.zeros((NEDOS,NSPIN))
-
-        for i in range(NEDOS):
-            dos_line = self.datlines[6+i].split()
-
-            eng[i] = float(dos_line[0])
-            if NSPIN >= 2:
-                pass
-                dos[i,0]    = float(dos_line[1])
-                dos[i,1]    = float(dos_line[2])
-                intdos[i,0] = float(dos_line[3])
-                intdos[i,1] = float(dos_line[4])
-            else:
-                dos[i,0]    = float(dos_line[1])
-                intdos[i,0] = float(dos_line[2])
-
-        self.INTTDOS = intdos[:,spin]
-        return self.INTTDOS
-
-    ############################################################################
-    # PDOS
-    # 注意) atom と spin は 0 から始める(spin=0 --> up-spin)
-    # 注意) LDOS までしか計算してなくてもエラーは吐かずに LDOS を返す
-    def get_pdos(self,lm=0,atom=0,spin=0):
-
-        NEDOS = self.get_nedos()
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
-
-        if LORBIT >= 11:
-            lm_max = 9
-        else:
-            lm_max = 3
-
-        pdos = np.zeros((NEDOS,lm_max,NSPIN))
-        eng = np.zeros((NEDOS))
-
-        for i in range(NEDOS):
-            tmp = self.datlines[6+NEDOS*(atom+1)+1+i+atom].split()
-            eng[i] = float(tmp[0])
-            if LORBIT >= 11:
-               f = 1
-               for lm_local in range(lm_max):
-                   # 0: eng
-                   # 1: lm=0 s
-                   # 2: lm=1 p_y
-                   # 3: lm=2 p_z
-                   # 4: lm=3 p_x
-                   # 5: lm=4 d_xy
-                   # 6: lm=5 d_yz
-                   # 7: lm=6 d_3z2-r2
-                   # 8: lm=7 d_xz
-                   # 9: lm=8 d_x2-y2
-                   for ispin in range(NSPIN):
-                       pdos[i,lm_local,ispin] = float(tmp[f])
-                       f += 1
-            else:
-               f = 1
-               for lm_local in range(lm_max):
-                   # 0:eng
-                   # 1:lm=0: s
-                   # 2:lm=1: p
-                   # 3:lm=2: d
-                   for ispin in range(NSPIN):
-                       pdos[i,lm_local,ispin] = float(tmp[f])
-                       f += 1
-
-        self.PDOS = pdos[:,lm,spin]
-        return self.PDOS
-
-    ############################################################################
-    # PDOS_ALL
-    # 注意) atom と spin は 0 から始める(spin=0 --> up-spin)
-    # 注意) LDOS までしか計算してなくてもエラーは吐かずに LDOS を返す
     def get_pdos_all(self):
+        self.pdos = self.pdos_all
+        return self.pdos
 
-        NEDOS = self.get_nedos()
-        NATOM = self.get_natom()
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
+    def get_tdos(self,spin=0):
+        if isinstance(spin, str):
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.tdos = self.tdos_all[:,spin]
+        return self.tdos
 
-        if LORBIT >= 11:
-            lm_max = 9
-        else:
-            lm_max = 3
+    def get_inttdos(self,spin=0):
+        if isinstance(spin, str):
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.inttdos = self.intdos_all[:,spin]
+        return self.inttdos
 
-        pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
-        eng = np.zeros((NEDOS,NATOM))
 
-        for atom0 in range(NATOM):
-           for i in range(NEDOS):
-               tmp = self.datlines[6+NEDOS*(atom0+1)+1+i+atom0].split()
-               eng[i] = float(tmp[0])
-               if LORBIT >= 11:
-                  f = 1
-                  for lm in range(lm_max):
-                      # 0:eng
-                      # 1:lm=0: s
-                      # 2:lm=1: p_y
-                      # 3:lm=2: p_z
-                      # 4:lm=3: p_x
-                      # 5:lm=4: d_xy
-                      # 6:lm=5: d_yz
-                      # 7:lm=6: d_3z2-r2
-                      # 8:lm=7: d_xz
-                      # 9:lm=8: d_x2-y2
-                      for ispin in range(NSPIN):
-                          pdos[i,lm,atom0,ispin] = float(tmp[f])
-                          f += 1
-               else:
-                  f = 1
-                  for lm in range(lm_max):
-                      # 0:eng
-                      # 1:lm=0: s
-                      # 2:lm=1: p
-                      # 3:lm=2: d
-                      for ispin in range(NSPIN):
-                          pdos[i,lm,atom0,ispin] = float(tmp[f])
-                          f += 1
+    def get_pdos(self,lm=0,atom=0,spin=0):
+        if isinstance(spin, str):
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.pdos = self.pdos_all[:,lm,atom,spin]
+        return self.pdos
 
-        self.PDOS = pdos
-        return self.PDOS
+    def get_ldos(self,l=0,atom=0,spin=0):
+        if isinstance(l, str):
+            if l == 's': l=0
+            if l == 'p': l=1
+            if l == 'd': l=2
+        if isinstance(spin, str):
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.ldos = self.ldos_all[:,l,atom,spin]
+        return self.LDOS
+
 
     ############################################################################
-    # LDOS
-    # 注意) atom と spin は 0 から始める(spin=0 --> up-spin)
-    # 注意) PDOS で計算していても、PDOS から LDOS を算出して返す
-    def get_ldos(self,l=0,atom=0,spin=0):
+    # TDOS_spd, (すべての原子種のs,p,d を足し合わせる,物理的にはほとんど意味が無い解析)
+    def get_tdos_spd(self,l=0,spin=0):
 
         if isinstance(l, str):
             if l == 's': l=0
             if l == 'p': l=1
             if l == 'd': l=2
 
-        NEDOS = self.get_nedos()
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
-
         l_max = 3
-        ldos = np.zeros((NEDOS,l_max,NSPIN))
-        eng = np.zeros((NEDOS))
+        tdos_spd = np.zeros((self.nedos,l_max,self.nspin))
 
-        for i in range(NEDOS):
-            tmp = self.datlines[6+NEDOS*(atom+1)+1+i+atom].split()
-            eng[i] = float(tmp[0])
-            if LORBIT >= 11:
-                f = 1
-                ### 0:s
+        for atom0 in range(self.natom):
+            if self.lorbit >= 11:
                 for lm in range(0,1):
-                    for ispin in range(NSPIN):
-                        ldos[i,0,ispin] = float(tmp[f])
-                        f += 1
-                ### 1:p_y,2:p_z,3:p_x
+                    for ispin in range(self.nspin):
+                        tdos_spd[:,0,ispin] = \
+                                tdos_spd[:,0,ispin] + self.pdos_all[:,lm,atom0,ispin]
                 for lm in range(1,4):
-                    for ispin in range(NSPIN):
-                        ldos[i,1,ispin] = ldos[i,1,ispin] + float(tmp[f])
-                        f += 1
-                ### 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
+                    for ispin in range(self.nspin):
+                        tdos_spd[:,1,ispin] = \
+                                tdos_spd[:,1,ispin] + self.pdos_all[:,lm,atom0,ispin]
                 for lm in range(4,9):
-                    for ispin in range(NSPIN):
-                        ldos[i,2,ispin] = ldos[i,2,ispin] + float(tmp[f])
-                        f += 1
+                    for ispin in range(self.nspin):
+                        tdos_spd[:,2,ispin] = \
+                                tdos_spd[:,2,ispin] + self.pdos_all[:,lm,atom0,ispin]
             else:
-                f = 1
                 for l in range(l_max):
-                    for ispin in range(NSPIN):
-                        ldos[i,l,ispin] = float(tmp[f])
-                        f += 1
+                    for ispin in range(self.nspin):
+                        tdos_spd[:,l,ispin] = \
+                                tdos_spd[:,l,ispin] + self.pdos_all[:,l,atom0,ispin]
 
-        self.LDOS = ldos[:,l,spin]
-        return self.LDOS
-
-    ############################################################################
-    # LDOS_ALL
-    # spin と l は読んでいるが意味は無い
-    # 注意) atom と spin は 0 から始める(spin=0 --> up-spin)
-    def get_ldos_all(self):
-
-        NEDOS = self.get_nedos()
-        NATOM = self.get_natom()
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
-
-        l_max = 3
-        ldos = np.zeros((NEDOS,l_max,NATOM,NSPIN))
-        eng = np.zeros((NEDOS,NATOM))
-
-        for atom0 in range(NATOM):
-            for i in range(NEDOS):
-                tmp = self.datlines[6+NEDOS*(atom0+1)+1+i+atom0].split()
-                eng[i] = float(tmp[0])
-                if LORBIT >= 11:
-                    f = 1
-                    ### 0:s
-                    for lm in range(0,1):
-                        for ispin in range(NSPIN):
-                            ldos[i,0,atom0,ispin] = \
-                                    ldos[i,0,atom0,ispin] + float(tmp[f])
-                            f += 1
-                    ### 1:p_y,2:p_z,3:p_x
-                    for lm in range(1,4):
-                        for ispin in range(NSPIN):
-                            ldos[i,1,atom0,ispin] = \
-                                    ldos[i,1,atom0,ispin] + float(tmp[f])
-                            f += 1
-                    ### 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
-                    for lm in range(4,9):
-                        for ispin in range(NSPIN):
-                            ldos[i,2,atom0,ispin] = \
-                                    ldos[i,2,atom0,ispin] + float(tmp[f])
-                            f += 1
-                else:
-                    f = 1
-                    for l in range(l_max):
-                        for ispin in range(NSPIN):
-                            ldos[i,l,atom0,ispin] = tmp[f] # 0:s
-                            f += 1
-
-        self.LDOS = ldos
-        return self.LDOS
-
-    ############################################################################
-    # TDOS_spd, (すべての原子種のs,p,d を足し合わせる,物理的にはほとんど意味が無い解析)
-    # 注意) spin は 0 から始める (spin=0 --> up-spin)
-    def get_tdos_spd(self,l=0,spin=0):
-
-        NEDOS = self.get_nedos()
-        NATOM = self.get_natom()
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
-
-        l_max = 3
-
-        tdos_spd = np.zeros((NEDOS,l_max,NSPIN))
-        eng = np.zeros((NEDOS,NATOM))
-
-        for atom0 in range(NATOM):
-            for i in range(NEDOS):
-                tmp = self.datlines[6+NEDOS*(atom0+1)+1+i+atom0].split()
-                eng[i] = float(tmp[0])
-                if LORBIT >= 11:
-                    f = 1
-                    ### 0:s
-                    for lm in range(0,1):
-                        for ispin in range(NSPIN):
-                            tdos_spd[i,0,ispin] = \
-                                    tdos_spd[i,0,ispin] + float(tmp[f])
-                            f += 1
-                    ### 1:p_y,2:p_z,3:p_x
-                    for lm in range(1,4):
-                        for ispin in range(NSPIN):
-                            tdos_spd[i,1,ispin] = \
-                                    tdos_spd[i,1,ispin] + float(tmp[f])
-                            f += 1
-                    ### 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
-                    for lm in range(4,9):
-                        for ispin in range(NSPIN):
-                            tdos_spd[i,2,ispin] = \
-                                    tdos_spd[i,2,ispin] + float(tmp[f])
-                            f += 1
-                else:
-                    f = 1
-                    for l in range(l_max):
-                        for ispin in range(NSPIN):
-                            tdos_spd[i,l,ispin] = \
-                                    tdos_spd[i,l,ispin] + float(tmp[f])
-                            f += 1
-
-        self.TDOS_SPD = tdos_spd[:,l,spin]
-        return self.TDOS_SPD
+        self.tdos_spd = tdos_spd[:,l,spin]
+        return self.tdos_spd
 
     ############################################################################
     # LDOS_ion (サイトごとのLDOSを取る), ReadOutcar.py を読む
@@ -538,11 +335,12 @@ class ReadVaspDoscar(object):
     #       spin は 0 から始める (spin=0 --> up-spin)
     def get_ldos_ion(self,l=0,ion=0,spin=0):
 
-        oname='OUTCAR'
+        if isinstance(spin, str):
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
 
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
-        NEDOS = self.get_nedos()
+        oname='OUTCAR'
 
         import StructureAnalysisEnvironment as SAE
         outcar = SAE.ReadOutcar(oname)
@@ -551,44 +349,31 @@ class ReadVaspDoscar(object):
         ATOMS_J = outcar.get_atoms_j()
 
         l_max = 3
-        ldos_ion = np.zeros((NEDOS,l_max,NION,NSPIN))
-        eng = np.zeros((NEDOS,NATOM))
+        ldos_ion = np.zeros((self.nedos,l_max,NION,self.nspin))
 
         for atom in range(NATOM):
             ion1 = ATOMS_J[atom]
-            for i in range(NEDOS):
-                tmp = self.datlines[6+NEDOS*(atom+1)+1+i+atom].split()
-                eng[i] = float(tmp[0])
-                if LORBIT >= 11:
-                    f = 1
-                    ### 0:s
-                    for lm in range(0,1):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,0,ion1,ispin] = \
-                                    ldos_ion[i,0,ion1,ispin] + float(tmp[f])
-                            f += 1
-                    ### 1:p_y,2:p_z,3:p_x
-                    for lm in range(1,4):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,1,ion1,ispin] = \
-                                    ldos_ion[i,1,ion1,ispin] + float(tmp[f])
-                            f += 1
-                    ### 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
-                    for lm in range(4,9):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,2,ion1,ispin] = \
-                                    ldos_ion[i,2,ion1,ispin] + float(tmp[f])
-                            f += 1
-                else:
-                    f = 1
-                    for l in range(l_max):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,l,ion1,ispin] = \
-                                    ldos_ion[i,l,ion1,ispin] + float(tmp[f])
-                            f += 1
+            if self.lorbit >= 11:
+                for lm in range(0,1):
+                    for ispin in range(self.nspin):
+                        ldos_ion[:,0,ion1,ispin] = \
+                                ldos_ion[:,0,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
+                for lm in range(1,4):
+                    for ispin in range(self.nspin):
+                        ldos_ion[:,1,ion1,ispin] = \
+                                ldos_ion[:,1,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
+                for lm in range(4,9):
+                    for ispin in range(self.nspin):
+                        ldos_ion[:,2,ion1,ispin] = \
+                                ldos_ion[:,2,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
+            else:
+                for l in range(l_max):
+                    for ispin in range(self.nspin):
+                        ldos_ion[:,l,ion1,ispin] = \
+                                ldos_ion[:,l,ion1,ispin] + self.pdos_all[:,l,atom,ispin]
 
-        self.LDOS_ION = ldos_ion[:,l,ion,spin]
-        return self.LDOS_ION
+        self.ldos_ion= ldos_ion[:,l,ion,spin]
+        return self.ldos_ion
 
     ############################################################################
     # LDOS_ion (サイトごとのLDOSを取る), ReadOutcar.py を読む
@@ -600,10 +385,6 @@ class ReadVaspDoscar(object):
 
         oname='OUTCAR'
 
-        NSPIN = self.get_ispin()
-        LORBIT = self.get_lorbit()
-        NEDOS = self.get_nedos()
-
         import StructureAnalysisEnvironment as SAE
         outcar = SAE.ReadOutcar(oname)
         NATOM = outcar.get_natom()
@@ -611,44 +392,32 @@ class ReadVaspDoscar(object):
         ATOMS_J = outcar.get_atoms_j()
 
         l_max = 3
-        ldos_ion = np.zeros((NEDOS,l_max,NION,NSPIN))
-        eng = np.zeros((NEDOS,NATOM))
+        ldos_ion = np.zeros((self.nedos,l_max,NION,self.nspin))
 
         for atom in range(NATOM):
             ion1 = ATOMS_J[atom]
-            for i in range(NEDOS):
-                tmp = self.datlines[6+NEDOS*(atom+1)+1+i+atom].split()
-                eng[i] = float(tmp[0])
-                if LORBIT >= 11:
-                    f = 1
-                    ### 0:s
+            for i in range(self.nedos):
+                if self.lorbit >= 11:
                     for lm in range(0,1):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,0,ion1,ispin] = \
-                                    ldos_ion[i,0,ion1,ispin] + float(tmp[f])
-                            f += 1
-                    ### 1:p_y,2:p_z,3:p_x
+                        for ispin in range(self.nspin):
+                            ldos_ion[:,0,ion1,ispin] = \
+                                    ldos_ion[:,0,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
                     for lm in range(1,4):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,1,ion1,ispin] = \
-                                    ldos_ion[i,1,ion1,ispin] + float(tmp[f])
-                            f += 1
-                    ### 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
+                        for ispin in range(self.nspin):
+                            ldos_ion[:,1,ion1,ispin] = \
+                                    ldos_ion[:,1,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
                     for lm in range(4,9):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,2,ion1,ispin] = \
-                                    ldos_ion[i,2,ion1,ispin] + float(tmp[f])
-                            f += 1
+                        for ispin in range(self.nspin):
+                            ldos_ion[:,2,ion1,ispin] = \
+                                    ldos_ion[i,2,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
                 else:
-                    f = 1
                     for l in range(l_max):
-                        for ispin in range(NSPIN):
-                            ldos_ion[i,l,ion1,ispin] = \
-                                    ldos_ion[i,l,ion1,ispin] + float(tmp[f])
-                            f += 1
+                        for ispin in range(self.nspin):
+                            ldos_ion[:,l,ion1,ispin] = \
+                                    ldos_ion[:,l,ion1,ispin] + self.pdos_all[:,lm,atom,ispin]
 
-        self.LDOS_ION_ALL = ldos_ion
-        return self.LDOS_ION_ALL
+        self.ldos_ion_all = ldos_ion
+        return self.ldos_ion_all
 
 
 ################################################################################
@@ -681,15 +450,14 @@ if __name__ == '__main__':
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
 
-    print "ISPIN  = ",NSPIN
-    print "LORBIT = ",LORBIT
-    print "NATOM  = ",NATOM
-    print "TITLE  = ",TITLE
-    print "EMAX   = ",EMAX
-    print "EMIN   = ",EMIN
-    print "NEDOS  = ",NEDOS
-    print "EFERMI = ",EFERMI
-
+    print "ISPIN  = ",dos.nspin,NSPIN
+    print "LORBIT = ",dos.lorbit,LORBIT
+    print "NATOM  = ",dos.natom,NATOM
+    print "TITLE  = ",dos.title,TITLE
+    print "EMAX   = ",dos.emax,EMAX
+    print "EMIN   = ",dos.emin,EMIN
+    print "NEDOS  = ",dos.nedos,NEDOS
+    print "EFERMI = ",dos.efermi,EFERMI
 
     ENG = dos.get_eng()
    #TDOS = dos.get_tdos(0)                   # spin=0 (up-spin)

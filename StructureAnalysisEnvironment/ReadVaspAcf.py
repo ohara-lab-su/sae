@@ -39,7 +39,7 @@ class ReadVaspAcf(object):
 
         self.datlines, self.num = SAE.read_dataline(acf)
 
-        if isinstance(poscar, SAE.ReadPoscar):
+        if isinstance(poscar, SAE.ReadVaspPoscar):
             self.poscar = poscar
             self.natom = self.poscar.natom
             self.nion = self.poscar.nion
