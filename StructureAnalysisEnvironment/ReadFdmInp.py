@@ -90,7 +90,7 @@ class ReadFdmInp(object):
             # Atom TAG があるときは停止(未対応)
             if bool(atom_reg.match(self.datlines[i])) \
                     and not bool(comment_reg.match(self.datlines[i])):
-                sys.exit("STOP: non support Atom tag")
+                sys.exit("STOP(ReadFdmInp): non support Atom tag")
 
             # Magnetism ( Atom タグがない Magnetism は SOC のみ )
             if bool(magnetism_reg.match(self.datlines[i])):
@@ -139,7 +139,7 @@ class ReadFdmInp(object):
 
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i+1].split()) == 6:
-                    sys.exit("STOP: a,b,c,alpha,beta,gamma INPUT LINE error")
+                    sys.exit("STOP(ReadFdmInp): a,b,c,alpha,beta,gamma INPUT LINE error")
 
                 i += 1
 

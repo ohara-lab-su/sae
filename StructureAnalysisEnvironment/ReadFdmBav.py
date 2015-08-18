@@ -58,7 +58,7 @@ class ReadFdmBav(object):
                 if self.datlines[i].split()[0] == 'ngroup':
                     self.ngroup = int(self.datlines[i].split()[2].replace(',',''))
                 else:
-                    sys.exit("STOP: ngroup tag not found.")
+                    sys.exit("STOP(ReadFdmBav): ngroup tag not found.")
 
             # 吸収原子の最大のlを探す
             if bool(excited_atom_reg.match(self.datlines[i])):

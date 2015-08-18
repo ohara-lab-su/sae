@@ -8,6 +8,12 @@
 #
 ################################################################################
 #
+# 2015.08.18
+#  lmax の抽出を _bav.txt ファイルではなくて 実際に計算している _sd*.txt
+#  のヘッダから行うように変更。それに伴って _bav.txt の利用を前面停止
+#  ただし、内部的には bavname はそのまま用いる(averageなどで使う)
+#  --> 明示的に指定しない限り bavname は自動で sdname となる
+#
 # 2015.07.02
 #  spin,ylm,intt,等の全出力の対応を含めた一般化
 #
@@ -39,7 +45,7 @@ __version__    = "0.0.1"
 import sys
 #import gzip
 #import os
-#import re
+import re
 import optparse
 import numpy as np
 
@@ -49,9 +55,13 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 class ReadFdmSd(object):
 
-    def __init__(self,sdname,\
-            suffix='_sd0.txt',inpname='read_pdb.inp',\
-            bavname=None,absorber=None,weight=None):
+    def __init__(self,\
+            sdname,\
+            suffix='_sd0.txt',\
+            inpname='read_pdb.inp',\
+            bavname=None,\
+            absorber=None,\
+            weight=None):
 
         if bavname is None:
             bavname = sdname
@@ -61,7 +71,7 @@ class ReadFdmSd(object):
         if absorber is None:
             print "---- ReadFdmSd ----"
             print "sdname + suffix = ",sdname+suffix
-            print "bavname_bav.txt = ",bavname+'_bav.txt'
+#           print "bavname_bav.txt = ",bavname+'_bav.txt'
             print "inpname         = ",inpname
             print "-------------------"
             self.datlines,self.num = SAE.read_dataline(sdname+suffix)
@@ -101,10 +111,19 @@ class ReadFdmSd(object):
         ############################## self.datlines ###########################
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
-        bav = SAE.ReadFdmBav(bavname)
+#       bav = SAE.ReadFdmBav(bavname)
         inp = SAE.ReadFdmInp(inpname)
 
-        self.lmax = int(bav.get_lmax())
+        # get lmax
+        # _sd*.txt で実際に出力されている lmax の最大値をゲットする
+        nl = len(self.datlines[0].split())
+        tmp = self.datlines[0].split()[nl-1]
+        tmp = re.sub('.*\(' ,'',tmp)
+        self.lmax = int(re.sub('\).*','',tmp))
+
+#      # _bav.txt ファイルから吸収原子の lmax を抽出する
+#       self.lmax = int(bav.get_lmax())
+
         self.ispin = int(inp.get_ispin())
         self.mmax = int(2*self.lmax+1)
 
@@ -120,7 +139,13 @@ class ReadFdmSd(object):
         # _sd0.txt の一行目のチェック
         if absorber is None:
             if len(self.datlines[0].split()) != total_row:
-                sys.exit("STOP: unknown type "+name+"_sd0.txt")
+                print "lmax",self.lmax
+                print "ispin",self.ispin
+                print "mmax", self.mmax
+                print "total_row",total_row
+                print "-----------"
+                print len(self.datlines[0].split()),"= ", self.datlines[0]
+                sys.exit("STOP: unknown type "+sdname+suffix)
 
         # すべての row 成分の情報を配列に叩きこむ
         self.ylm   = np.zeros((self.num-1,self.lmax+1,self.mmax,self.ispin))
@@ -166,6 +191,8 @@ class ReadFdmSd(object):
             if l == 'f' and self.lmax >= 3: l = 3
 
         if isinstance(spin,str):
+            if spin == 'nonmag': spin = 0
+            if spin == 'non': spin = 0
             if spin == 'up': spin = 0
             if spin == 'dn': spin = 1
             if spin == 'down': spin = 1

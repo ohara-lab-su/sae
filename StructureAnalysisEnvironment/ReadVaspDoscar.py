@@ -257,6 +257,8 @@ class ReadVaspDoscar(object):
 
     def get_tdos(self,spin=0):
         if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
             if spin == 'up': spin=0
             if spin == 'dn': spin=1
             if spin == 'down': spin=1
@@ -265,6 +267,8 @@ class ReadVaspDoscar(object):
 
     def get_inttdos(self,spin=0):
         if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
             if spin == 'up': spin=0
             if spin == 'dn': spin=1
             if spin == 'down': spin=1
@@ -274,6 +278,8 @@ class ReadVaspDoscar(object):
 
     def get_pdos(self,lm=0,atom=0,spin=0):
         if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
             if spin == 'up': spin=0
             if spin == 'dn': spin=1
             if spin == 'down': spin=1
@@ -285,7 +291,12 @@ class ReadVaspDoscar(object):
             if l == 's': l=0
             if l == 'p': l=1
             if l == 'd': l=2
+            if l == 'S': l=0
+            if l == 'P': l=1
+            if l == 'D': l=2
         if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
             if spin == 'up': spin=0
             if spin == 'dn': spin=1
             if spin == 'down': spin=1
@@ -301,6 +312,9 @@ class ReadVaspDoscar(object):
             if l == 's': l=0
             if l == 'p': l=1
             if l == 'd': l=2
+            if l == 'S': l=0
+            if l == 'P': l=1
+            if l == 'D': l=2
 
         l_max = 3
         tdos_spd = np.zeros((self.nedos,l_max,self.nspin))
@@ -336,6 +350,8 @@ class ReadVaspDoscar(object):
     def get_ldos_ion(self,l=0,ion=0,spin=0):
 
         if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
             if spin == 'up': spin=0
             if spin == 'dn': spin=1
             if spin == 'down': spin=1

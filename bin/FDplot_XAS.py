@@ -118,9 +118,9 @@ def options():
 
 #   parser = optparse.OptionParser()
     parser = argparse.ArgumentParser()
-    parser.add_argument(  '-i','--input', dest='INPUT',)
-    parser.add_argument(  '-c','--convolution',)
-    parser.add_argument(  '-t','--text',)
+    parser.add_argument(  '-i','--input', dest='INPUT',)  # inp ファイル名(自動処理用)
+    parser.add_argument(  '-c','--convolution',)          # convolution ファイル名
+    parser.add_argument(  '-t','--text',)                 # 元ソースファイル名
     parser.add_argument(  '--emax',)
     parser.add_argument(  '--emin',)
     parser.add_argument(  '--ymax',)
@@ -159,10 +159,15 @@ if __name__ == '__main__':
             FLAG_fermi,FLAG_subt,\
             FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE,WEDOS = options()
 
+    # *.inp から各種情報を読み込む
     if inpname:
         print "INP name        =",inpname
+
+    # *.txt (計算結果のconv前のファイル)
     if textname:
         print "TEXT name       =",textname
+
+    # 直接 *_conv.txt を指定して表示する機能
     if convolname:
         print "Convolution file=",convolname
 

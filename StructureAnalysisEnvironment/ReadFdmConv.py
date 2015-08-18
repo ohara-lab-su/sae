@@ -69,7 +69,7 @@ class ReadFdmConv(object):
 
     ############################################################################
     # allsite のときの複数の *_conv.txt の平均を取る
-    # filout = Pd6 のとき allsite ならばとして結果を出力したとする
+    # filout = Pd のとき allsite ならばとして結果を出力したとする
     # Pd_1_conv.txt
     # Pd_2_conv.txt
     # Pd_3_conv.txt
