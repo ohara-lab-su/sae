@@ -27,6 +27,7 @@ __version__    = "0.1.1"
 #
 from ase.io import read,write
 from ase.io.vasp import *
+from ase.io.wien2k import *  ## using cellconst
 #from ase.io.xyz import *
 from ase import Atoms
 
@@ -35,17 +36,6 @@ import sys
 import optparse
 import numpy as np
 
-################################################################################
-# from ase.io.wien2k
-def cellconst(metT):
-    """ metT=np.dot(cell,cell.T) """
-    aa = np.sqrt(metT[0, 0])
-    bb = np.sqrt(metT[1, 1])
-    cc = np.sqrt(metT[2, 2])
-    gamma = np.arccos(metT[0, 1] / (aa * bb)) / np.pi * 180.0
-    beta = np.arccos(metT[0, 2] / (aa * cc)) / np.pi * 180.0
-    alpha = np.arccos(metT[1, 2] / (bb * cc)) / np.pi * 180.0
-    return np.array([aa, bb, cc, alpha, beta, gamma])
 
 ################################################################################
 def write_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
@@ -63,7 +53,7 @@ def write_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
 
     cell = atoms.get_cell()
     metT = np.dot(cell, np.transpose(cell))
-    cell2 = cellconst(metT)
+    cell2 = cellconst(metT)  # from ASE module
 
     a = cell2[0]
     b = cell2[1]
@@ -102,9 +92,9 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
 
 #   atoms = atoms2.copy()
 
-    cell = atoms.get_cell()
+    cell = atoms.get_cell()  # from ASE
     metT = np.dot(cell, np.transpose(cell))
-    cell2 = cellconst(metT)
+    cell2 = cellconst(metT)  # from ASE module
 
     a = cell2[0]
     b = cell2[1]

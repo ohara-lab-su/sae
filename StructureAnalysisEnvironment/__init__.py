@@ -14,7 +14,9 @@
 ### current (using Numpy and Matplotlib )
 
 ### general class
+from Read import *
 from ReadMd import *
+
 
 ### class for VASP (+alpha)
 from ReadVaspOutcar import *
@@ -83,12 +85,16 @@ from ReadPfformat import *
 
 
 ################################################################################
-## function for WIEN2k
+## function
+
+# general
+from write import *
+
+#############################
+
+# function for WIEN2k
 from plot_xas import *
 from plot_sum_xas import *
-
-################################################################################
-### function 1
 
 ### delete function
 from del_commentout import *

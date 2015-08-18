@@ -69,7 +69,7 @@ if __name__ == '__main__':
     print "INPUT STRUCT file  = ",structname
     print "OUTPUT POSCAR file = ",poscarname
 
-    atoms = read(structname,format='struct')
+    atoms = read(structname,format='struct')  # using ASE
     atoms.write(poscarname,format='vasp',direct=True,vasp5=True)
 
 
