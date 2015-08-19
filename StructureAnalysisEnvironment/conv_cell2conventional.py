@@ -49,7 +49,7 @@ def conv_cell2conventional(atoms):
 ##
 def conv_cell2conventional0(atoms):
 
-    cell = atoms.get_cell()  # from ASE
+    cell = atoms.get_cell()  # from ASE ( translation vector)
     metT = np.dot(cell, np.transpose(cell))
     cell2 = cellconst(metT)  # from ASE module
 
@@ -60,7 +60,29 @@ def conv_cell2conventional0(atoms):
     beta = cell2[4]
     gamma = cell2[5]
 
+    print atoms.get_positions()
     natom = len(atoms.get_positions())
+
+    return a,b,c,alpha,beta,gamma,natom
+
+################################################################################
+## ASE 利用 & atoms(cell) は SAEnv の構造
+##
+def conv_cell2conventional1(cell):
+
+    t = cell.t
+    metT = np.dot(cell, np.transpose(t))
+
+    conv = cellconst(metT)  # from ASE module
+
+    a = conv[0]
+    b = conv[1]
+    c = conv[2]
+    alpha = conv[3]
+    beta = conv[4]
+    gamma = conv[5]
+
+    natom = cell.natom
 
     return a,b,c,alpha,beta,gamma,natom
 

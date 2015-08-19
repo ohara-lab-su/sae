@@ -29,7 +29,7 @@ import sys
 #import re
 #import gzip
 #import numpy as np
-#import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -143,6 +143,11 @@ class Read(object):
         else:
             self.ion_local = None
         return self.ion_local
+
+    def write(self,filename=None,code=None,STD=False):
+        if code is None: code=self.code
+        SAEnv.write(self.cell,outname=filename,code=code,STD=False)
+        return
 
 
 ################################################################################

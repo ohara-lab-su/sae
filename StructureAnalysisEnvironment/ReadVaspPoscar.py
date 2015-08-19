@@ -50,6 +50,9 @@
 #
 ################################################################################
 #
+# 2015.08.19
+#  原子番号リストを atoms_number_j に保存しておく(通し番号で)
+#
 # 2015.07.08
 #  supercell 対応で sp_j 変数をインスタンス変数化で追加
 #
@@ -106,7 +109,7 @@ import sys
 import re
 #import gzip
 import numpy as np
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -116,7 +119,7 @@ class ReadVaspPoscar(object):
     ## init and Read POSCAR
     def __init__(self,POSCAR='POSCAR'):
 
-        self.datlines, self.num = SAE.read_dataline(POSCAR)
+        self.datlines, self.num = SAEnv.read_dataline(POSCAR)
 
         self.system = self.datlines[0]
         self.title = self.system
@@ -189,6 +192,15 @@ class ReadVaspPoscar(object):
             for k in range(self.nion):
                 for l in range(int(self.atoms[k])):
                     self.atoms_index_j.append(str(self.atoms_index[k]))
+
+        ###############################################
+        ## atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
+        self.atoms_number_j = []
+        if self.vasp_version == 5:
+            for k in range(self.nion):
+                for l in range(int(self.atoms[k])):
+                    num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
+                    self.atoms_number_j.append(num0)
 
         ###############################################
         ## 全原子数の確認
@@ -316,6 +328,9 @@ class ReadVaspPoscar(object):
     def get_atoms_index_j(self):
         return self.atoms_index_j
 
+    def get_atoms_number_j(self):
+        return self.atoms_number_j
+
     def get_nion(self):
         return self.nion
 
@@ -348,7 +363,7 @@ class ReadVaspPoscar(object):
     # ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
     def conv_rot_euler(self,alpha,beta,gamma):
 
-        R = SAE.rotate_euler(alpha,beta,gamma)
+        R = SAEnv.rotate_euler(alpha,beta,gamma)
 
         # 基本並進ベクトルの変換
         t = self.get_t()
@@ -413,7 +428,7 @@ class ReadVaspPoscar(object):
                 if ABS == 'vasp' or ABS == 'VASP':
                     ABS=True
 
-        self.scale, self.direct = SAE.conv_direct2car0(\
+        self.scale, self.direct = SAEnv.conv_direct2car0(\
                 ABS,\
                 self.scale,\
                 self.t,\
@@ -425,7 +440,7 @@ class ReadVaspPoscar(object):
     # print POSCAR
     def print_poscar(self, outname='POSCAR', STD=True ):
 
-        SAE.print_poscar(\
+        SAEnv.print_poscar(\
                 outname,STD,\
                 self.title,\
                 self.scale,\
@@ -452,7 +467,7 @@ class ReadVaspPoscar(object):
         # direct --> cartesian
         if self.direct:
             ABS=True
-            self.scale,self.direct = SAE.conv_direct2car0(
+            self.scale,self.direct = SAEnv.conv_direct2car0(
                     ABS,\
                     self.scale,\
                     self.t,\
@@ -470,7 +485,7 @@ class ReadVaspPoscar(object):
         sp_j  = np.zeros(self.natom*supers)                # super cell と orijinal cell の対応
 
         # super 用の内部座標作成
-        SAE.make_supercell1(
+        SAEnv.make_supercell1(
                 super_x,\
                 super_y,\
                 super_z,\
@@ -490,7 +505,7 @@ class ReadVaspPoscar(object):
                 fix_sp)
 
         # super 用の基本並進ベクトル/原子種数を作る
-        SAE.make_supercell_param(\
+        SAEnv.make_supercell_param(\
                 super_x,super_y,super_z,\
                 self.nion,\
                 self.atoms,\
@@ -500,7 +515,7 @@ class ReadVaspPoscar(object):
 
         # cartesian --> direct
         if not self.direct:
-            self.scale, self.direct = SAE.conv_car2direct(\
+            self.scale, self.direct = SAEnv.conv_car2direct(\
                     self.scale,\
                     self.t,\
                     self.natom,\
