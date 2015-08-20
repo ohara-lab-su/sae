@@ -185,6 +185,13 @@ class ReadVaspPoscar(object):
         self.nion = len(self.atoms)
 
         ###############################################
+        ## atoms_number[i]
+        ##   atoms_index の原子番号版
+        self.atoms_number = np.zeros(self.nion,dtype=int)
+        for i in range(self.nion):
+            self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
+
+        ###############################################
         ## atoms_index の通し番号版
         ##    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
         self.atoms_index_j = []
@@ -310,6 +317,9 @@ class ReadVaspPoscar(object):
     def get_title(self):
         return self.system
 
+    def get_system(self):
+        return self.system
+
     def get_scale(self):
         return self.scale
 
@@ -324,6 +334,9 @@ class ReadVaspPoscar(object):
 
     def get_atoms_index(self):
         return self.atoms_index
+
+    def get_atoms_number(self):
+        return self.atoms_number
 
     def get_atoms_index_j(self):
         return self.atoms_index_j

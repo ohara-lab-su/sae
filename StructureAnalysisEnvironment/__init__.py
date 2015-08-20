@@ -85,14 +85,21 @@ from ReadPfformat import *
 
 
 ################################################################################
-## function
+### function
 
-# general
+### general
 from write import *
 
-#############################
+from sort_atoms_index_j import *
+from sort_atoms_number_j import *
+from sort_fix import *
+from sort_position import *
 
-# function for WIEN2k
+from chk_pdb_cryst1 import *
+
+###
+
+### function for WIEN2k
 from plot_xas import *
 from plot_sum_xas import *
 
@@ -160,7 +167,7 @@ from print_vasprun import *
 from read_outcar_param import *
 from read_outcar_position import *
 
-## for RMC_pot
+### for RMC_pot
 from read_cfg import *
 from read_cfg_coll import *
 from read_cfg_coll_param import *
@@ -176,8 +183,8 @@ from read_vasprun0 import *
 from read_vasprun1 import *
 from read_vasprun2 import *
 
-## for FDMNES
-from conv_cell2conventional import *
+### for FDMNES
+from conv_cellparam import *
 from print_fdmnes import *
 from print_fdmnes_inp import *
 

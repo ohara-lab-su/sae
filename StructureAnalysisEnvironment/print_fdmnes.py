@@ -40,19 +40,19 @@ import StructureAnalysisEnvironment as SAEnv
 ################################################################################
 ## 独自実装版
 ##
-def print_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
+def print_fdmnes(outname='POSCAR',atoms=None,STD=True,MOL=False):
     return
 
 ################################################################################
 ## ASE 依存版 & atoms は ASEの構造
 ##
-def print_fdmnes0(name='POSCAR',atoms=None,STD=True,MOL=False):
+def print_fdmnes0(outname='POSCAR',atoms=None,STD=True,MOL=False):
 
     if STD:
         out = sys.stdout
     else:
         try:
-            out = open(name+'.fdmnes','w')
+            out = open(outname+'.fdmnes','w')
         except:
             out.close()
             sys.exit("STOP:"+name+".fdmnes file can't open")
@@ -60,7 +60,7 @@ def print_fdmnes0(name='POSCAR',atoms=None,STD=True,MOL=False):
 #   atoms = atoms2.copy()
 
     # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
-    a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cell2conventional0(atoms)
+    a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cellparam0(atoms)
 
     if MOL:
         print >> out, " molecule"
@@ -69,33 +69,38 @@ def print_fdmnes0(name='POSCAR',atoms=None,STD=True,MOL=False):
 
     print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
     for ii in range(nat):
-        zza = atoms.get_atomic_numbers()[ii]
+        zzn = atoms.get_atomic_numbers()[ii]
        #pos = atoms.get_positions()[ii]
         pos = atoms.get_scaled_positions()[ii]
         sym = atoms.get_chemical_symbols()[ii]
-        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym )
+        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym )
 
     if not STD:
         out.close()
 
 ################################################################################
 ## ASE 依存版 & atoms(cell) は SAEnv の構造
+##  ただし、conv_cellparam 内でまだASEを用いているので一部ASE依存
 ##
-def print_fdmnes1(name='POSCAR',cell=None,STD=True,MOL=False):
+##  self.atoms_number_j
+##  self.atoms_index_j
+##  self.position
+##
+##  セルパラメータゲット: conv_cellparam*(cell)
+##
+def print_fdmnes1(outname='POSCAR',cell=None,STD=True,MOL=False):
 
     if STD:
         out = sys.stdout
     else:
         try:
-            out = open(name+'.fdmnes','w')
+            out = open(outname+'.fdmnes','w')
         except:
             out.close()
-            sys.exit("STOP:"+name+".fdmnes file can't open")
-
-#   atoms = atoms2.copy()
+            sys.exit("STOP:"+outname+".fdmnes file can't open")
 
     # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
-    a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cell2conventional1(cell)
+    a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cellparam1(cell)
 
     if MOL:
         print >> out, " molecule"
@@ -104,10 +109,10 @@ def print_fdmnes1(name='POSCAR',cell=None,STD=True,MOL=False):
 
     print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
     for ii in range(nat):
-        zza = atoms.get_atomic_numbers()[ii]
+        zzn = cell.atoms_number_j[ii]
         pos = cell.position[ii,:]
         sym = cell.atoms_index_j[ii]
-        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym )
+        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym )
 
     if not STD:
         out.close()

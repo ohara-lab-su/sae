@@ -11,6 +11,10 @@
 #
 ################################################################################
 #
+# 2015.08.18
+#  ASE で読み込む構造を止めて、拙作 SAEnv を用いる様にした
+#    注意) scale ファクターは 1 を要求
+#
 # 2015.05.18 startup
 #
 ################################################################################
@@ -27,28 +31,32 @@ __version__    = "0.1.1"
 #
 #from ase.io.xyz import *
 
-from ase import Atoms
-from ase.io import read,write
-from ase.io.vasp import *
-from ase.io.wien2k import *  ## using cellconst
+#from ase import Atoms
+#from ase.io import read,write
+#from ase.io.vasp import *
+#from ase.io.wien2k import *  ## using cellconst
 
 import os
 import sys
 import optparse
 #import numpy as np
 
+from ase.io.vasp import *
 import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 def options():
     name = 'POSCAR'
+    outname = 'read_pdb.inp'
 
     parser = optparse.OptionParser()
     parser.add_option( '-i','--ipput',dest='INPUT')
+    parser.add_option( '-o','--outname')
     parser.add_option( '-m','--mol',action='store_true',default=False)
     options,args = parser.parse_args()
 
     if options.INPUT: name = options.INPUT
+    if options.outname: outname = options.outname
     if len(args) > 0: name = str(args[0])
 
     if options.mol:
@@ -62,23 +70,27 @@ def options():
         else:
             sys.exit("STOP: "+name+" file not found")
 
-    return [name,MOL]
+    return name,outname,MOL
 
 ################################################################################
 if __name__ == '__main__':
 
+    name,outname,MOL = options()
 
-    name,MOL = options()
-    atoms = read_vasp(name)
-    #atoms.write('POSCAR.pdb',format='pdb')
+    cell = SAEnv.Read(filename=name,code='VASP')
+    cell.write(code='FDMNES',outname=outname,STD=True)
+    cell.write(code='FDMNES',outname=outname)
 
-    #print atoms.positions
-    #print ""
-    #print atoms.cell
-    #print ""
-    #print atoms.get_scaled_positions()
+## ASE version
+#   atoms = read_vasp(name)
+#   SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
+#   SAEnv.print_fdmnes0(outname=outname,atoms=atoms,STD=False,MOL=MOL)
+#   SAEnv.print_fdmnes_inp0(atoms=atoms,MOL=MOL)
 
-    SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
-    SAEnv.print_fdmnes0(name=name,atoms=atoms,STD=False,MOL=MOL)
-    SAEnv.write_fdmnes_inp0(atoms=atoms,MOL=MOL)
+### SAEnv version
+#   cell = SAEnv.Read(filename = name, code = 'VASP')
+#   SAEnv.print_fdmnes1(outname=outname,cell=cell,MOL=MOL)
+#   SAEnv.print_fdmnes1(outname=outname,cell=cell,STD=False,MOL=MOL)
+#   SAEnv.print_fdmnes_inp1(cell=cell,MOL=MOL)
+
 

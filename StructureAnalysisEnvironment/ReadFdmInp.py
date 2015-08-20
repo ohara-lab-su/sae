@@ -10,6 +10,13 @@
 #
 ################################################################################
 #
+# 2015.08.20
+#  Read.py との統合化のためのすりあわせ
+#  position のソートルーチンの追加＆分離
+#
+# 2015.08.19
+#  cellparam の基本並進ベクトル変換を ASE の coorsys を採用
+#
 # 2015.06.24
 #  allsite 計算をしているか否かの判断を*.inp かおこなう
 #
@@ -20,12 +27,6 @@
 #
 # 2015.05.19 startup
 #   cellpar(a,b,c,alpha,beta,gamma) --> cell(基本並進) への変換が意外に鬼門
-#
-#   ２つの選択肢
-#
-#   (1) 以前に HiLAPW の群論パートを参考に実装したもの SGE を用いる
-#   (2) ASE を用いる
-#
 #   ---> とりあえずこのルーチンの開発は一旦サスペンド
 #
 ################################################################################
@@ -46,17 +47,23 @@ import sys
 import re
 import optparse
 import numpy as np
+#import copy
+import collections
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
+
+
+# for coorsys
+from ase.io.wien2k import *   ## suing coorsys
 
 ################################################################################
 class ReadFdmInp(object):
 
-    def __init__(self,cname='POSCAR.inp'):
+    def __init__(self,cname='POSCAR.inp',sort=True):
 
-        self.datlines, self.num = SAE.read_dataline(cname)
-        self.datlines, self.num = SAE.del_comment(self.datlines)
+        self.datlines, self.num = SAEnv.read_dataline(cname)
+        self.datlines, self.num = SAEnv.del_comment(self.datlines)
 
         magnetism_reg = re.compile('.*Magnetism.*',re.IGNORECASE)
         energygpho_reg = re.compile('.*Energpho.*',re.IGNORECASE)
@@ -138,12 +145,13 @@ class ReadFdmInp(object):
                 self.MOL=False
 
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
-                if not len(self.datlines[i+1].split()) == 6:
+                if not len(self.datlines[i+1].split()) >= 6:
+                    print self.datlines[i+1].split()
                     sys.exit("STOP(ReadFdmInp): a,b,c,alpha,beta,gamma INPUT LINE error")
 
                 i += 1
 
-                # cell パラメーターをゲット
+                # conventional cell パラメーターをゲット
                 lattice_a = float(self.datlines[i].split()[0])
                 lattice_b = float(self.datlines[i].split()[1])
                 lattice_c = float(self.datlines[i].split()[2])
@@ -151,7 +159,8 @@ class ReadFdmInp(object):
                 beta = float(self.datlines[i].split()[4])
                 gamma = float(self.datlines[i].split()[5])
 
-                self.cell = [lattice_a,lattice_b,lattice_c,alpha,beta,gamma]
+                self.cellparam = [lattice_a,lattice_b,lattice_c,alpha,beta,gamma]
+                self.t = coorsys(self.cellparam)
 
                 self.atoms_index_j = []
                 while 1:
@@ -165,13 +174,13 @@ class ReadFdmInp(object):
                         x = float(self.datlines[i].split()[1])
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
-                        self.atoms_index_j.append(SAE.get_atomic_symbol0(zz))
+                        self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
                         self.position.append([x,y,z])
 
                     if i == self.num:
                         break
 
-                self.position = np.array(self.position)
+               #self.position = np.array(self.position)
 
             # Mol 行を検索 (position の スペース行コメント行も対応)
             elif bool(mole_reg.match(self.datlines[i])) \
@@ -181,10 +190,23 @@ class ReadFdmInp(object):
                 self.MOL=True
 
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
-                if not len(self.datlines[i+1].split()) == 6:
+                if not len(self.datlines[i+1].split()) >= 6:
+                    print self.datlines[i+1].split()
                     sys.exit("STOP: a,b,c,alpha,beta,gamma INPUT LINE error")
 
                 i +=1
+
+                # conventional cell パラメーターをゲット
+                lattice_a = float(self.datlines[i].split()[0])
+                lattice_b = float(self.datlines[i].split()[1])
+                lattice_c = float(self.datlines[i].split()[2])
+                alpha = float(self.datlines[i].split()[3])
+                beta = float(self.datlines[i].split()[4])
+                gamma = float(self.datlines[i].split()[5])
+
+                self.cellparam = [lattice_a,lattice_b,lattice_c,alpha,beta,gamma]
+                self.t = coorsys(self.cellparam)
+
                 self.atoms_index_j = []
                 while 1:
                     i +=1
@@ -197,17 +219,94 @@ class ReadFdmInp(object):
                         x = float(self.datlines[i].split()[1])
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
-                        self.atoms_index_j.append(SAE.get_atomic_symbol0(zz))
+                        self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
                         self.position.append([x,y,z])
 
                     if i == self.num:
                         break
 
-                self.position = np.array(self.position)
+               #self.position = np.array(self.position)
 
+        ########################################
+        # position を numpy array 化
+        self.position = np.array(self.position)
 
         # すべてのサイトの原子数
         self.natom = len(self.position)
+
+        ########################################
+       # ION 数および atoms, atoms_index の作成
+        counter = collections.Counter(self.atoms_index_j)
+        self.nion = len(counter)
+        self.atoms = np.zeros(self.nion,dtype=int)
+        self.atoms_index = []
+        self.atoms_number = np.zeros(self.nion,dtype=int)
+        i = 0
+        for atom, cnt in counter.most_common():
+            self.atoms_index.append(atom)
+            self.atoms_number[i] = SAEnv.get_atomic_number1(atom)
+            self.atoms[i] = cnt
+            i += 1
+
+        self.atoms_number_j = np.zeros(self.natom,dtype=int)
+        for i in range(self.natom):
+            self.atoms_number_j[i] = \
+                    SAEnv.get_atomic_number1(str(self.atoms_index_j[i]))
+
+        ########################################
+        # fix 情報のダミー
+        self.fix = np.zeros((self.natom,3),dtype='S')
+        self.fix[:,:] = 'F'
+
+        ########################################
+        # 原子種ごとのソートスイッチが入っているとき
+        if sort:
+            self.sort_index,\
+                    self.sort_index_r,\
+                    self.atoms,\
+                    self.atoms_index,\
+                    self.atoms_index_j = SAEnv.sort_atom_index_j(self.atoms_index_j)
+
+            self.sort_index,\
+                    self.sort_index_r,\
+                    self.atoms,\
+                    self.atoms_index,\
+                    self.atoms_number_j = SAEnv.sort_atom_number_j(self.atoms_number_j)
+
+            self.position = SAEnv.sort_position(self.sort_index_r,self.position)
+            self.fix = SAEnv.sort_fix(self.sort_index_r,self.fix)
+
+        ########################################
+        # ion[j]: 通し番号(max=nmax)を与えると原子の種類番号を返す
+        self.ion = np.zeros(self.natom,dtype=int)
+        tmp = -1
+        for j in range(self.nion):
+            local = -1
+            for k in range(int(self.atoms[j])):
+                tmp += 1
+                local += 1
+                self.ion[tmp] = int(j)
+
+        ########################################
+        # ion_local[j]: 通し番号(max=nmax)を与えるとサイト内のローカル通し番号を返す
+        self.ion_local = np.zeros(self.natom,dtype=int)
+        tmp = -1
+        for j in range(self.nion):
+            local = -1
+            for k in range(int(self.atoms[j])):
+                tmp += 1
+                local += 1
+                self.ion_local[tmp] = int(local)
+
+        ## 共通仕様
+        self.title = self.filout
+        self.system = self.title
+        self.vasp_version = None
+        self.selective = False
+        self.direct = True
+        self.scale = 1.0
+        self.sort_index = None
+        self.sort_index_r = None
 
        #########################
        #test print atom_index_j
@@ -217,6 +316,7 @@ class ReadFdmInp(object):
        #    print atoms_index_j[j],i
        #    j += 1
 
+    ######################################### for FDMNES  infomation
     def get_ispin(self):
         return self.ispin
 
@@ -245,11 +345,31 @@ class ReadFdmInp(object):
         self.filout = self.filout if hasattr(self, 'filout') else None
         return self.filout
 
-    def get_position(self):
-        return self.position
+    ######################################### for structure infomation
 
-    def get_natom(self):
-        return self.natom
+    def get_title(self):
+        return self.title
+
+    def get_system(self):
+        return self.system
+
+    def get_scale(self):
+        return self.scale
+
+    def get_t(self):
+        return self.t
+
+    def get_vasp_version(self):
+        return self.vasp_version
+
+    def get_atoms(self):
+        return self.atoms
+
+    def get_atoms_index(self):
+        return self.atoms_index
+
+    def get_atoms_number(self):
+        return self.atoms_number
 
     def get_atoms_index_j(self):
         try:
@@ -257,6 +377,57 @@ class ReadFdmInp(object):
         except:
             self.atoms_index_j = []
         return self.atoms_index_j
+
+    def get_atoms_number_j(self):
+        return self.atoms_number_j
+
+    def get_nion(self):
+        return self.nion
+
+    def get_natom(self):
+        return self.natom
+
+    def get_ion(self):
+        return self.ion
+
+    def get_ion_local(self):
+        return self.ion_local
+
+    def get_selective(self):
+        return self.selective
+
+    def get_position(self):
+        return self.position
+
+    def get_fix(self):
+        return self.fix
+
+    def get_cellparam(self):
+        return self.cellparam
+
+    ######################################### for structure convert
+
+    ###
+    def sort_atoms_index_j(self):
+
+        self.sort_index,\
+                self.sort_index_r,\
+                self.atoms,\
+                self.atoms_index,\
+                self.atoms_index_j = SAEnv.sort_atom_index_j(self.atoms_index_j)
+
+        return self.sort_index,\
+                self.sort_index_r,\
+                self.atoms,\
+                self.atoms_index,\
+                self.atoms_index_j
+
+    ###
+    def sort_position(self):
+        if self.sort_index_r is None: self.sort_atoms_index_j()
+        self.position = SAEnv.sort_position(self.sort_index_r,self.position)
+        return self.position
+
 
 ################################################################################
 def options():
@@ -277,11 +448,14 @@ def options():
 if __name__ == '__main__':
 
     name = options()
+
+#   out = ReadFdmInp(name,sort=True)
     out = ReadFdmInp(name)
 
     absorber = out.get_absorber()
     filout = out.get_filout()
     atoms_index_j = out.get_atoms_index_j()
+    atoms_number_j = out.get_atoms_number_j()
     natom = out.get_natom()
     position = out.get_position()
     energygpho = out.get_energygpho()
@@ -292,16 +466,66 @@ if __name__ == '__main__':
     convolution = out.get_convolution()
     conv_out = out.get_conv_out()
 
+    a     = out.cellparam[0]
+    b     = out.cellparam[1]
+    c     = out.cellparam[2]
+    alpha = out.cellparam[3]
+    beta  = out.cellparam[4]
+    gamma = out.cellparam[5]
+
     print 'allsite    :',allsite
     print 'absorber   :',absorber
     print 'energygpho :',energygpho
     print 'ispin      :',ispin
     print 'filout     :',filout
     print 'natom      :',natom
+    print ''
+    print 'a          :',out.cellparam[0]
+    print 'b          :',out.cellparam[1]
+    print 'c          :',out.cellparam[2]
+    print 'alpha      :',out.cellparam[3]
+    print 'beta       :',out.cellparam[4]
+    print 'gamma      :',out.cellparam[5]
+    print ''
+    print 't          :'
+    print out.t
+    print ''
+    print out.atoms_number
+    print out.atoms_index
+
+#   cal = np.cos(alpha * np.pi / 180.0)
+#   cbe = np.cos(beta * np.pi / 180.0)
+#   cga = np.cos(gamma * np.pi /180.0)
+#   sga = np.sin(gamma * np.pi /180.0)
+
+#   t = np.array([
+#                 [a, b * cga, c * cbe],\
+#                 [0, b * sga, c * (cal - cbe * cga) / sga],\
+#                 [0, 0, c * np.sqrt(1 - cal**2 -cbe**2 - cga**2 +\
+#                                    2 * cal * cbe * cga) / sga],\
+#                ]).transpose()
 
     for i in range(natom):
-         print " %s %14.10f %14.10f %14.10f" \
-                 %(atoms_index_j[i],position[i,0],position[i,1],position[i,2])
+         print " %s %d  %14.10f %14.10f %14.10f" \
+                 %(atoms_index_j[i],atoms_number_j[i],\
+                 position[i,0],position[i,1],position[i,2])
+
+#   out.sort_atoms_index_j()
+
+#   out.sort_atoms_number_j()
+    out.sort_position()
+#   out.sort_fix()
+
+    print out.atoms_number
+    print out.atoms_index
+
+    for i in range(natom):
+         print " %s %d  %14.10f %14.10f %14.10f" \
+                 %(out.atoms_index_j[i],\
+                 out.atoms_number_j[i],\
+                 out.position[i,0],\
+                 out.position[i,1],\
+                 out.position[i,2])
 
     if convolution:
         print ""

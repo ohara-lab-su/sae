@@ -38,11 +38,15 @@ class Read(object):
     def __init__(self,filename=None,code='VASP'):
 
         module_name = 'StructureAnalysisEnvironment'
+        suffix = ''
 
-        if code == 'VASP':
+        if code == 'VASP' or code == 'vasp':
             class_name = 'ReadVaspPoscar'
-            suffix = ''
             if filename is None: filename = 'POSCAR'
+
+        if code == 'FDMNES' or code == 'fdmnes' or code == 'FDM' or code == 'fdm':
+            class_name = 'ReadFdmInp'
+            if filename is None: filename = 'read_pdb.inp'
 
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
@@ -56,6 +60,7 @@ class Read(object):
         self.nion = self.cell.nion
         self.atoms = self.cell.atoms
         self.atoms_index = self.cell.atoms_index
+        self.atoms_number = self.cell.atoms_number
         self.natom = self.cell.natom
         self.selective = self.cell.selective
         self.direct = self.cell.direct
@@ -65,8 +70,9 @@ class Read(object):
         self.ion = self.cell.ion
         self.ion_local = self.cell.ion_local
         self.atoms_index_j = self.cell.atoms_index_j
+        self.atoms_number_j = self.cell.atoms_number_j
 
-        if code == 'VASP':
+        if code == 'VASP' or code == 'vasp':
             self.vasp_version = self.cell.vasp_version
         else:
             self.vasp_version = None
@@ -113,9 +119,21 @@ class Read(object):
         self.atoms_index_j = self.cell.get_atoms_index_j()
         return self.atoms_index_j
 
+    def get_atoms_number_j(self):
+        self.atoms_number_j = self.cell.get_atoms_number_j()
+        return self.atoms_number_j
+
     def get_natom(self):
         self.natom = self.cell.get_natom()
         return self.natom
+
+    def get_ion(self):
+        self.ion = self.cell.get_ion()
+        return self.nion
+
+    def get_ion_local(self):
+        self.ion_local = self.cell.get_ion()
+        return self.ion_local
 
     def get_selective(self):
         self.selective = self.cell.get_selective()
@@ -133,20 +151,11 @@ class Read(object):
         self.fix = self.cell.get_fix()
         return self.fix
 
-    def get_ion(self):
-        self.ion = self.cell.get_ion()
-        return self.ion
 
-    def get_ion_local(self):
-        if self.code == 'VASP':
-            self.ion_local = self.cell.get_ion_local()
-        else:
-            self.ion_local = None
-        return self.ion_local
-
-    def write(self,filename=None,code=None,STD=False):
+    ############################################################################
+    def write(self,outname=None,code=None,STD=False):
         if code is None: code=self.code
-        SAEnv.write(self.cell,outname=filename,code=code,STD=False)
+        SAEnv.write(self.cell,outname=outname,code=code,STD=STD)
         return
 
 

@@ -41,13 +41,13 @@ import numpy as np
 ################################################################################
 ## 独自実装版
 ##
-def conv_cell2conventional(atoms):
+def conv_cellparam(atoms):
     return
 
 ################################################################################
 ## ASE 利用 & atoms はASEの構造
 ##
-def conv_cell2conventional0(atoms):
+def conv_cellparam0(atoms):
 
     cell = atoms.get_cell()  # from ASE ( translation vector)
     metT = np.dot(cell, np.transpose(cell))
@@ -60,7 +60,6 @@ def conv_cell2conventional0(atoms):
     beta = cell2[4]
     gamma = cell2[5]
 
-    print atoms.get_positions()
     natom = len(atoms.get_positions())
 
     return a,b,c,alpha,beta,gamma,natom
@@ -68,19 +67,18 @@ def conv_cell2conventional0(atoms):
 ################################################################################
 ## ASE 利用 & atoms(cell) は SAEnv の構造
 ##
-def conv_cell2conventional1(cell):
+def conv_cellparam1(cell):
 
     t = cell.t
-    metT = np.dot(cell, np.transpose(t))
+    metT = np.dot(t, np.transpose(t))
+    param = cellconst(metT)  # from ASE module
 
-    conv = cellconst(metT)  # from ASE module
-
-    a = conv[0]
-    b = conv[1]
-    c = conv[2]
-    alpha = conv[3]
-    beta = conv[4]
-    gamma = conv[5]
+    a = param[0]
+    b = param[1]
+    c = param[2]
+    alpha = param[3]
+    beta = param[4]
+    gamma = param[5]
 
     natom = cell.natom
 
