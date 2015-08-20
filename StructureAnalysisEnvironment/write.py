@@ -33,9 +33,10 @@ import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-def write(cell,outname=None,code='VASP',STD=False,MOL=False):
+def write(cell,outname=None,code='VASP',calinfo=None,STD=False,MOL=False,FRAC=True):
 
-    if code == 'VASP' or code == 'vasp':
+    ### VASP
+    if code.upper() == 'VASP':
         if outname is None: outname = 'POSCAR'
         if cell.vasp_version is None: cell.vasp_version = 5
         SAEnv.print_poscar(outname,STD,\
@@ -52,10 +53,47 @@ def write(cell,outname=None,code='VASP',STD=False,MOL=False):
                            cell.position,\
                            cell.fix)
 
-    if code == 'FDMNES' or code == 'fdmnes' or code == 'FDM' or code == 'fdm':
+    ### FDMNES
+    if code.upper() == 'FDMNES' or code.upper() == 'FDM':
+
         if outname is None: outname = 'read_pdb.inp'
         SAEnv.print_fdmnes1(outname=outname,cell=cell,STD=STD,MOL=MOL)
         if not STD:
             SAEnv.print_fdmnes_inp1(outname=outname,cell=cell,MOL=MOL)
 
+    ## OpenMX
+    if code.upper() == 'OPENMX' or code.upper() == 'MX':
+
+        if outname is None: outname = 'openemx'
+        if calinfo is not None:
+            NSW,NELM,IBRION,EDIFF,EDIFFG,KP = SAEnv.get_calinfo(code=calinfo)
+        else:
+            NSW=None
+            NELM=None
+            IBRION=None
+            EDIFF=None
+            EDIFFG=None
+            KP=None
+
+        SAEnv.print_mx_dat(outname,STD,\
+                           cell.title,\
+                           cell.scale,\
+                           cell.natom,\
+                           cell.nion,\
+                           cell.selective,\
+                           cell.direct,\
+                           cell.vasp_version,\
+                           cell.t,\
+                           cell.atoms,\
+                           cell.atoms_index,\
+                           cell.position,\
+                           cell.fix,\
+                           cell.atoms_index_j,\
+                           NSW=NSW,\
+                           NELM=NELM,\
+                           IBRION=IBRION,\
+                           EDIFF=EDIFF,\
+                           EDIFFG=EDIFFG,\
+                           KP=KP,\
+                           FRAC=FRAC)
 

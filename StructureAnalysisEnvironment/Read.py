@@ -4,7 +4,7 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # 統合テスト
-#  入力系クラスをラップするボス
+#  入力系(ファイル読み込み系)クラスをラップするボス
 #
 ################################################################################
 # History
@@ -40,11 +40,11 @@ class Read(object):
         module_name = 'StructureAnalysisEnvironment'
         suffix = ''
 
-        if code == 'VASP' or code == 'vasp':
+        if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
             if filename is None: filename = 'POSCAR'
 
-        if code == 'FDMNES' or code == 'fdmnes' or code == 'FDM' or code == 'fdm':
+        if code.upper() == 'FDMNES' or  code.upper() == 'FDM':
             class_name = 'ReadFdmInp'
             if filename is None: filename = 'read_pdb.inp'
 
@@ -53,6 +53,7 @@ class Read(object):
 
         self.cell = klass(filename+suffix)
 
+        # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title
         self.system = self.cell.system
         self.scale = self.cell.scale
@@ -60,19 +61,18 @@ class Read(object):
         self.nion = self.cell.nion
         self.atoms = self.cell.atoms
         self.atoms_index = self.cell.atoms_index
+        self.atoms_index_j = self.cell.atoms_index_j
         self.atoms_number = self.cell.atoms_number
+        self.atoms_number_j = self.cell.atoms_number_j
         self.natom = self.cell.natom
+        self.ion = self.cell.ion
+        self.ion_local = self.cell.ion_local
         self.selective = self.cell.selective
         self.direct = self.cell.direct
         self.position = self.cell.position
         self.fix = self.cell.fix
 
-        self.ion = self.cell.ion
-        self.ion_local = self.cell.ion_local
-        self.atoms_index_j = self.cell.atoms_index_j
-        self.atoms_number_j = self.cell.atoms_number_j
-
-        if code == 'VASP' or code == 'vasp':
+        if code.upper() == 'VASP':
             self.vasp_version = self.cell.vasp_version
         else:
             self.vasp_version = None
@@ -153,9 +153,16 @@ class Read(object):
 
 
     ############################################################################
-    def write(self,outname=None,code=None,STD=False):
+    def write(self,outname=None,code=None,calinfo=None,STD=False,MOL=False,FRAC=True):
         if code is None: code=self.code
-        SAEnv.write(self.cell,outname=outname,code=code,STD=STD)
+
+        SAEnv.write(self.cell,\
+                    outname=outname,\
+                    code=code,\
+                    calinfo=calinfo,\
+                    STD=STD,\
+                    MOL=MOL,\
+                    FRAC=FRAC)
         return
 
 
