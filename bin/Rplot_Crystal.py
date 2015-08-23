@@ -143,13 +143,13 @@ if __name__ == '__main__':
     scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
     scale,direct = SAE.conv_cfg2vasp(scale,t,natom,direct,position)
 
-    # Direct to Cartesian 変換
+    # Direct to Cartesian 変換,引数版
     if direct:
         ABS=False
         scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
-    # 絶対座標系へ変換( cartesian and scale=1.0 )
-    scale = SAE.conv_car2carABS(scale,t,natom,direct,position)
+    # 絶対座標系へ変換( cartesian and scale=1.0 ),引数版
+    scale = SAE.conv_car2carABSa(scale,t,natom,direct,position)
 
 #   for j in range(natom):
 #       print " %14.10f %14.10f %14.10f " \

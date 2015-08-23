@@ -19,15 +19,15 @@
 #    vpython,wxpython 利用
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014,2015, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.3"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014,2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.3"
 ################################################################################
 
 #from __future__ import division
@@ -36,8 +36,8 @@ import wx
 import numpy as np
 import visual as vp
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 from crystal_make_unit import *
 
@@ -49,39 +49,24 @@ import optparse
 #from numpy import *
 #from visual import *
 
-#from LIB_vasp.read_poscar_param import *
-#from LIB_vasp.read_poscar import *
-#
-#from LIB_vasp.read_md_param import *
-#from LIB_vasp.read_md import *
-#
-#from LIB_vasp.print_poscar import *
-#from LIB_vasp.conv_direct2car import *
-#from LIB_vasp.conv_car2carABS import *
-#
-#from LIB_vasp.get_atomic_radius import *
-#from LIB_vasp.get_bond_info import *
-#
-#from LIB_vasp.crystal_make_unit import *
-
 ################################################################################
-def options():                                                                  
-                                                                                
-    XYZ = "C60_position.xyz"  # default name                                     
-                                                                                
+def options():
+
+    XYZ = "C60_position.xyz"  # default name
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=XYZ,
-    )                                                                           
+    )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         XYZ=options.INPUT
-                                                                                
+
     if len(args) > 0:
         XYZ=args[0]
-                                                                                
+
     return XYZ
 
 
@@ -174,4 +159,4 @@ if __name__ == '__main__':
             obj.visible=0
 
 ################################################################################
-     
+

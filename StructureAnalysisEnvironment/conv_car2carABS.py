@@ -28,6 +28,12 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  関数名のるーるを再統一化
+#   引数版   conv_car2carABS  --> conv_car2carABSa
+#   戻り値版 conv_car2carABS1 --> conv_car2carABS
+#
+#
 # 2015.03.09
 #  戻り値のルールを変更したバージョン conv_car2carABS1 を用意
 #
@@ -53,7 +59,8 @@ import numpy as np
 
 
 ################################################################################
-def conv_car2carABS(scale0,t,natom,direct,position):
+# 引数版
+def conv_car2carABSa(scale0,t,natom,direct,position):
 
     if direct:
         sys.exit("STOP: current is Direct.")
@@ -107,7 +114,9 @@ def conv_car2carABS(scale0,t,natom,direct,position):
     return scale
 
 ################################################################################
-def conv_car2carABS1(scale0,t,natom,direct,position):
+# 戻り値版
+#
+def conv_car2carABS(scale0,t,natom,direct,position):
 
     if direct:
         sys.exit("STOP: current is Direct.")

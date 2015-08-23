@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     SAE.conv_direct2carABS(scale,t,natom,direct,position)
         else:
             scale,t,natom,direct,position = \
-                    SAE.conv_car2carABS1(scale,t,natom,direct,position)
+                    SAE.conv_car2carABS(scale,t,natom,direct,position)
 
     ############################################################################
     ## print xyz  style

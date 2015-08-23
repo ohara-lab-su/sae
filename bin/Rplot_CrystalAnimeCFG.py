@@ -174,6 +174,7 @@ if __name__ == '__main__':
 
         ############################################
         # Direc to Cartesian 変換 (RMC_POT *.cfg は Direct形式) (by loop)
+        # 引数版
         #
         if direct:
             ABS = False
@@ -182,8 +183,9 @@ if __name__ == '__main__':
 
         ############################################
         # 絶対座標系へ変換 ( cartesian --> cartesian and scale=1.0 ) ( by loop)
+        # 引数版
         #
-        scale = SAE.conv_car2carABS(scale,t,natom,direct,position)
+        scale = SAE.conv_car2carABSa(scale,t,natom,direct,position)
 
        #print "==========LOOP: "+str(loop)
        #print t[0,0], t[1,0], t[2,0]

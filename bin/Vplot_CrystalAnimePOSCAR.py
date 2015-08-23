@@ -121,8 +121,8 @@ if __name__ == '__main__':
 #       ABS=False
 #       scale,direct = conv_direct2cara(ABS,scale,t,natom,direct,position)
 
-#   # 絶対座標系へ変換( cartesian and scale=1.0 )
-#   scale = conv_car2carABS(scale,t,natom,direct,position)
+#   # 絶対座標系へ変換( cartesian and scale=1.0 ),引数版
+#   scale = conv_car2carABSa(scale,t,natom,direct,position)
 
 
     ############################################################################

@@ -257,8 +257,8 @@ class MyCrystalFrame():
             ABS=False
             scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
-        # 絶対座標系へ変換( cartesian and scale=1.0 )
-        scale = SAE.conv_car2carABS(scale,t,natom,direct,position)
+        # 絶対座標系へ変換( cartesian and scale=1.0 ),引数版
+        scale = SAE.conv_car2carABSa(scale,t,natom,direct,position)
 
 
         ############################################

@@ -75,7 +75,7 @@ if __name__ == '__main__':
        #ABS=True  # for SuperCell
         scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
-    scale = SAE.conv_car2carABS(scale,t,natom,direct,position)
+    scale = SAE.conv_car2carABSa(scale,t,natom,direct,position) # 引数版
 
     if direct:
         sys.exit("Error: current mode is Direct")

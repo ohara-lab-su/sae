@@ -104,8 +104,8 @@ def extract_struct1(scale,t,natom,direct,position,fix,c0,c1,\
         ABS=False
         scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
-    # 絶対座標系へ変換
-    SAE.conv_car2carABS(scale,t,natom,direct,position)
+    # 絶対座標系へ変換(引数版)
+    SAE.conv_car2carABSa(scale,t,natom,direct,position)
 
     # リージョン内の原子探索(c軸のリージョンのみ)
     j=0
