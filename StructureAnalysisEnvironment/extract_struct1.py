@@ -102,7 +102,7 @@ def extract_struct1(scale,t,natom,direct,position,fix,c0,c1,\
     # cartesian系へ変換
     if direct:
         ABS=False
-        scale,direct = SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
     # 絶対座標系へ変換
     SAE.conv_car2carABS(scale,t,natom,direct,position)

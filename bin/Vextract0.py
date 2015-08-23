@@ -17,15 +17,15 @@
 # 2014.11.13 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -33,26 +33,11 @@ import os
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import re
 #from copy import deepcopy
-
-#from LIB_vasp import read_poscar_param
-#from LIB_vasp import read_poscar
-#from LIB_vasp import print_poscar
-#from LIB_vasp import *
-
-#from numpy import *
-#from LIB_vasp.read_poscar_param import *
-#from LIB_vasp.read_poscar import *
-#from LIB_vasp.print_poscar import *
-#from LIB_vasp.conv_direct2car import *
-#from LIB_vasp.conv_car2direct import *
-#from LIB_vasp.extract_struct_param import *
-#from LIB_vasp.extract_struct0 import *
-#from LIB_vasp.extract_struct1 import *
 
 ################################################################################
 def options():
@@ -62,12 +47,12 @@ def options():
     ##
     cname  = "POSCAR" # OUTPUT BASE filename
     POSCAR = "POSCAR" # INPUT (BASE) filename
-    
+
     ###############################################
     ## optparse
     ##
     parser = optparse.OptionParser()
-    
+
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=POSCAR,
@@ -77,26 +62,26 @@ def options():
                         default=cname,
     )
     options,  args = parser.parse_args()
-    
+
     if options.INPUT:
         POSCAR=options.INPUT
-    
+
     if options.OUTPUT:
         cname=options.OUTPUT
-    
+
     #print args,options
     if len(args) > 0:
         #print "script name:",argvs[0]
         #POSCAR=argv[0]
         #distance = float(args[0])
         cname=args[0]
-    
+
     if not os.path.exists(POSCAR):
         if os.path.exists(POSCAR+".vasp"):
             POSCAR="POSCAR.vasp"
         else:
             sys.exit(POSCAR+" file not found")
-    
+
     print "INPUT file name    :",POSCAR
     print "OUTPUT file name   :",cname+".vasp"
     print ""
@@ -173,7 +158,7 @@ if __name__ == '__main__':
 
     # Cartesian to Direct
     if direct0:
-        scale,direct = SAE.conv_car2direct(scale,t,ex_natom,direct,ex_position) 
+        scale,direct = SAE.conv_car2directa(scale,t,ex_natom,direct,ex_position)
 
 
     # 抽出した原子の一覧出力

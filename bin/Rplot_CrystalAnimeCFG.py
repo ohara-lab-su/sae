@@ -25,15 +25,15 @@
 #    vpython,wxpython 利用
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #from __future__ import division
@@ -42,8 +42,8 @@ import sys
 import os
 from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import numpy as np
 import visual as vp
@@ -131,16 +131,16 @@ if __name__ == '__main__':
 
     ############################################################################
     # 結晶描画の基礎プログラム
- 
+
     # 複数のオブジェクトをまとめるためにフレームを作る
     f  = vp.frame()
- 
+
     # 結晶描画の単位胞の座標原点
     O = [ -3,-3,0 ]
     RC = 0.03
     C = [ 255,255,2555 ] # white
- 
- 
+
+
     RATIO=0.3
 
     t0      = deepcopy(t)
@@ -168,7 +168,7 @@ if __name__ == '__main__':
             position[i,2] = position_loop[loop,i,2]
 
         ############################################
-        # *.cfg 形式を VASP形式(=通常の基本並進+内部座標形式)へ変換 ( by loop) 
+        # *.cfg 形式を VASP形式(=通常の基本並進+内部座標形式)へ変換 ( by loop)
         #
         scale,direct = SAE.conv_cfg2vasp(scale,t,natom,direct,position)
 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
         if direct:
             ABS = False
             scale,direct = \
-                    SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+                    SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
         ############################################
         # 絶対座標系へ変換 ( cartesian --> cartesian and scale=1.0 ) ( by loop)
@@ -198,15 +198,15 @@ if __name__ == '__main__':
         # bond 情報の取得
         #
         if bond_FLAG:
-    
+
             bondnum = \
                     SAE.get_bond_info_param(atom1,atom2,distance,nion,atoms,position)
            #print "NUMBER OF BOND     :",bondnum
-    
+
             bondr = np.zeros((bondnum))
             bond1 = np.zeros((bondnum),dtype=int)
             bond2 = np.zeros((bondnum),dtype=int)
-    
+
             SAE.get_bond_info(atom1,atom2,distance,nion,\
                               atoms,atoms_index,position,bondr,bond1,bond2)
 
@@ -227,18 +227,18 @@ if __name__ == '__main__':
             if dummy_FLAG:
                 # 原子の種類を取得
                 atom_type = atoms_index[int(ion_site[i])]
-    
+
                 # 原子半径を取得
                 radius = SAE.get_atomic_radius1(atom_type)
                 R = radius*RATIO
-    
+
                 # 原子番号を取得
                 num = SAE.get_atomic_number1(atom_type)
-    
+
             else:
                 R=0.3
                 num=6
- 
+
             atom = vp.sphere(frame=f,pos=(xp,yp,zp), radius=R)
 
             # 原子の色設定(RG)を適当に自動化
@@ -252,28 +252,28 @@ if __name__ == '__main__':
 
             BR = 0.08 # ボンドの太さ
             for num in range(bondnum):
-        
+
                 x1 = position[bond1[num],0]
                 y1 = position[bond1[num],1]
                 z1 = position[bond1[num],2]
-        
+
                 x2 = position[bond2[num],0]
                 y2 = position[bond2[num],1]
                 z2 = position[bond2[num],2]
-        
+
                 x12 =  x2 - x1
                 y12 =  y2 - y1
                 z12 =  z2 - z1
-        
+
                 x0 = x1 +O[0]
                 y0 = y1 +O[1]
                 z0 = z1 +O[2]
-        
+
                 r1 = bondr[num]
-        
+
                 bond = vp.cylinder (frame=f, pos=(x0,y0,z0), \
                                     axis=(x12,y12,z12), radius =BR )
-   
+
 #                   print num, bond1[num],"("+str(ion_site[num])+") -",\
 #                              bond2[num],"("+str(ion_site[num])+")"  ,\
 #                              " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
@@ -286,4 +286,4 @@ if __name__ == '__main__':
             obj.visible=0
 
 ################################################################################
-  
+

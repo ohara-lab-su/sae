@@ -32,18 +32,6 @@ import StructureAnalysisEnvironment as SAE
 #from copy import deepcopy
 #from numpy import *
 
-#from LIB_vasp import read_poscar_param
-#from LIB_vasp import read_poscar
-#from LIB_vasp import conv_direct2car
-#from LIB_vasp import print_poscar
-#from LIB_vasp import *
-
-#from LIB_vasp.read_poscar_param import *
-#from LIB_vasp.read_poscar import *
-#from LIB_vasp.conv_direct2car import *
-#from LIB_vasp.conv_car2direct import *
-#from LIB_vasp.print_poscar import *
-
 ################################################################################
 def options():
 
@@ -114,7 +102,7 @@ if __name__ == '__main__':
 
     # Cartesian to Direct
     if not direct:
-        scale,direct = SAE.conv_car2direct(scale,t,natom,direct,position)
+        scale,direct = SAE.conv_car2directa(scale,t,natom,direct,position)
         src_mode="Cartesian"
     else:
         src_mode="Direct"

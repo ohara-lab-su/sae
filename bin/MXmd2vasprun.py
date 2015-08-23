@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     if not direct:
         for loop in range(nloop):
-            SAE.conv_car2direct(scale,t,natom,direct,position_loop[loop,:,:])
+            SAE.conv_car2directa(scale,t,natom,direct,position_loop[loop,:,:])
 
 
     ################ output ######################

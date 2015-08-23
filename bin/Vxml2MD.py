@@ -42,15 +42,15 @@
 #   Vxmlread.py
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2015, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.7"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2015, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.7"
 ################################################################################
 
 #import sys
@@ -58,8 +58,8 @@ import optparse
 #import xml.etree.ElementTree as ET
 
 #import numpy as np
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import os
 #import re
@@ -67,23 +67,23 @@ import StructureAnalysisEnvironment as SAE
 
 
 ################################################################################
-def options():                                                                  
-                                                                                
+def options():
+
     XMLFILE = "vasprun.xml"  # default name
-                                                                                
+
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=XMLFILE,
     )
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         XMLFILE=options.INPUT
-                                                                                
+
     if len(args) > 0:
         XMLFILE=args[0]
-                                                                                
+
     return XMLFILE
 
 
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 #       #             一応はこのルーチン部分を挟むことで、抜けた後は
 #       #             普通に座標系が絶対座標化される
 #       ABS=True
-#       SAE.conv_direct2car(ABS,scale,t,natom,direct,position)
+#       SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
         j=0
         print natom

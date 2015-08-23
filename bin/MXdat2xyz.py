@@ -40,10 +40,10 @@ import re
 #import gzip
 #import numpy as np
 
-import optparse 
+import optparse
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
@@ -66,16 +66,16 @@ def options():
     )
     options, args = parser.parse_args()
 
-    # デフォルト名より最適なデフォルトファイル名の推定ルーチン                     
+    # デフォルト名より最適なデフォルトファイル名の推定ルーチン
     if not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):
         try:
             name0 = SAE.find_datfile('dat')
             if not name0 == None:
                 name = name0
-                mxname = name+suffix 
+                mxname = name+suffix
                 xyzname = mxname+'.xyz'
-        except:                                                                 
-            pass 
+        except:
+            pass
 
     if options.INPUT:
         mxname = options.INPUT
@@ -125,14 +125,14 @@ if __name__ == '__main__':
     direct = dat.get_direct()
     position = dat.get_position()
     fix = dat.get_fix()
-    position_max = dat.get_position_max()                                       
-    position_min = dat.get_position_min() 
+    position_max = dat.get_position_max()
+    position_min = dat.get_position_min()
 
     left_natom = dat.get_left_natom()
     left_atoms_index_j = dat.get_left_atoms_index_j()
     left_position = dat.get_left_position()
     right_natom = dat.get_right_natom()
-    right_atoms_index_j = dat.get_right_atoms_index_j() 
+    right_atoms_index_j = dat.get_right_atoms_index_j()
     right_position = dat.get_right_position()
 
 #   if OPT_DIRECT:
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     if dat.FLAG_t:
         if direct:
             scale,t,natom,direct,position = \
-                    SAE.conv_direct2carABS1(scale,t,natom,direct,position)
+                    SAE.conv_direct2carABS(scale,t,natom,direct,position)
         else:
             scale,t,natom,direct,position = \
                     SAE.conv_car2carABS1(scale,t,natom,direct,position)
@@ -163,44 +163,44 @@ if __name__ == '__main__':
 
 
     ############################################################################
-    ## Left print xyz style                                                     
-    ##                                                                          
-    if dat.FLAG_left:                                                           
-        left_xyz_name=re.sub('\.xyz','',xyzname)                                
-        left_xyz_outname=left_xyz_name+'.left.xyz'                              
-        try:                                                                    
-            out_left_xyz = open(left_xyz_outname,'w')                           
-        except:                                                                 
-            out_left_xyz.close()                                                
-            sys.exit("STOP: "+left_xyz_outname+" does'nt open")                 
-                                                                                
-        print "OUTPUT left xyz    =",left_xyz_outname                           
-        print >> out_left_xyz,left_natom                                        
-        print >> out_left_xyz,""                                                
-        for j in range(left_natom):                                             
+    ## Left print xyz style
+    ##
+    if dat.FLAG_left:
+        left_xyz_name=re.sub('\.xyz','',xyzname)
+        left_xyz_outname=left_xyz_name+'.left.xyz'
+        try:
+            out_left_xyz = open(left_xyz_outname,'w')
+        except:
+            out_left_xyz.close()
+            sys.exit("STOP: "+left_xyz_outname+" does'nt open")
+
+        print "OUTPUT left xyz    =",left_xyz_outname
+        print >> out_left_xyz,left_natom
+        print >> out_left_xyz,""
+        for j in range(left_natom):
             print >> out_left_xyz, " %s %13.9f %13.9f %13.9f" \
                  %( left_atoms_index_j[j],\
-                    left_position[j,0],left_position[j,1],left_position[j,2] )  
-        out_left_xyz.close()                                                    
-                                                                                
+                    left_position[j,0],left_position[j,1],left_position[j,2] )
+        out_left_xyz.close()
+
     ############################################################################
-    ## Right print xyz style                                                    
-    ##                                                                          
-    if dat.FLAG_right:                                                          
-        right_xyz_name=re.sub('\.xyz','',xyzname)                               
-        right_xyz_outname=left_xyz_name+'.right.xyz'                            
-        try:                                                                    
-            out_right_xyz = open(right_xyz_outname,'w')                         
-        except:                                                                 
-            out_right_xyz.close()                                               
-            sys.exit("STOP: "+right_xyz_outname+" does'nt open")                
-                                                                                
-        print "OUTPUT right xyz   =",right_xyz_outname                          
-        print >> out_right_xyz,right_natom                                      
-        print >> out_right_xyz,""                                               
-        for j in range(right_natom):                                            
+    ## Right print xyz style
+    ##
+    if dat.FLAG_right:
+        right_xyz_name=re.sub('\.xyz','',xyzname)
+        right_xyz_outname=left_xyz_name+'.right.xyz'
+        try:
+            out_right_xyz = open(right_xyz_outname,'w')
+        except:
+            out_right_xyz.close()
+            sys.exit("STOP: "+right_xyz_outname+" does'nt open")
+
+        print "OUTPUT right xyz   =",right_xyz_outname
+        print >> out_right_xyz,right_natom
+        print >> out_right_xyz,""
+        for j in range(right_natom):
             print >> out_right_xyz, " %s %13.9f %13.9f %13.9f"\
                  %( right_atoms_index_j[j],\
                     right_position[j,0],right_position[j,1],right_position[j,2] )
-        out_right_xyz.close()  
+        out_right_xyz.close()
 

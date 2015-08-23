@@ -241,11 +241,11 @@ def print_mx_dat(datname,STD,\
 
     if direct and not FRAC:
         scale,t,natom,direct,position = \
-                SAEnv.conv_direct2carABS1(scale,t,natom,direct,position)
+                SAEnv.conv_direct2carABS(scale,t,natom,direct,position)
 
     # scale factor を1に変更(内部座標もスケール)
     scale,t,natom,direct,position = \
-            SAEnv.conv_scale21r(scale,t,natom,direct,position)
+            SAEnv.conv_scale21(scale,t,natom,direct,position)
 
     ############################################################################
     # VPS と PAO の情報リストのインスタンス生成

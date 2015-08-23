@@ -142,12 +142,12 @@ if __name__ == '__main__':
 
     # scale factor を1に変更(内部座標もスケール)
     scale,t,natom,direct,position = \
-            SAE.conv_scale21r(scale,t,natom,direct,position)
+            SAE.conv_scale21(scale,t,natom,direct,position)
 
     # 内部座標をスケール
     if direct:
         scale,t,natom,direct,position = \
-                SAE.conv_direct2carABS1(scale,t,natom,direct,position)
+                SAE.conv_direct2carABS(scale,t,natom,direct,position)
     else:
         scale,t,natom,direct,position = \
                 SAE.conv_car2carABS1(scale,t,natom,direct,position)

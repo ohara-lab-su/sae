@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # convert to Cartesian Corrdinate
     if direct:
         scale,t,natom,direct,position = \
-                SAE.conv_direct2carABS1(scale,t,natom,direct,position)
+                SAE.conv_direct2carABS(scale,t,natom,direct,position)
     else:
         scale,t,natom,direct,position = \
                 SAE.conv_car2carABS1(scale,t,natom,direct,position)
@@ -137,7 +137,7 @@ if __name__ == '__main__':
     # conver to original coordinate mode
     if direct0:
         scale,t,natom,direct,position = \
-                SAE.conv_car2direct1(scale,t,natom,direct,position)
+                SAE.conv_car2direct(scale,t,natom,direct,position)
 
     # POSCAR の標準出力
     STD=False

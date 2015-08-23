@@ -19,15 +19,15 @@
 #       を出力する
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #import sys
@@ -37,8 +37,8 @@ __version__    = "0.0.1"
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #from copy import deepcopy
 
@@ -50,12 +50,12 @@ def options():
     ##
     OUTCAR = "OUTCAR" # OUTPUT BASE filename
     POSCAR = "POSCAR" # INPUT (BASE) filename
-    
+
     ###############################################
     ## optparse
     ##
     parser = optparse.OptionParser()
-    
+
     parser.add_option(  '-p','--poscar',
                         dest='INPUT',
                         default=POSCAR,
@@ -65,20 +65,20 @@ def options():
                         default=OUTCAR,
     )
     options,  args = parser.parse_args()
-    
+
     if options.INPUT:
         POSCAR=options.INPUT
-    
+
     if options.OUTLOG:
         OUTCAR=options.OUTLOG
-    
+
     #print args,options
 #   if len(args) > 0:
 #       #print "script name:",argvs[0]
 #       #POSCAR=argv[0]
 #       #distance = float(args[0])
 #       cname=args[0]
-    
+
    #print "INPUT POSCAR file name    :",POSCAR
    #print "INPUT OUTCAR file name    :",OUTCAR
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     SAE.read_outcar_position(OUTCAR,natom,nloop,position_loop,force_loop)
 
     # scale factor --> 1.0
-    scale = SAE.conv_scale21(scale,t)
+    scale = SAE.conv_scale21a(scale,t)
 
 
     # イオンループごとの処理 (座標変換 & 表示)
@@ -146,9 +146,9 @@ if __name__ == '__main__':
                 position0[j,0] = position_loop[i,j,0]
                 position0[j,1] = position_loop[i,j,1]
                 position0[j,2] = position_loop[i,j,2]
-    
+
                 ABS=False
-                scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position0)
+                scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position0)
 
                 position_loop[i,j,0] = position0[j,0]
                 position_loop[i,j,1] = position0[j,1]
@@ -158,7 +158,7 @@ if __name__ == '__main__':
                     % ( str(atoms_index[int(ion[j])]),\
                         position_loop[i,j,0],position_loop[i,j,1],position_loop[i,j,2],\
                         force_loop[i,j,0],   force_loop[i,j,1],   force_loop[i,j,2] )
-    
+
 
 ################################################################################
-     
+

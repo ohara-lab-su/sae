@@ -7,7 +7,7 @@
 #  RplotCrystal.py
 #
 #     RMC_POT (*.cfg) 形式を入力とする、変換なしの直接描画ソフト
-#  
+#
 ################################################################################
 #
 # 2015.02.27
@@ -29,15 +29,15 @@
 #    vpython,wxpython 利用
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #from __future__ import division
@@ -48,8 +48,8 @@ import os
 import numpy as np
 import visual as vp
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 from  crystal_make_unit import *
 
@@ -59,18 +59,6 @@ from  crystal_make_unit import *
 
 #from numpy import *
 #from visual import *
-
-#from LIB_vasp.read_cfg_param import *
-#from LIB_vasp.read_cfg import *
-#from LIB_vasp.conv_direct2car import *
-#from LIB_vasp.conv_cfg2vasp import *
-#from LIB_vasp.conv_car2carABS import *
-#
-#from LIB_vasp.get_atomic_radius import *
-#from LIB_vasp.get_bond_info import *
-
-#from LIB_vasp.crystal_make_unit import *
-
 
 ################################################################################
 if __name__ == '__main__':
@@ -147,10 +135,10 @@ if __name__ == '__main__':
 
     ############################################
     # RMC_POT (*.cfg) 形式から VASP 形式へ変換
-    # 
+    #
     #  1) 基本並進を2.0倍して
     #  2)内部座標を0.5倍してから1/2,1/2,1/2並進
-    # 
+    #
     direct = True   # conv_cfg2vasp は direce を想定(in/out)
     scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
     scale,direct = SAE.conv_cfg2vasp(scale,t,natom,direct,position)
@@ -158,7 +146,7 @@ if __name__ == '__main__':
     # Direct to Cartesian 変換
     if direct:
         ABS=False
-        scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
     # 絶対座標系へ変換( cartesian and scale=1.0 )
     scale = SAE.conv_car2carABS(scale,t,natom,direct,position)
@@ -215,7 +203,7 @@ if __name__ == '__main__':
         if dummy_FLAG:
             # 原子の種類を取得
             atom_type = atoms_index[int(ion_site[i])]
-    
+
             # 原子半径を取得
             radius = SAE.get_atomic_radius1(atom_type)
             R = radius*RATIO
@@ -271,4 +259,4 @@ if __name__ == '__main__':
 
 
 ################################################################################
-     
+

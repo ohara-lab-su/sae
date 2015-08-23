@@ -97,3 +97,17 @@ def write(cell,outname=None,code='VASP',calinfo=None,STD=False,MOL=False,FRAC=Tr
                            KP=KP,\
                            FRAC=FRAC)
 
+    ## RMC_POT
+    if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
+
+        # scale factor to 1.0
+        cell.scale = SAEnv.conv_scale21(cell.scale,cell.t)
+
+        # Cartesian to Direct
+        if not cell.direct:
+            cell.scale,cell.direct = SAEnv.conv_car2direct(cell.scale,\
+                    cell.t,cell.natom,cell.direct,cell.position)
+            src_mode="Cartesian"
+        else:
+            src_mode="Direct"
+

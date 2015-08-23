@@ -23,6 +23,16 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  引数版をマイナー化( conv_scale21 --> conv_scale21a )
+#  戻り値版をメジャー化( conv_scale21r --> conv_scale21 )
+#
+#  および戻り値版の戻り値のデーター構造を変更
+#    poscar =  [scale,t,natom,direct,position]
+#    ---> [scale,t,natom,direct,position
+#
+#  それに伴いいくつかのフロントエンドツールを変更
+#
 # 2015.02.27
 #  conv_scale21  (旧バージョン,そのまま)
 #  conv_scale21r (新バージョン,戻り値版)
@@ -55,7 +65,7 @@ __version__    = "0.0.2"
 
 ################################################################################
 # 引数版
-def conv_scale21(scale0,t):
+def conv_scale21a(scale0,t):
 
     ##
     t1_x = t[0,0]
@@ -109,11 +119,11 @@ def conv_scale21(scale0,t):
 # 戻り値版
 #  戻り値は conv_direct2car_return とほぼ同一
 #
-def conv_scale21r(scale0,t,natom,direct,position):
+def conv_scale21(scale0,t,natom,direct,position):
 
     t = t*scale0
     scale = 1.0
 
-    poscar =  [scale,t,natom,direct,position]
-    return poscar
+#   poscar =  [scale,t,natom,direct,position]
+    return scale,t,natom,direct,position
 

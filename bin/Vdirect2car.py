@@ -33,8 +33,8 @@ import optparse
 import numpy as np
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 
 ################################################################################
@@ -45,12 +45,12 @@ def options():
     ##
     cname  = "POSCAR" # OUTPUT BASE filename
     POSCAR = "POSCAR" # INPUT (BASE) filename
-    
+
     ###############################################
     ## optparse
     ##
     parser = optparse.OptionParser()
-    
+
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=POSCAR,
@@ -60,13 +60,13 @@ def options():
                         default=cname,
     )
     options,  args = parser.parse_args()
-    
+
     if options.INPUT:
         POSCAR=options.INPUT
-    
+
     if options.OUTPUT:
         cname=options.OUTPUT
-    
+
     #print args,options
     if len(args) > 0:
         #print "script name:",argvs[0]
@@ -74,14 +74,14 @@ def options():
         #distance = float(args[0])
         cname=args[0]
         POSCAR=args[0]
-    
+
     if not os.path.exists(POSCAR):
         if os.path.exists(POSCAR+".vasp"):
             POSCAR="POSCAR.vasp"
             cname=POSCAR
         else:
             sys.exit(POSCAR+" file not found")
-    
+
     print "INPUT file name    :",POSCAR
     print "OUTPUT file name   :",cname+".vasp"
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     if direct:
         ABS=False # for VASP
        #ABS=True  # for SuperCell
-        scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
         src_mode="Direct"
     else:
         src_mode="Cartesian"

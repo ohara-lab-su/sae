@@ -441,7 +441,7 @@ class ReadVaspPoscar(object):
                 if ABS == 'vasp' or ABS == 'VASP':
                     ABS=True
 
-        self.scale, self.direct = SAEnv.conv_direct2car0(\
+        self.scale, self.direct = SAEnv.conv_direct2cara(\
                 ABS,\
                 self.scale,\
                 self.t,\
@@ -480,7 +480,7 @@ class ReadVaspPoscar(object):
         # direct --> cartesian
         if self.direct:
             ABS=True
-            self.scale,self.direct = SAEnv.conv_direct2car0(
+            self.scale,self.direct = SAEnv.conv_direct2cara(
                     ABS,\
                     self.scale,\
                     self.t,\

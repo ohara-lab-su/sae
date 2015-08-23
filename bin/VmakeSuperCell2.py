@@ -24,7 +24,7 @@
 #
 # 2014.11.04
 #   bag fix
-#      conv_car2direct(scale,t,natom,direct,sp) ルーチンにバグ(修正)
+#      conv_car2directa(scale,t,natom,direct,sp) ルーチンにバグ(修正)
 #
 #  2014.10.31
 #   スーパーセル変換関数の準備とそのテスト用で VmakeSuperCell2.py を

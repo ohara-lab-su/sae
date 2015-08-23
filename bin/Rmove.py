@@ -19,15 +19,15 @@
 #   基本ベースは VmodifyAtomPosition.py (2014.11.05 version)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -35,8 +35,8 @@ import os
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import re
 #from copy import deepcopy
@@ -50,7 +50,7 @@ def options():
 #   cname  = "POSCAR" # OUTPUT BASE filename
     cname  = "igzo"   # OUTPUT BASE filename
     POSCAR = "POSCAR" # INPUT (BASE) filename
-    
+
     ###############################################
     ## optparse
     ##
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     ##########################################################################
 
     # 移動原子リスト読み込み (data,x,y,z)
-    name='LIST' 
+    name='LIST'
     nlist = SAE.read_list_param(name)
 
     list_atoms = np.zeros((nlist,4))
@@ -125,13 +125,13 @@ if __name__ == '__main__':
     # Direct to Cartesian
     if direct:
         ABS=False # for VASP
-        scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
     for i in range(nlist):
         print i, int(list_atoms[i,0]), list_atoms[i,1],list_atoms[i,2],list_atoms[i,3]
 
     # スケールファクターを 1.0 へ変換
-    scale = SAE.conv_scale21(scale,t)
+    scale = SAE.conv_scale21a(scale,t)
 
     # 原子移動(ang) 必要:cartesian-mode
     #    入力list_atom: cartesian-実座標系(ang)
@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
     # Cartesian to Direct
     if not direct:
-        scale,direct = SAE.conv_car2direct(scale,t,natom,direct,position)
+        scale,direct = SAE.conv_car2directa(scale,t,natom,direct,position)
 
 #   # POSCAR のファイル標準出力
 #   STD=False
@@ -178,4 +178,4 @@ if __name__ == '__main__':
 
 
 ################################################################################
-     
+

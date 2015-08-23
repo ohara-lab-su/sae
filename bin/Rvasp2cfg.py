@@ -12,12 +12,12 @@
 #    1st version
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
 #
 __status__     = "alpha"
 __version__    = "0.0.2"
@@ -29,8 +29,8 @@ import optparse
 
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import re
 
@@ -42,12 +42,12 @@ def options():
     ##
     POSCAR = "POSCAR" # INPUT filename
     cname  = "POSCAR" # OUTPUT BASE filename
-    
+
     ###############################################
     ## optparse
     ##
     parser = optparse.OptionParser()
-    
+
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=POSCAR,
@@ -57,25 +57,25 @@ def options():
                         default=cname,
     )
     options,  args = parser.parse_args()
-    
+
     if options.INPUT:
         POSCAR=options.INPUT
-    
+
     if options.OUTPUT:
         cname=options.OUTPUT
-    
+
     #print args,options
     if len(args) > 0:
         #print "script name:",argvs[0]
         cname=args[0]
         POSCAR=args[0]
-    
+
     if not os.path.exists(POSCAR):
         sys.exit(POSCAR+" file not found")
-    
+
     if POSCAR:
         print "INPUT file name :",POSCAR
-    
+
     if cname:
         print "OUTPUT file name:",cname+".cfg"
 
@@ -108,17 +108,17 @@ if __name__ == '__main__':
 #   if direct:
 #      #ABS=False # for VASP
 #       ABS=True  # for RMC_POT
-#       scale,direct = conv_direct2car(ABS,scale,t,natom,position)
+#       scale,direct = conv_direct2cara(ABS,scale,t,natom,position)
 #       mode="Direct"
 #   else:
 #       mode="Cartesian"
 
     # スケールファクターを 1.0 へ変換
-    scale = SAE.conv_scale21(scale,t)
+    scale = SAE.conv_scale21a(scale,t)
 
     # Cartesian to Direct
     if not direct:
-        scale,direct = SAE.conv_car2direct(scale,t,natom,direct,position)
+        scale,direct = SAE.conv_car2directa(scale,t,natom,direct,position)
         src_mode="Cartesian"
     else:
         src_mode="Direct"

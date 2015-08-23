@@ -50,7 +50,7 @@
 #     問題点) ゾーン境界で正しく動作しない
 #     原因)   スーパーセル化が正しく動作してない
 #
-# 2014.10.09 
+# 2014.10.09
 #   VfindNN0.py
 #
 #    vasp POSCAR format 対応
@@ -60,15 +60,15 @@
 #    *) 周期境界条件は考慮しない("端"の原子の近接はひとつの箱のなかだけ考慮)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -76,8 +76,8 @@ import os
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import re
 #from copy import deepcopy
@@ -90,16 +90,16 @@ def options():
     ##
     cname  = "POSCAR" # OUTPUT BASE filename
     POSCAR = "POSCAR" # INPUT (BASE) filename
-    
+
     distance = "2.5"  # 検索する領域
-    
+
     find = 1   # (元のセルで)通しでn番目の原子(1から始まるindex)からの近接原子検索
-    
+
     ###############################################
     ## optparse
     ##
     parser = optparse.OptionParser()
-    
+
     parser.add_option(  '-i','--input',
                         dest='INPUT',
                         default=POSCAR,
@@ -117,31 +117,31 @@ def options():
                         default=distance,
     )
     options,  args = parser.parse_args()
-    
+
     if options.INPUT:
         POSCAR=options.INPUT
-    
+
     if options.OUTPUT:
         cname=options.OUTPUT
-    
+
     if options.NN:
         find=int(options.NN)
-    
+
     if options.DISTANCE:
         distance=float(options.DISTANCE)
-    
+
     #print args,options
     if len(args) > 0:
         #print "script name:",argvs[0]
         #POSCAR=argv[0]
         distance = float(args[0])
-    
+
     if not os.path.exists(POSCAR):
         if os.path.exists(POSCAR+".vasp"):
             POSCAR="POSCAR.vasp"
         else:
             sys.exit(POSCAR+" file not found")
-    
+
     print "INPUT file name    :",POSCAR
     print "OUTPUT file name   :",cname+"_nn_"+str(find)+".out"
     print "SEARCH DISTANCE    :",distance
@@ -176,7 +176,7 @@ if __name__ == '__main__':
     if direct:
        #ABS=False # for VASP
         ABS=True  # for SuperCell
-        scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
     if direct:
         sys.exit("Error: current mode is Direct")
@@ -195,7 +195,7 @@ if __name__ == '__main__':
 
     # 近接原子間距離の計算: 特定距離内の部分空間index 作成準備
 #   find_nn_distance()
- 
+
 ################################################################################
-     
+
 

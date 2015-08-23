@@ -37,6 +37,11 @@
 #
 ##################################################################################
 #
+# 2015.08.24
+#  基本ルール変更
+#    引数版 conv_direct2carABS --> conv_direct2carABSa
+#    戻り値版 conv_direct2darABS1 --> conv_direct2carABS
+#
 # 2015.02.27
 #   引数版
 #    conv_direct2car1    (ABS非対応化)
@@ -73,7 +78,8 @@ import sys
 import numpy as np
 
 ################################################################################
-def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
+# 引数版
+def conv_direct2carABSa(ABS,scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")
@@ -163,7 +169,7 @@ def conv_direct2carABS(ABS,scale0,t,natom,direct,position):
 ################################################################################
 # ABS 版,戻り値版
 #
-def conv_direct2carABS1(scale0,t,natom,direct,position):
+def conv_direct2carABS(scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")

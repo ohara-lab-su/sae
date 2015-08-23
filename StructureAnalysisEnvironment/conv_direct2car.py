@@ -36,6 +36,12 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  戻り値版と引数版の名前センスを他に統一(引数版*a, 戻り値版)
+#  conv_direct2car0 --> conv_direct2cara  (引数版)
+#  conv_direct2car1 --> conv_direct2car   (戻り値版)
+#
+#
 # 2015.02.27
 #  旧バージョン(引数版) を conv_direct2car0 へ名前変更
 #  新バージョン(戻り値版) を conv_direct2car1 へ名前変更
@@ -90,7 +96,7 @@ import  numpy as np
 # 少メモリ/高速仕様
 #  注意) 2015.02.27: conv_direct2car --> conv_direct2car0 名前変更
 #
-def conv_direct2car0(ABS,scale0,t,natom,direct,position):
+def conv_direct2cara(ABS,scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")
@@ -184,7 +190,7 @@ def conv_direct2car0(ABS,scale0,t,natom,direct,position):
 # conv_direct2car と同一仕様(戻り値が異なる)
 #  ただし、ABS 仕様は消す
 #
-def conv_direct2car1(scale0,t,natom,direct,position):
+def conv_direct2car(scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")

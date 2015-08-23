@@ -13,15 +13,15 @@
 #   conv_direct2car --> conv_direct2car0
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #import os
@@ -33,7 +33,7 @@ import numpy as np
 #from copy import deepcopy
 
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE 
+#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
@@ -43,7 +43,7 @@ def options():
     atom1    = 1    # 検索する原子の種類番号(1) default
     atom2    = 4    # 検索する原子の種類番号(2) default
     distance = 2.4  # ボンドを検索する範囲(ang) default
-    
+
 
     return [POSCAR,atom1,atom2,distance]
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     if direct:
         ABS=False # for VASP
        #ABS=True  # for SuperCell
-        scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
     scale = SAE.conv_car2carABS(scale,t,natom,direct,position)
 
@@ -106,16 +106,16 @@ if __name__ == '__main__':
         x1 = position[bond1[num],0]
         y1 = position[bond1[num],1]
         z1 = position[bond1[num],2]
- 
+
         x2 = position[bond2[num],0]
         y2 = position[bond2[num],1]
         z2 = position[bond2[num],2]
 
         r1 = bondr[num]
- 
+
         print num, bond1[num],"("+str(atoms_index[ion[bond1[num]]])+") -",\
                    bond2[num],"("+str(atoms_index[ion[bond2[num]]])+")"  ,\
                    " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
                    % ( r1, x1,y1,z1, x2,y2,z2)
 
- 
+

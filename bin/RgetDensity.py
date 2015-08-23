@@ -19,56 +19,34 @@
 #  Rvasp2cfg.py (2014.10.31 版)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
 import os
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 #import re
 #import optparse
 #from copy import deepcopy
-
-#from LIB_vasp import read_param_poscar
-#from LIB_vasp import read_poscar
-#from LIB_vasp import print_poscar
-#from LIB_vasp import *
-
-#from numpy import *
-#from LIB_vasp.read_poscar_param import *
-#from LIB_vasp.read_poscar import *
-#from LIB_vasp.read_list_param import *
-#from LIB_vasp.read_list import *
-#from LIB_vasp.print_poscar import *
-#from LIB_vasp.print_poscar4 import *
-#from LIB_vasp.print_cfg import *
-#from LIB_vasp.conv_direct2car import *
-#from LIB_vasp.conv_car2direct import *
-#from LIB_vasp.conv_scale21 import *
-#from LIB_vasp.conv_vasp2cfg import *
-#from LIB_vasp.conv_cfg2vasp import *
-#from LIB_vasp.move_atoms import *
-
-#from LIB_vasp.change_density import *
 
 ################################################################################
 def options():
 
     cname   = "POSCAR"        # OUTPUT BASE filename
     POSCAR  = "POSCAR"      # INPUT (BASE) filename
-    
+
     if not os.path.exists(POSCAR):
         sys.exit("STOP: "+POSCAR+" file not found")
 
@@ -103,7 +81,7 @@ if __name__ == '__main__':
     ##########################################################################
 
     # スケールファクターを 1.0 へ変換
-    scale = SAE.conv_scale21(scale,t)
+    scale = SAE.conv_scale21a(scale,t)
 
     lattice     = t[0,0]
     cell        = t[0,0]/2  # for RMC_POT
@@ -116,11 +94,11 @@ if __name__ == '__main__':
     print ""
     print "  DENSITY         = ", density
     print ""
-   
+
     # Cartesian to Direct
     if not direct:
-        scale,direct = SAE.conv_car2direct(scale,t,natom,direct,position)
-   
+        scale,direct = SAE.conv_car2directa(scale,t,natom,direct,position)
+
     # RMC_POT(cfg) 形式への変換 必須:direct-Mode
     scale,direct = SAE.conv_vasp2cfg(scale,t,natom,direct,position)
 
@@ -129,7 +107,7 @@ if __name__ == '__main__':
     t[2,2] =  cell
 
     outname = cname
-   
+
     # RMC_POT(cfg) 形式への出力(標準出力)
     print "  OUTPUT CFG-FILE = ", outname+'.cfg'
     STD=False
@@ -143,21 +121,21 @@ if __name__ == '__main__':
     direct = True   # conv_cfg2vasp は direce を想定(in/out)
     scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
     scale,direct = SAE.conv_cfg2vasp(scale,t,natom,direct,position)
-   
+
     # 擬似VASP5 設定
     dummy   = "In Ga Zn O"
     PV5FLAG = True  # 擬似VASP5 出力
-   
+
     # VASP4+擬似VASP5 出力
     STD=False
    #STD=True
     SAE.print_poscar4(outname,STD,title,scale,natom,nion,\
                       direct,PV5FLAG,t,atoms,dummy,position)
-   
-    print ""
-   
-    ##########################################################################
- 
 
- 
-      
+    print ""
+
+    ##########################################################################
+
+
+
+

@@ -9,7 +9,7 @@
 #     RMC_POT (*.cfg) 形式を入力とする、変換なしの直接描画ソフト
 #      ---> VASPの名前を冠した変換ルーチンを読んでいないだけで
 #           やっている内容は VASP の変換ルーチンと一緒
-#  
+#
 ################################################################################
 #
 # 2015.02.27
@@ -23,15 +23,15 @@
 #    vpython,wxpython 利用
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #from __future__ import division
@@ -45,8 +45,8 @@ __version__    = "0.0.1"
 import numpy as np
 import visual as vp
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import wx
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     ABS=False
     scale=1.0
     direct=True
-    SAE.conv_direct2car0(ABS,scale,t,natom,direct,position)
+    SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
 #   for j in range(natom):
 #       print " %14.10f %14.10f %14.10f " \
@@ -155,7 +155,7 @@ if __name__ == '__main__':
         atom.red   = 0.05*num
         atom.green = 0.01*num*num
         atom.blue  = 10/num
- 
+
 
 ################################################################################
-     
+

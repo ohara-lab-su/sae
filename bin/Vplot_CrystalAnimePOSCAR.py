@@ -19,15 +19,15 @@
 #    VplotCrystal.py (vpython,wxpython 利用)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 #from __future__ import division
@@ -41,8 +41,8 @@ import sys
 import numpy as np
 import visual as vp
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE 
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 from crystal_make_unit import *
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 #   # Cartesian to Direct 変換
 #   if direct:
 #       ABS=False
-#       scale,direct = conv_direct2car0(ABS,scale,t,natom,direct,position)
+#       scale,direct = conv_direct2cara(ABS,scale,t,natom,direct,position)
 
 #   # 絶対座標系へ変換( cartesian and scale=1.0 )
 #   scale = conv_car2carABS(scale,t,natom,direct,position)
@@ -155,7 +155,7 @@ if __name__ == '__main__':
         # 座標変換のための準備
         if conv:
             position0 = np.zeros((natom,3))
- 
+
         for i in range(natom): # すべての原子位置を描画
 
             # ループごとの座標変換
@@ -166,27 +166,27 @@ if __name__ == '__main__':
                 position0[i,2] = position_loop[l,i,2]
 
                 ABS=False
-                scale,direct = SAE.conv_direct2car0(ABS,scale,t,natom,direct,position0)
+                scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position0)
 
                 position_loop[l,i,0] = position0[i,0]
                 position_loop[l,i,1] = position0[i,1]
                 position_loop[l,i,2] = position0[i,2]
-        
+
             # 描画の原点位置修正
             xp = position_loop[l,i,0] + O[0]
             yp = position_loop[l,i,1] + O[1]
             zp = position_loop[l,i,2] + O[2]
-        
+
             # 原子の種類を取得
             atom_type = str(atoms_index[int(ion[i])])
-        
+
             # 原子半径を取得
             radius = SAE.get_atomic_radius1(atom_type)
             R = radius*RATIO
-        
+
             # 原子番号を取得
             num = SAE.get_atomic_number1(atom_type)
-        
+
             atom = vp.sphere(frame=f,pos=(xp,yp,zp), radius=R)
             atom.red   = 0.5*num*num
             atom.green = 0.1*num
@@ -199,4 +199,4 @@ if __name__ == '__main__':
             obj.visible=0
 
 ################################################################################
-     
+

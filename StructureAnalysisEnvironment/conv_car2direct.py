@@ -22,6 +22,10 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#   引数版( conv_car2direct() --> conv_car2directa() )  マイナー化
+#   戻り値版( conv_car2direct1() --> conv_car2direct() ) メジャー化
+#
 # 2015.06.17
 #  conv_car2direct1() 戻り値が異なるだけのバージョンを追加
 #
@@ -49,7 +53,10 @@ import sys
 import numpy as np
 #from copy import deepcopy
 
-def conv_car2direct(scale,t,natom,direct,position):
+
+####################################################
+# 引数版
+def conv_car2directa(scale,t,natom,direct,position):
 
     if direct:
         sys.exit("STOP: curret mode is Direct.")
@@ -98,8 +105,10 @@ def conv_car2direct(scale,t,natom,direct,position):
     return [scale,direct]
 
 
-# conv_car2direct() と同じで、戻り値が異なるだけ
-def conv_car2direct1(scale,t,natom,direct,position):
+######################################################
+# 戻り値版
+#  conv_car2directa() と同じで、戻り値が異なるだけ
+def conv_car2direct(scale,t,natom,direct,position):
 
     if direct:
         sys.exit("STOP: curret mode is Direct.")
@@ -145,5 +154,5 @@ def conv_car2direct1(scale,t,natom,direct,position):
         position[j,2] = dp[j,2]
 
     direct = True
-    return [scale,t,natom,direct,position]
+    return scale,t,natom,direct,position
 
