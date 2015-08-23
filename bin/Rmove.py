@@ -164,7 +164,7 @@ if __name__ == '__main__':
     # RMC_POT (*.cfg) 形式から VASP 形式へ変換
     direct = True   # conv_cfg2vasp は direce を想定(in/out)
     scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
-    scale,direct = SAE.conv_cfg2vasp(scale,natom,t,direct,position)
+    scale,direct = SAE.conv_cfg2vaspa(scale,natom,t,direct,position) # 引数版
 
     # 擬似VASP5 設定
     dummy   = "In Ga Zn O"

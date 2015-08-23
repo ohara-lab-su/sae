@@ -141,7 +141,7 @@ if __name__ == '__main__':
     #
     direct = True   # conv_cfg2vasp は direce を想定(in/out)
     scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
-    scale,direct = SAE.conv_cfg2vasp(scale,t,natom,direct,position)
+    scale,direct = SAE.conv_cfg2vaspa(scale,t,natom,direct,position) # 引数版
 
     # Direct to Cartesian 変換,引数版
     if direct:

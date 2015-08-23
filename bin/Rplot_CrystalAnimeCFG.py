@@ -170,7 +170,7 @@ if __name__ == '__main__':
         ############################################
         # *.cfg 形式を VASP形式(=通常の基本並進+内部座標形式)へ変換 ( by loop)
         #
-        scale,direct = SAE.conv_cfg2vasp(scale,t,natom,direct,position)
+        scale,direct = SAE.conv_cfg2vaspa(scale,t,natom,direct,position) # 引数版
 
         ############################################
         # Direc to Cartesian 変換 (RMC_POT *.cfg は Direct形式) (by loop)

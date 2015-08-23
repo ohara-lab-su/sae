@@ -28,6 +28,10 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  戻り値版と引数版のルールの再統一に合わせる
+#    引数版 conv_cfg2vasp()  --> conv_cfg2vaspa()
+#
 # 2014.10.31 bug fix
 # 2014.10.30 1st
 #
@@ -50,7 +54,8 @@ import optparse
 from numpy import *
 
 
-def conv_cfg2vasp(scale,t,natom,direct,position):
+### 戻り値版
+def conv_cfg2vaspa(scale,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP: input file is not direct mode")
@@ -106,5 +111,5 @@ def conv_cfg2vasp(scale,t,natom,direct,position):
 
     scale = scale
     direct = True
-    return [scale,direct]
+    return scale,direct
 

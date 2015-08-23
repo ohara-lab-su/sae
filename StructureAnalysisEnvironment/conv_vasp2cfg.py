@@ -20,6 +20,11 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  戻り値版と引数版のルールの再統一に合わせる
+#   引数版   conv_vasp2cfg()  --> conv_vasp2cfga()
+#   戻り値版 conv_vasp2cfg1() --> conv_vasp2cfg()
+#
 # 2015.03.10
 #  戻り値と引数を1:1にしたバージョンの関数を作成
 #   conv_vasp2cfg
@@ -47,7 +52,8 @@ import sys
 
 
 ################################################################################
-def conv_vasp2cfg(scale0,t,natom,direct,position):
+# 引数版
+def conv_vasp2cfga(scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP: input file is not direct mode")
@@ -106,7 +112,9 @@ def conv_vasp2cfg(scale0,t,natom,direct,position):
 
 
 ################################################################################
-def conv_vasp2cfg1(scale0,t,natom,direct,position):
+# 戻り値版
+#
+def conv_vasp2cfg(scale0,t,natom,direct,position):
 
     if not direct:
         sys.exit("STOP: input file is not direct mode")
@@ -161,5 +169,5 @@ def conv_vasp2cfg1(scale0,t,natom,direct,position):
 
     scale  = 1.0
     direct = True
-    return [scale,t,natom,direct,position]
+    return scale,t,natom,direct,position
 
