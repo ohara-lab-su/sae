@@ -21,7 +21,7 @@ __copyright__  = "Copyright 2014,2015 Kengo NAKADA"
 __license__    = "MIT"
 #
 __status__     = "alpha"
-__version__    = "0.0.5"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys

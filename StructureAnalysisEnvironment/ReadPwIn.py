@@ -121,6 +121,8 @@ class ReadPwIn(object):
                 tmp = re.sub('\'','',tmp)
                 tmp = re.sub(',.*','',tmp)
                 self.prefix = str(tmp.strip())
+                self.title = self.prefix
+                self.system = self.title
 
             if bool(cell_reg.match(line)):
 
