@@ -53,6 +53,11 @@ class Read(object):
             suffix = '.inp'
             if filename is None: filename = 'read_pdb.inp'
 
+        if code.upper() == 'OPENMX' or code.upper() == 'MX':
+            class_name = 'ReadMxDat'
+            suffix = '.dat'
+            if filename is None: filename = 'openmx.dat'
+
         if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
             class_name = 'ReadRmcpotCfg'
             suffix = '.cfg'
@@ -62,6 +67,14 @@ class Read(object):
             class_name = 'ReadPwIn'
             suffix = '.in'
             if filename is None: filename = 'scf.in'
+
+        if code.upper() == 'WIEN2K' or code.upper() == 'WIEN':
+            suffix = '.struct'
+            if filename is None: filename = 'case.struct'
+
+        if code.upper() == 'HILAPW' or code.upper() == 'HI':
+            suffix = '.in'
+            if filename is None: filename = 'sets.in'
 
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
