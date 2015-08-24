@@ -40,12 +40,12 @@ __version__    = "0.0.1"
 ################################################################################
 
 import sys
-import os
-import re
-import optparse
-from numpy import *
+#import os
+#import re
+#import optparse
+#from numpy import *
 
-def print_cfg(cname,STD,title,t,natom,nion,atoms,position):
+def print_rmcpot_cfg_raw(cname,STD,title,t,natom,nion,atoms,position):
 
     t1_x = t[0,0]
     t1_y = t[1,0]

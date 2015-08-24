@@ -68,7 +68,6 @@ def write(cell,\
                            cell.position,\
                            cell.fix)
 
-
     ### FDMNES ###
     if code.upper() == 'FDMNES' or code.upper() == 'FDM':
         if outname is None: outname = 'read_pdb.inp'
@@ -116,58 +115,28 @@ def write(cell,\
 
 
     ### RMC_POT ###
+    ### 出力ファイル名は outname+".cfg" と自動で内部的に ".cfg" が加わる
     if code.upper() == 'RMC_POT' or code.upper() == 'RMC' or code.upper() == 'RMCPOT':
-
-        if outname is None: outname = 'rmcpot.inp'
-        # scale factor to 1.0
-        cell.scale,\
-                cell.t,\
-                cell.natom,\
-                cell.direct,\
-                cell.position = SAEnv.conv_scale21(cell.scale,\
-                        cell.t,\
-                        cell.natom,\
-                        cell.direct,\
-                        cell.position)
-
-        # Cartesian to Direct
-        if not cell.direct:
-            cell.scale,\
-                    cell.t,\
-                    cell.natom,\
-                    cell.direct,\
-                    cell.position = SAEnv.conv_car2direct(cell.scale,\
-                            cell.t,\
-                            cell.natom,\
-                            cell.direct,\
-                            cell.position)
-
-        # RMC_POT(cfg) へ変換
-        cell.scale,\
-                cell.t,\
-                cell.natom,\
-                cell.direct,\
-                cell.position = SAEnv.conv_vasp2cfg(cell.scale,\
-                        cell.t,\
-                        cell.natom,\
-                        cell.direct,\
-                        cell.position)
-
-        # print cfg (RMC_POT) style
-        SAEnv.print_cfg(outname,\
-                STD,\
+        if outname is None: outname = 'rmcpot'
+        SAEnv.print_rmcpot_cfg(outname,STD,\
                 cell.title,\
-                cell.t,\
+                cell.scale,\
                 cell.natom,\
                 cell.nion,\
+                cell.selective,\
+                cell.direct,\
+                cell.vasp_version,\
+                cell.t,\
                 cell.atoms,\
-                cell.position)
+                cell.atoms_index,\
+                cell.position,\
+                cell.fix)
+
 
     ### PWScf ###
     if code.upper() == 'PWSCF' or code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':
         if outname is None: outname = 'scf.in'
-        SAEnv.print_pwscf_scf(outname,\
-                STD,\
+        SAEnv.print_pwscf_scf(outname,STD,\
                 cell.title,\
                 cell.scale,\
                 cell.natom,\

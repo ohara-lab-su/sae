@@ -99,7 +99,6 @@ from sort_position import *
 from chk_pdb_cryst1 import *
 
 ### general (print function)
-from print_cfg import *
 from print_poscar import *
 from print_poscar4 import *
 from print_sets import *
@@ -108,6 +107,8 @@ from print_mx_dat import *
 from print_fdmnes import *
 from print_fdmnes_inp import *
 from print_pwscf_scf import *
+from print_rmcpot_cfg import *
+from print_rmcpot_cfg_raw import *
 
 ### general (get function)
 from get_atom_start import *
