@@ -9,10 +9,14 @@
 # 1) pw.x 入力ファイル名の第一候補を scf.in とする
 # 2) ibrav = 0 のみ対応 (2015.05.12)
 # 3) タグ名と値の間の区切りの = (イコール) には必ずスペースが入る事が前提
+#
 # 4) CELL_PARAMETERS は {alat} が前提
 # 5) ATOMIC_POSITIONS は {crystal} が前提
 #
 ################################################################################
+#
+# 2015.08.24
+#  統合化のためのすりあわせ (4)と(5) の注意事項に注意
 #
 # 2015.08.24
 #  統合化の前に、インスタンス重視に切りかえる
@@ -44,7 +48,7 @@ import StructureAnalysisEnvironment as SAEnv
 ################################################################################
 class ReadPwIn(object):
 
-    def __init__(self,cname):
+    def __init__(self,cname,suffix='.in',sort=False,atoms_index=None):
 
         self.datlines,self.num = SAEnv.read_dataline(cname)
 
@@ -65,6 +69,8 @@ class ReadPwIn(object):
         # set default
         self.ispin = 1
         self.prefix = 'input'
+        self.title = self.prefix
+        self.system = self.title
 
         self.vasp_version = 5
         self.t = np.zeros((3,3))
@@ -180,10 +186,42 @@ class ReadPwIn(object):
             for l in range(int(self.atoms[k])):
                 self.atoms_number_j.append(str(self.atoms_number[k]))
 
+
+        ###############################################
+        ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+        ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+        self.ion = np.zeros(self.natom,dtype=int)
+        self.ion_local = np.zeros(self.natom,dtype=int)
+        tmp = -1
+        for j in range(self.nion):
+            local = -1
+            for k in range(int(self.atoms[j])):
+                tmp += 1
+                local += 1
+                self.ion[tmp] = int(j)
+                self.ion_local[tmp] = int(local)
+
+        ## dummy
+        self.direct = True
+        self.selective = False
+        self.fix = [''] * self.natom
+
     ############################################################################
+
+    def get_title(self):
+        return self.title
+
+    def get_system(self):
+        return self.system
+
+    def get_scale(self):
+        return self.scale
+
     def get_t(self):
         return self.t
 
+    def get_vasp_version(self):
+        return self.vasp_version
 
     def get_atoms(self):
         return self.atoms
@@ -194,26 +232,14 @@ class ReadPwIn(object):
     def get_atoms_index(self):
         return self.atoms_index
 
-    def get_atoms_index_j(self):
-        return self.atoms_index_j
-
     def get_atoms_number(self):
         return self.atoms_number
 
+    def get_atoms_index_j(self):
+        return self.atoms_index_j
+
     def get_atoms_number_j(self):
         return self.atoms_number_j
-
-    def get_position(self):
-        return self.position
-
-    def get_ispin(self):
-        return self.ispin
-
-    def get_ibrav(self):
-        return self.ibrav
-
-    def get_scale(self):
-        return self.scale
 
     def get_nion(self):
         return self.nion
@@ -221,8 +247,24 @@ class ReadPwIn(object):
     def get_natom(self):
         return self.natom
 
-    def get_title(self):
-        return self.prefix
+    def get_ion(self):
+        return self.ion
+
+    def get_ion_local(self):
+        return self.ion_local
+
+    def get_position(self):
+        return self.position
+
+    def get_fix(self):
+        return self.fix
+
+    def get_ispin(self):
+        return self.ispin
+
+    def get_ibrav(self):
+        return self.ibrav
+
 
 ################################################################################
 def options():

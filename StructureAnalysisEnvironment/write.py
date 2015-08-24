@@ -33,15 +33,21 @@ import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
+## VASP
+## FDMNES
+## OpenMX
+## RMC_POT
+## PWscf
+##
 def write(cell,\
         outname=None,\
         suffix=None,\
         code='VASP',\
         calinfo=None,\
+        sort=False,\
         STD=False,\
         MOL=False,\
         FRAC=True):
-
 
     ### VASP ###
     ### 出力ファイル名は outname+".vasp" と自動で内部的に ".vasp" が加わる
@@ -65,7 +71,6 @@ def write(cell,\
 
     ### FDMNES ###
     if code.upper() == 'FDMNES' or code.upper() == 'FDM':
-
         if outname is None: outname = 'read_pdb.inp'
         SAEnv.print_fdmnes1(outname=outname,cell=cell,STD=STD,MOL=MOL)
         if not STD:
@@ -157,4 +162,24 @@ def write(cell,\
                 cell.nion,\
                 cell.atoms,\
                 cell.position)
+
+    ### PWScf ###
+    if code.upper() == 'PWSCF' or code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':
+        if outname is None: outname = 'scf.in'
+        SAEnv.print_pwscf_scf(outname,\
+                STD,\
+                cell.title,\
+                cell.scale,\
+                cell.natom,\
+                cell.nion,\
+                cell.selective,\
+                cell.direct,\
+                cell.vasp_version,\
+                cell.t,\
+                cell.atoms,\
+                cell.atoms_index,\
+                cell.position,\
+                cell.fix,\
+                cell.atoms_index_j)
+
 

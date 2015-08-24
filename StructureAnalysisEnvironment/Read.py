@@ -39,27 +39,34 @@ import StructureAnalysisEnvironment as SAEnv
 #
 class Read(object):
 
-    def __init__(self,filename=None,suffix=None,code='VASP',atoms_index=None):
+    def __init__(self,filename=None,suffix=None,code='VASP',sort=False,atoms_index=None):
 
         module_name = 'StructureAnalysisEnvironment'
-        if suffix is None: suffix = ''
 
         if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
+            suffix = '.vasp'
             if filename is None: filename = 'POSCAR'
 
         if code.upper() == 'FDMNES' or  code.upper() == 'FDM':
             class_name = 'ReadFdmInp'
+            suffix = '.inp'
             if filename is None: filename = 'read_pdb.inp'
 
         if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
             class_name = 'ReadRmcpotCfg'
+            suffix = '.cfg'
             if filename is None: filename = 'rmcpot.cfg'
+
+        if code.upper() == 'PWSCF' or code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':
+            class_name = 'ReadPwIn'
+            suffix = '.in'
+            if filename is None: filename = 'scf.in'
 
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
 
-        self.cell = klass(filename+suffix,atoms_index=atoms_index)
+        self.cell = klass(filename,suffix=suffix,atoms_index=atoms_index)
 
         # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title
@@ -87,6 +94,7 @@ class Read(object):
        #else:
        #    self.vasp_version = None
 
+        self.suffix = suffix
         self.code = code
 
     ############################################################################
@@ -175,8 +183,6 @@ class Read(object):
             STD=False,\
             MOL=False,\
             FRAC=True):
-
-        if code is None: code=self.code
 
         SAEnv.write(self.cell,\
                     outname=outname,\

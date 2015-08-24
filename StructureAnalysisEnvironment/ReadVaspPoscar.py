@@ -117,7 +117,7 @@ class ReadVaspPoscar(object):
 
     ###############################################
     ## init and Read POSCAR
-    def __init__(self,POSCAR='POSCAR',atoms_index=None):
+    def __init__(self,POSCAR='POSCAR',suffix='.vasp',sort=False,atoms_index=None):
 
         self.datlines, self.num = SAEnv.read_dataline(POSCAR)
 

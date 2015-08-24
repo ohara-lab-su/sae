@@ -47,9 +47,9 @@ import StructureAnalysisEnvironment as SAEnv
 ################################################################################
 class ReadRmcpotCfg(object):
 
-    def __init__(self,cname='POSCAR.cfg',suffix=None,atoms_index=None):
+    def __init__(self,cname='POSCAR.cfg',suffix='.cfg',sort=False,atoms_index=None):
 
-        if suffix is not None: cname = cname+suffix
+#       if suffix is not None: cname = cname+suffix
         self.datlines, self.num = SAEnv.read_dataline(cname)
 
         ###############################################
