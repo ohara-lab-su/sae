@@ -166,6 +166,7 @@ class ReadVaspPoscar(object):
             self.vasp_version = 4
         else:
             self.vasp_version = 5
+        del atoms
 
         ###############################################
         ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
@@ -182,6 +183,7 @@ class ReadVaspPoscar(object):
         else:
             sys.exit("Error: unknown VASP format")
 
+        self.atoms = np.array(self.atoms,dtype=int)
         self.nion = len(self.atoms)
 
         ###############################################
@@ -242,6 +244,18 @@ class ReadVaspPoscar(object):
                 local += 1
                 self.ion_local[tmp] = int(local)
                #print tmp, int(ion[tmp]), int(ion_local[tmp])
+
+
+        ###############################################
+        ## natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
+        ##                               <---> atoms_index_j() は元素記号を返す
+        ## ReadOutcar.py, ReadMxDatMethod.py 互換
+        self.atoms_j = np.zeros(self.natom,dtype=int)
+        j = 0
+        for ion in range(self.nion):
+            for atom in range(self.atoms[ion]):
+                self.atoms_j[j] = int(ion)
+                j += 1
 
         ###############################################
         ## get atomc coordinate mode
@@ -331,6 +345,9 @@ class ReadVaspPoscar(object):
 
     def get_atoms(self):
         return self.atoms
+
+    def get_atoms_j(self):
+        return self.atoms_j
 
     def get_atoms_index(self):
         return self.atoms_index

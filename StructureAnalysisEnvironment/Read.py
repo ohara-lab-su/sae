@@ -32,7 +32,11 @@ import sys
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
+
 ################################################################################
+# RMC_POT や VASP4 などでは atoms_index 情報が存在しないので自分で
+# その情報を手動で入力するときに atoms_index=['In','Ga','Zn','O'] などとする
+#
 class Read(object):
 
     def __init__(self,filename=None,suffix=None,code='VASP',atoms_index=None):
@@ -64,6 +68,7 @@ class Read(object):
         self.t = self.cell.t
         self.nion = self.cell.nion
         self.atoms = self.cell.atoms
+        self.atoms_j = self.cell.atoms_j
         self.atoms_index = self.cell.atoms_index
         self.atoms_index_j = self.cell.atoms_index_j
         self.atoms_number = self.cell.atoms_number
@@ -115,6 +120,10 @@ class Read(object):
     def get_atoms(self):
         self.atoms = self.cell.get_atoms()
         return self.atoms
+
+    def get_atoms_j(self):
+        self.atoms_j = self.cell.get_atoms_j()
+        return self.atoms_j
 
     def get_atoms_index(self):
         self.atoms_index = self.cell.get_atoms_index()
@@ -178,7 +187,6 @@ class Read(object):
                     MOL=MOL,\
                     FRAC=FRAC)
         return
-
 
 ################################################################################
 # for TEST

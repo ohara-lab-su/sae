@@ -14,6 +14,9 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  統合化の前に、インスタンス重視に切りかえる
+#
 # 2015.05.12 startup
 #
 ################################################################################
@@ -35,7 +38,7 @@ import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -43,7 +46,7 @@ class ReadPwIn(object):
 
     def __init__(self,cname):
 
-        self.datlines,self.num = SAE.read_dataline(cname)
+        self.datlines,self.num = SAEnv.read_dataline(cname)
 
         ibrav_reg = re.compile('.*ibrav.*',re.IGNORECASE)
         lattice_a_reg = re.compile('.* a *=',re.IGNORECASE)
@@ -52,6 +55,10 @@ class ReadPwIn(object):
         spin_reg = re.compile('.*nspin.*')
         prefix_reg = re.compile('.*prefix.*')
 
+        cell_reg = re.compile('.*CELL_PARAMETERS.*',re.IGNORECASE)
+        species_reg = re.compile('.*ATOMIC_SPECIES.*',re.IGNORECASE)
+        position_reg = re.compile('.*ATOMIC_POSITIONS.*',re.IGNORECASE)
+
         # 1bhor = 0.529177249 angstrom
         # 1Rydberg = 13.6056981 eV
 
@@ -59,6 +66,14 @@ class ReadPwIn(object):
         self.ispin = 1
         self.prefix = 'input'
 
+        self.vasp_version = 5
+        self.t = np.zeros((3,3))
+        self.atoms_index = []
+        self.atoms_index_j = []
+
+        NION_FLAG = False
+        NATOM_FLAG = False
+        i = 0
         for line in self.datlines:
 
             if bool(ibrav_reg.match(line)):
@@ -78,11 +93,17 @@ class ReadPwIn(object):
                 tmp = re.sub('.*nat *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
                 self.natom = int(tmp)
+                if self.natom and not NATOM_FLAG:
+                    NATOM_FLAG = True
+                    self.position = np.zeros((self.natom,3))
 
             if bool(nion_reg.match(line)):
                 tmp = re.sub('.*ntyp *=','',line.lower())
                 tmp = re.sub(',.*','',tmp)
                 self.nion = int(tmp)
+                if self.nion and not NION_FLAG:
+                    NION_FLAG = True
+                    self.atoms = np.zeros(self.nion,dtype=int)
 
             if bool(spin_reg.match(line)):
                 tmp = re.sub('.*nspin *=','',line.lower())
@@ -95,13 +116,6 @@ class ReadPwIn(object):
                 tmp = re.sub(',.*','',tmp)
                 self.prefix = str(tmp.strip())
 
-    ############################################################################
-    # ReadPoscar.py での t に準ずる構造
-    def get_t(self):
-        self.t = np.zeros((3,3))
-        cell_reg = re.compile('.*CELL_PARAMETERS.*',re.IGNORECASE)
-        for i in range(self.num):
-            line = self.datlines[i]
             if bool(cell_reg.match(line)):
 
                 t1_x = self.datlines[i+1].split()[0]
@@ -128,41 +142,26 @@ class ReadPwIn(object):
                 self.t[1,2] = t3_y
                 self.t[2,2] = t3_z
 
-        return self.t
-
-    ############################################################################
-    def get_atoms_index(self):
-
-        species_reg = re.compile('.*ATOMIC_SPECIES.*',re.IGNORECASE)
-        self.atoms_index = []
-        for i in range(self.num):
             if bool(species_reg.match(self.datlines[i])):
                 for j in range(self.nion):
                     atom_name = self.datlines[i+j+1].split()[0]
                     self.atoms_index.append(atom_name)
-        return self.atoms_index
 
-    ############################################################################
-    def get_atoms(self):
-
-        self.get_atoms_index()
-        self.atoms = np.zeros(self.nion,dtype=int)
-        position_reg = re.compile('.*ATOMIC_POSITIONS.*',re.IGNORECASE)
-        for i in range(self.num):
-            line = self.datlines[i]
             if bool(position_reg.match(line)):
                 for j in range(self.natom):
-                    tmp = str(self.datlines[i+j+1].split()[0])
+                    atom_name = str(self.datlines[i+j+1].split()[0])
+                    self.atoms_index_j.append(atom_name)
+                    self.position[j,0] = self.datlines[i+j+1].split()[1]
+                    self.position[j,1] = self.datlines[i+j+1].split()[2]
+                    self.position[j,2] = self.datlines[i+j+1].split()[3]
                     for k in range(self.nion):
-                        if self.atoms_index[k] == tmp:
+                        if self.atoms_index[k] == atom_name:
                             self.atoms[k] += 1
-        return self.atoms
 
-    ############################################################################
-    # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号を返す)
-    def get_atoms_j(self):  # ReadOutcar.py 互換, ReadMxDatMethod.py 互換
+            i += 1
+            ########## END of loop ############################
 
-        self.get_atoms()
+        ## natom までの通し番号で原子の種類番号を返す
         self.atoms_j = np.zeros(self.natom,dtype=int)
         j = 0
         for ion in range(self.nion):
@@ -170,38 +169,43 @@ class ReadPwIn(object):
                 self.atoms_j[j] = int(ion)
                 j += 1
 
+        ## atoms_number
+        self.atoms_number = np.zeros(self.nion,dtype=int)
+        for i in range(self.nion):
+            self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
+
+        ## atoms_number_j
+        self.atoms_number_j = []
+        for k in range(self.nion):
+            for l in range(int(self.atoms[k])):
+                self.atoms_number_j.append(str(self.atoms_number[k]))
+
+    ############################################################################
+    def get_t(self):
+        return self.t
+
+
+    def get_atoms(self):
+        return self.atoms
+
+    def get_atoms_j(self):
         return self.atoms_j
 
-    ############################################################################
-    # natom までの通し番号で原子種の記号を返す
-    def get_atoms_index_j(self): # ReadMd, ReadPoscar, 互換
+    def get_atoms_index(self):
+        return self.atoms_index
 
-        position_reg = re.compile('.*ATOMIC_POSITIONS.*',re.IGNORECASE)
-        self.atoms_index_j = []
-        for i in range(self.num):
-            if bool(position_reg.match(self.datlines[i])):
-                for j in range(self.natom):
-                    atom_name = self.datlines[i+j+1].split()[0]
-                    self.atoms_index_j.append(atom_name)
-
+    def get_atoms_index_j(self):
         return self.atoms_index_j
 
-    ############################################################################
+    def get_atoms_number(self):
+        return self.atoms_number
+
+    def get_atoms_number_j(self):
+        return self.atoms_number_j
+
     def get_position(self):
-
-        position_reg = re.compile('.*ATOMIC_POSITIONS.*',re.IGNORECASE)
-        self.position = np.zeros((self.natom,3))
-        for i in range(self.num):
-            line = self.datlines[i]
-            if bool(position_reg.match(line)):
-                for j in range(self.natom):
-                    self.position[j,0] = self.datlines[i+j+1].split()[1]
-                    self.position[j,1] = self.datlines[i+j+1].split()[2]
-                    self.position[j,2] = self.datlines[i+j+1].split()[3]
-
         return self.position
 
-    ############################################################################
     def get_ispin(self):
         return self.ispin
 

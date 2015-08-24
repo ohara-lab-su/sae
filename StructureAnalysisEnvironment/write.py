@@ -42,7 +42,9 @@ def write(cell,\
         MOL=False,\
         FRAC=True):
 
-    ### VASP
+
+    ### VASP ###
+    ### 出力ファイル名は outname+".vasp" と自動で内部的に ".vasp" が加わる
     if code.upper() == 'VASP':
         if outname is None: outname = 'POSCAR'
         if cell.vasp_version is None: cell.vasp_version = 5
@@ -60,7 +62,8 @@ def write(cell,\
                            cell.position,\
                            cell.fix)
 
-    ### FDMNES
+
+    ### FDMNES ###
     if code.upper() == 'FDMNES' or code.upper() == 'FDM':
 
         if outname is None: outname = 'read_pdb.inp'
@@ -68,7 +71,9 @@ def write(cell,\
         if not STD:
             SAEnv.print_fdmnes_inp1(outname=outname,cell=cell,MOL=MOL)
 
-    ## OpenMX
+
+    ### OpenMX ###
+    ### 出力ファイル名は outname+".dat" と自動で内部的に ".dat" が加わる
     if code.upper() == 'OPENMX' or code.upper() == 'MX':
 
         if outname is None: outname = 'openemx'
@@ -104,10 +109,11 @@ def write(cell,\
                            KP=KP,\
                            FRAC=FRAC)
 
-    ## RMC_POT
-    if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
 
-        if outname is None: outname = 'rmcpot'
+    ### RMC_POT ###
+    if code.upper() == 'RMC_POT' or code.upper() == 'RMC' or code.upper() == 'RMCPOT':
+
+        if outname is None: outname = 'rmcpot.inp'
         # scale factor to 1.0
         cell.scale,\
                 cell.t,\
@@ -142,7 +148,7 @@ def write(cell,\
                         cell.direct,\
                         cell.position)
 
-        # print cfg(RMC_POT) style
+        # print cfg (RMC_POT) style
         SAEnv.print_cfg(outname,\
                 STD,\
                 cell.title,\

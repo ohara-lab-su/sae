@@ -253,6 +253,14 @@ class ReadFdmInp(object):
             self.atoms_number_j[i] = \
                     SAEnv.get_atomic_number1(str(self.atoms_index_j[i]))
 
+        ## natom までの通し番号で原子種(原子の種類番号を返す)
+        self.atoms_j = np.zeros(self.natom,dtype=int)
+        j = 0
+        for ion in range(self.nion):
+            for atom in range(self.atoms[ion]):
+                self.atoms_j[j] = int(ion)
+                j += 1
+
         ########################################
         # fix 情報のダミー
         self.fix = np.zeros((self.natom,3),dtype='S')
@@ -261,14 +269,12 @@ class ReadFdmInp(object):
         ########################################
         # 原子種ごとのソートスイッチが入っているとき
         if sort:
-            self.sort_index,\
-                    self.sort_index_r,\
+            self.sort_index, self.sort_index_r,\
                     self.atoms,\
                     self.atoms_index,\
                     self.atoms_index_j = SAEnv.sort_atom_index_j(self.atoms_index_j)
 
-            self.sort_index,\
-                    self.sort_index_r,\
+            self.sort_index, self.sort_index_r,\
                     self.atoms,\
                     self.atoms_index,\
                     self.atoms_number_j = SAEnv.sort_atom_number_j(self.atoms_number_j)
@@ -365,6 +371,9 @@ class ReadFdmInp(object):
     def get_atoms(self):
         return self.atoms
 
+    def get_atoms_j(self):
+        return self.atoms_j
+
     def get_atoms_index(self):
         return self.atoms_index
 
@@ -407,22 +416,18 @@ class ReadFdmInp(object):
 
     ######################################### for structure convert
 
-    ###
     def sort_atoms_index_j(self):
 
-        self.sort_index,\
-                self.sort_index_r,\
+        self.sort_index, self.sort_index_r,\
                 self.atoms,\
                 self.atoms_index,\
                 self.atoms_index_j = SAEnv.sort_atom_index_j(self.atoms_index_j)
 
-        return self.sort_index,\
-                self.sort_index_r,\
+        return self.sort_index, self.sort_index_r,\
                 self.atoms,\
                 self.atoms_index,\
                 self.atoms_index_j
 
-    ###
     def sort_position(self):
         if self.sort_index_r is None: self.sort_atoms_index_j()
         self.position = SAEnv.sort_position(self.sort_index_r,self.position)

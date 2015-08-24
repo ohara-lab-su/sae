@@ -163,6 +163,14 @@ class ReadRmcpotCfg(object):
                     self.ion[tmp]= int(j)
                     self.ion_local[tmp] = int(local)
 
+           ### natom までの通し番号で原子の種類番号を返す
+           #self.atoms_j = np.zeros(self.natom,dtype=int)
+           #j = 0
+           #for ion in range(self.nion):
+           #    for atom in range(self.atoms[ion]):
+           #        self.atoms_j[j] = int(ion)
+           #        j += 1
+
         else:
             self.vasp_version = 4
             self.atoms_index = []

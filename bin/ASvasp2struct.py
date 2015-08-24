@@ -33,11 +33,8 @@ parser = optparse.OptionParser()
 parser.add_option( '-i','--input',dest='INPUT')
 options,args = parser.parse_args()
 
-if options.INPUT:
-    poscarname=options.INPUT
-
-if len(args) > 0:
-    poscarname=args[0]
+if options.INPUT: poscarname=options.INPUT
+if len(args) > 0: poscarname=args[0]
 
 if not os.path.exists(poscarname):
     poscarname0 = poscarname
