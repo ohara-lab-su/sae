@@ -21,6 +21,10 @@
 #
 ################################################################################
 #
+# 2015.08.24
+#  統合化を前提として、基本並進ベクトルおよび内部座標の保存をRMC_POT形式
+#  ではなく、デフォルトで VASP 形式とする
+#
 # 2015.07.16 startup
 #
 ################################################################################
@@ -35,34 +39,37 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-import sys
+#import sys
 #import os
 import numpy as np
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 class ReadRmcpotCfg(object):
 
-    def __init__(self,cname='POSCAR.cfg'):
+    def __init__(self,cname='POSCAR.cfg',suffix=None,atoms_index=None):
 
-        self.datlines, self.num = SAE.read_dataline(cname)
-
-        ###############################################
-        # instance value
-        self.direct = True # cfg は in/out 共に direct を想定
-        self.scale = 1.0   # cfg は scale 1.0 を想定
+        if suffix is not None: cname = cname+suffix
+        self.datlines, self.num = SAEnv.read_dataline(cname)
 
         ###############################################
         # Read Parameter
         self.header = str(self.datlines[0])
-        self.title = self.header
         self.comment = str(self.datlines[1])
-        self.moves = self.datlines[4]
-        self.saved = self.datlines[5]
+        self.title = self.comment
+        self.system = self.title
+        self.moves = self.datlines[4] # RMC
+        self.saved = self.datlines[5] # RMC
         self.natom = int(self.datlines[7].split()[0])
         self.nion = int(self.datlines[8].split()[0])
-        self.nmoles = self.datlines[9]
-        self.angles = self.datlines[10]
+        self.nmoles = self.datlines[9] # RMC
+        self.angles = self.datlines[10] # RMC
+
+        # dummy parameter
+        self.vasp_version = 5
+        self.direct = True # cfg は in/out 共に direct を想定
+        self.selective = False
+        self.scale = 1.0   # cfg は scale 1.0 を想定
 
         ###############################################
         ## Read Lattice Vector
@@ -118,6 +125,54 @@ class ReadRmcpotCfg(object):
                #print atoms_j[index],index
                 index += 1
 
+        # 入力の原子情報基づく基本情報マトリックスの作成
+        if atoms_index:
+            # 入力原子情報に基づいて atoms_index を作成する
+            self.atoms_index = [''] * self.nion
+            if self.nion == len(atoms_index):
+                for i in range(self.nion):
+                    self.atoms_index[i] = atoms_index[i]
+
+            # 入力原子情報に基づいて atoms_index_j を作成する
+            self.atoms_index_j = []
+            for k in range(self.nion):
+                for l in range(int(self.atoms[k])):
+                    self.atoms_index_j.append(str(self.atoms_index[k]))
+
+            # 入力原子情報に基づいて atoms_number を作成する
+            self.atoms_number = np.zeros(self.nion,dtype=int)
+            for i in range(self.nion):
+                self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
+
+            # 入力原子情報に基づいて atoms_number_j を作成する
+            self.atoms_number_j = []
+            for k in range(self.nion):
+                for l in range(int(self.atoms[k])):
+                    num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
+                    self.atoms_number_j.append(num0)
+
+            ## ion_local[j] & ion[j]
+            self.ion = np.zeros(self.natom,dtype=int)
+            self.ion_local = np.zeros(self.natom,dtype=int)
+            tmp = -1
+            for j in range(self.nion):
+                local = -1
+                for k in range(int(self.atoms[j])):
+                    tmp += 1
+                    local += 1
+                    self.ion[tmp]= int(j)
+                    self.ion_local[tmp] = int(local)
+
+        else:
+            self.vasp_version = 4
+            self.atoms_index = []
+            self.atoms_index_j = []
+            self.atoms_number = []
+            self.atoms_number_j = []
+            self.ion = []
+            self.ion_local = []
+
+
         ###############################################
         ## Read Internal Coordinate
         ##
@@ -129,8 +184,27 @@ class ReadRmcpotCfg(object):
             self.position[i,2] = float(self.datlines[lines].split()[2])
            #print position[i,0], position[i,1], position[i,2]
 
+
+        # dummy parameter
+        self.fix = ['T'] * self.natom
+
+        # conver to VASP 形式(VASP形式を標準フォーマットとする)
+        self.scale, self.direct = SAEnv.conv_cfg2vaspa(\
+                self.scale,\
+                self.t,\
+                self.natom,\
+                self.direct,\
+                self.position)
+
+    ############################################################################
     def get_title(self):
         return self.title
+
+    def get_system(self):
+        return self.system
+
+    def get_comment(self):
+        return self.comment
 
     def get_t(self):
         return self.t
@@ -144,11 +218,42 @@ class ReadRmcpotCfg(object):
     def get_atoms_j(self):
         return self.atoms_j
 
+    def get_atoms_index(self):
+        return self.atoms_index
+
+    def get_atoms_index_j(self):
+        return self.atoms_index_j
+
+    def get_atoms_number(self):
+        return self.atoms_number
+
+    def get_atoms_number_j(self):
+        return self.atoms_number_j
+
+    def get_ion(self):
+        return self.ion
+
+    def get_ion_local(self):
+        return self.ion_local
+
     def get_direct(self):
         return self.direct
 
+    def get_selective(self):
+        return self.selective
+
     def get_position(self):
         return self.position
+
+    def get_fix(self):
+        return self.fix
+
+    def conv_cfg2vasp(self):
+        self.scale, self.direct = SAEnv.conv_cfg2vasp(self.t,\
+                self.natom,\
+                self.direct,\
+                self.position)
+        return self.scale,self.direct
 
     ############################################################################
     #
@@ -166,61 +271,61 @@ class ReadRmcpotCfg(object):
     # [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
     #
     ############################################################################
-    def conv_cfg2vasp(self):
+#   def conv_cfg2vasp(self):
 
-        if not self.direct:
-            sys.exit("STOP: input file is not direct mode")
+#       if not self.direct:
+#           sys.exit("STOP: input file is not direct mode")
 
-        t1_x = self.t[0,0]
-        t1_y = self.t[1,0]
-        t1_z = self.t[2,0]
+#       t1_x = self.t[0,0]
+#       t1_y = self.t[1,0]
+#       t1_z = self.t[2,0]
 
-        t2_x = self.t[0,1]
-        t2_y = self.t[1,1]
-        t2_z = self.t[2,1]
+#       t2_x = self.t[0,1]
+#       t2_y = self.t[1,1]
+#       t2_z = self.t[2,1]
 
-        t3_x = self.t[0,2]
-        t3_y = self.t[1,2]
-        t3_z = self.t[2,2]
+#       t3_x = self.t[0,2]
+#       t3_y = self.t[1,2]
+#       t3_z = self.t[2,2]
 
-        ###############################################
-        ## DATA convert (RMC_POT to VASP )
-        ##
-        t1_x = t1_x*2
-        t1_y = t1_y*2
-        t1_z = t1_z*2
+#       ###############################################
+#       ## DATA convert (RMC_POT to VASP )
+#       ##
+#       t1_x = t1_x*2
+#       t1_y = t1_y*2
+#       t1_z = t1_z*2
 
-        t2_x = t2_x*2
-        t2_y = t2_y*2
-        t2_z = t2_z*2
+#       t2_x = t2_x*2
+#       t2_y = t2_y*2
+#       t2_z = t2_z*2
 
-        t3_x = t3_x*2
-        t3_y = t3_y*2
-        t3_z = t3_z*2
+#       t3_x = t3_x*2
+#       t3_y = t3_y*2
+#       t3_z = t3_z*2
 
-        x_offset=0.5
-        y_offset=0.5
-        z_offset=0.5
+#       x_offset=0.5
+#       y_offset=0.5
+#       z_offset=0.5
 
-        # for Direct
-        for i in range(self.natom):
-            self.position[i,0] = self.position[i,0]/2 + x_offset
-            self.position[i,1] = self.position[i,1]/2 + y_offset
-            self.position[i,2] = self.position[i,2]/2 + z_offset
+#       # for Direct
+#       for i in range(self.natom):
+#           self.position[i,0] = self.position[i,0]/2 + x_offset
+#           self.position[i,1] = self.position[i,1]/2 + y_offset
+#           self.position[i,2] = self.position[i,2]/2 + z_offset
 
-        self.t[0,0] = t1_x
-        self.t[1,0] = t1_y
-        self.t[2,0] = t1_z
+#       self.t[0,0] = t1_x
+#       self.t[1,0] = t1_y
+#       self.t[2,0] = t1_z
 
-        self.t[0,1] = t2_x
-        self.t[1,1] = t2_y
-        self.t[2,1] = t2_z
+#       self.t[0,1] = t2_x
+#       self.t[1,1] = t2_y
+#       self.t[2,1] = t2_z
 
-        self.t[0,2] = t3_x
-        self.t[1,2] = t3_y
-        self.t[2,2] = t3_z
+#       self.t[0,2] = t3_x
+#       self.t[1,2] = t3_y
+#       self.t[2,2] = t3_z
 
-        self.direct = True
+#       self.direct = True
 
 
 ################################################################################
@@ -230,10 +335,13 @@ if __name__ == '__main__':
     # Default & OptionParser
     cname = 'igzo'
 
-    cfg = SAE.ReadRmcpotCfg(cname+'.cfg')
+    atoms_index = ['In','Ga','Zn','O']
+    cfg = SAEnv.ReadRmcpotCfg(cname+'.cfg',atoms_index=atoms_index)
+#   print cfg.title
+#   print cfg.atoms
 
-    cfg.conv_cfg2vasp()
-#   cfg.scale,cfg.direct = SAE.conv_cfg2vasp(cfg.scale,\
+#   cfg.conv_cfg2vasp()
+#   cfg.scale,cfg.direct = SAEnv.conv_cfg2vasp(cfg.scale,\
 #           cfg.t,\
 #           cfg.natom,\
 #           cfg.direct,\
@@ -247,6 +355,6 @@ if __name__ == '__main__':
    #print ""
     STD=False
    #STD=True
-    SAE.print_poscar4(cname,STD,cfg.title,cfg.scale,cfg.natom,cfg.nion,\
+    SAEnv.print_poscar4(cname,STD,cfg.title,cfg.scale,cfg.natom,cfg.nion,\
                       cfg.direct,PV5FLAG,cfg.t,cfg.atoms,dummy,cfg.position)
 

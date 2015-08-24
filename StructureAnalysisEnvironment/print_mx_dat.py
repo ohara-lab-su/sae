@@ -14,7 +14,7 @@
 #
 #  実行にはPAO と VPS の情報一覧を必須とする (ReadMxVps.py, ReadMxVpsList.py)
 #
-#    情報一覧ファイル: openmx_defaults_vpsdata
+#    情報一覧ファイル: openmx_defaults_vpsdata.list
 #       1) カレントをサーチ
 #       2) ホーム直下の DFT_DATA13 ディレクトリをサーチ
 #       3) ../DFT_DATA13 ディレクトリをサーチ
@@ -178,7 +178,7 @@ def print_mx_dat(datname,STD,\
     ############################################################################
     ## データーファイルパスとデフォルトPAO/VPS 情報のセット
     ##
-    VPSLIST = 'openmx_defaults_vpsdata'
+    VPSLIST = 'openmx_defaults_vpsdata.list'
     DFT_DATA = 'DFT_DATA13'
 
     data = '../'+DFT_DATA

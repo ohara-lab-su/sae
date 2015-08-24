@@ -33,7 +33,14 @@ import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-def write(cell,outname=None,code='VASP',calinfo=None,STD=False,MOL=False,FRAC=True):
+def write(cell,\
+        outname=None,\
+        suffix=None,\
+        code='VASP',\
+        calinfo=None,\
+        STD=False,\
+        MOL=False,\
+        FRAC=True):
 
     ### VASP
     if code.upper() == 'VASP':

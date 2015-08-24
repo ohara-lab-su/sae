@@ -35,36 +35,22 @@ __version__    = "0.0.3"
 import sys
 import os
 import optparse
-import numpy as np
+#import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
 
-    ###############################################
-    ## default name
-    ##
     cname="igzo" # INPUT BASE filename
 
-    ###############################################
-    ## optparse
     parser = optparse.OptionParser()
-
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=cname,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT',)
     options,  args = parser.parse_args()
+    if options.INPUT: cname=options.INPUT
 
-    if options.INPUT:
-        cname=options.INPUT
-
-    #print args,options
-    if len(args) > 0:
-        #print "script name:",argvs[0]
-        cname=args[0]
+    if len(args) > 0: cname=args[0]
 
     if cname:
         print "INPUT file name :",cname+".cfg"
@@ -79,21 +65,12 @@ def options():
 ################################################################################
 if __name__ == '__main__':
 
-    # Default & OptionParser
     cname = options()
+    filename = cname+".cfg"
+    outname = cname
 
-    cfg = SAE.ReadRmcpotCfg(cname+'.cfg')
-    cfg.conv_cfg2vasp()
+    dummy=['In','Ga','Zn','O']
 
-    # 擬似VASP5 設定
-    dummy   = "In Ga Zn O"
-    PV5FLAG = True  # 擬似VASP5 出力
+    cell = SAEnv.Read(filename=filename,code='RMC',atoms_index=dummy)
+    cell.write(outname=outname,code='VASP')
 
-    # VASP4+擬似VASP5 出力
-   #print ""
-    STD=False
-   #STD=True
-    SAE.print_poscar4(cname,STD,cfg.title,cfg.scale,cfg.natom,cfg.nion,\
-                      cfg.direct,PV5FLAG,cfg.t,cfg.atoms,dummy,cfg.position)
-
-################################################################################

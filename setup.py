@@ -20,17 +20,32 @@ version = __version__
 
 script =  glob.glob("bin/*.py")
 
+long_description = 'Structure Analysis Environment'
+import os
+if os.path.exists('README.md'):
+    long_description = open('README.md').read()
+
 setup(
         name = 'StructureAnalysisEnvironment',
         packages = find_packages(),
-        scripts = script,
 #       packages = find_packages('StructureAnalysisEnvironment'),
 #       package_dir  = {'':'StructureAnalysisEnvironment'},
+#       include_package_data=True,
+#       package_data = { '': ['LICENSE.txt', 'README.md']},
+        scripts = script,
         version = version,
+        description = 'Structure Analysis Environment',
+        long_description = long_description,
         author = 'K.NAKADA',
 #       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
         author_email = 'kengo.nakada@gmail.com',
         license = 'MIT',
+        install_requires = ['numpy','matplotlib'],
 #       platforms = ['linux','OSX','Window'],
+        classifiers = [
+            'Programming Language :: Python :: 2.7',
+            'Intended Audience :: Science/Research',
+            'License :: OSI Approved :: MIT License'
+            ]
 )
 

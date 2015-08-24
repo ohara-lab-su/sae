@@ -30,7 +30,7 @@ import sys
 import os
 import optparse
 
-import numpy as np
+#import numpy as np
 
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
@@ -66,7 +66,6 @@ def options():
 ################################################################################
 if __name__ == '__main__':
 
-    # Default & OptionParser
     POSCAR,cname = options()
 
     cell = SAEnv.Read(filename=POSCAR,code='VASP')

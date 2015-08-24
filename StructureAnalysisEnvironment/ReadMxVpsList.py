@@ -92,7 +92,7 @@ class ReadMxVpsList(object):
 ################################################################################
 if __name__ == '__main__':
 
-    VPSLIST = 'openmx_defaults_vpsdata'
+    VPSLIST = 'openmx_defaults_vpsdata.list'
     DFT_DATA = 'DFT_DATA13'
 
     data = '../'+DFT_DATA
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     elif os.path.exists(HOMEPATH+'/openmx1/'+VPSLIST):
         vpslistpath = HOMEPATH+'/openmx1/'+VPSLIST
     else:
-        VPSLIST = 'openmx_defaults_vpsdata.py'
+        VPSLIST = 'openmx_defaults_vpsdata.list.py'
         if not os.path.exists(VPSLIST):
             sys.exit("STOP: "+VPSLIST+" file not found")
 

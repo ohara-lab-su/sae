@@ -35,10 +35,10 @@ import StructureAnalysisEnvironment as SAEnv
 ################################################################################
 class Read(object):
 
-    def __init__(self,filename=None,code='VASP'):
+    def __init__(self,filename=None,suffix=None,code='VASP',atoms_index=None):
 
         module_name = 'StructureAnalysisEnvironment'
-        suffix = ''
+        if suffix is None: suffix = ''
 
         if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
@@ -48,10 +48,14 @@ class Read(object):
             class_name = 'ReadFdmInp'
             if filename is None: filename = 'read_pdb.inp'
 
+        if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
+            class_name = 'ReadRmcpotCfg'
+            if filename is None: filename = 'rmcpot.cfg'
+
         module = __import__(module_name,globals(),locals(),[class_name],-1)
         klass = getattr(module,class_name)
 
-        self.cell = klass(filename+suffix)
+        self.cell = klass(filename+suffix,atoms_index=atoms_index)
 
         # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title
@@ -72,10 +76,11 @@ class Read(object):
         self.position = self.cell.position
         self.fix = self.cell.fix
 
-        if code.upper() == 'VASP':
-            self.vasp_version = self.cell.vasp_version
-        else:
-            self.vasp_version = None
+        self.vasp_version = self.cell.vasp_version
+       #if code.upper() == 'VASP':
+       #    self.vasp_version = self.cell.vasp_version
+       #else:
+       #    self.vasp_version = None
 
         self.code = code
 
@@ -97,10 +102,10 @@ class Read(object):
         return self.t
 
     def get_vasp_version(self):
-        if self.code == 'VASP':
-            self.vasp_version = self.cell.get_vasp_version()
-        else:
-            self.vasp_version = None
+       #if self.code == 'VASP':
+       #    self.vasp_version = self.cell.get_vasp_version()
+       #else:
+       #    self.vasp_version = None
         return self.vasp_version
 
     def get_nion(self):
@@ -153,11 +158,20 @@ class Read(object):
 
 
     ############################################################################
-    def write(self,outname=None,code=None,calinfo=None,STD=False,MOL=False,FRAC=True):
+    def write(self,\
+            outname=None,\
+            suffix=None,\
+            code=None,\
+            calinfo=None,\
+            STD=False,\
+            MOL=False,\
+            FRAC=True):
+
         if code is None: code=self.code
 
         SAEnv.write(self.cell,\
                     outname=outname,\
+                    suffix=suffix,\
                     code=code,\
                     calinfo=calinfo,\
                     STD=STD,\

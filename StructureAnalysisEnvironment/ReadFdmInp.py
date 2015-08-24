@@ -60,7 +60,7 @@ from ase.io.wien2k import *   ## suing coorsys
 ################################################################################
 class ReadFdmInp(object):
 
-    def __init__(self,cname='POSCAR.inp',sort=True):
+    def __init__(self,cname='POSCAR.inp',sort=True,atoms_index=None):
 
         self.datlines, self.num = SAEnv.read_dataline(cname)
         self.datlines, self.num = SAEnv.del_comment(self.datlines)

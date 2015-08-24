@@ -79,7 +79,9 @@ def print_poscar4(cname,STD,title,scale,natom,nion,direct,PV5FLAG,t,atoms,dummy,
         print >> out, "Cartesian"
 
     for i in range(int(natom)):
-        print >> out, " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2])
+#       print >> out, " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2])
+        print >> out, " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]),
+        print >> out, ""
 
     out.close()
 
