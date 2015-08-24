@@ -100,14 +100,48 @@ def write(cell,outname=None,code='VASP',calinfo=None,STD=False,MOL=False,FRAC=Tr
     ## RMC_POT
     if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
 
+        if outname is None: outname = 'rmcpot'
         # scale factor to 1.0
-        cell.scale = SAEnv.conv_scale21(cell.scale,cell.t)
+        cell.scale,\
+                cell.t,\
+                cell.natom,\
+                cell.direct,\
+                cell.position = SAEnv.conv_scale21(cell.scale,\
+                        cell.t,\
+                        cell.natom,\
+                        cell.direct,\
+                        cell.position)
 
         # Cartesian to Direct
         if not cell.direct:
-            cell.scale,cell.direct = SAEnv.conv_car2direct(cell.scale,\
-                    cell.t,cell.natom,cell.direct,cell.position)
-            src_mode="Cartesian"
-        else:
-            src_mode="Direct"
+            cell.scale,\
+                    cell.t,\
+                    cell.natom,\
+                    cell.direct,\
+                    cell.position = SAEnv.conv_car2direct(cell.scale,\
+                            cell.t,\
+                            cell.natom,\
+                            cell.direct,\
+                            cell.position)
+
+        # RMC_POT(cfg) へ変換
+        cell.scale,\
+                cell.t,\
+                cell.natom,\
+                cell.direct,\
+                cell.position = SAEnv.conv_vasp2cfg(cell.scale,\
+                        cell.t,\
+                        cell.natom,\
+                        cell.direct,\
+                        cell.position)
+
+        # print cfg(RMC_POT) style
+        SAEnv.print_cfg(outname,\
+                STD,\
+                cell.title,\
+                cell.t,\
+                cell.natom,\
+                cell.nion,\
+                cell.atoms,\
+                cell.position)
 
