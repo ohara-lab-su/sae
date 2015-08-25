@@ -63,27 +63,12 @@ def options():
 
     ###########################################
     # INPUT files
-    parser.add_option(  '-p','--procar',
-                        dest='PROCAR',
-                        default=procarname,
-    )
-    parser.add_option(  '-o','--outcar',
-                        dest='OUTCAR',
-                        default=outcarname,
-    )
+    parser.add_option(  '-p','--procar', dest='PROCAR', default=procarname,)
+    parser.add_option(  '-o','--outcar', dest='OUTCAR', default=outcarname,)
 
-    parser.add_option(  '-k','--kpoints',
-                        dest='KPOINTS',
-                        default=kpointsname,
-    )
-    parser.add_option(  '-d','--doscar',
-                        dest='DOSCAR',
-                        default=doscarname,
-    )
-    parser.add_option(  '-s','--symdat',
-                        dest='SYMDAT',
-                        default=symdatname,
-    )
+    parser.add_option(  '-k','--kpoints', dest='KPOINTS', default=kpointsname,)
+    parser.add_option(  '-d','--doscar', dest='DOSCAR', default=doscarname,)
+    parser.add_option(  '-s','--symdat', dest='SYMDAT', default=symdatname,)
     ###########################################
     # FLAGS
     parser.add_option(  '-a','--absolute',
@@ -128,18 +113,10 @@ def options():
     )
     ###########################################
     # Parameters
-    parser.add_option(  '--emin',
-                        dest='EMIN',
-    )
-    parser.add_option(  '--emax',
-                        dest='EMAX',
-    )
-    parser.add_option(  '--band',
-                        dest='BAND',
-    )
-    parser.add_option(  '--atom',
-                        dest='ATOM',
-    )
+    parser.add_option(  '--emin', dest='EMIN',)
+    parser.add_option(  '--emax', dest='EMAX',)
+    parser.add_option(  '--band', dest='BAND',)
+    parser.add_option(  '--atom', dest='ATOM',)
     options,  args = parser.parse_args()
 
 
@@ -167,22 +144,14 @@ if __name__ == '__main__':
     print "KPOINTS  :",kpointsname
     print "DOSCAR   :",doscarname
 
-    if OPT_EMIN:
-        print "EMIN       :",OPT_EMIN
-    if OPT_EMAX:
-        print "EMAX       :",OPT_EMAX
-    if UP_FLAG:
-        print "UP_SPIN    :",UP_FLAG
-    if DOWN_FLAG:
-        print "DOWN_FLAG  :",DOWN_FLAG
-    if OPT_BAND:
-        print "BAND       :",OPT_BAND
-    if OPT_ATOM:
-        print "ATOM       :",OPT_ATOM
-    if DOS_FLAG:
-        print "WRITE DOS  :",DOS_FLAG
-    if SPD_FLAG:
-        print "SPD MODE   :",SPD_FLAG
+    if OPT_EMIN: print "EMIN       :",OPT_EMIN
+    if OPT_EMAX: print "EMAX       :",OPT_EMAX
+    if UP_FLAG: print "UP_SPIN    :",UP_FLAG
+    if DOWN_FLAG: print "DOWN_FLAG  :",DOWN_FLAG
+    if OPT_BAND: print "BAND       :",OPT_BAND
+    if OPT_ATOM: print "ATOM       :",OPT_ATOM
+    if DOS_FLAG: print "WRITE DOS  :",DOS_FLAG
+    if SPD_FLAG: print "SPD MODE   :",SPD_FLAG
 
     # 基本インスタンス生成
     procar = SAE.ReadVaspProcar(procarname)
@@ -543,10 +512,8 @@ if __name__ == '__main__':
 
             # Y幅の調整(DOS)
             plt.ylim( ymin=eigen_min, ymax=eigen_max )
-            if OPT_EMIN:
-                plt.ylim( ymin=float(OPT_EMIN))
-            if OPT_EMAX:
-                plt.ylim( ymax=float(OPT_EMAX))
+            if OPT_EMIN: plt.ylim( ymin=float(OPT_EMIN))
+            if OPT_EMAX: plt.ylim( ymax=float(OPT_EMAX))
 
             # Fermi-Level
             if ABS_FLAG:

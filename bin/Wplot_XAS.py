@@ -51,8 +51,7 @@ def options():
     parser.add_option( '--ymax', dest='YMAX',)
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        name = options.INPUT
+    if options.INPUT: name = options.INPUT
 
     return [name,\
             options.EMAX,options.EMIN,options.YMAX]

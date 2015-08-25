@@ -109,12 +109,9 @@ if __name__ == '__main__':
             NO_WINDOW_FLAG,AT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,plot_ions = options()
 
-    if OPT_EMAX:
-        print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-        print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-        print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
 
     # ION の種類(サイトの種類)で番号を入力
     if len(plot_ions) > 1:
@@ -296,15 +293,10 @@ if __name__ == '__main__':
             # Y軸の調整
             plt.ylim( ymin=0 )
 
-        if spin == 0:
-            yl = plt.ylabel("DOS/"+unit, fontsize=20 )
-
-        if OPT_EMAX:
-            plt.xlim( xmax=int(OPT_EMAX) )
-        if OPT_EMIN:
-            plt.xlim( xmin=int(OPT_EMIN) )
-        if OPT_YMAX:
-            plt.ylim( ymax=int(OPT_YMAX) )
+        if spin == 0: yl = plt.ylabel("DOS/"+unit, fontsize=20 )
+        if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+        if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+        if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
         if nspin == 2:
             if spin == 0:

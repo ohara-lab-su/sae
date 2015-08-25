@@ -160,16 +160,13 @@ if __name__ == '__main__':
             FLAG_B,FLAG_DOS,FLAG_OBS,AV,WE,WEDOS = options()
 
     # *.inp から各種情報を読み込む
-    if inpname:
-        print "INP name        =",inpname
+    if inpname: print "INP name        =",inpname
 
     # *.txt (計算結果のconv前のファイル)
-    if textname:
-        print "TEXT name       =",textname
+    if textname: print "TEXT name       =",textname
 
     # 直接 *_conv.txt を指定して表示する機能
-    if convolname:
-        print "Convolution file=",convolname
+    if convolname: print "Convolution file=",convolname
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)

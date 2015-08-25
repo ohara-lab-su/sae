@@ -80,11 +80,9 @@ def options():
     else:
         unit='None'
 
-    if options.INPUT:
-        name = options.INPUT
+    if options.INPUT: name = options.INPUT
 
-    if len(args) > 0:
-        name=args[0]
+    if len(args) > 0: name=args[0]
 
     return [name,unit,options.fermi,\
             options.nw,options.portrait,\
@@ -99,12 +97,9 @@ if __name__ == '__main__':
             NO_WINDOW_FLAG,PORTRAIT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
-    if OPT_EMAX:
-                print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-                print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
 
     ############################################
     # case.dos ファイルを抽出
@@ -237,15 +232,10 @@ if __name__ == '__main__':
        #plt.xlim([-10,10])
        #plt.ylim([0,2.5])
 
-        if spin == 0:
-            yl = plt.ylabel("DOS/"+unit, fontsize=20 )
-
-        if OPT_EMAX:
-            plt.xlim( xmax=int(OPT_EMAX) )
-        if OPT_EMIN:
-            plt.xlim( xmin=int(OPT_EMIN) )
-        if OPT_YMAX:
-            plt.ylim( ymax=int(OPT_YMAX) )
+        if spin == 0: yl = plt.ylabel("DOS/"+unit, fontsize=20 )
+        if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+        if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+        if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
         if nspin == 2:
             if spin == 0:

@@ -42,24 +42,16 @@ import matplotlib.pyplot as plt
 def options():
 
     parser = optparse.OptionParser()
-    parser.add_option( '-n', '--nw',
-                      action='store_true',
-                      default=False,
-                      dest='NOWINDOW',
-    )
+    parser.add_option( '-n', '--nw', action='store_true', default=False,)
 
-    parser.add_option( '-p', '--portrait',
-                      action='store_true',
-                      default=False,
-                      dest='PORTRAIT',
-    )
+    parser.add_option( '-p', '--portrait', action='store_true', default=False,)
     parser.add_option(  '--emax', dest='EMAX',)
     parser.add_option(  '--emin', dest='EMIN',)
     parser.add_option(  '--cohpmax', '--ymax',dest='YMAX',)
     parser.add_option(  '--cohpmin', '--ymin',dest='YMIN',)
     options,  args = parser.parse_args()
 
-    return [options.NOWINDOW,options.PORTRAIT,\
+    return [options.nw,options.portrait,\
             options.EMAX,options.EMIN,options.YMAX,options.YMIN]
 
 ################################################################################
@@ -69,14 +61,10 @@ if __name__ == '__main__':
     NO_WINDOW_FLAG,PORTRAIT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_YMIN = options()
 
-    if OPT_EMAX:
-                print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-                print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
-    if OPT_YMIN:
-                print "Ymax=",OPT_YMIN
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_YMIN: print "Ymax=",OPT_YMIN
 
     cohp = SAE.ReadLobCohp()
     dos = SAE.ReadLobDos()

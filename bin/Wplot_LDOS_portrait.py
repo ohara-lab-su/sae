@@ -59,14 +59,12 @@ def options():
     parser.add_option( '--ymax', dest='YMAX',)
     options,  args = parser.parse_args()
 
-
     if options.ev:
         unit='ev'
     else:
         unit='None'
 
-    if options.INPUT:
-        name = options.INPUT
+    if options.INPUT: name = options.INPUT
 
     return [name,unit,options.fermi,\
             options.nw,\
@@ -85,12 +83,9 @@ if __name__ == '__main__':
 
     TDOS_FLAG=True
 
-    if OPT_EMAX:
-                print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-                print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
 
     ############################################
     # case.dos ファイルを抽出
@@ -278,12 +273,9 @@ if __name__ == '__main__':
                 if spin == 1:
                     plt.ylim([ymax,0])
 
-            if OPT_EMAX:
-                plt.xlim( xmax=int(OPT_EMAX) )
-            if OPT_EMIN:
-                plt.xlim( xmin=int(OPT_EMIN) )
-            if OPT_YMAX:
-                plt.ylim( ymax=int(OPT_YMAX) )
+            if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+            if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+            if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
             # title,label,xticks
             # 一番上

@@ -83,17 +83,10 @@ def options():
     else:
         unit='None'
 
-    if options.INPUT:
-        name = options.INPUT
-
-    if options.atom:
-        atom = options.atom
-
-    if options.ALL:
-        options.nw = True
-
-    if len(args) > 0:
-        atom = int(args[0])
+    if options.INPUT: name = options.INPUT
+    if options.atom: atom = options.atom
+    if options.ALL: options.nw = True
+    if len(args) > 0: atom = int(args[0])
 
     return [name,atom,unit,\
             options.fermi,\
@@ -119,17 +112,12 @@ if __name__ == '__main__':
 
     ############################################
     # オプションの確認
-    if OPT_EMAX:
-        print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-        print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-        print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
 
-    if OPT_UP:
-        print "SPIN-UP"
-    if OPT_DN:
-        print "SPIN-DOWN"
+    if OPT_UP: print "SPIN-UP"
+    if OPT_DN: print "SPIN-DOWN"
 
     ############################################
     # case.dos ファイルを抽出
@@ -269,12 +257,9 @@ if __name__ == '__main__':
                 # Y軸の調整
                 plt.ylim( ymin=0 )
 
-                if OPT_EMAX:
-                    plt.xlim( xmax=int(OPT_EMAX) )
-                if OPT_EMIN:
-                    plt.xlim( xmin=int(OPT_EMIN) )
-                if OPT_YMAX:
-                    plt.ylim( ymax=int(OPT_YMAX) )
+                if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+                if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+                if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
                 ############################################
                 # Label 処理

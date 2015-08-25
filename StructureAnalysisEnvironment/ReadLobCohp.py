@@ -8,7 +8,12 @@
 #
 ################################################################################
 #
-# 2015.06.05 startup
+# 2015.08.25
+#   あらゆるタイプのCOHPデータを読めるように変更
+#   (ボンドタイプの数をカウントする)
+#
+# 2015.06.05
+#   startup
 #
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -25,7 +30,7 @@ __version__    = "0.0.1"
 #import sys
 #import os
 #import gzip
-#import re
+import re
 #import optparse
 import numpy as np
 
@@ -42,22 +47,126 @@ class ReadLobCohp(object):
         self.datlines,self.num = SAE.read_dataline(name)
         self.nedos = int(self.datlines[1].split()[2])
 
+        self.nbond = int(self.datlines[1].split()[0])
+        self.nspin = int(self.datlines[1].split()[1])
+
         self.eng = np.zeros(self.nedos)
-        self.ave = np.zeros(self.nedos)
-        j=0
-        for i in range(4,self.num+1):
-            self.eng[j] = float(self.datlines[i].split()[0])
-            self.ave[j] = float(self.datlines[i].split()[1])
-            j += 1
+
+        # nbond = 0 のときを Average とする
+        self.cohp_all = np.zeros((self.nedos,self.nbond,self.nspin))
+        self.icohp_all = np.zeros((self.nedos,self.nbond,self.nspin))
+
+        self.bond_index = [''] * (self.nbond)
+        self.bond_ave = np.zeros(self.nbond)
+
+        # ボンドの各情報(ボンドしている原子のペア、平均値、最大のボンド)
+        self.bond_index[0] = 'Average'
+        ave0 = 0
+        self.bond_max = 0
+        for i in range(1,self.nbond):
+            char0 = self.datlines[i+2].split()[0]
+            char1 = re.sub('^.*:','',char0)
+            self.bond_index[i] = re.sub('\(.*','',char1)
+            ave = float(re.sub('\)','',re.sub('^.*\(','',char0)).strip())
+            if ave0 < ave:
+                ave0 = ave
+                self.bond_max = i
+            self.bond_ave[i] = ave
+
+#       print self.bond_max,self.bond_index[self.bond_max],self.bond_ave[self.bond_max]
+#       for i in range(self.nbond):
+#           print self.bond_index[i],':',self.bond_ave[i]
+
+        for i in range(self.nedos):
+
+            line = i+2+self.nbond
+            self.eng[i] = float(self.datlines[line].split()[0])
+
+            for ispin in range(self.nspin):
+                for bond in range(self.nbond):
+
+                    row0 = 1+2*bond + ispin*(2*self.nbond)
+                    row1 = 2+2*bond + ispin*(2*self.nbond)
+
+                    self.cohp_all[i,bond,ispin] = \
+                            float(self.datlines[line].split()[row0])
+                    self.icohp_all[i,bond,ispin] = \
+                            float(self.datlines[line].split()[row1])
+
+    ############################################################################
 
     def get_nedos(self):
         return self.nedos
 
+    def get_nspin(self):
+        return self.nspin
+
+    def get_nbond(self):
+        return self.nbond
+
+    def get_bond_max(self): # 最大のボンドを持つ原子ペアの添え字
+        return self.bond_max
+
+    def get_bond_index(self): # 全ボンドペアの原子種の情報
+        return self.bond_index
+
+    def get_bond_ave(self): # 全ボンドペアの平均値
+        return self.bond_ave
+
     def get_eng(self):
         return self.eng
 
+    ###################
+    # pCOHP の平均
+    #
     def get_ave(self,spin=0):
+        if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.ave = self.cohp_all[:,0,spin]
         return self.ave
+
+    ###################
+    # pCOHP 積分の平均
+    #
+    def get_iave(self,spin=0):
+        if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.ave = self.icohp_all[:,0,spin]
+        return self.ave
+
+    ###################
+    # pCOHP ボンドごと
+    #
+    def get_cohp(self,bond=0,spin=0): # bond=0 は平均
+        if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.cohp = self.cohp_all[:,bond,spin]
+        return self.cohp
+
+    ###################
+    # pCOHP 積分のボンドごと
+    #
+    def get_icohp(self,bond=0,spin=0):  # bond=0 は平均
+        if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+        self.icohp = self.icohp_all[:,bond,spin]
+        return self.icohp
 
 ################################################################################
 if __name__ == '__main__':
@@ -65,12 +174,13 @@ if __name__ == '__main__':
 
     cohp = ReadLobCohp()
 
-    nedos = cohp.get_nedos()
-    eng = cohp.get_eng()
-    ave = cohp.get_ave()
+    bond1 = cohp.get_cohp(bond=1,spin=0)  # bond=0 は平均値
+#   nedos = cohp.get_nedos()
+#   eng = cohp.get_eng()
+#   ave = cohp.get_ave()
 
-    for i in range(nedos):
-        print eng[i],ave[i]
+#   for i in range(nedos):
+#       print eng[i],ave[i]
 
 
 ################################################################################

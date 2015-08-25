@@ -67,24 +67,10 @@ def options():
     oname = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-d','--doscar',
-                        dest='DOSCAR',
-                        default=dname,
-    )
-    parser.add_option( '-o', '--outcar',
-                      dest='OUTCAR',
-                      default=oname,
-    )
-    parser.add_option( '-n', '--nw',
-                      action='store_true',
-                      default=False,
-                      dest='NOWINDOW',
-    )
-    parser.add_option( '-l', '--landscape',
-                      action='store_true',
-                      default=False,
-                      dest='LANDSCAPE',
-    )
+    parser.add_option(  '-d','--doscar', dest='DOSCAR',)
+    parser.add_option( '-o', '--outcar', dest='OUTCAR',)
+    parser.add_option( '-n', '--nw', action='store_true', default=False,)
+    parser.add_option( '-l', '--landscape', action='store_true', default=False,)
     parser.add_option( '--auto',
                       action='store_true',
                       default=False,
@@ -110,29 +96,18 @@ def options():
                       default=False,
                       dest='SP',
     )
-    parser.add_option(  '--emax',
-                      dest='EMAX',
-    )
-    parser.add_option(  '--emin',
-                      dest='EMIN',
-    )
-    parser.add_option(  '--ymax',
-                      dest='YMAX',
-    )
-    parser.add_option(  '--atom',
-                      dest='ATOM',
-    )
+    parser.add_option(  '--emax', dest='EMAX',)
+    parser.add_option(  '--emin', dest='EMIN',)
+    parser.add_option(  '--ymax', dest='YMAX',)
+    parser.add_option(  '--atom', dest='ATOM',)
     options,  args = parser.parse_args()
 
-    if options.DOSCAR:
-        dname=options.DOSCAR
-
-    if options.OUTCAR:
-        oname=options.OUTCAR
+    if options.DOSCAR: dname=options.DOSCAR
+    if options.OUTCAR: oname=options.OUTCAR
 
 
     return [dname,oname,\
-            options.NOWINDOW,options.LANDSCAPE,\
+            options.nw,options.landscape,\
             options.AUTO,options.HEX,options.CUBIC,options.SPD,options.SP,\
             options.EMAX,options.EMIN,options.YMAX,options.ATOM]
 
@@ -157,12 +132,9 @@ if __name__ == '__main__':
     else:
         print "Default (lm=0,1,2,,,,9) MODE"
 
-    if OPT_EMAX:
-        print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-        print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-        print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
     if OPT_ATOM:
         print "ATOM=",OPT_ATOM
         atom=int(OPT_ATOM)-1
@@ -369,12 +341,9 @@ if __name__ == '__main__':
                     xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
                     yl = plt.ylabel("DOS/eV", fontsize=16)
 
-            if OPT_EMAX:
-                plt.xlim( xmax=int(OPT_EMAX) )
-            if OPT_EMIN:
-                plt.xlim( xmin=int(OPT_EMIN) )
-            if OPT_YMAX:
-                plt.ylim( ymax=int(OPT_YMAX) )
+            if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+            if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+            if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
             if spin == 0:
                 leg = plt.legend(fontsize=9)   # 凡例Box

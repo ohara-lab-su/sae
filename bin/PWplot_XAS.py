@@ -21,10 +21,10 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-import sys
+#import sys
 #import gzip
-import os
-import re
+#import os
+#import re
 import optparse
 #import numpy as np
 

@@ -77,11 +77,11 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
-#import matplotlib.cm as cm  
+#import matplotlib.cm as cm
 #import matplotlib.ticker as tic
 #import matplotlib.mlab as mlab
 
@@ -93,39 +93,19 @@ def options():
     suffix_pdos = '.PDOS.Tetrahedron'
     suffix_tdos_g = '.DOS.Gaussian'
     suffix_pdos_g = '.PDOS.Gaussian'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option( '-i', '--input',
-                      dest='INPUT',
-                      default=name,
-    )
-    parser.add_option( '-n', '--nw',
-                      action='store_true',
-                      default=False,
-                      dest='NOWINDOW',
-    ) 
+    parser.add_option( '-i', '--input', dest='INPUT', default=name,)
+    parser.add_option( '-n', '--nw', action='store_true', default=False,)
 
-    parser.add_option( '-p', '--portrait',
-                      action='store_true',
-                      default=False,
-                      dest='PORTRAIT',
-    )
-    parser.add_option( '-g', '--gaussian',
-                      action='store_true',
-                      default=False,
-    ) 
+    parser.add_option( '-p', '--portrait', action='store_true', default=False,)
+    parser.add_option( '-g', '--gaussian', action='store_true', default=False,)
 
-    parser.add_option(  '--emax',
-                      dest='EMAX',
-    ) 
-    parser.add_option(  '--ymax',
-                      dest='YMAX',
-    ) 
-    parser.add_option(  '--emin',
-                      dest='EMIN',
-    ) 
+    parser.add_option(  '--emax', dest='EMAX',)
+    parser.add_option(  '--ymax', dest='YMAX',)
+    parser.add_option(  '--emin', dest='EMIN',)
     options,  args = parser.parse_args()
-                                                                                
+
     if options.INPUT:
         name=options.INPUT
 
@@ -150,7 +130,7 @@ def options():
             pass
 
     return [name,suffix_tdos,suffix_pdos,\
-            options.NOWINDOW,options.PORTRAIT,\
+            options.nw,options.portrait,\
             options.EMAX,options.EMIN,options.YMAX]
 
 ################################################################################
@@ -160,17 +140,14 @@ if __name__ == '__main__':
     name,suffix_tdos,suffix_pdos,NO_WINDOW_FLAG,PORTRAIT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
-    if OPT_EMAX:                                                                
-                print "Emax=",OPT_EMAX                                                  
-    if OPT_EMIN:                                                                
-                print "Emin=",OPT_EMIN                                                  
-    if OPT_YMAX:                                                                
-                print "Ymax=",OPT_YMAX  
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
 
     # makes instance ( Read DOS.Tetrahedron )
     dos = SAE.ReadMxTdos(name,suffix_tdos)
     pdos = SAE.ReadMxPdos(name,suffix_pdos)
-    
+
     # set output device
     out = sys.stdout
 
@@ -193,13 +170,13 @@ if __name__ == '__main__':
     plt.rcParams['axes.linewidth']    = 1.5 # 軸の太さを設定。目盛りは変わらない
 
 #   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
-    if PORTRAIT_FLAG:                                                      
+    if PORTRAIT_FLAG:
 #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 #       plt.figure(figsize=(8.27, 11.69)) # for portrait
         plt.figure(figsize=(7.00, 9.89))  # for portrait
 
     ############################################################################
-    for spin in range(NSPIN): 
+    for spin in range(NSPIN):
 
         if NSPIN == 1:
             plt.axes([ 0.130,0.130, 0.80,0.80 ]) # 一段組の原点(x,y), 幅(x,y) nonmag
@@ -209,40 +186,37 @@ if __name__ == '__main__':
                 plt.axes([ 0.130,0.530, 0.80, 0.4])  # 二段組の上側(y幅半分) up-spin
             if spin == 1:
                 plt.axes([ 0.130,0.130, 0.80, 0.4])  # 二段組の下段( down-spin )
-    
+
         INTTDOS = dos.get_inttdos(spin)
         TDOS = dos.get_tdos(spin)
     #   plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
         plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
-    
+
         TDOS = pdos.get_tdos_spd(0,spin)
         plt.plot(ENG-EFERMI,TDOS, color='red', linewidth=2, label='ALL-s')
-    
+
         TDOS = pdos.get_tdos_spd(1,spin)
         plt.plot(ENG-EFERMI,TDOS, color="green", linewidth=2, label='ALL-p')
-    
+
         TDOS = pdos.get_tdos_spd(2,spin)
         plt.plot(ENG-EFERMI,TDOS, color="blue", linewidth=2, label='ALL-d')
 
-        # Y軸の調整                                                             
-        plt.ylim( ymin=0 ) 
-    
+        # Y軸の調整
+        plt.ylim( ymin=0 )
+
         # EF0
         plt.axvline(x=0,color="black",linewidth=1)
-    
+
        ## for BCC-Fe
        #plt.xlim([-10,10])
        #plt.ylim([0,2.5])
-       
+
         if spin == 0:
             yl = plt.ylabel("DOS/eV", fontsize=20 )
 
-        if OPT_EMAX: 
-            plt.xlim( xmax=int(OPT_EMAX) )
-        if OPT_EMIN:   
-            plt.xlim( xmin=int(OPT_EMIN) )
-        if OPT_YMAX: 
-            plt.ylim( ymax=int(OPT_YMAX) )
+        if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+        if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+        if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
         if NSPIN == 2:
             if spin == 0:
@@ -271,11 +245,11 @@ if __name__ == '__main__':
     if PORTRAIT_FLAG:
         plt.savefig("TDOS.eps",orientation = 'portrait')
         plt.savefig("TDOS.pdf",orientation = 'portrait')
-        plt.savefig("TDOS.png",orientation = 'portrait') 
+        plt.savefig("TDOS.png",orientation = 'portrait')
     else:
         plt.savefig("TDOS.eps")
         plt.savefig("TDOS.pdf")
-        plt.savefig("TDOS.png") 
+        plt.savefig("TDOS.png")
 
     if not NO_WINDOW_FLAG:
         plt.show()

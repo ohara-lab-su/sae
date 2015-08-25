@@ -32,7 +32,7 @@
 #
 # 2015.02.25
 #  startup
-#  MXplot_PDOS.py 
+#  MXplot_PDOS.py
 #
 # ----------------------------------- Vplot_PDOS.py
 # 2015.01.15
@@ -63,7 +63,7 @@ __credits__    = ["Kengo NAKADA"]
 __email__      = "kengo.nakada@gmail.com"
 __copyright__  = "Copyright 2015, Kengo NAKADA"
 __license__    = "MIT"
-#                                                                                         
+#
 __status__     = "alpha"
 __version__    = "0.1.0"
 ################################################################################
@@ -77,8 +77,8 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE                                      
-#import SpaceGroupEnvironment as SGE  
+import StructureAnalysisEnvironment as SAE
+#import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -92,66 +92,22 @@ def options():
     suffix_pdos = '.PDOS.Tetrahedron'
     suffix_tdos_g = '.DOS.Gaussian'
     suffix_pdos_g = '.PDOS.Gaussian'
-                                                                                
+
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
-    parser.add_option( '-d', '--dat',
-                      dest='DATFILE',
-    )
-    parser.add_option( '-n', '--nw',
-                      action='store_true',
-                      default=False,
-                      dest='NOWINDOW',
-    )
-    parser.add_option( '-l', '--landscape',
-                      action='store_true',
-                      default=False,
-                      dest='LANDSCAPE',
-    )
-    parser.add_option( '-g', '--gaussian',
-                      action='store_true',
-                      default=False,
-    )
-    parser.add_option( '--auto',
-                      action='store_true',
-                      default=False,
-                      dest='AUTO',
-    )
-    parser.add_option( '--hexagonal',
-                      action='store_true',
-                      default=False,
-                      dest='HEX',
-    )
-    parser.add_option( '--cubic',
-                      action='store_true',
-                      default=False,
-                      dest='CUBIC',
-    )
-    parser.add_option( '--spd',
-                      action='store_true',
-                      default=False,
-                      dest='SPD',
-    )
-    parser.add_option( '--sp',
-                      action='store_true',
-                      default=False,
-                      dest='SP',
-    )
-    parser.add_option(  '--emax',
-                      dest='EMAX',
-    )                                                                           
-    parser.add_option(  '--emin',
-                      dest='EMIN',
-    )
-    parser.add_option(  '--ymax',
-                      dest='YMAX',
-    )                                                                           
-    parser.add_option(  '--atom',
-                      dest='ATOM',
-    )                                                                           
+    parser.add_option(  '-i','--input', dest='INPUT', default=name,)
+    parser.add_option( '-d', '--dat', dest='DATFILE',)
+    parser.add_option( '-n', '--nw', action='store_true', default=False,)
+    parser.add_option( '-l', '--landscape', action='store_true', default=False,)
+    parser.add_option( '-g', '--gaussian', action='store_true', default=False,)
+    parser.add_option( '--auto', action='store_true', default=False,)
+    parser.add_option( '--hexagonal', action='store_true', default=False, dest='HEX',)
+    parser.add_option( '--cubic', action='store_true', default=False,)
+    parser.add_option( '--spd', action='store_true', default=False,)
+    parser.add_option( '--sp', action='store_true', default=False,)
+    parser.add_option(  '--emax', dest='EMAX',)
+    parser.add_option(  '--emin', dest='EMIN',)
+    parser.add_option(  '--ymax', dest='YMAX',)
+    parser.add_option(  '--atom', dest='ATOM',)
     options,  args = parser.parse_args()
 
     if options.gaussian:
@@ -176,8 +132,8 @@ def options():
 
     return [options.INPUT, options.DATFILE,\
             suffix_tdos, suffix_pdos,\
-            options.NOWINDOW,options.LANDSCAPE,\
-            options.AUTO,options.HEX,options.CUBIC,options.SPD,options.SP,\
+            options.nw,options.landscape,\
+            options.auto,options.HEX,options.cubic,options.spd,options.sp,\
             options.EMAX,options.EMIN,options.YMAX,options.ATOM]
 
 ################################################################################
@@ -202,12 +158,9 @@ if __name__ == '__main__':
     else:
         print "Default (lm=0,1,2,,,,9) MODE"
 
-    if OPT_EMAX:
-        print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-        print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-        print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
     if OPT_ATOM:
         print "ATOM=",OPT_ATOM
         atom=int(OPT_ATOM)-1
@@ -254,7 +207,7 @@ if __name__ == '__main__':
         klass = getattr(module,class_name)
 
         dat = klass(datname)
-        NION = dat.get_nion()                                                    
+        NION = dat.get_nion()
         atoms = dat.get_atoms_index()
         atoms_j = dat.get_atoms_j()
 #       point_sym = outcar.get_point_symmetry()
@@ -316,9 +269,9 @@ if __name__ == '__main__':
         block_list = list2
     elif SPD_FLAG:
         block_list = list1
-   ######################################################## 
+   ########################################################
    # OpenMX *.out ファイルに対称性の情報がないようなので、
-   # 対称性ファインダーを直接実装するまではこの機能は停止 
+   # 対称性ファインダーを直接実装するまではこの機能は停止
    #
    #elif AUTO_FLAG and FLAG_DATFILE:
    #    point_sym = outcar.get_point_symmetry()
@@ -337,7 +290,7 @@ if __name__ == '__main__':
    #        print "Hexgonal MODE"
    #    else:
    #        block_list = list1
-   ######################################################## 
+   ########################################################
     else:
         block_list = list1
 
@@ -411,7 +364,7 @@ if __name__ == '__main__':
                     plt.ylim([0,ymax])
                 if spin == 1:
                     plt.ylim([ymax,0])
-        
+
             ################################################################
             # title,label,xticks 処理
             # 一番上
@@ -425,27 +378,24 @@ if __name__ == '__main__':
             # 一番下
             if NSPIN == 1:
                 if blk == (nblock -1):
-                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 ) 
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
                     yl = plt.ylabel("DOS/eV", fontsize=16)
             if NSPIN == 2:
                 if blk == (nblock -1) and spin == 0:
                     plt.xticks([])
                 if blk == (nblock -1) and spin == 1:
-                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 ) 
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
                     yl = plt.ylabel("DOS/eV", fontsize=16)
 
-            if OPT_EMAX:
-                plt.xlim( xmax=int(OPT_EMAX) )
-            if OPT_EMIN:
-                plt.xlim( xmin=int(OPT_EMIN) )
-            if OPT_YMAX:
-                plt.ylim( ymax=int(OPT_YMAX) )
+            if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
+            if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
+            if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
 
             if spin == 0:
                 leg = plt.legend(fontsize=9)   # 凡例Box
                 leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
-    
-    
+
+
     ############################################################################
 
 
@@ -455,11 +405,11 @@ if __name__ == '__main__':
     if LANDSCAPE_FLAG:
         plt.savefig("PDOS"+str(atom+1)+".eps")
         plt.savefig("PDOS"+str(atom+1)+".pdf")
-        plt.savefig("PDOS"+str(atom+1)+".png") 
+        plt.savefig("PDOS"+str(atom+1)+".png")
     else:
         plt.savefig("PDOS"+str(atom+1)+".eps",orientation = 'portrait')
         plt.savefig("PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
-        plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait') 
+        plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait')
 
     if not NO_WINDOW_FLAG:
         plt.show()

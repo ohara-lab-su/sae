@@ -60,20 +60,11 @@ def options():
     parser.add_option( '--ymax', dest='YMAX',)
     options,  args = parser.parse_args()
 
-    if options.DOSCAR:
-        dname=options.DOSCAR
-
-    if options.OUTCAR:
-        oname=options.OUTCAR
-
-    if options.atom:
-        atom = int(options.atom)
-
-    if options.ALL:
-        options.nw = True
-
-    if len(args) > 0:
-        atom = int(args[0])
+    if options.DOSCAR: dname=options.DOSCAR
+    if options.OUTCAR: oname=options.OUTCAR
+    if options.atom: atom = int(options.atom)
+    if options.ALL: options.nw = True
+    if len(args) > 0: atom = int(args[0])
 
     return [dname,oname,atom,\
             options.nw,options.ALL,\
@@ -92,12 +83,9 @@ if __name__ == '__main__':
 
     #####################################################
     # オプションの確認
-    if OPT_EMAX:
-        print "Emax=",OPT_EMAX
-    if OPT_EMIN:
-        print "Emin=",OPT_EMIN
-    if OPT_YMAX:
-        print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax=",OPT_EMAX
+    if OPT_EMIN: print "Emin=",OPT_EMIN
+    if OPT_YMAX: print "Ymax=",OPT_YMAX
 
     if OPT_UP:
         print "SPIN-UP"
