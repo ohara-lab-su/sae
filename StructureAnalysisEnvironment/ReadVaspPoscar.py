@@ -3,6 +3,17 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+################################################################################
 # POSCAR 読み込み class
 #
 #
@@ -49,6 +60,9 @@
 #     conv_supercell()
 #
 ################################################################################
+#
+# 2015.08.25
+#  統合化＆Method化でいろいろと分離整理
 #
 # 2015.08.19
 #  原子番号リストを atoms_number_j に保存しておく(通し番号で)
@@ -113,7 +127,7 @@ import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-class ReadVaspPoscar(object):
+class ReadVaspPoscar(SAEnv.Method):
 
     ###############################################
     ## init and Read POSCAR
@@ -325,65 +339,6 @@ class ReadVaspPoscar(object):
            #print " %16.12f %16.12f %16.12f" \
            #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
            #print ""
-
-
-    ############################################################################
-    def get_title(self):
-        return self.system
-
-    def get_system(self):
-        return self.system
-
-    def get_scale(self):
-        return self.scale
-
-    def get_t(self):
-        return self.t
-
-    def get_vasp_version(self):
-        return self.vasp_version
-
-    def get_atoms(self):
-        return self.atoms
-
-    def get_atoms_j(self):
-        return self.atoms_j
-
-    def get_atoms_index(self):
-        return self.atoms_index
-
-    def get_atoms_number(self):
-        return self.atoms_number
-
-    def get_atoms_index_j(self):
-        return self.atoms_index_j
-
-    def get_atoms_number_j(self):
-        return self.atoms_number_j
-
-    def get_nion(self):
-        return self.nion
-
-    def get_natom(self):
-        return self.natom
-
-    def get_ion(self):
-        return self.ion
-
-    def get_ion_local(self):
-        return self.ion_local
-
-    def get_selective(self):
-        return self.selective
-
-    def get_direct(self):
-        return self.direct
-
-    def get_position(self):
-        return self.position
-
-    def get_fix(self):
-        return self.fix
 
 
     ############################################################################

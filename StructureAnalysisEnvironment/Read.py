@@ -32,7 +32,6 @@ import sys
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
-
 ################################################################################
 # RMC_POT や VASP4 などでは atoms_index 情報が存在しないので自分で
 # その情報を手動で入力するときに atoms_index=['In','Ga','Zn','O'] などとする
@@ -185,7 +184,6 @@ class Read(object):
     def get_fix(self):
         self.fix = self.cell.get_fix()
         return self.fix
-
 
     ############################################################################
     def write(self,\

@@ -3,13 +3,25 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+###############################################################################
+#
 # *.cfg ファイル読み込み
 #
 ################################################################################
-# [in/out] atoms[i]       : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
-# [in/out] atoms_j[i]    : 原子の通し番号を与えると、原子のサイト番号を与える
-#                           [注意] *.cfg形式は種類を与えないので 0 番から違う種類毎
-#                                    に(仮に)無理やりナンバリングする
+# [in/out] atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# [in/out] atoms_j[i]: 原子の通し番号を与えると、原子のサイト番号を与える
+#                      [注意] *.cfg形式は種類を与えないので 0 番から違う種類毎
+#                             に(仮に)無理やりナンバリングする
 #
 # [in/out] t[3,3]         :  基本並進ベクトル(注意:配列内indexは0から)
 #                                  x   y   z
@@ -45,7 +57,7 @@ import numpy as np
 import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
-class ReadRmcpotCfg(object):
+class ReadRmcpotCfg(SAEnv.Method):
 
     def __init__(self,cname='POSCAR.cfg',suffix='.cfg',sort=False,atoms_index=None):
 
@@ -205,56 +217,9 @@ class ReadRmcpotCfg(object):
                 self.position)
 
     ############################################################################
-    def get_title(self):
-        return self.title
-
-    def get_system(self):
-        return self.system
 
     def get_comment(self):
         return self.comment
-
-    def get_t(self):
-        return self.t
-
-    def get_natom(self):
-        return self.natom
-
-    def get_atoms(self):
-        return self.atoms
-
-    def get_atoms_j(self):
-        return self.atoms_j
-
-    def get_atoms_index(self):
-        return self.atoms_index
-
-    def get_atoms_index_j(self):
-        return self.atoms_index_j
-
-    def get_atoms_number(self):
-        return self.atoms_number
-
-    def get_atoms_number_j(self):
-        return self.atoms_number_j
-
-    def get_ion(self):
-        return self.ion
-
-    def get_ion_local(self):
-        return self.ion_local
-
-    def get_direct(self):
-        return self.direct
-
-    def get_selective(self):
-        return self.selective
-
-    def get_position(self):
-        return self.position
-
-    def get_fix(self):
-        return self.fix
 
     def conv_cfg2vasp(self):
         self.scale, self.direct = SAEnv.conv_cfg2vasp(self.t,\

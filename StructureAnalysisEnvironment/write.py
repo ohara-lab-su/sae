@@ -75,7 +75,6 @@ def write(cell,\
         if not STD:
             SAEnv.print_fdmnes_inp1(outname=outname,cell=cell,MOL=MOL)
 
-
     ### OpenMX ###
     ### 出力ファイル名は outname+".dat" と自動で内部的に ".dat" が加わる
     if code.upper() == 'OPENMX' or code.upper() == 'MX':
@@ -113,7 +112,6 @@ def write(cell,\
                            KP=KP,\
                            FRAC=FRAC)
 
-
     ### RMC_POT ###
     ### 出力ファイル名は outname+".cfg" と自動で内部的に ".cfg" が加わる
     if code.upper() == 'RMC_POT' or code.upper() == 'RMC' or code.upper() == 'RMCPOT':
@@ -131,7 +129,6 @@ def write(cell,\
                 cell.atoms_index,\
                 cell.position,\
                 cell.fix)
-
 
     ### PWScf ###
     if code.upper() == 'PWSCF' or code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':

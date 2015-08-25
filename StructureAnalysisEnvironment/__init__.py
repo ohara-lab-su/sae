@@ -16,7 +16,7 @@
 ### general class
 from Read import *
 from ReadMd import *
-
+from Method import *
 
 ### class for VASP (+alpha)
 from ReadVaspOutcar import *

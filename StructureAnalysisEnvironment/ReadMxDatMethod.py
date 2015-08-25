@@ -3,46 +3,37 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+################################################################################
+#
 # OpenMX 3.7 *.dat 形式ファイル 読み込み class
 #
-#  ReadDatMx
-#    *.dat 名の重複があるので DatMx とする( 例 RMC_POT の *.dat 形式 )
-#
 ################################################################################
 #
-# atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す  
+# atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
 # atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
-# atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す     
-# ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す         
+# atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+# ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す
 # ion_local[j]      : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
-#                                                                               
-# position[j,3]     : 通し番号(max=natom)とx,y,z 指定で内部座標                 
-# fix[j,3]          : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定  
-#                                                                               
-# title             : タイトル                                                  
-# scale             : 格子定数(スケールファクター)                              
-# selective         : selective mode                                            
-# direct            : direct or cartesian  
+#
+# position[j,3]     : 通し番号(max=natom)とx,y,z 指定で内部座標
+# fix[j,3]          : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定
+#
+# title             : タイトル
+# scale             : 格子定数(スケールファクター)
+# selective         : selective mode
+# direct            : direct or cartesian
 #
 ################################################################################
-#
-#  get_title()
-#  get_ispin()
-#  get_natom()
-#  get_nion()
-#  get_atoms()
-#  get_atoms_j()
-#  get_atoms_index()
-#  get_atoms_index_j()
-#  get_ion()
-#  get_scale()
-#  get_t()
-#  get_selective()
-#  get_direct()
-#  get_position()
-#  get_position_max()
-#  get_position_min()
-#  get_fix()
 #
 #  get_left_natom()
 #  get_left_atoms_index_j()
@@ -132,11 +123,11 @@ import re
 #import gzip
 import numpy as np
 
-#import optparse 
-
+#import optparse
+import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
-class ReadMxDatMethod(object):
+class ReadMxDatMethod(SAEnv.Method):
 
     ###################################
     # title (System.Name)
@@ -147,7 +138,7 @@ class ReadMxDatMethod(object):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(title_reg.match(self.datlines[i])):
                     src = self.datlines[i].split()[1]
-                    self.SYSTEM = re.sub(' *$','',src) 
+                    self.SYSTEM = re.sub(' *$','',src)
                     break
         return self.SYSTEM
 
@@ -180,7 +171,7 @@ class ReadMxDatMethod(object):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg.match(self.datlines[i])):
                     self.natom = int(self.datlines[i].split()[1])
-                    break 
+                    break
         return self.natom
 
 
@@ -308,7 +299,7 @@ class ReadMxDatMethod(object):
     ###################################
     # 2015.03.09
     # ion[j]    : 通し番号(max=natom)を与えると原子の種類番号を返す
-    # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す  
+    # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
     def get_ion(self):
         natom = self.get_natom()
         atoms = self.get_atoms()  # atoms に依存
@@ -322,11 +313,11 @@ class ReadMxDatMethod(object):
         return self.ion
 
     ###################################
-    # 2015.03.09 
-    # atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す  
+    # 2015.03.09
+    # atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
     # atoms_j[j]        : 通し番号(max=natom)を与えると、原子の種類番号を返す
     # atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
-    # atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す 
+    # atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
     #
     def get_atoms_index_j(self):
         natom = self.get_natom()
@@ -352,7 +343,7 @@ class ReadMxDatMethod(object):
                 if bool(reg.match(self.datlines[i])):
                     self.FLAG_left = True
                     self.left_natom = int(self.datlines[i].split()[1])
-                    break 
+                    break
         return self.left_natom
 
     ###################################
@@ -399,7 +390,7 @@ class ReadMxDatMethod(object):
                     self.FLAG_left = True
                     for j in range(left_natom):
                         self.left_position[j,0] = \
-                                float(self.datlines[i+j+1].split()[2])*self.UNIT 
+                                float(self.datlines[i+j+1].split()[2])*self.UNIT
                         self.left_position[j,1] = \
                                 float(self.datlines[i+j+1].split()[3])*self.UNIT
                         self.left_position[j,2] = \
@@ -420,7 +411,7 @@ class ReadMxDatMethod(object):
                 if bool(reg.match(self.datlines[i])):
                     self.FLAG_right = True
                     self.right_natom = int(self.datlines[i].split()[1])
-                    break 
+                    break
         return self.right_natom
 
     ###################################
@@ -464,7 +455,7 @@ class ReadMxDatMethod(object):
                     self.FLAG_right = True
                     for j in range(right_natom):
                         self.right_position[j,0] = \
-                                float(self.datlines[i+j+1].split()[2])*self.UNIT 
+                                float(self.datlines[i+j+1].split()[2])*self.UNIT
                         self.right_position[j,1] = \
                                 float(self.datlines[i+j+1].split()[3])*self.UNIT
                         self.right_position[j,2] = \
@@ -481,11 +472,11 @@ class ReadMxDatMethod(object):
 
 
     ###################################
-    ## Read Translation Vector                                                  
-    ##         x   y   z                                                        
-    ##   t1 = t11 t21 t31                                                       
-    ##   t2 = t12 t22 t32                                                       
-    ##   t3 = t13 t23 t33                                                       
+    ## Read Translation Vector
+    ##         x   y   z
+    ##   t1 = t11 t21 t31
+    ##   t2 = t12 t22 t32
+    ##   t3 = t13 t23 t33
     ##
     ##   Unit を調べて AU のときは Ang にして返す
     ##
@@ -699,32 +690,6 @@ class ReadMxDatMethod(object):
                                 l += 1
                     break
         return self.position
-
-
-    ###################################
-    ## position の(x,y,z) 毎の最大を返す
-    ##
-    def get_position_max(self):
-        position = self.get_position()
-
-        self.position_max_xyz = np.zeros((3))
-        for xyz in range(0,3):
-            self.position_max_xyz[xyz] = max(position[:,xyz])
-
-        return self.position_max_xyz
-
-
-    ###################################
-    ## position の(x,y,z) 毎の最小値を返す
-    ##
-    def get_position_min(self):
-        position = self.get_position()
-
-        self.position_min_xyz = np.zeros((3))
-        for xyz in range(0,3):
-            self.position_min_xyz[xyz] = min(position[:,xyz])
-
-        return self.position_min_xyz
 
 
     ###################################

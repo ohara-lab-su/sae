@@ -629,31 +629,6 @@ class ReadMxDat(SAEnv.ReadMxDatMethod):
 #        return self.right_position
 #
 #
-#   ###################################
-#    ## position の(x,y,z) 毎の最大を返す
-#    ##
-#    def get_position_max(self):
-#        position = self.get_position()
-#
-#        self.position_max_xyz = np.zeros((3))
-#        for xyz in range(0,3):
-#            self.position_max_xyz[xyz] = max(position[:,xyz])
-#
-#        return self.position_max_xyz
-#
-#
-#    ###################################
-#    ## position の(x,y,z) 毎の最小値を返す
-#    ##
-#    def get_position_min(self):
-#        position = self.get_position()
-#
-#        self.position_min_xyz = np.zeros((3))
-#        for xyz in range(0,3):
-#            self.position_min_xyz[xyz] = min(position[:,xyz])
-#
-#        return self.position_min_xyz
-
 
 ################################################################################
 def options():

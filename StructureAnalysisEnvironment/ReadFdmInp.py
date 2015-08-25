@@ -3,12 +3,27 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+################################################################################
+#
 # FDMNES
 # *.in ファイル
 #
 # 主に Crystal の部分の解析と読み込み
 #
 ################################################################################
+#
+# 2015.08.25
+#  統合化&Method でいろいろと分離
 #
 # 2015.08.20
 #  Read.py との統合化のためのすりあわせ
@@ -53,12 +68,11 @@ import collections
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
-
 # for coorsys
 from ase.io.wien2k import *   ## suing coorsys
 
 ################################################################################
-class ReadFdmInp(object):
+class ReadFdmInp(SAEnv.Method):
 
     def __init__(self,cname='POSCAR.inp',suffix='.inp',sort=True,atoms_index=None):
 
@@ -89,7 +103,6 @@ class ReadFdmInp(object):
         self.center_abs = False
 
         for i in range(self.num):
-
 
             if bool(energygpho_reg.match(self.datlines[i])):
                 self.energygpho = True
@@ -352,64 +365,6 @@ class ReadFdmInp(object):
         return self.filout
 
     ######################################### for structure infomation
-
-    def get_title(self):
-        return self.title
-
-    def get_system(self):
-        return self.system
-
-    def get_scale(self):
-        return self.scale
-
-    def get_t(self):
-        return self.t
-
-    def get_vasp_version(self):
-        return self.vasp_version
-
-    def get_atoms(self):
-        return self.atoms
-
-    def get_atoms_j(self):
-        return self.atoms_j
-
-    def get_atoms_index(self):
-        return self.atoms_index
-
-    def get_atoms_number(self):
-        return self.atoms_number
-
-    def get_atoms_index_j(self):
-        try:
-            self.atoms_index_j = self.atoms_index_j
-        except:
-            self.atoms_index_j = []
-        return self.atoms_index_j
-
-    def get_atoms_number_j(self):
-        return self.atoms_number_j
-
-    def get_nion(self):
-        return self.nion
-
-    def get_natom(self):
-        return self.natom
-
-    def get_ion(self):
-        return self.ion
-
-    def get_ion_local(self):
-        return self.ion_local
-
-    def get_selective(self):
-        return self.selective
-
-    def get_position(self):
-        return self.position
-
-    def get_fix(self):
-        return self.fix
 
     def get_cellparam(self):
         return self.cellparam
