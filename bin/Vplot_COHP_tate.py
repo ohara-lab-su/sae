@@ -86,9 +86,9 @@ if __name__ == '__main__':
     ############################################################################
     spin = 0
 
-    dos_y = dos.get_tdos(spin)
+    dos_y = dos.get_tdos(spin=spin)
     dos_x = dos.get_eng()
-    cohp_y = cohp.get_ave(spin)
+    cohp_y = cohp.get_ave(spin=spin)
     cohp_x = cohp.get_eng()
 
     ## DOS

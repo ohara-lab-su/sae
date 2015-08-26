@@ -94,16 +94,15 @@ class ReadLobDos(object):
                     self.orbit_index_j.append(orbit)
                 else:
                     pdos = line.split()
-                   #print pdos[0],
                     for orb in range(1,norbit+1):
                         for spin in range(self.nspin):
                             row =  int(orb + (orb - 1 + spin)*(self.nspin -1))
                             self.pdos_all[j-1, orb-1, atom, spin] = float(pdos[row])
-                           #print pdos[row],
-                   #print ""
                 i += 1
 
-#       print self.orbit_index_j
+        # 中身はMethodで計算される(引数で選択して PDOS を部分的に足し合わせる)
+        self.pdos_sum = np.zeros(self.nedos)
+        self.ldos = np.zeros(self.nedos)
 
     ############################################################################
     def get_nedos(self):
@@ -148,10 +147,67 @@ class ReadLobDos(object):
             if spin == 'down': spin=1
         return self.pdos_all[:,lm,atom,spin]
 
+    ################################################################
+    #   0 からスタート
+    #   特定原子の特定軌道から特定の軌道までのPDOS成分を足し合わせる
+    def get_pdos_sum(self,start,end,atom=0,spin=0):
+
+        if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+
+        for i in range(start,end+1):
+            self.pdos_sum[:] = self.pdos_all[:,i,atom,spin] + self.pdos_sum[:]
+
+        return self.pdos_sum
+
+    ################################################################
+    #   l軌道に対応するlm軌道成分のリストをorbit_index_jから作成する
+    #   PDOS成分の足し合わせ
+    #   原子ごと(atomごと) に実際に射影しているlm成分が異なるので
+    #   l軌道ごとに毎回調査する必要があるためにこのルーチンを動かす
+    def get_ldos(self,l=0,atom=0,spin=0):
+
+        if isinstance(spin, str):
+            if spin == 'nonmag': spin=0
+            if spin == 'non': spin=0
+            if spin == 'up': spin=0
+            if spin == 'dn': spin=1
+            if spin == 'down': spin=1
+
+        if isinstance(l, int):
+            if l == 0: l = 's'
+            if l == 1: l = 'p'
+            if l == 2: l = 'd'
+            if l == 3: l = 'f'
+
+        norbit = len(self.orbit_index_j[atom]) # 計算した lm 成分の数
+        orbit_list = []
+        for orb in range(norbit):
+            orbit = self.orbit_index_j[atom][orb]
+            pattern = '.*'+str(l).lower()+'.*'
+            if re.match( pattern, orbit):
+                orbit_list.append(orb)
+
+        for orb in orbit_list:
+            self.ldos[:] = self.pdos_all[:,orb,atom,spin] + self.ldos[:]
+
+        return self.ldos
+
 ################################################################################
 if __name__ == '__main__':
 
     dos = SAEnv.ReadLobDos()
+
+    dos.get_ldos()
+
+#   # atom=0, spin=0 の lm: 1 から 3 まで足し合わせた pdos を出力
+#   pdos = dos.get_pdos_sum(1,3,atom=0,spin=0)
+#   for i in range(dos.nedos):
+#       print pdos[i]
 
 #   print "ISPIN:",dos.get_nspin()
 #   print "NATOM:",dos.get_natom()
