@@ -99,10 +99,8 @@ if __name__ == '__main__':
     plt.axhline(y=0,color="black",linewidth=1)
 
     plt.xlim( xmin=0 )
-    if OPT_EMAX:
-        plt.ylim( ymax=int(OPT_EMAX) )
-    if OPT_EMIN:
-        plt.ylim( ymin=int(OPT_EMIN) )
+    if OPT_EMAX: plt.ylim( ymax=int(OPT_EMAX) )
+    if OPT_EMIN: plt.ylim( ymin=int(OPT_EMIN) )
 
     plt.xlabel("DOS/eV", fontsize=17 )
     plt.ylabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=17 )
@@ -116,14 +114,10 @@ if __name__ == '__main__':
 
     plt.yticks([])
 
-    if OPT_EMAX:
-        plt.ylim( ymax=int(OPT_EMAX) )
-    if OPT_EMIN:
-        plt.ylim( ymin=int(OPT_EMIN) )
-    if OPT_YMAX:
-        plt.xlim( xmax=int(OPT_YMAX) )
-    if OPT_YMIN:
-        plt.xlim( xmin=int(OPT_YMIN) )
+    if OPT_EMAX: plt.ylim( ymax=int(OPT_EMAX) )
+    if OPT_EMIN: plt.ylim( ymin=int(OPT_EMIN) )
+    if OPT_YMAX: plt.xlim( xmax=int(OPT_YMAX) )
+    if OPT_YMIN: plt.xlim( xmin=int(OPT_YMIN) )
 
     plt.xlabel("-pCOHP", fontsize=17 )
 
