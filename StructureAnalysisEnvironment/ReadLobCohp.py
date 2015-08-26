@@ -57,25 +57,26 @@ class ReadLobCohp(object):
         self.icohp_all = np.zeros((self.nedos,self.nbond,self.nspin))
 
         self.bond_index = [''] * (self.nbond)
-        self.bond_ave = np.zeros(self.nbond)
+        self.bond_leng = np.zeros(self.nbond)
 
         # ボンドの各情報(ボンドしている原子のペア、平均値、最大のボンド)
         self.bond_index[0] = 'Average'
-        ave0 = 0
-        self.bond_max = 0
+        leng0 = 0
+        self.bond_max_index = 0
         for i in range(1,self.nbond):
             char0 = self.datlines[i+2].split()[0]
             char1 = re.sub('^.*:','',char0)
             self.bond_index[i] = re.sub('\(.*','',char1)
-            ave = float(re.sub('\)','',re.sub('^.*\(','',char0)).strip())
-            if ave0 < ave:
-                ave0 = ave
-                self.bond_max = i
-            self.bond_ave[i] = ave
+            length = float(re.sub('\)','',re.sub('^.*\(','',char0)).strip())
+            if leng0 < length:
+                leng0 = length
+                self.bond_max_index = i
+            self.bond_leng[i] = length
 
-#       print self.bond_max,self.bond_index[self.bond_max],self.bond_ave[self.bond_max]
+#       print self.bond_max_index,self.bond_index[self.bond_max_index],\
+#                                  self.bond_leng[self.bond_max_index]
 #       for i in range(self.nbond):
-#           print self.bond_index[i],':',self.bond_ave[i]
+#           print self.bond_index[i],':',self.bond_leng[i]
 
         for i in range(self.nedos):
 
@@ -104,7 +105,7 @@ class ReadLobCohp(object):
     def get_nbond(self):
         return self.nbond
 
-    def get_bond_max(self): # 最大のボンドを持つ原子ペアの添え字
+    def get_bond_max(self): # 最大のボンド長を持つ原子ペアの添え字
         return self.bond_max
 
     def get_bond_index(self): # 全ボンドペアの原子種の情報

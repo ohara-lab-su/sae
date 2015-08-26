@@ -70,8 +70,12 @@ if __name__ == '__main__':
     print ""
     print "ISMEAR =",incar.ismear
     print "SIGMA  =",incar.sigma
+    if incar.nbands is not None:
+        print "NBANDS = ",incar.nbands
+
     print ""
     print "NSW    = ",incar.nsw
+
 
     if incar.nsw > 0:
         print "IBRION = ",incar.ibrion

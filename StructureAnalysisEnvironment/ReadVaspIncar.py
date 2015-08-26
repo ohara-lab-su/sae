@@ -73,6 +73,7 @@ class ReadVaspIncar(object):
         self.ngxf = None
         self.ngyf = None
         self.ngzf = None
+        self.nbands = None
 
         for i in range(self.num):
 

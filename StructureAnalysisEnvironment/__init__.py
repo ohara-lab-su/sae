@@ -1,7 +1,6 @@
 ################################################################################
 #__all__ = ["read_param_poscar", "read_poscar", "print_poscar", "conv_direct2car"]
 
-
 ################################################################################
 ### gui function (using VPython and wxPython )
 #try:
@@ -36,6 +35,7 @@ from ReadVaspPotcar import *
 ### LOBSTER,COHP for VASP
 from ReadLobCohp import *
 from ReadLobDos import *
+from ReadLobOut import *
 
 ### class for OpenMX
 from ReadMxVps import *

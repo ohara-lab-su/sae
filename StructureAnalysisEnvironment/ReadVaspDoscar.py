@@ -4,18 +4,10 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # VASP
-# ReadDoscar.py
 #
 #  DOSCAR 読み込みクラス
 #   SPIN 情報対応の DOSCAR 読み込みには かならず DOSCAR or vasprun.xml が
 #   必要となる
-#
-#  dos = ReadDoscar(filename)
-#
-#
-# 関連クラス)
-#  ReadEigenval.py
-#  ReadOutcar.py
 #
 ################################################################################
 #
@@ -115,11 +107,8 @@ class ReadVaspDoscar(object):
 
         self.datlines, self.num = SAE.read_dataline(name)
 
-        # NATOM, VASP 的には正式には NSIONS に相当
-        self.natom = int(self.datlines[0].split()[0])
-
-        # SYSTEM
-        self.title = re.sub(' *$','', str(self.datlines[4]) )
+        self.natom = int(self.datlines[0].split()[0]) # VASP正式では NSIONS
+        self.title = re.sub(' *$','', str(self.datlines[4]) ) # SYSTEM
 
         self.emax = float(self.datlines[5].split()[0]) # EMAX
         self.emin = float(self.datlines[5].split()[1]) # EMIN
