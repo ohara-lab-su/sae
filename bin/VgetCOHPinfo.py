@@ -26,17 +26,24 @@ __version__    = "0.0.1"
 #import os
 #import gzip
 #import re
-#import optparse
 #import numpy as np
-
+import optparse
 #from copy import deepcopy
 
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
+def options():
+    parser = optparse.OptionParser()
+    parser.add_option( '-v',action='store_true', default=False,)
+    options, args = parser.parse_args()
+
+    return options.v
+
 ################################################################################
 if __name__ == '__main__':
 
+    v = options()
 
     # 軌道情報をサイトごとに表示
     out = SAEnv.ReadLobOut()
@@ -45,6 +52,14 @@ if __name__ == '__main__':
         for j in range(out.orbit[i]):
             print out.orbit_index[i][j],
         print ""
+
+
+    if v:
+        # COHP 解析をした原子のペアを表示( 0番は Average)
+        cohp = SAEnv.ReadLobCohp()
+        print ""
+        for i in range(len(cohp.bond_index)):
+            print i,cohp.bond_index[i]
 
 #   # 結合してる距離が一番長いペアを表示
 #   cohp = SAEnv.ReadLobCohp()

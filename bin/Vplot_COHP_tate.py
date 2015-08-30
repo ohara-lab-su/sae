@@ -21,7 +21,7 @@ __status__     = "alpha"
 __version__    = "0.0.5"
 ################################################################################
 
-import sys
+#import sys
 #import os
 #import gzip
 import optparse
@@ -45,10 +45,11 @@ def options():
     parser.add_option( '-n', '--nw', action='store_true', default=False,)
 
     parser.add_option( '-p', '--portrait', action='store_true', default=False,)
-    parser.add_option(  '--emax', dest='EMAX',)
-    parser.add_option(  '--emin', dest='EMIN',)
-    parser.add_option(  '--cohpmax', '--ymax',dest='YMAX',)
-    parser.add_option(  '--cohpmin', '--ymin',dest='YMIN',)
+    parser.add_option( '--emax', dest='EMAX',)
+    parser.add_option( '--emin', dest='EMIN',)
+    parser.add_option( '--dosmax', dest='DMAX',)
+    parser.add_option( '--cohpmax', '--ymax', dest='YMAX',)
+    parser.add_option( '--cohpmin', '--ymin', dest='YMIN',)
     options,  args = parser.parse_args()
 
     return [options.nw,options.portrait,\

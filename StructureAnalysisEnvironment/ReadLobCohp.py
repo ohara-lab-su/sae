@@ -105,14 +105,14 @@ class ReadLobCohp(object):
     def get_nbond(self):
         return self.nbond
 
-    def get_bond_max(self): # 最大のボンド長を持つ原子ペアの添え字
-        return self.bond_max
-
-    def get_bond_index(self): # 全ボンドペアの原子種の情報
+    def get_bond_index(self): # 全ボンドペアの原子種の情報(0番はAverage)
         return self.bond_index
 
-    def get_bond_ave(self): # 全ボンドペアの平均値
-        return self.bond_ave
+    def get_bond_max_index(self): # 最大のボンド長を持つ原子ペアの添え字
+        return self.bond_max_index
+
+    def get_bond_leng(self): # 全ボンドペアの平均値
+        return self.bond_leng
 
     def get_eng(self):
         return self.eng

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
+###############################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # Rread* 共通Method のボス
@@ -15,33 +15,35 @@
 #  Method --- ReadRmcpotCfg
 #  Method --- ReadPwIn
 #
-################################################################################
+###############################################################################
 # History
 #
 # 2015.08.25
 #  startup (ReadMxDatMethod.py から抽出)
 #
-################################################################################
-__author__     = "Kengo NAKADA"
+###############################################################################
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014-2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2014-2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.1.4"
-################################################################################
+__status__ = "alpha"
+__version__ = "0.1.4"
+###############################################################################
+# import sys
+# import os
+# import re
+# import gzip
 
-#import sys
-#import os
-#import re
-#import gzip
 import numpy as np
 
-#import optparse
+# import optparse
 
-################################################################################
+###############################################################################
+
+
 class Method(object):
 
     def get_title(self):
@@ -101,32 +103,26 @@ class Method(object):
     def get_fix(self):
         return self.fix
 
-
     ####################################
     # position の(x,y,z) 毎の最大を返す
     #
     def get_position_max(self):
-#       position = self.get_position()
         position = self.position
 
         self.position_max_xyz = np.zeros((3))
-        for xyz in range(0,3):
-            self.position_max_xyz[xyz] = max(position[:,xyz])
+        for xyz in range(0, 3):
+            self.position_max_xyz[xyz] = max(position[:, xyz])
         return self.position_max_xyz
-
 
     ####################################
     # position の(x,y,z) 毎の最小値を返す
     #
     def get_position_min(self):
-#       position = self.get_position()
         position = self.position
 
         self.position_min_xyz = np.zeros((3))
-        for xyz in range(0,3):
-            self.position_min_xyz[xyz] = min(position[:,xyz])
+        for xyz in range(0, 3):
+            self.position_min_xyz[xyz] = min(position[:, xyz])
         return self.position_min_xyz
 
-
-################################################################################
-
+###############################################################################

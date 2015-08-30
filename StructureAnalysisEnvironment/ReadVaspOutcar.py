@@ -173,6 +173,7 @@ class ReadVaspOutcar(object):
         title_reg = re.compile('.*POSCAR:')
         nkpts_reg = re.compile('.*NKPTS.*')
         nbands_reg = re.compile('.*NBANDS.*')
+        nbands0_reg = re.compile('.*number of bands.*NBANDS=')
         spin_reg = re.compile('.*ISPIN.*',re.IGNORECASE)
         orbit_reg = re.compile('.*LORBIT.*',re.IGNORECASE)
         nsw_reg = re.compile('.*NSW.*',re.IGNORECASE)
@@ -221,7 +222,10 @@ class ReadVaspOutcar(object):
                     try: # for VASP5
                         self.nbands = int(self.datlines[i].split()[14])
                     except: # for VASP4
-                        self.nbands = int(self.datlines[i].split()[8])
+                        try:
+                            self.nbands = int(self.datlines[i].split()[8])
+                        except:
+                            pass
             # spin
             if bool(spin_reg.match(self.datlines[i])):
                 self.ispin = int(self.datlines[i].split()[2])

@@ -1,84 +1,95 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
+###############################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # 統合テスト
 #  入力系(ファイル読み込み系)クラスをラップするボス
 #
-################################################################################
+###############################################################################
 # History
 #
 # 2015.08.18
 #  startup
 #
-################################################################################
-__author__     = "Kengo NAKADA"
+###############################################################################
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2014,2015 Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
-################################################################################
+__status__ = "alpha"
+__version__ = "0.0.1"
+###############################################################################
 
 import sys
-#import os
-#import re
-#import gzip
-#import numpy as np
+# import os
+# import re
+# import gzip
+# import numpy as np
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+# import SpaceGroupEnvironment as SGE
 
-################################################################################
+###############################################################################
 # RMC_POT や VASP4 などでは atoms_index 情報が存在しないので自分で
 # その情報を手動で入力するときに atoms_index=['In','Ga','Zn','O'] などとする
 #
+
+
 class Read(object):
 
-    def __init__(self,filename=None,suffix=None,code='VASP',sort=False,atoms_index=None):
+    def __init__(self, filename=None, suffix=None,
+                 code='VASP', sort=False, atoms_index=None):
 
         module_name = 'StructureAnalysisEnvironment'
 
         if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
             suffix = '.vasp'
-            if filename is None: filename = 'POSCAR'
+            if filename is None:
+                filename = 'POSCAR'
 
-        if code.upper() == 'FDMNES' or  code.upper() == 'FDM':
+        if code.upper() == 'FDMNES' or code.upper() == 'FDM':
             class_name = 'ReadFdmInp'
             suffix = '.inp'
-            if filename is None: filename = 'read_pdb.inp'
+            if filename is None:
+                filename = 'read_pdb.inp'
 
         if code.upper() == 'OPENMX' or code.upper() == 'MX':
             class_name = 'ReadMxDat'
             suffix = '.dat'
-            if filename is None: filename = 'openmx.dat'
+            if filename is None:
+                filename = 'openmx.dat'
 
         if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
             class_name = 'ReadRmcpotCfg'
             suffix = '.cfg'
-            if filename is None: filename = 'rmcpot.cfg'
+            if filename is None:
+                filename = 'rmcpot.cfg'
 
-        if code.upper() == 'PWSCF' or code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':
+        if code.upper() == 'PWSCF' or \
+                code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':
             class_name = 'ReadPwIn'
             suffix = '.in'
-            if filename is None: filename = 'scf.in'
+            if filename is None:
+                filename = 'scf.in'
 
         if code.upper() == 'WIEN2K' or code.upper() == 'WIEN':
             suffix = '.struct'
-            if filename is None: filename = 'case.struct'
+            if filename is None:
+                filename = 'case.struct'
 
         if code.upper() == 'HILAPW' or code.upper() == 'HI':
             suffix = '.in'
-            if filename is None: filename = 'sets.in'
+            if filename is None:
+                filename = 'sets.in'
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+        klass = getattr(module, class_name)
 
-        self.cell = klass(filename,suffix=suffix,atoms_index=atoms_index)
+        self.cell = klass(filename, suffix=suffix, atoms_index=atoms_index)
 
         # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title
@@ -101,15 +112,11 @@ class Read(object):
         self.fix = self.cell.fix
 
         self.vasp_version = self.cell.vasp_version
-       #if code.upper() == 'VASP':
-       #    self.vasp_version = self.cell.vasp_version
-       #else:
-       #    self.vasp_version = None
 
         self.suffix = suffix
         self.code = code
 
-    ############################################################################
+    ###########################################################################
     def get_title(self):
         self.title = self.cell.get_title()
         return self.title
@@ -127,10 +134,6 @@ class Read(object):
         return self.t
 
     def get_vasp_version(self):
-       #if self.code == 'VASP':
-       #    self.vasp_version = self.cell.get_vasp_version()
-       #else:
-       #    self.vasp_version = None
         return self.vasp_version
 
     def get_nion(self):
@@ -185,38 +188,39 @@ class Read(object):
         self.fix = self.cell.get_fix()
         return self.fix
 
-    ############################################################################
-    def write(self,\
-            outname=None,\
-            suffix=None,\
-            code=None,\
-            calinfo=None,\
-            STD=False,\
-            MOL=False,\
-            FRAC=True):
+    ###########################################################################
+    def write(self,
+              outname=None,
+              suffix=None,
+              code=None,
+              calinfo=None,
+              STD=False,
+              MOL=False,
+              FRAC=True):
 
-        SAEnv.write(self.cell,\
-                    outname=outname,\
-                    suffix=suffix,\
-                    code=code,\
-                    calinfo=calinfo,\
-                    STD=STD,\
-                    MOL=MOL,\
+        SAEnv.write(self.cell,
+                    outname=outname,
+                    suffix=suffix,
+                    code=code,
+                    calinfo=calinfo,
+                    STD=STD,
+                    MOL=MOL,
                     FRAC=FRAC)
         return
 
-################################################################################
+
+###############################################################################
 # for TEST
 if __name__ == '__main__':
 
     import optparse
     name = 'POSCAR'
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input', dest='INPUT', default=name,)
+    parser.add_option('-i', '--input', dest='INPUT', default=name,)
     options, args = parser.parse_args()
     name = options.INPUT
 
-    cell = Read(filename=name,code='VASP')
+    cell = Read(filename=name, code='VASP')
 
     title = cell.get_title()
     scale = cell.get_scale()
@@ -238,18 +242,18 @@ if __name__ == '__main__':
 #   for i in range(natom):
 #       print i, atoms_index_j[i]
 
-#   ############################################################################
+#   ###########################################################################
     out = sys.stdout
     print >> out, title
-    print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+    print >> out, " ", scale
+    print >> out, "  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0])
+    print >> out, "  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1])
+    print >> out, "  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2])
 
     if vasp >= 5:
         print >> out, " ",
         for i in range(nion):
-            print >> out,atoms_index[i],
+            print >> out, atoms_index[i],
         print >> out, " "
 
     print >> out, " ",
@@ -266,13 +270,12 @@ if __name__ == '__main__':
 
     for j in range(natom):
         print >> out, " %13.9f %13.9f %13.9f" \
-                %(position[j,0], position[j,1], position[j,2]),
+            % (position[j, 0], position[j, 1], position[j, 2]),
         if selective:
             print >> out, "",
-            print >> out, fix[j,0],fix[i,1],fix[i,2],
+            print >> out, fix[j, 0], fix[i, 1], fix[i, 2],
         print >> out, ""
-    ############################################################################
+    ###########################################################################
 
 #   print ion
 #   print ion_local
-

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
+###############################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
 # *_conv.txt ファイル( pw.x 入力ファイル 読み込み)
 #
-################################################################################
+###############################################################################
 #
 # 2015.07.22
 #  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
@@ -20,17 +20,17 @@
 #
 # 2015.05.21 startup
 #
-################################################################################
-__author__     = "Kengo NAKADA"
+###############################################################################
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
-################################################################################
+__status__ = "alpha"
+__version__ = "0.0.1"
+###############################################################################
 
 #import sys
 #import gzip
@@ -42,24 +42,26 @@ import numpy as np
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
-################################################################################
+###############################################################################
+
+
 class ReadFdmConv(object):
 
-    def __init__(self,cname,suffix='_conv.txt',weight=1.0):
+    def __init__(self, cname, suffix='_conv.txt', weight=1.0):
 
-        if not os.path.exists(cname+suffix):
-            cname = cname.replace(suffix,'')
+        if not os.path.exists(cname + suffix):
+            cname = cname.replace(suffix, '')
 
-        self.datlines,self.num = SAE.read_dataline(cname+suffix)
+        self.datlines, self.num = SAE.read_dataline(cname + suffix)
 
         self.name = cname
         self.conv_suffix = suffix
-        self.eng = np.zeros(self.num-1)
-        self.xas = np.zeros(self.num-1)
+        self.eng = np.zeros(self.num - 1)
+        self.xas = np.zeros(self.num - 1)
 
-        for i in range(1,self.num):
-            self.eng[i-1] = float(self.datlines[i].split()[0])
-            self.xas[i-1] = float(self.datlines[i].split()[1])/weight
+        for i in range(1, self.num):
+            self.eng[i - 1] = float(self.datlines[i].split()[0])
+            self.xas[i - 1] = float(self.datlines[i].split()[1]) / weight
 
     def get_eng(self):
         return self.eng
@@ -67,7 +69,7 @@ class ReadFdmConv(object):
     def get_xas(self):
         return self.xas
 
-    ############################################################################
+    ###########################################################################
     # allsite のときの複数の *_conv.txt の平均を取る
     # filout = Pd のとき allsite ならばとして結果を出力したとする
     # Pd_1_conv.txt
@@ -77,33 +79,34 @@ class ReadFdmConv(object):
     # 平均を self.xas に返す
     #
 #   def average_conv(self,name,*allsite):
-    def average_conv(self,name,absorber,weight=None):
+    def average_conv(self, name, absorber, weight=None):
         if weight is None:
             n_site = float(len(absorber))
         else:
-            print "weight : ",weight
+            print "weight : ", weight
             n_site = float(weight)
-        s_xas = np.zeros(self.num-1)
-       #print absorber
-        for site in absorber :
-            convname = name+"_"+str(site)+self.conv_suffix
-            datlines,num = SAE.read_dataline(convname)
-            print "sum : ",convname
-            for i in range(1,self.num):
-                s_xas[i-1] = float(datlines[i].split()[1]) + s_xas[i-1]
-        self.xas = s_xas/n_site
+        s_xas = np.zeros(self.num - 1)
+       # print absorber
+        for site in absorber:
+            convname = name + "_" + str(site) + self.conv_suffix
+            datlines, num = SAE.read_dataline(convname)
+            print "sum : ", convname
+            for i in range(1, self.num):
+                s_xas[i - 1] = float(datlines[i].split()[1]) + s_xas[i - 1]
+        self.xas = s_xas / n_site
         return self.xas
 
 
-################################################################################
-def plot_fdm_xas(eng,xas):
+###############################################################################
+def plot_fdm_xas(eng, xas):
 
     import matplotlib.pyplot as plt
 
-    plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
+    plt.rcParams['font.family'] = 'Times New Roman'
+    plt.rcParams['font.size'] = 16  # ラベル等のフォントサイズ
     plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
-    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
+    # 軸の太さを設定。目盛りは変わらない
+    plt.rcParams['axes.linewidth'] = 1.5
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
 
@@ -111,17 +114,17 @@ def plot_fdm_xas(eng,xas):
     orgy = 0.080
     off = 0.010
     xsize = 0.75
-    ysize = 0.83/2.
+    ysize = 0.83 / 2.
 
-    plt.axes([orgx,orgy,xsize,ysize])
+    plt.axes([orgx, orgy, xsize, ysize])
 
-    plt.plot(eng,xas,linewidth=2,label='XAS')
+    plt.plot(eng, xas, linewidth=2, label='XAS')
 
     plt.xlabel("Energy above Fermi [eV]")
     plt.ylabel("Absorption [arb. unit]")
-    plt.axvline(x=0,color='black',linewidth=1)
+    plt.axvline(x=0, color='black', linewidth=1)
 
-    leg = plt.legend(fontsize=12,loc='lower right')
+    leg = plt.legend(fontsize=12, loc='lower right')
     leg.get_frame().set_alpha(0.5)
 
     plt.savefig("XAS.eps")
@@ -132,42 +135,44 @@ def plot_fdm_xas(eng,xas):
 
     plt.close('all')
 
-################################################################################
+###############################################################################
+
+
 def options():
 
     name = 'POSCAR'
     suffix = '_conv.txt'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT',)
+    options, args = parser.parse_args()
 
     if not os.path.exists(name):
         name0 = SAE.find_datfile1(suffix)
-        name0 = name0.replace(suffix,'')
+        name0 = name0.replace(suffix, '')
         if name0 is not None:
             name0 = name
         name = name0
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT:
+        name = options.INPUT
+    if len(args) > 0:
+        name = args[0]
 
-    return name,suffix
+    return name, suffix
 
-################################################################################
+###############################################################################
 if __name__ == '__main__':
 
-    name,suffix = options()
+    name, suffix = options()
 #   print name,suffix
-    conv = ReadFdmConv(name,suffix)
+    conv = ReadFdmConv(name, suffix)
 
     eng = conv.get_eng()
     xas = conv.get_xas()
 
-    av = conv.average_conv(1,2,3,4,5)
+    av = conv.average_conv(1, 2, 3, 4, 5)
 
 #   plot_fdm_xas(eng,xas)
 
 #   print "NAME",name
-
-

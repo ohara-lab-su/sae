@@ -65,15 +65,21 @@ class ReadVaspIncar(object):
         npar_reg = re.compile('.*NPAR',re.IGNORECASE)
 
         # defaults
-        self.sigma = 0.2
         self.ispin = 1
         self.nsw = 0
+        self.ismear = 1
+        self.sigma = 0.2
         self.npar = 1
         self.laechg = False
         self.ngxf = None
         self.ngyf = None
         self.ngzf = None
         self.nbands = None
+        self.ediff = 1.0e-4
+        self.ediffg = self.ediff*10.0
+        self.alog = 'Normal'
+        self.nedos = 301
+        self.lreal = False
 
         for i in range(self.num):
 
