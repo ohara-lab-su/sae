@@ -47,22 +47,23 @@ class ReadVaspIncar(object):
         self.datlines,self.num = SAE.read_dataline1(INCAR)
 
         # set TAG rule
-        title_reg = re.compile('.*SYSTEM',re.IGNORECASE)
-        nsw_reg = re.compile('.*NSW',re.IGNORECASE)
-        sigma_reg = re.compile('.*SIGMA',re.IGNORECASE)
-        ismear_reg = re.compile('.*ISMEAR',re.IGNORECASE)
-        ediff_reg = re.compile('.*EDIFF',re.IGNORECASE)
-        ediffg_reg = re.compile('.*EDIFFG',re.IGNORECASE)
-        nbands_reg = re.compile('.*NBANDS',re.IGNORECASE)
-        ispin_reg = re.compile('.*ISPIN',re.IGNORECASE)
-        nelm_reg = re.compile('.*NELM',re.IGNORECASE)
-        smass_reg = re.compile('.*SMASS',re.IGNORECASE)
-        ibrion_reg = re.compile('.*IBRION',re.IGNORECASE)
-        laechg_reg = re.compile('.*LAECHG',re.IGNORECASE)
-        ngxf_reg = re.compile('.*NGXF',re.IGNORECASE)
-        ngyf_reg = re.compile('.*NGYF',re.IGNORECASE)
-        ngzf_reg = re.compile('.*NGZF',re.IGNORECASE)
-        npar_reg = re.compile('.*NPAR',re.IGNORECASE)
+        title_reg = re.compile('.*SYSTEM', re.IGNORECASE)
+        nsw_reg = re.compile('.*NSW', re.IGNORECASE)
+        sigma_reg = re.compile('.*SIGMA', re.IGNORECASE)
+        ismear_reg = re.compile('.*ISMEAR', re.IGNORECASE)
+        ediff_reg = re.compile('.*EDIFF', re.IGNORECASE)
+        ediffg_reg = re.compile('.*EDIFFG', re.IGNORECASE)
+        nbands_reg = re.compile('.*NBANDS', re.IGNORECASE)
+        ispin_reg = re.compile('.*ISPIN', re.IGNORECASE)
+        nelm_reg = re.compile('.*NELM', re.IGNORECASE)
+        smass_reg = re.compile('.*SMASS', re.IGNORECASE)
+        ibrion_reg = re.compile('.*IBRION', re.IGNORECASE)
+        laechg_reg = re.compile('.*LAECHG', re.IGNORECASE)
+        ngxf_reg = re.compile('.*NGXF', re.IGNORECASE)
+        ngyf_reg = re.compile('.*NGYF', re.IGNORECASE)
+        ngzf_reg = re.compile('.*NGZF', re.IGNORECASE)
+        npar_reg = re.compile('.*NPAR', re.IGNORECASE)
+        isym_reg = re.compile('.*ISYM', re.IGNORECASE)
 
         # defaults
         self.ispin = 1
@@ -80,6 +81,7 @@ class ReadVaspIncar(object):
         self.alog = 'Normal'
         self.nedos = 301
         self.lreal = False
+        self.isym = 1
 
         for i in range(self.num):
 
@@ -110,6 +112,10 @@ class ReadVaspIncar(object):
             # NBANDS
             if bool(nbands_reg.match(self.datlines[i])):
                 self.nbands = int(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # ISYM
+            if bool(isym_reg.match(self.datlines[i])):
+                self.isym = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
             # ISPIN
             if bool(ispin_reg.match(self.datlines[i])):
@@ -186,6 +192,10 @@ class ReadVaspIncar(object):
     def get_nbands(self):
         self.nbands = self.nbands if hasattr(self, 'nbands') else None
         return self.nbands
+
+    def get_isym(self):
+        self.isym = self.isym if hasattr(self, 'isym') else 1
+        return self.isym
 
     def get_ispin(self):
         self.ispin = self.ispin if hasattr(self, 'ispin') else 1

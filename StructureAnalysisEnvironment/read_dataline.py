@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-################################################################################
+##########################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # read_dataline(name)
@@ -8,7 +8,7 @@
 #  datlines[num] 配列に放り込む関数
 #  配列数 num および、datalines 配列を戻り値にする
 #
-################################################################################
+##########################################################################
 #
 # 2015.08.10
 #  CR を削除するようにした
@@ -25,85 +25,93 @@
 #   わりと多用するので class のコンストラクタ部分から分離
 #   関数で呼び出すようにする
 #
-################################################################################
-__author__     = "Kengo NAKADA"
+##########################################################################
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
-################################################################################
+__status__ = "alpha"
+__version__ = "0.0.1"
+##########################################################################
 
 import sys
 import os
 import gzip
 
-################################################################################
+##########################################################################
+
+
 def read_dataline(name):
 
     if os.path.exists(name):
-        GZIP=False
-    elif os.path.exists(name+".gz"):
-        GZIP=True
+        GZIP = False
+    elif os.path.exists(name + ".gz"):
+        GZIP = True
     else:
-        sys.exit("STOP: "+name+" or "+name+".gz file not found")
+        sys.exit("STOP(read_dataline): " + name +
+                 " or " + name + ".gz file not found")
 
     try:
         if GZIP:
-            tmp = gzip.open(name+".gz")
+            tmp = gzip.open(name + ".gz")
         else:
             tmp = open(name)
 #       datfile = tmp.read().replace('\r','')
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+        sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
     finally:
         tmp.close()
 
     datlines = datfile.split('\n')
-    num = len(datlines) -1
+    num = len(datlines) - 1
 
     # 配列の各要素から CR を削除
 #   for i in range(num):
 #       print datlines[i]
 #      #datlines[i] = datlines[i].rstrip('r')
 
-    return datlines,num
+    return datlines, num
 
-################################################################################
+
+##########################################################################
+# read_dataline1
 # コメントアウト対応版
+
+
 def read_dataline1(name):
 
     import re
-    comment0_reg = re.compile('^#.*',re.IGNORECASE)
-    comment1_reg = re.compile('^!.*',re.IGNORECASE)
+    comment0_reg = re.compile('^#.*', re.IGNORECASE)
+    comment1_reg = re.compile('^!.*', re.IGNORECASE)
 
     if os.path.exists(name):
-        GZIP=False
-    elif os.path.exists(name+".gz"):
-        GZIP=True
+        GZIP = False
+    elif os.path.exists(name + ".gz"):
+        GZIP = True
     else:
-        sys.exit("STOP: "+name+" or "+name+".gz file not found")
+        sys.exit(
+            "STOP(read_dataline): " + name + " or " + name + ".gz file not found")
 
     try:
         if GZIP:
-            tmp = gzip.open(name+".gz")
+            tmp = gzip.open(name + ".gz")
         else:
             tmp = open(name)
 #       datfile = tmp.read().replace('\r','')
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+        sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
     finally:
         tmp.close()
 
     datalines0 = datfile.split('\n')
-    num0 = len(datalines0) -1
+    num0 = len(datalines0) - 1
 
 #   # 配列の各要素から CR を削除
 #   for i in range(num0):
@@ -118,5 +126,6 @@ def read_dataline1(name):
                 j += 1
 
     num = j
-    return datalines,num
+    return datalines, num
 
+##########################################################################

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
+##########################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # ReadLobDos.py
@@ -13,7 +13,10 @@
 #
 #  などの点が本来の DOSCAR と異なり、拡張されている。
 #
-################################################################################
+##########################################################################
+#
+# 2015.09.01
+#  TDOS パート down-spin にバグ(INT-DOSを読んでいた) を発見、修正
 #
 # 2015.08.26
 #   PDOS パートに対応
@@ -21,17 +24,17 @@
 # 2015.06.05 startup
 #   TDOS パートのみ対応
 #
-################################################################################
-__author__     = "Kengo NAKADA"
+##########################################################################
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
-################################################################################
+__status__ = "alpha"
+__version__ = "0.0.1"
+##########################################################################
 
 #import sys
 #import os
@@ -45,12 +48,14 @@ import numpy as np
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
-################################################################################
+##########################################################################
+
+
 class ReadLobDos(object):
 
-    def __init__(self,name='DOSCAR.lobster'):
+    def __init__(self, name='DOSCAR.lobster'):
 
-        self.datlines,self.num = SAEnv.read_dataline(name)
+        self.datlines, self.num = SAEnv.read_dataline(name)
 
         self.natom = int(self.datlines[0].split()[0])
         self.title = self.datlines[4]
@@ -66,27 +71,44 @@ class ReadLobDos(object):
         self.tdos_all = np.zeros((self.nedos, self.nspin))
 
         for i in range(self.nedos):
-            self.eng[i] = float(self.datlines[6+i].split()[0])
+            self.eng[i] = float(self.datlines[6 + i].split()[0])
             for spin in range(self.nspin):
-                self.tdos_all[i,spin] = float(self.datlines[6+i].split()[1+spin*2])
+                self.tdos_all[i, spin] = float(
+                    self.datlines[6 + i].split()[1 + spin])
 
-        j0 = 6+i+1
+        j0 = 6 + i + 1
 
         # partial DOS part
-        lm_max = 9 # 最大
+        #    _pv などの擬ポテンシャルの時は軌道の数が9を超えるので注意)
+        lm_max = 9  # 最大(s, px, py, pz, dxy, dyz, dzx, dx2-y2, d3z2-r2)
+
+        # _pv などの擬ポテンシャル対応
+        #    最大のnorbit (lm_max) を求める --> pdos の最大サイズ見積もり
+        lm_max = 0
+        i = 0
+        for atom in range(self.natom):
+            for j in range(self.nedos + 1):
+                line = self.datlines[j0 + i]
+                if j == 0:
+                    orbit = re.sub('.*Z=.*;', '', line).split()
+                    lm_max0 = len(orbit)
+                    if lm_max0 > lm_max:
+                        lm_max = lm_max0
+                i += 1
+
         self.pdos_all = np.zeros((self.nedos, lm_max, self.natom, self.nspin))
 
         self.orbit_index_j = []
         self.atoms_index_j = []
-        self.atoms_number_j = np.zeros(self.natom,dtype=int)
+        self.atoms_number_j = np.zeros(self.natom, dtype=int)
 
-        i =0
+        i = 0
         for atom in range(self.natom):
-            for j in range(self.nedos+1):
-                line = self.datlines[j0+i]
+            for j in range(self.nedos + 1):
+                line = self.datlines[j0 + i]
                 if j == 0:
-                    orbit = re.sub('.*Z=.*;','',line).split()
-                    atomn = int(re.sub(';.*','',re.sub('.*Z=','',line)))
+                    orbit = re.sub('.*Z=.*;', '', line).split()
+                    atomn = int(re.sub(';.*', '', re.sub('.*Z=', '', line)))
                     symb = SAEnv.get_atomic_symbol0(atomn)
                     norbit = len(orbit)
                     self.atoms_number_j[atom] = atomn
@@ -94,17 +116,19 @@ class ReadLobDos(object):
                     self.orbit_index_j.append(orbit)
                 else:
                     pdos = line.split()
-                    for orb in range(1,norbit+1):
+                    for orb in range(1, norbit + 1):
                         for spin in range(self.nspin):
-                            row =  int(orb + (orb - 1 + spin)*(self.nspin -1))
-                            self.pdos_all[j-1, orb-1, atom, spin] = float(pdos[row])
+                            row = int(orb
+                                    + (orb - 1 + spin) * (self.nspin - 1))
+                            self.pdos_all[j - 1, orb - 1, atom, spin] \
+                                    = float(pdos[row])
                 i += 1
 
         # 中身はMethodで計算される(引数で選択して PDOS を部分的に足し合わせる)
         self.pdos_sum = np.zeros(self.nedos)
         self.ldos = np.zeros(self.nedos)
 
-    ############################################################################
+    ##########################################################################
     def get_nedos(self):
         return self.nedos
 
@@ -114,53 +138,71 @@ class ReadLobDos(object):
     def get_natom(self):
         return self.natom
 
+    # 原子ごとの原子種記号リスト
     def get_atoms_index_j(self):
         return self.atoms_index_j
 
     def get_atoms_number_j(self):
         return self.atoms_number_j
 
+    # 原子ごとの射影軌道リスト
     def get_orbit_index_j(self):
         return self.orbit_index_j
 
     def get_eng(self):
         return self.eng
 
-    def get_tdos(self,spin=0):
+    def get_tdos(self, spin=0):
         if isinstance(spin, str):
-            if spin == 'nonmag': spin=0
-            if spin == 'non': spin=0
-            if spin == 'up': spin=0
-            if spin == 'dn': spin=1
-            if spin == 'down': spin=1
-        return self.tdos_all[:,spin]
+            if spin == 'nonmag':
+                spin = 0
+            if spin == 'non':
+                spin = 0
+            if spin == 'up':
+                spin = 0
+            if spin == 'dn':
+                spin = 1
+            if spin == 'down':
+                spin = 1
+        return self.tdos_all[:, spin]
 
     def get_pdos_all(self):
         return self.pdos_all
 
-    def get_pdos(self,lm=0,atom=0,spin=0):
+    def get_pdos(self, lm=0, atom=0, spin=0):
         if isinstance(spin, str):
-            if spin == 'nonmag': spin=0
-            if spin == 'non': spin=0
-            if spin == 'up': spin=0
-            if spin == 'dn': spin=1
-            if spin == 'down': spin=1
-        return self.pdos_all[:,lm,atom,spin]
+            if spin == 'nonmag':
+                spin = 0
+            if spin == 'non':
+                spin = 0
+            if spin == 'up':
+                spin = 0
+            if spin == 'dn':
+                spin = 1
+            if spin == 'down':
+                spin = 1
+        return self.pdos_all[:, lm, atom, spin]
 
     ################################################################
     #   0 からスタート
     #   特定原子の特定軌道から特定の軌道までのPDOS成分を足し合わせる
-    def get_pdos_sum(self,start,end,atom=0,spin=0):
+    def get_pdos_sum(self, start, end, atom=0, spin=0):
 
         if isinstance(spin, str):
-            if spin == 'nonmag': spin=0
-            if spin == 'non': spin=0
-            if spin == 'up': spin=0
-            if spin == 'dn': spin=1
-            if spin == 'down': spin=1
+            if spin == 'nonmag':
+                spin = 0
+            if spin == 'non':
+                spin = 0
+            if spin == 'up':
+                spin = 0
+            if spin == 'dn':
+                spin = 1
+            if spin == 'down':
+                spin = 1
 
-        for i in range(start,end+1):
-            self.pdos_sum[:] = self.pdos_all[:,i,atom,spin] + self.pdos_sum[:]
+        for i in range(start, end + 1):
+            self.pdos_sum[:] = self.pdos_all[
+                :, i, atom, spin] + self.pdos_sum[:]
 
         return self.pdos_sum
 
@@ -169,35 +211,44 @@ class ReadLobDos(object):
     #   PDOS成分の足し合わせ
     #   原子ごと(atomごと) に実際に射影しているlm成分が異なるので
     #   l軌道ごとに毎回調査する必要があるためにこのルーチンを動かす
-    def get_ldos(self,l=0,atom=0,spin=0):
+    def get_ldos(self, l=0, atom=0, spin=0):
 
         if isinstance(spin, str):
-            if spin == 'nonmag': spin=0
-            if spin == 'non': spin=0
-            if spin == 'up': spin=0
-            if spin == 'dn': spin=1
-            if spin == 'down': spin=1
+            if spin == 'nonmag':
+                spin = 0
+            if spin == 'non':
+                spin = 0
+            if spin == 'up':
+                spin = 0
+            if spin == 'dn':
+                spin = 1
+            if spin == 'down':
+                spin = 1
 
         if isinstance(l, int):
-            if l == 0: l = 's'
-            if l == 1: l = 'p'
-            if l == 2: l = 'd'
-            if l == 3: l = 'f'
+            if l == 0:
+                l = 's'
+            if l == 1:
+                l = 'p'
+            if l == 2:
+                l = 'd'
+            if l == 3:
+                l = 'f'
 
-        norbit = len(self.orbit_index_j[atom]) # 計算した lm 成分の数
+        norbit = len(self.orbit_index_j[atom])  # 計算した lm 成分の数
         orbit_list = []
         for orb in range(norbit):
             orbit = self.orbit_index_j[atom][orb]
-            pattern = '.*'+str(l).lower()+'.*'
-            if re.match( pattern, orbit):
+            pattern = '.*' + str(l).lower() + '.*'
+            if re.match(pattern, orbit):
                 orbit_list.append(orb)
 
         for orb in orbit_list:
-            self.ldos[:] = self.pdos_all[:,orb,atom,spin] + self.ldos[:]
+            self.ldos[:] = self.pdos_all[:, orb, atom, spin] + self.ldos[:]
 
         return self.ldos
 
-################################################################################
+##########################################################################
 if __name__ == '__main__':
 
     dos = SAEnv.ReadLobDos()
@@ -214,6 +265,4 @@ if __name__ == '__main__':
 #   print "NEDOS:",dos.get_nedos()
 
 
-
-################################################################################
-
+##########################################################################
