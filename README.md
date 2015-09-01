@@ -1,14 +1,262 @@
 # StructureAnalysisEnvironment
 
-<p>VASP, WIEN2k, Quantum ESPRESSO, OpenMX, CP2K, HiLAPW, FDMNES, RMC_POT 等の第一原理計算および逆モンテカルロ法の各種計算コードに対応した入出力・解析の一元化を目指したPythonフレームワークです。これにより、計算コードの違いを意識することなく、構造作成や解析などの計算コードの入出力・解析を統一的な方法で実現できます。
+<p>VASP, WIEN2k, Quantum ESPRESSO, OpenMX, CP2K, HiLAPW, FDMNES, RMC\_POT 等の第一原理計算および逆モンテカルロ法の各種計算コードに対応した入出力・解析の一元化を目指したPythonフレームワークです。これにより、計算コードの違いを意識することなく、構造作成や解析などの計算コードの入出力・解析を統一的な方法で実現できます。
 
 <p>また、同時に提供される、同フレームワークを用いて開発された実用的なツール群によりエンドユーザーは気楽にほぼ同一の手続きで計算から解析まで行うことが可能になります。
 
-## リリースノート
-- 2015.10.01: version 0.0.1 暫定リリース
+現バージョンではまだまだ企画倒れな部分も多数ありますが、順次バージョンアップしておく予定です。
+
 
 ## ライセンスおよび免責事項
-<p>[MITライセンス](https://ja.wikipedia.org/wiki/MIT_License)です。ユーザーは使用にあたってMITライセンスを順守してください。MITライセンスに基づき、作者はソフトウエアに関して何ら責任を負いません。詳しくは LICENSE.txt ファイルをご覧ください。This software is released under the MIT License, see LICENSE.txt.
+<p>[MITライセンス](http://opensource.org/licenses/mit-license.php)です。ユーザーは使用にあたってMITライセンスを順守してください。MITライセンスに基づき、作者はソフトウエアに関して何ら責任を負いません。詳しくは LICENSE.txt ファイルをご覧ください。This software is released under the MIT License, see LICENSE.txt.
+
+## 想定する実行環境
+<p>開発のメインは Mac OS X で、テスト環境のメインは Linux ですが、ある程度は Windows 7 Pro および Windows 8.1 Pro でテストを行っています。Python が導入されていればほとんど何処でも動くと思います。
+
+## インストール
+<p>Windows (64bit)の場合は <b>StructureAnalysisEnvironment-0.0.1.win-amd64.exe</b> を実行していただければインストーラが立ち上がり、すべてOKで推し進めれば、インストールは完了します。Python 2.7系のみ対応しています。ソースコードから setup.py を使ってインストールしても同じです。PyPI にはまだ登録していませんので pip での一発インストールは出来ません。
+
+## 実行に必要なPythonおよびモジュール
+
+[Python 2.7](https://www.python.org/downloads/) を想定しています。まずは、Python 2.7 をインストールしてから以下のモジュールのインストールを行ってください。
+
+* [ASE](https://wiki.fysik.dtu.dk/) (AtomicSimulationEnvironment)
+* [NumPy](http://www.numpy.org)
+* [SciPy](http://www.numpy.org): matplitlib で用います
+* [pytz](https://pypi.python.org/pypi/pytz/):matplitlib で用います
+* [pyparsing](https://pypi.python.org/pypi/pyparsing): matplitlib で用います
+* [six](https://pypi.python.org/pypi/six): matplitlib で用います
+* [matplitlib](http://matplotlib.org)
+* PyCifRW
+* [VPython](http://vpython.org)
+* [wxPython](http://www.wxpython.org)
+
+## フレームワークの基本的な使い方
+
+一般的なPythonによるOOPでスタイルでコードが書けます。たとえば、構造情報を読み込むReadクラスを用いてインスタンスを作成すること事が可能です。これによりインスタンスに様々なメッソドを作用させて処理させるなどの当たり前の操作が可能です。たとえば、以下の数行のプログラムにより、VASPの構造入力ファイルであるPOSCARをFDMNES形式に変換します。
+
+```py
+#!/usr/bin/env python
+import StructureAnalysisEnvironment as SAEnv
+
+cell = SAEnv.Read(filename='POSCAR', code='VASP')
+cell.write(code='FDMNES')
+```
+
+これらのクラス・メッソド・関数には様々なオプションがあり、たとえば構造情報であるPOSCAR以外のVASPの入力ファイルを読み込んで、ほぼ同じ計算条件の入力ファイルを自動作成する機能などもあります。
+また、作成したインスタンスをメッソドからのアクセスではなく write 関数を用いて関数型としてコーディングも可能です。
+
+```py
+#!/usr/bin/env python
+import StructureAnalysisEnvironment as SAEnv
+
+cell = SAEnv.Read(filename='POSCAR', code='VASP')
+SAEnv.write(cell, code='FDMNES')
+```
+
+その他、スーパーセルを作ったり、オイラー角にしたがって回転させたりなど、多数の構造に関するメッソド・関数を有しています。他にも、計算後の電子状態に対する処理も同様の手続きで処理が可能です。それぞれのクラス・メッソド・関数には多数のオプション機能があります。Pythonでのプログラム経験があれば、だれでも容易に、統一的に、構造作成から電子状態の解析まで第一原理計算のプログラム処理が可能になります。
+
+フレームワークの各機能についてはここでは詳しくは紹介しませんが、実際には、ユーザーはこのフレームワークを用いて作られたツール群を用いてこれらの機能の恩恵を受けることが可能です。
+
+
+## フレームワークを用いたツール群の解説
+
+### 基本ルール
+普通ユーザーはフレームワーク自体を直接使うことはほぼ稀となります。実際には、ユーザーはフレームワークとともに提供されるツール群を用いることになります。このツール群は、一部の例外はありますが、基本的には以下のルールに則ってネーミングをされてます。同じような名前のツールはほぼ同じ機能を用いており、多数の機能を似たような手続きで使うことが可能になります。
+
+1. <b>大文字</b>から始まるコードはユーザーが編集する必要のない<b>汎用ツール</b>。非常に多くのコマンドラインオプションを持ち、かなり高機能化、肥大化しているツールもあります。大抵は -h でヘルプが一応出るようにしてます。汎用の高機能のマクロとも言えます。
+
+2. <b>小文字</b>から始まるコードはユーザーがその都度必要に応じて直接編集する必要があります。ただし、実施問題小回りの効いた非常に小さいコードであり、Pythonを知っていれば汎用性が高く、簡単に目的に応じて編集できるので、ある意味一番便利なコードでもあります。一種の野良マクロと言えます。
+
+3. 先頭の<b>大文字</b>もしくは<b>小文字</b>は使用する計算コード（もしくは使用するフレームワーク)を示します。これらツールのネーミングセンスの元は、小口先生のHiLAPWに同封されているLAcopyなどのツールに由来します。(LAcopyに相当する他の計算コード向けのプログラムなども多数用意していますが、多くはc-shellやb-shellで実装しているために、このフレームワークのツール群としてはパッケージしません。)
+	1. <b>AS</b>から始まる AS\*.py プログラムは <b>ASE</b> を用いた変換系コード
+	2. <b>CP</b>から始まる CP\*.py プログラムは <b>CP2K</b>用
+	3. <b>FD</b>から始まる FD\*.py プログラムは <b>FDMNES</b>用
+	4. <b>LA</b>から始まる LA\*.py プログラムは <b>HiLAPW</b>用
+	4. <b>MX</b>から始まる MX\*.py プログラムは <b>OpenMX</b>用
+	5. <b>PW</b>から始まる PW\*.py プログラムは <b>Quantum ESPRESSO(PWScf)</b>用
+	6. <b>R</b>から始まる R\*.py プログラムは <b>RMC_POT</b>用
+	7. <b>V</b>から始まる V\*.py プログラムは <b>VASP</b>用
+	8. <b>W</b>から始まる W\*.py プログラムは <b>WIEN2k</b>用
+4. 先頭の大文字を除いて同じ名前だったらほぼ同じ操作で同じことが出来ます。
+	1. (例) Vplot\_LDOS.py と Wplot\_LDOS.py は同じく LDOS 描画ツールでほぼ同じコマンドラインオプションで同じ描画をしてくれる機能を有します。
+    2. (例)\*plot\*.py が含まれているコードは matplotlib を用いた2Dプロットかもしくは3Dプロットするコードです。
+
+### いくつかの具体的な代表的なツールの説明
+本フレームワークを用いて開発された、ある程度メンテナンスが行き届いていて、かつ実用的と思われる
+ツール群をいくつか紹介します。プログラム中から呼び出すことが前提の関数群の紹介は割愛します。
+
+#### for CP2K
+- CPfindINP.py
+- CPvasp2inp.py
+
+#### for FDMNES
+- <b>FDbav2xyz.py</b> : \*\_bav.txt ファイルから xyz 形式のファイルを出力します。計算に用いたクラスター半径に応じて \*\_bav.txt で記述される構造情報が異なりますので、xyz形式に直すことにより、どのような半径のクラスターで計算したか容易に可視化することが可能です。
+- <b>FDcif2fdm.py</b> : \*.cif 形式から FDMNES で用いる \*.inp ファイルを出力します。また構造情報だけではなく、典型的な計算のサンプルインプットファイルも同時に \*.inp に記述されますので、ほとんど修正無く、基本的な XANES スペクトルの計算が可能な \*.inp ファイルを cif ファイルから作成可能です。
+- <b>FDclean.py</b> : FDMNES の計算結果等のファイルを消し、計算前のファイル構成に戻ります。
+- <b>FDconv\_e2photoe.py</b>: 計算後の \*\_conv.txt ファイルが above Fermi Energy 形式の時、Photon Energy 形式に直して計算し直します。
+- <b>FDfdm2vasp.py</b> : FDMNES の入力形式ファイル \*.inp に書かれた構造情報を VASP の POSCAR 形式に変換する
+- <b>FDmakeCconvAllsite.py</b> : allsite で計算したときはすべての site で convolution されないので、計算後にまとめてすべての site で convolution するためのスクリプトです。 convolution 用の \*.inp ファイルの一括作成とそれを連続動作させるための fdmfiles.txt の自動作成スクリプトとなります。
+- <b>FDpbd2fdm.py</b> : PDB形式のファイルを FDMNES の入力形式 \*.inp に変換するスクリプトです。FDMNESには本来PDB形式ファイルをインポートする機能があります。PDF形式には、本来PDB形式に存在ない？周期的な構造情報をプロットするためにコメントアウト行に書かれた構造情報があるのですが、これを読み込む機能がFDMNESはいささかバグ？っぽいため、FDMNES本来のインポート機能を用いるよりは、このスクリプトを用いた方が意図した構造が計算出来ると思います。
+- <b>FDplot\_XAS.py</b> : \*\_conv.txt ファイルや \*.txt ファイルなどの XANES の計算結果および、\*\_sd.txt ファイルなどの状態密の結果をまとめて表示したり、それぞれの結果を平均化したりするなどの様々なオプション機能を持つ高機能描画ソフトです。かなり機能がゴージャスです。基本的に　matploblib のGUI画面を持ちますので、そちらで拡大縮小やセーブも可能ですが、このプログラムを実行するだけで、デフォルトで自動的に描画結果はpdf,png,eps 形式に出力されます。
+- <b>FDplot\_XASs.py</b> :
+- <b>FDvasp2fdm.py</b> : VASP の入力ファイルPOSCAR を FDMNES の入力形式 \*.inp へ変換するスクリプトです。また構造情報だけではなく、典型的な計算のサンプルインプットファイルも同時に \*.inp に記述されますので、ほとんど修正無く、基本的な XANES スペクトルの計算が可能な \*.inp ファイルを POSCAR ファイルから作成可能です。
+- <b>FDxyz2fdm.py</b> : xyz形式(md形式)ファイルを FDMNES の入力形式 \*.inp へ変換するスクリプト
+- <b>fdExp\_comp\_XAS.py</b> : FDplot\_XAS.py のシンプル機能版にさらに、同フレームワーク中の Athena のノーマライズ形式(nor)を読み込むクラスを用いて実験結果と計算結果度同時にプロットしたりするプログラムです。比較的シンプルに作ってあるので、実際には状況に応じてユーザーはこれを書き換えて、自由に臨み通りの図をプロットすることが用意です。このプログラムは、そのためサンプルプログラムであるともいえます。
+- fdLDOS.py
+- fdLDOS0_specified.py
+- fdLDOSmulti.py
+- fdXAS.py
+- fdXAS\_specified.py
+
+#### for OpenMX
+- MXEE.py
+- MXEI.py
+- MXdat2vasp.py
+- MXdat2xyz.py
+- MXdosall.py
+- MXfindDAT.py
+- MXfindPAO.py
+- MXgetvalence.py
+- MXjoinxyz.py
+- MXmd2vasprun.py
+- MXplot\_ADOS.py
+- MXplot\_ADOS\_portrait.py
+- MXplot\_LDOS.py
+- MXplot\_MXEI.py
+- MXplot\_PDOS.py
+- MXplot\_TDOS+.py
+- MXplot\_TDOS.py
+- MXplot\_temperature.py
+- MXreadMD.py
+- MXtemp.py
+- MXvasp2mx.py
+- mxDOS1.py
+
+#### for Quantum ESPRESSO
+- PWin2vasp.py
+- PWmakePPinp.py
+- PWout2vasp.py
+- PWout2vasprun.py
+- PWplot\_TDOS.py
+- PWplot\_XAS.py
+- PWvasp2in.py
+- pwPDOS.py
+- pwTDOS.py
+
+#### for RMC_POT
+- Rcfg2vasp.py
+- RchangeDensity.py
+- RcollSplit.py
+- RcollSplit\_nonSplit.py
+- RgetDensity.py
+- Rmove.py
+- Rmove1.py
+- Rplot\_Crystal.py
+- Rplot\_Crystal0.py
+- Rplot\_CrystalAnimeCFG.py
+- Rplot\_fit.py
+- Rplot\_ppcf.py
+- Rplot\_ppcf2.py
+- Rplot\_ppcf3.py
+- Rvasp2cfg.py
+
+#### for VASP
+- Vacf.py
+- Vados.py
+- Vband.py
+- Vcar2direct.py
+- Vch
+- VchangeVacumm.py
+- Vdirect2car.py
+- Vextract0.py
+- VfindBond.py
+- VfindNN0.py
+- VfindNN1\_library0.py
+- VfindNN1\_library1.py
+- VfindNN2FNC.py
+- Vforce.py
+- Vforce2md.py
+- VgetCOHPinfo.py
+- Vldos.py
+- VmakeSuperCell2.py
+- VmodifyAtomPosition.py
+- Vpdos.py
+- Vplot\_ADOS.py
+- Vplot\_ADOS\_portrait.py
+- Vplot\_Bader.py
+- Vplot\_COHP\_tate.py
+- Vplot\_Crystal.py
+- Vplot\_CrystalAnimeMD.py
+- Vplot\_CrystalAnimePOSCAR.py
+- Vplot\_LDOS.py
+- Vplot\_LDOSm.py
+- Vplot\_PDOS.py
+- Vplot\_TDOS.py
+- Vplot\_VDEI.py
+- Vplot\_VEE.py
+- Vplot\_VEI.py
+- Vplot\_band.py
+- Vplot\_com.py
+- Vplot\_temperature.py
+- VrotPOSCAR.py
+- Vtdos.py
+- Vtemp.py
+- Vvasp2sets.py
+- Vvasp2xyz.py
+- Vxdat2MD.py
+- Vxml2CONTCAR\_ALL.py
+- Vxml2MD.py
+- Vxml2POSCAR.py
+- vLDOSm\_3d.py
+- vLDOSm\_4d.py
+- vLDOSmulti.py
+- vLDOSs.py
+
+#### for WIEN2k
+- WchkEparm.py
+- Wgeteparm.py
+- Wgeteph.py
+- Wgetepl.py
+- Wldos.py
+- Wplot\_ADOS.py
+- Wplot\_ADOS\_portrait.py
+- Wplot\_LDOS.py
+- Wplot\_LDOS\_portrait.py
+- Wplot\_LDOSm.py
+- Wplot\_TDOS.py
+- Wplot\_XAS.py
+- Wstruct2vasp.py
+- Wvasp2struct.py
+- wLCOS\_core.py
+- wLDOS\_core.py
+- wLDOSm\_3d.py
+- wLDOSm\_4d.py
+- wXAS.py
+- wfch\_XAS.py
+
+#### ASE フレームワークを用いたいくつかのツール群
+現時点で私のフレームワークに機能が一部実装されていない、もしくはまだ機能が限定的などの理由があり、ASEを用いているものがあります。
+
+- ASchangeVacuum\_ALL.py
+- AScif2surface111.py
+- AScif2vasp.py
+- ASpdb2vasp.py
+- ASstruct2vasp.py
+- ASvasp2cif.py
+- ASvasp2pdb.py
+- ASvasp2struct.py
+- ASvasp2supercell.py
+- ASvasp2surface111.py
+- ASvasp2vasp.py
+- ASvasp2xyz.py
+
+## お願い
+<p>現時点のバージョンではあり得ないことかと思いますが、もしこれらフレームワークやツールを使って解析やプロット、計算をされたときは、論文等の謝辞に一言、名前を入れていただけたらと思います。無論、これらの行為はマストではありません。ただし、コード自体を改変したりしてご利用した場合は、MITライセンスに基づいたレベルでライセンス表記してください。
+
+
+## リリースノート
+- 2015.10.01: version 0.0.1 暫定リリース
 
 ## 特徴
 <p>現在のところ、各種計算コードの入出力の変換機能がメインとなります。たとえば、構造の変換で言えば、結晶・分子構造をその計算コードで要求される形式に変換するだけではなく、その他計算に必要な入力項目の変換も含んでいます。基本方針としては、一度どれかの計算コードにおいて、計算が可能な入力ファイルを作れば、別の計算コードでもそのまま無編集で計算まで持っていけることを目指しています。つまり、計算コードの入出力に関して、可能な限り計算コードの違いを吸収することが目的の一つとなります。計算コードを扱う際の入出力の一元化に関しては、当然計算コードのアルゴリズム上、本質的に同じように扱うことが無理な場合も多数あります。その場合は、ある程度は私自身の推奨する独断と偏見の初期パラメーターを与えて簡略化をしています。当然詳細設定も可能です。無論、最初から一元化を諦めて特化機能としている部分も多数ありますが、これらはほぼ同じ手順で簡単に操作が可能としています。入力の構造のみならず、計算結果や、電子状態の解析など、あらゆるシーンで、対応する計算コードの一元的な操作環境を提供しています。特に解析機能が充実しているのも特徴となります。
@@ -25,7 +273,7 @@
 <p>電荷密度、局所状態密度、バンド分散、Barder電荷、XANESスペクトル、pCOHP解析などを始めとした、基本的な解析対応だけではなく、様々な計算の解析・プロット、およびそれらへの入力支援を行う機能を多数含んでいます。おそらく、ASEよりも解析関係のログ解析やプロット機能が豊富ではないかと推察します。現時点での開発者自身の開発のモチベーションの主軸はむしろ解析支援部分の機能の開発にあります。
 
 ### 構造作成支援
-スーパーセルの作成から配位数やボンドのサーチ、指定した局所構造の並進移動・回転操作などの座標のモディファイ、表面作成や真空層作成なども含みます。ただ、わりと構造系の支援はしてくれるクラスや関数は作っているのですが、現時点ではあまり賢く作ってないのと、機能もまだまだ不十分です。ASEのようにナノパーティクルとかナノチューブとかは自動では作ってくれません。
+<p>スーパーセルの作成から配位数やボンドのサーチ、指定した局所構造の並進移動・回転操作などの座標のモディファイ、表面作成や真空層作成なども含みます。ただ、わりと構造系の支援はしてくれるクラスや関数は作っているのですが、現時点ではあまり賢く作ってないのと、機能もまだまだ不十分です。ASEのようにナノパーティクルとかナノチューブとかは自動では作ってくれません。
 
 ### 2Dプロット機能
 <p>2Dプロット機能は基本的にはmatplotlibモジュールを用いていますので、PDF/EPS出力に対応しています。局所状態密度解析などを初めバンド計算で用いられる一般的な解析のテンプレートは多く実装しており、かなり容易に、論文に使える図表などの作成をルーチンワークに持っていけると思います。スクリプトからの自動実行・ルーチン作業化が大前提ですので、GUI化には全く力を入れておりません。当然バンド分散プロット等では波動関数成分の可視化をE-Kプロット上に連続的な色の変化やポイントのサイズの変化で同時に表示することにも対応しています。また、VASPの一般的な可視化ソフトであるp4vaspのXML形式へ各種計算コードの結果を変換する機能を持っているのがおそらくマニアックな特徴となります。おそらくp4vaspへ無理矢理変換する発想も、その機能も、業界初だと思います。たとえば、OpenMXで計算したMDのxyz形式をp4vaspでアニメーションする形へ持っていくのも容易に出来ます。XCrysDen に対応しているツールは多いと思いますが、本ツールではまず p4vasp に対応しました。XCrysDen にはまだ対応してません。小口先生のPSP形式の対応はこっそりとは進んでいますが、maplotlib 機能で直接PDF出力したほうが現時点では健全かつ便利です。
@@ -35,7 +283,7 @@
 
 
 ## 開発の経緯と現状
-元々は作者が大学院時代からポスドク時代までのおよそ１５年位の間にほそぼそと個別に作っていたAWK/Perl/Cなどを用いた多数の変換・プロット・解析支援プログラムがベースになっています。これまで、それぞれの支援コードにおいて、各支援コードが同じような方法論で使えるインターフェースを持ちつつ、それぞれの支援コードが相補性的に機能するように'なるべく'作ってきましたが、対応する計算コードの増加と、開発規模の肥大化に伴い、全体像としての開発が破綻しかけていたのがまず現状としてあります。そのため、自身の利便性と趣味でPython化したことから始まっています。
+<p>元々は作者が大学院時代からポスドク時代までのおよそ１５年位の間にほそぼそと個別に作っていたAWK/Perl/Cなどを用いた多数の変換・プロット・解析支援プログラムがベースになっています。これまで、それぞれの支援コードにおいて、各支援コードが同じような方法論で使えるインターフェースを持ちつつ、それぞれの支援コードが相補性的に機能するように'なるべく'作ってきましたが、対応する計算コードの増加と、開発規模の肥大化に伴い、全体像としての開発が破綻しかけていたのがまず現状としてあります。そのため、自身の利便性と趣味でPython化したことから始まっています。
 
 <p>フレームワーク化により開発にまつわる多くの問題は解決されます。Pythonフレームワーク設計ですので、ASEをご存じの方は、ASEを思い出すと思いますが、本コードは結果的にはASEの廉価版だと思ってくれてよいです。末端のReadクラスからの構造の読み込み・書き込みなどの基本機能の使い勝手、関数として呼び出しても良いしMethodで呼び出しても良い点など、ほぼASEと同じです。インスタンス作成からの流れや、マルチパラダイムな点は、ASEでなくとも、Pythonフレームワークならばどれも発想は同じなると思います。ですので、自虐的にASEの類似品と言うよりは Python OOP の自然の帰結だと思います。(むしろASEは基本構造としてクラス・メッソド・継承などのOOP的な手続よりは、多くは関数で作られている印象がある）。内部構造は当然まったく異なります。ただ基本機能の意味で、現時点ではかなりASE廉価版かと思われます。かなりショボイかもしれません。開発当初は自身の不勉強のためにASEの存在をあまり良く知らなかったこともあります。今になって振り返ると、Python フレームワークで計算の統合環境といえば、ASEがダントツで優れており、業界標準です。欧米では第一原理計算コードはASE対応が前提なものがほとんどです。おそらくASE以外にはそれに匹敵する同等のツールは必要ありません。本フレームワークは、結果的に似たようなフレームワークなので、開発として無駄だった点もあるかもしれませんが、独自開発故のメリットも当然多数あります。
 
@@ -64,47 +312,3 @@ Pythonのみならず、C++などのネイティブなGUIも含めて開発は�
 
 結局、どれに時間と力を注ぎこむのかは今後次第ですが、ただ残念ながら、しばらく計算をする仕事からは離れそうなので、あまり開発は進められない気もします。
 
-## 想定する実行環境
-<p>開発のメインは Mac OS X で、テスト環境のメインは Linux ですが、ある程度は Windows 7 Pro および Windows 8.1 Pro でテストを行っています。Python が導入されていればほとんど何処でも動くと思います。
-
-## インストール
-<p>Windows (64bit)の場合は <b>StructureAnalysisEnvironment-0.0.1.win-amd64.exe</b> を実行していただければインストーラが立ち上がり、すべてOKで推し進めれば、インストールは完了します。Python 2.7系のみ対応しています。ソースコードから setup.py を使ってインストールしても同じです。PyPI にはまだ登録していませんので pip での一発インストールは出来ません。
-
-## 実行に必要なPythonおよびモジュール
-
-[Python 2.7](https://www.python.org/downloads/) を想定しています。まずは、Python 2.7 をインストールしてから以下のモジュールのインストールを行ってください。
-
-* [ASE](https://wiki.fysik.dtu.dk/) (AtomicSimulationEnvironment)
-* [NumPy](http://www.numpy.org)
-* [SciPy](http://www.numpy.org): matplitlib で用います
-* [pytz](https://pypi.python.org/pypi/pytz/):matplitlib で用います
-* [pyparsing](https://pypi.python.org/pypi/pyparsing): matplitlib で用います
-* [six](https://pypi.python.org/pypi/six): matplitlib で用います
-* [matplitlib](http://matplotlib.org)
-* [VPython](http://vpython.org)
-* [wxPython](http://www.wxpython.org)
-
-## フレームワークを用いたツール群の解説
-
-### 基本ルール
-普通ユーザーはフレームワーク自体を直接使うことはほぼ稀となります。実際には、ユーザーはフレームワークとともに提供されるツール群を用いることになります。このツール群は、一部の例外はありますが、基本的には以下のルールに則ってネーミングをされてます。
-
-1. <b>大文字</b>から始まるコードはユーザーが編集する必要のない<b>汎用ツール</b>。非常に多くのコマンドラインオプションを持ち、かなり高機能化、肥大化しているツールもあります。大抵は -h でヘルプが一応出るようにしてます。汎用の高機能のマクロとも言えます。
-
-2. <b>小文字</b>から始まるコードはユーザーがその都度必要に応じて直接編集する必要があります。ただし、実施問題小回りの効いた非常に小さいコードであり、Pythonを知っていれば汎用性が高く、簡単に目的に応じて編集できるので、ある意味一番便利なコードでもあります。一種の野良マクロと言えます。
-
-3. 先頭の<b>大文字</b>もしくは<b>小文字</b>は使用する計算コード（もしくは使用するフレームワーク)を示します。これらツールのネーミングセンスの元は、小口先生のHiLAPWに同封されているLAcopyなどのツールに由来します。
-	1. <b>AS</b>から始まる AS\*.py プログラムは <b>ASE</b> を用いた変換系コード
-	2. <b>CP</b>から始まる CP\*.py プログラムは <b>CP2K</b>用
-	3. <b>FD</b>から始まる FD\*.py プログラムは <b>FDMNES</b>用
-	4. <b>LA</b>から始まる LA\*.py プログラムは <b>HiLAPW</b>用
-	4. <b>MX</b>から始まる MX\*.py プログラムは <b>OpenMX</b>用
-	5. <b>PW</b>から始まる PW\*.py プログラムは <b>Quantum ESPRESSO(PWScf)</b>用
-	6. <b>R</b>から始まる R\*.py プログラムは <b>RMC_POT</b>用
-	7. <b>V</b>から始まる V\*.py プログラムは <b>VASP</b>用
-	8. <b>W</b>から始まる W\*.py プログラムは <b>WIEN2k</b>用
-4. 先頭の大文字を除いて同じ名前だったらほぼ同じ操作で同じことが出来ます。
-	1. (例) Vplot\_LDOS.py と Wplot\_LDOS.py は同じく LDOS 描画ツールでほぼ同じコマンドラインオプションで同じ描画をしてくれる機能を有します。
-5. \*plot\*.py が含まれているコードは matplotlib を用いた2Dプロットかもしくは3Dプロットするコードです。
-
-### いくつかの具体的なツールの説明
