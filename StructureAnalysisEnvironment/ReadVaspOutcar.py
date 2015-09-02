@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-################################################################################
+##########################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # VASP
 # OUTCAR 読み込み (汎用,その他)
 #   情報はすべて return で返す
 #
-################################################################################
+##########################################################################
 # 共通基本変数
 #
 # atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
@@ -24,7 +24,10 @@
 # selective         : selective mode
 # direct            : direct or cartesian
 #
-################################################################################
+##########################################################################
+#
+# 2015.09.03
+#  インスタンス変数を少し整理
 #
 # 2015.09.02
 #  逆格子の基本ベクトルor Direct lattice vectorの読み込みで
@@ -80,7 +83,7 @@
 #  重視の方がかなり高速なのだが、莫大なテキストを正規表現で毎回マッチするのは
 #  たぶんアホ。元に戻す必要があるかもしれない。
 #
-################################################################################
+##########################################################################
 #
 # 2015.02.24
 #  method 名ルール変更に伴い get_iter_num() --> get_n_ion_loop()
@@ -146,17 +149,17 @@
 # 2015.01.09
 #   startup, 圧縮ファイル対応版
 #
-################################################################################
-__author__     = "Kengo NAKADA"
+##########################################################################
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.1.0"
-################################################################################
+__status__ = "alpha"
+__version__ = "0.1.0"
+##########################################################################
 
 import sys
 #import gzip
@@ -167,44 +170,51 @@ import numpy as np
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
-################################################################################
+##########################################################################
+
+
 class ReadVaspOutcar(object):
 
-
-    def __init__(self,cname):
+    def __init__(self, cname):
 
         self.datlines, self.num = SAE.read_dataline(cname)
 
-        rec_reg = re.compile('.*reciprocal lattice vectors',re.IGNORECASE)
+        rec_reg = re.compile('.*reciprocal lattice vectors', re.IGNORECASE)
         title_reg = re.compile('.*POSCAR:')
         nkpts_reg = re.compile('.*NKPTS.*')
         nbands_reg = re.compile('.*NBANDS.*')
         nbands0_reg = re.compile('.*number of bands.*NBANDS=')
-        spin_reg = re.compile('.*ISPIN.*',re.IGNORECASE)
-        orbit_reg = re.compile('.*LORBIT.*',re.IGNORECASE)
-        nsw_reg = re.compile('.*NSW.*',re.IGNORECASE)
-        isym_reg = re.compile('.*ISYM',re.IGNORECASE)
-        ibrion_reg = re.compile('.*IBRION',re.IGNORECASE)
-        nwrite_reg = re.compile('.*NWRITE',re.IGNORECASE)
+        spin_reg = re.compile('.*ISPIN.*', re.IGNORECASE)
+        orbit_reg = re.compile('.*LORBIT.*', re.IGNORECASE)
+        nsw_reg = re.compile('.*NSW.*', re.IGNORECASE)
+        isym_reg = re.compile('.*ISYM', re.IGNORECASE)
+        ibrion_reg = re.compile('.*IBRION', re.IGNORECASE)
+        nwrite_reg = re.compile('.*NWRITE', re.IGNORECASE)
         efermi_reg = re.compile('^.*E-fermi')
 
-        iter_reg = re.compile('.*-- Iteration',re.IGNORECASE)
-        toten_ion_reg = re.compile('.*free  energy   TOTEN',re.IGNORECASE)
+        iter_reg = re.compile('.*-- Iteration', re.IGNORECASE)
+        toten_ion_reg = re.compile('.*free  energy   TOTEN', re.IGNORECASE)
 
-        nions_reg = re.compile('.*number of ions.*NIONS.*',re.IGNORECASE)
-        ion_type_reg = re.compile('.*ions per type',re.IGNORECASE)
+        nions_reg = re.compile('.*number of ions.*NIONS.*', re.IGNORECASE)
+        ion_type_reg = re.compile('.*ions per type', re.IGNORECASE)
 
-        self.t = np.zeros((3,3))
-        self.rec_t = np.zeros((3,3))
+        self.t = np.zeros((3, 3))
+        self.rec_t = np.zeros((3, 3))
+
+        # for default
+        self.lorbit = 0
+        self.ispin = 1
+        self.nsw = 0
 
         self.atoms = []
+        self.atoms_index = []
         self.toten_ion = []
 
         for i in range(self.num):
 
             # title
             if bool(title_reg.match(self.datlines[i])):
-                self.title = re.sub(' *$','',self.datlines[i][9:])
+                self.title = re.sub(' *$', '', self.datlines[i][9:])
 
             # nkpts (複数の dim. of array 項目があったときに最初のみ有効)
             if bool(nkpts_reg.match(self.datlines[i])):
@@ -225,9 +235,9 @@ class ReadVaspOutcar(object):
                 try:
                     self.nbands = self.nbands
                 except:
-                    try: # for VASP5
+                    try:  # for VASP5
                         self.nbands = int(self.datlines[i].split()[14])
-                    except: # for VASP4
+                    except:  # for VASP4
                         try:
                             self.nbands = int(self.datlines[i].split()[8])
                         except:
@@ -259,17 +269,26 @@ class ReadVaspOutcar(object):
             # nion ( VASP 公式では TYPES に相当 )
             if bool(ion_type_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
-                self.nion = len(tmp)-4
+                self.nion = len(tmp) - 4
+
+                # 大きなNION のときのバグ対策
+                if self.nion >= 10:  # OUTCAR出力バグ対策
+                    if os.path.exists('vasprun.xml'):
+                        vrun = SAE.ReadVasprun()
+                        self.nion = vrun.get_nion()
+                    else:
+                        sys.exit("STOP(get_nion): NION >= 10")
 
             # atoms[i] : 原子の種類番号(max=nion)を与えるとその原子種の数を返す
             if bool(ion_type_reg.match(self.datlines[i])):
                 for ion in range(self.nion):
-                    self.atoms.append(int(self.datlines[i].split()[4+ion]))
+                    self.atoms.append(int(self.datlines[i].split()[4 + ion]))
 
             # current の iter number をゲット(最後には全Iter番号が入る)
             # get_n_ion_loop (旧名) get_iter_num
             if bool(iter_reg.match(self.datlines[i])):
-                self.n_ion_loop = int(self.datlines[i].split()[2].replace('(',''))
+                self.n_ion_loop = int(self.datlines[i].split()[
+                                      2].replace('(', ''))
 
             # Total Free Energy
             if bool(toten_ion_reg.match(self.datlines[i])):
@@ -277,7 +296,7 @@ class ReadVaspOutcar(object):
 
             # Fermi Energy
             if bool(efermi_reg.match(self.datlines[i])):
-               self.efermi = self.datlines[i].split()[2]
+                self.efermi = self.datlines[i].split()[2]
 
             # t and recipcola
             if bool(rec_reg.match(self.datlines[i])):
@@ -285,84 +304,133 @@ class ReadVaspOutcar(object):
 #               t1_x = float(self.datlines[i+1].split()[0])
 #               t1_y = float(self.datlines[i+1].split()[1])
 #               t1_z = float(self.datlines[i+1].split()[2])
-                t1_x = float(self.datlines[i+1][3:16])
-                t1_y = float(self.datlines[i+1][16:29])
-                t1_z = float(self.datlines[i+1][29:42])
+                t1_x = float(self.datlines[i + 1][3:16])
+                t1_y = float(self.datlines[i + 1][16:29])
+                t1_z = float(self.datlines[i + 1][29:42])
 
 #               rec1_x = float(self.datlines[i+1].split()[3])
 #               rec1_y = float(self.datlines[i+1].split()[4])
 #               rec1_z = float(self.datlines[i+1].split()[5])
-                rec1_x = float(self.datlines[i+1][45:58])
-                rec1_y = float(self.datlines[i+1][58:71])
-                rec1_z = float(self.datlines[i+1][71:84])
+                rec1_x = float(self.datlines[i + 1][45:58])
+                rec1_y = float(self.datlines[i + 1][58:71])
+                rec1_z = float(self.datlines[i + 1][71:84])
 
 #               t2_x = float(self.datlines[i+2].split()[0])
 #               t2_y = float(self.datlines[i+2].split()[1])
 #               t2_z = float(self.datlines[i+2].split()[2])
-                t2_x = float(self.datlines[i+2][3:16])
-                t2_y = float(self.datlines[i+2][16:29])
-                t2_z = float(self.datlines[i+2][29:42])
+                t2_x = float(self.datlines[i + 2][3:16])
+                t2_y = float(self.datlines[i + 2][16:29])
+                t2_z = float(self.datlines[i + 2][29:42])
 #               rec2_x = float(self.datlines[i+2].split()[3])
 #               rec2_y = float(self.datlines[i+2].split()[4])
 #               rec2_z = float(self.datlines[i+2].split()[5])
-                rec2_x = float(self.datlines[i+2][45:58])
-                rec2_y = float(self.datlines[i+2][58:71])
-                rec2_z = float(self.datlines[i+2][71:84])
+                rec2_x = float(self.datlines[i + 2][45:58])
+                rec2_y = float(self.datlines[i + 2][58:71])
+                rec2_z = float(self.datlines[i + 2][71:84])
 
 #               t3_x = float(self.datlines[i+3].split()[0])
 #               t3_y = float(self.datlines[i+3].split()[1])
 #               t3_z = float(self.datlines[i+3].split()[2])
-                t3_x = float(self.datlines[i+3][3:16])
-                t3_y = float(self.datlines[i+3][16:29])
-                t3_z = float(self.datlines[i+3][29:42])
+                t3_x = float(self.datlines[i + 3][3:16])
+                t3_y = float(self.datlines[i + 3][16:29])
+                t3_z = float(self.datlines[i + 3][29:42])
 #               rec3_x = float(self.datlines[i+3].split()[3])
 #               rec3_y = float(self.datlines[i+3].split()[4])
 #               rec3_z = float(self.datlines[i+3].split()[5])
-                rec3_x = float(self.datlines[i+3][45:58])
-                rec3_y = float(self.datlines[i+3][58:71])
-                rec3_z = float(self.datlines[i+3][71:84])
+                rec3_x = float(self.datlines[i + 3][45:58])
+                rec3_y = float(self.datlines[i + 3][58:71])
+                rec3_z = float(self.datlines[i + 3][71:84])
 
-                self.t[0,0] = t1_x
-                self.t[1,0] = t1_y
-                self.t[2,0] = t1_z
+                self.t[0, 0] = t1_x
+                self.t[1, 0] = t1_y
+                self.t[2, 0] = t1_z
 
-                self.t[0,1] = t2_x
-                self.t[1,1] = t2_y
-                self.t[2,1] = t2_z
+                self.t[0, 1] = t2_x
+                self.t[1, 1] = t2_y
+                self.t[2, 1] = t2_z
 
-                self.t[0,2] = t3_x
-                self.t[1,2] = t3_y
-                self.t[2,2] = t3_z
+                self.t[0, 2] = t3_x
+                self.t[1, 2] = t3_y
+                self.t[2, 2] = t3_z
 
-                self.rec_t[0,0] = rec1_x
-                self.rec_t[1,0] = rec1_y
-                self.rec_t[2,0] = rec1_z
+                self.rec_t[0, 0] = rec1_x
+                self.rec_t[1, 0] = rec1_y
+                self.rec_t[2, 0] = rec1_z
 
-                self.rec_t[0,1] = rec2_x
-                self.rec_t[1,1] = rec2_y
-                self.rec_t[2,1] = rec2_z
+                self.rec_t[0, 1] = rec2_x
+                self.rec_t[1, 1] = rec2_y
+                self.rec_t[2, 1] = rec2_z
 
-                self.rec_t[0,2] = rec3_x
-                self.rec_t[1,2] = rec3_y
-                self.rec_t[2,2] = rec3_z
+                self.rec_t[0, 2] = rec3_x
+                self.rec_t[1, 2] = rec3_y
+                self.rec_t[2, 2] = rec3_z
 
+        # makes atoms_index
+        # VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
+        j = 0
+        potcar_reg = re.compile('.*POTCAR: ')
+        for i in range(self.num):
+            if bool(potcar_reg.match(self.datlines[i])):
+                j += 1
+                tmp = str(self.datlines[i].split()[2])
+                self.atoms_index.append(tmp)
+        j = int(j / 2)
+        for i in range(j):
+            self.atoms_index.pop()
+        if j != self.nion:
+            sys.exit("STOP(get_atoms_index): NION !=", NION)
 
-    ############################################################################
-    ## 逆格子ベクトルを吸い出す
-    ##         x   y   z
-    ##   t1 = t11 t21 t31
-    ##   t2 = t12 t22 t32
-    ##   t3 = t13 t23 t33
+        # makes atoms_j
+        # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
+        j = 0
+        self.atoms_j = np.zeros(self.natom, dtype=int)
+        for ion in range(self.nion):
+            for atom in range(self.atoms[ion]):
+                self.atoms_j[j] = ion
+                j += 1
+
+        # makes atoms_index_j
+        j = 0
+        self.atoms_index_j = np.zeros(self.natom, dtype='S2')
+        for ion in range(self.nion):
+            for atom in range(self.atoms[ion]):
+                self.atoms_index_j[j] = self.atoms_index[ion]
+                j += 1
+
+        # point symmetry
+        # OUTCAR から 結晶点群を吸い出す
+        # ISYM=0 のときは None を返す
+        if self.isym != 0 and self.isym != -1:
+            point_sym_text = '.*The.*tic.*fig.*ion.*ha.* point symmetry '
+            point_sym_reg = re.compile(point_sym_text, re.IGNORECASE)
+            for i in range(self.num):
+                if bool(point_sym_reg.match(self.datlines[i])):
+                    src = self.datlines[i]
+                    dst = re.sub(point_sym_text, '', src)
+                    dst = re.sub('\.', '', dst)
+                    self.point_sym = str(dst)
+        else:
+            #           point_sym = 'sym_off'
+            self.point_sym = None
+
+        self.point_symmetry = self.point_sym
+
+    ##########################################################################
+    # 逆格子ベクトルを吸い出す
+    # x   y   z
+    # t1 = t11 t21 t31
+    # t2 = t12 t22 t32
+    # t3 = t13 t23 t33
     ##
-    ## 本来の基本並進ベクトルの定義は
-    ##       t1  t2   t3
-    ##   x = t11 t12 t13
-    ##   y = t21 t22 t23
-    ##   z = t31 t32 t33
+    # 本来の基本並進ベクトルの定義は
+    # t1  t2   t3
+    # x = t11 t12 t13
+    # y = t21 t22 t23
+    # z = t31 t32 t33
     ##
-    ## >> 正常なmatrixの添字とは転置した添字となるが、
-    ##    正しいmatrixの添字で見直すときに正しい並進ベクトルになるためである
-    ##    VASP の入力(表示)形式が縦横逆なため
+    # >> 正常なmatrixの添字とは転置した添字となるが、
+    # 正しいmatrixの添字で見直すときに正しい並進ベクトルになるためである
+    # VASP の入力(表示)形式が縦横逆なため
     ##
     def get_reciprocal_t_init(self):
         return self.rec_t
@@ -388,27 +456,20 @@ class ReadVaspOutcar(object):
     def get_nsw(self):
         return self.nsw
 
-    def get_natom(self): # 注意) VASP 公式では NIONS に相当
+    def get_natom(self):  # 注意) VASP 公式では NIONS に相当
         return self.natom
 
-    def get_nion(self): # 注意) VASP 公式では TYPES に相当
-        if self.nion >= 10: # OUTCAR出力バグ対策
-            if os.path.exists('vasprun.xml'):
-                vrun = SAE.ReadVasprun()
-                self.nion = vrun.get_nion()
-            else:
-                sys.exit("STOP(get_nion): NION >= 10")
+    def get_nion(self):  # 注意) VASP 公式では TYPES に相当
         return self.nion
 
     def get_atoms(self):
-        if self.nion >= 10: # OUTCAR出力バグ対策
-            if os.path.exists('vasprun.xml'):
-                vrun = SAE.ReadVasprun()
-                self.atoms = vrun.get_atoms()
         return self.atoms
 
     def get_isym(self):
         return self.isym
+
+    def get_point_symmetry(self):
+        return self.point_sym
 
     def get_ibrion(self):
         return self.ibrion
@@ -425,6 +486,11 @@ class ReadVaspOutcar(object):
     def get_efermi(self):
         return self.efermi
 
+    def get_atoms_j(self):
+        return self.atoms_j
+
+    def get_atoms_index_j(self):
+        return self.atoms_index_j
 
     # OUTCAR の KPOINTS セッションから KPOINTS ファイルの内容(動作モード)の類推
     # かなり未完成。SCF でのオートmesh と band での line-mode の区別くらい
@@ -432,21 +498,20 @@ class ReadVaspOutcar(object):
         auto_FLAG = False
         line_FLAG = False
         hand_FLAG = False
-        car_FLAG  = False
-        rec_FLAG  = False
+        car_FLAG = False
+        rec_FLAG = False
 
         kpoints_reg = re.compile('.*KPOINTS:.*')
         for i in range(self.num):
             if bool(kpoints_reg.match(self.datlines[i])):
-                if "Automatic" == self.datlines[i+2].split()[0]:
+                if "Automatic" == self.datlines[i + 2].split()[0]:
                     auto_FLAG = True
-                if "k-points" == self.datlines[i+2].split()[0]:
+                if "k-points" == self.datlines[i + 2].split()[0]:
                     line_FLAG = True
                 break
 
-        self.FLAGS = [auto_FLAG,line_FLAG,hand_FLAG,car_FLAG,rec_FLAG]
+        self.FLAGS = [auto_FLAG, line_FLAG, hand_FLAG, car_FLAG, rec_FLAG]
         return self.FLAGS
-
 
     # 入力された KPOINTS の座標形式をゲット(cartesian or reciprocal)
     # もし band-mode(line-mode) でないのならば、Automatic モードならば
@@ -455,16 +520,16 @@ class ReadVaspOutcar(object):
         kpoints_reg = re.compile('.*KPOINTS:.*')
         for i in range(self.num):
             if bool(kpoints_reg.match(self.datlines[i])):
-                if "Automatic" == self.datlines[i+2].split()[0]:
+                if "Automatic" == self.datlines[i + 2].split()[0]:
                     self.kpoints_type = 'Automatic'
                 else:
-                    self.kpoints_type = self.datlines[i+2].split()[2]
+                    self.kpoints_type = self.datlines[i + 2].split()[2]
                 break
         return self.kpoints_type
 
-
     # atoms_index (My配列) の情報を引っ張るMethod
     # VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
+    # get_atoms_index0 との兼ね合いがあるのでもう一度中身のある実行をする
     def get_atoms_index(self):
         NION = self.get_nion()
         self.atoms_index = []
@@ -476,14 +541,13 @@ class ReadVaspOutcar(object):
                 j += 1
                 tmp = str(self.datlines[i].split()[2])
                 self.atoms_index.append(tmp)
-        j = int(j/2)
+        j = int(j / 2)
         for i in range(j):
             self.atoms_index.pop()
         if j != NION:
-            sys.exit("STOP(get_atoms_index): NION !=",NION)
+            sys.exit("STOP(get_atoms_index): NION !=", NION)
 
         return self.atoms_index
-
 
     # atoms_index (My配列) の情報を引っ張るMethod
     # 名称を get_atoms_index0 と変更 (NWRITE =2 以上でないと動作しない)
@@ -493,45 +557,18 @@ class ReadVaspOutcar(object):
         j = 0
 
         # 注意)  NWRITE が 2(default) 以上でないと VRHFIN 項目が出てこない
-        vrhfin_reg = re.compile('.*VRHFIN =',re.IGNORECASE)
+        vrhfin_reg = re.compile('.*VRHFIN =', re.IGNORECASE)
         for i in range(self.num):
             if bool(vrhfin_reg.match(self.datlines[i])):
                 j += 1
                 src = self.datlines[i]
-                dst = re.sub(':.*','',src)
-                dst = re.sub('.*VRHFIN =','',dst)
+                dst = re.sub(':.*', '', src)
+                dst = re.sub('.*VRHFIN =', '', dst)
                 self.atoms_index.append(dst)
         if j != NION:
-            sys.exit("STOP(get_atoms_index): NION !=",NION)
+            sys.exit("STOP(get_atoms_index): NION !=", NION)
 
         return self.atoms_index
-
-    # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
-    def get_atoms_j(self):
-        natom = self.get_natom()
-        nion = self.get_nion()
-        atoms = self.get_atoms()
-        j = 0
-        atoms_j = np.zeros(natom,dtype=int)
-        for ion in range(nion):
-            for atom in range(atoms[ion]):
-                atoms_j[j] = ion
-                j += 1
-
-        return atoms_j
-
-    def get_atoms_index_j(self):
-        natom = self.get_natom()
-        nion = self.get_nion()
-        atoms = self.get_atoms()
-        atoms_index = self.get_atoms_index()
-        j = 0
-        atoms_index_j = np.zeros(natom,dtype='S2')
-        for ion in range(nion):
-            for atom in range(atoms[ion]):
-                atoms_index_j[j] = atoms_index[ion]
-                j += 1
-        return atoms_index_j
 
     # get_mode
     # IBRION=0 or それ以外
@@ -550,7 +587,7 @@ class ReadVaspOutcar(object):
             # MD-mode
             n_ion_loop = self.get_n_ion_loop()
             self.temperature = np.zeros(n_ion_loop)
-            ekin_reg = re.compile('.*EKIN_LAT=',re.IGNORECASE)
+            ekin_reg = re.compile('.*EKIN_LAT=', re.IGNORECASE)
             j = 0
             for i in range(self.num):
                 if bool(ekin_reg.match(self.datlines[i])):
@@ -570,7 +607,7 @@ class ReadVaspOutcar(object):
             # MD-mode
             n_ion_loop = self.get_n_ion_loop()
             self.ETOTAL = np.zeros(n_ion_loop)
-            etotal_reg = re.compile('.*ETOTAL =',re.IGNORECASE)
+            etotal_reg = re.compile('.*ETOTAL =', re.IGNORECASE)
             j = 0
             for i in range(self.num):
                 if bool(etotal_reg.match(self.datlines[i])):
@@ -584,56 +621,56 @@ class ReadVaspOutcar(object):
         return self.ETOTAL
 
 
-    # OUTCAR から 結晶点群を吸い出す
-    # ISYM=0 のときは off を返す
-    def get_point_symmetry(self):
-        ISYM = self.get_isym()
-        print ISYM
-        if ISYM != 0 and ISYM != -1:
-            point_sym_text = '.*The.*tic.*fig.*ion.*ha.* point symmetry '
-            point_sym_reg = re.compile(point_sym_text, re.IGNORECASE)
-            for i in range(self.num):
-                if bool(point_sym_reg.match(self.datlines[i])):
-                    src = self.datlines[i]
-                    dst = re.sub(point_sym_text,'',src)
-                    dst = re.sub('\.','',dst)
-                    point_sym = str(dst)
-        else:
-#           point_sym = 'sym_off'
-            point_sym = None
 
-        return point_sym
-
-
-################################################################################
+##########################################################################
 if __name__ == '__main__':
 
     import optparse
     name = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT',)
     options,  args = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT:
+        name = options.INPUT
+    if len(args) > 0:
+        name = args[0]
 
     outcar = ReadVaspOutcar(name)
-    NION = outcar.get_nion()
-    NSPIN = outcar.get_ispin()
-    LORBIT = outcar.get_lorbit()
-    NATOM =  outcar.get_natom()
-    NSW =  outcar.get_nsw()
-    NKPTS = outcar.get_nkpts()
-    NBANDS = outcar.get_nbands()
-    TITLE = outcar.get_title()
-    ISYM = outcar.get_isym()
-    IBRION = outcar.get_ibrion()
-    NWRITE = outcar.get_nwrite()
+#   NION = outcar.get_nion()
+#   NSPIN = outcar.get_ispin()
+#   LORBIT = outcar.get_lorbit()
+#   NATOM = outcar.get_natom()
+#   NSW = outcar.get_nsw()
+#   NKPTS = outcar.get_nkpts()
+#   NBANDS = outcar.get_nbands()
+#   TITLE = outcar.get_title()
+#   ISYM = outcar.get_isym()
+#   IBRION = outcar.get_ibrion()
+#   NWRITE = outcar.get_nwrite()
+#   point_sym = outcar.get_point_symmetry()
+#   n_ion_loop = outcar.get_n_ion_loop()
+#   efermi = outcar.get_efermi()
+#   atoms = outcar.get_atoms()
+#   atoms_index = outcar.get_atoms_index()
+#   atoms_j = outcar.get_atoms_j()
+#   atoms_index_j = outcar.get_atoms_index_j()
 
-    point_sym = outcar.get_point_symmetry()
-    n_ion_loop = outcar.get_n_ion_loop()
-    efermi = outcar.get_efermi()
+    NION = outcar.nion
+    NSPIN = outcar.ispin
+    LORBIT = outcar.lorbit
+    NATOM = outcar.natom
+    NSW = outcar.nsw
+    NKPTS = outcar.nkpts
+    NBANDS = outcar.nbands
+    TITLE = outcar.title
+    ISYM = outcar.isym
+    IBRION = outcar.ibrion
+    NWRITE = outcar.nwrite
+    point_sym = outcar.point_sym
+    n_ion_loop = outcar.n_ion_loop
+    efermi = outcar.efermi
 
     print "TITLE     = ", TITLE
     print "LORBIT    = ", LORBIT
@@ -650,32 +687,28 @@ if __name__ == '__main__':
     print "E-fermi   = ", efermi
     print "NWRITE    = ", NWRITE
 
-    atoms = outcar.get_atoms()
-    atoms_index = outcar.get_atoms_index()
 
     print ""
     print "atoms_index"
     print "   ",
     for ion in range(NION):
-        print atoms_index[ion],
+        print outcar.atoms_index[ion],
     print ""
     print "atoms"
     print "   ",
     for ion in range(NION):
-        print atoms[ion],
+        print outcar.atoms[ion],
     print ""
 
     print "",
     print "i,atoms_j"
-    atoms_j = outcar.get_atoms_j()
     for i in range(NATOM):
-        print " ",i,atoms_j[i]
+        print " ", i, outcar.atoms_j[i]
 
     print "",
     print "i,atoms_index_j"
-    atoms_index_j = outcar.get_atoms_index_j()
     for i in range(NATOM):
-        print " ",i,atoms_index_j[i]
+        print " ", i, outcar.atoms_index_j[i]
 
 #   temperature = outcar.get_temperature()
 #   for j in range(n_ion_loop):
@@ -698,8 +731,7 @@ if __name__ == '__main__':
 
     print ""
     rec_t = outcar.get_reciprocal_t_init()
-    print " %12.9f %12.9f %12.9f" % ( rec_t[0,0], rec_t[1,0], rec_t[2,0])
-    print " %12.9f %12.9f %12.9f" % ( rec_t[0,1], rec_t[1,1], rec_t[2,1])
-    print " %12.9f %12.9f %12.9f" % ( rec_t[0,2], rec_t[1,2], rec_t[2,2])
-
+    print " %12.9f %12.9f %12.9f" % (rec_t[0, 0], rec_t[1, 0], rec_t[2, 0])
+    print " %12.9f %12.9f %12.9f" % (rec_t[0, 1], rec_t[1, 1], rec_t[2, 1])
+    print " %12.9f %12.9f %12.9f" % (rec_t[0, 2], rec_t[1, 2], rec_t[2, 2])
 
