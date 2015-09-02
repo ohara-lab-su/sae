@@ -588,7 +588,8 @@ class ReadVaspOutcar(object):
     # ISYM=0 のときは off を返す
     def get_point_symmetry(self):
         ISYM = self.get_isym()
-        if ISYM != 0:
+        print ISYM
+        if ISYM != 0 and ISYM != -1:
             point_sym_text = '.*The.*tic.*fig.*ion.*ha.* point symmetry '
             point_sym_reg = re.compile(point_sym_text, re.IGNORECASE)
             for i in range(self.num):
@@ -598,7 +599,8 @@ class ReadVaspOutcar(object):
                     dst = re.sub('\.','',dst)
                     point_sym = str(dst)
         else:
-            point_sym = 'sym_off'
+#           point_sym = 'sym_off'
+            point_sym = None
 
         return point_sym
 
