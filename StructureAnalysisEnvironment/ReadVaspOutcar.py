@@ -26,6 +26,12 @@
 #
 ################################################################################
 #
+# 2015.09.02
+#  逆格子の基本ベクトルor Direct lattice vectorの読み込みで
+#  split() だと失敗することがある事が判明
+#  (行列要素がスペースで分離されていない)
+#  固定フォーマットでスライスする方法に変更
+#
 # 2015.06.15
 #  nbands 及び natom の 読み込みでの複数の Dimension of array があったときに
 #  最初の dim. of array のみ有効にするように変更（ OUTCAR 出力のバグ対応)
@@ -276,26 +282,45 @@ class ReadVaspOutcar(object):
             # t and recipcola
             if bool(rec_reg.match(self.datlines[i])):
 
-                t1_x = float(self.datlines[i+1].split()[0])
-                t1_y = float(self.datlines[i+1].split()[1])
-                t1_z = float(self.datlines[i+1].split()[2])
-                rec1_x = float(self.datlines[i+1].split()[3])
-                rec1_y = float(self.datlines[i+1].split()[4])
-                rec1_z = float(self.datlines[i+1].split()[5])
+#               t1_x = float(self.datlines[i+1].split()[0])
+#               t1_y = float(self.datlines[i+1].split()[1])
+#               t1_z = float(self.datlines[i+1].split()[2])
+                t1_x = float(self.datlines[i+1][3:16])
+                t1_y = float(self.datlines[i+1][16:29])
+                t1_z = float(self.datlines[i+1][29:42])
 
-                t2_x = float(self.datlines[i+2].split()[0])
-                t2_y = float(self.datlines[i+2].split()[1])
-                t2_z = float(self.datlines[i+2].split()[2])
-                rec2_x = float(self.datlines[i+2].split()[3])
-                rec2_y = float(self.datlines[i+2].split()[4])
-                rec2_z = float(self.datlines[i+2].split()[5])
+#               rec1_x = float(self.datlines[i+1].split()[3])
+#               rec1_y = float(self.datlines[i+1].split()[4])
+#               rec1_z = float(self.datlines[i+1].split()[5])
+                rec1_x = float(self.datlines[i+1][45:58])
+                rec1_y = float(self.datlines[i+1][58:71])
+                rec1_z = float(self.datlines[i+1][71:84])
 
-                t3_x = float(self.datlines[i+3].split()[0])
-                t3_y = float(self.datlines[i+3].split()[1])
-                t3_z = float(self.datlines[i+3].split()[2])
-                rec3_x = float(self.datlines[i+3].split()[3])
-                rec3_y = float(self.datlines[i+3].split()[4])
-                rec3_z = float(self.datlines[i+3].split()[5])
+#               t2_x = float(self.datlines[i+2].split()[0])
+#               t2_y = float(self.datlines[i+2].split()[1])
+#               t2_z = float(self.datlines[i+2].split()[2])
+                t2_x = float(self.datlines[i+2][3:16])
+                t2_y = float(self.datlines[i+2][16:29])
+                t2_z = float(self.datlines[i+2][29:42])
+#               rec2_x = float(self.datlines[i+2].split()[3])
+#               rec2_y = float(self.datlines[i+2].split()[4])
+#               rec2_z = float(self.datlines[i+2].split()[5])
+                rec2_x = float(self.datlines[i+2][45:58])
+                rec2_y = float(self.datlines[i+2][58:71])
+                rec2_z = float(self.datlines[i+2][71:84])
+
+#               t3_x = float(self.datlines[i+3].split()[0])
+#               t3_y = float(self.datlines[i+3].split()[1])
+#               t3_z = float(self.datlines[i+3].split()[2])
+                t3_x = float(self.datlines[i+3][3:16])
+                t3_y = float(self.datlines[i+3][16:29])
+                t3_z = float(self.datlines[i+3][29:42])
+#               rec3_x = float(self.datlines[i+3].split()[3])
+#               rec3_y = float(self.datlines[i+3].split()[4])
+#               rec3_z = float(self.datlines[i+3].split()[5])
+                rec3_x = float(self.datlines[i+3][45:58])
+                rec3_y = float(self.datlines[i+3][58:71])
+                rec3_z = float(self.datlines[i+3][71:84])
 
                 self.t[0,0] = t1_x
                 self.t[1,0] = t1_y
