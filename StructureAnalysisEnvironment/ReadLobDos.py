@@ -264,6 +264,7 @@ class ReadLobDos(object):
             if l == 3:
                 l = 'f'
 
+        ldos = np.zeros(self.nedos)
         norbit = len(self.orbit_index_j[atom])  # 計算した lm 成分の数
         orbit_list = []
         for orb in range(norbit):
@@ -273,12 +274,18 @@ class ReadLobDos(object):
                 orbit_list.append(orb)
 
         for orb in orbit_list:
-            self.ldos[:] = self.pdos_all[:, orb, atom, spin] + self.ldos[:]
+            ldos[:] = self.pdos_all[:, orb, atom, spin] + ldos[:]
+
+        self.ldos = ldos
+        del ldos
 
         return self.ldos
 
     # get_ldos を原子種、スピンごとにすべて行う
     def get_ldos_all(self):
+
+        ldos_all = np.zeros((self.nedos, 3, self.natom, self.nspin))
+
         for atom in range(self.natom):
             norbit = len(self.orbit_index_j[atom])
 #           print norbit,self.orbit_index_j[atom]
@@ -299,21 +306,20 @@ class ReadLobDos(object):
                 if re.match(pattern_f, orbit): orbit_list_f.append(orb)
 
             for orb in orbit_list_s:
-                self.ldos_all[:, 0, atom, :] = \
-                        self.pdos_all[:, orb, atom, :] + \
-                        self.ldos_all[:, 0, atom, :]
+                ldos_all[:, 0, atom, :] = \
+                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 0, atom, :]
             for orb in orbit_list_p:
-                self.ldos_all[:, 1, atom, :] = \
-                        self.pdos_all[:, orb, atom, :] + \
-                        self.ldos_all[:, 1, atom, :]
+                ldos_all[:, 1, atom, :] = \
+                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 1, atom, :]
             for orb in orbit_list_d:
-                self.ldos_all[:, 2, atom, :] = \
-                        self.pdos_all[:, orb, atom, :] + \
-                        self.ldos_all[:, 2, atom, :]
+                ldos_all[:, 2, atom, :] = \
+                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 2, atom, :]
             for orb in orbit_list_f:
-                self.ldos_all[:, 3, atom, :] = \
-                        self.pdos_all[:, orb, atom, :] + \
-                        self.ldos_all[:, 3, atom, :]
+                ldos_all[:, 3, atom, :] = \
+                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 3, atom, :]
+
+        self.ldos_all = ldos_all
+        del ldos_all
 
         return self.ldos_all
 

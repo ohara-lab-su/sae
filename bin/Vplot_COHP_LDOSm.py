@@ -3,13 +3,14 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# Vplot_LDOSm.py
+# Vplot_COHP_LDOSm.py
 #
-#  Wplot_LDOSm.py (2015.04.22とほぼ同等になるように作成)
+#  Vplot_LDOSm.py とほぼ同じ
+#   DOSCAR の代わりに DOSCAR.lobster を読み込む
 #
 ################################################################################
 #
-# 2015.04.22
+# 2015.09.03
 #    startup
 #
 ################################################################################
@@ -25,7 +26,7 @@ __version__    = "0.0.5"
 ################################################################################
 
 #import sys
-import os
+#import os
 #import gzip
 import optparse
 #import numpy as np
@@ -43,13 +44,11 @@ import matplotlib.cm as cm
 ################################################################################
 def options():
 
-    dname = 'DOSCAR'
-    oname = 'OUTCAR'
-    atom = 1 # 0版から始まる
+    dname = 'DOSCAR.lobsetr'
+    atom = 1 # 0番から始まる
 
     parser = optparse.OptionParser()
     parser.add_option( '-d','--doscar', dest='DOSCAR', default=dname,)
-    parser.add_option( '-o', '--outcar', dest='OUTCAR', default=oname,)
     parser.add_option( '-a', '--atom', )
     parser.add_option( '--up', action='store_true', default=False,)
     parser.add_option( '--down', action='store_true', default=False,)
@@ -61,14 +60,13 @@ def options():
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
-    if options.OUTCAR: oname=options.OUTCAR
     if options.atom: atom = int(options.atom)
     if options.ALL: options.nw = True
     if len(args) > 0: atom = int(args[0])
 
-    return [dname,oname,atom,\
-            options.nw,options.ALL,\
-            options.up,options.down,\
+    return [dname,atom,
+            options.nw,options.ALL,
+            options.up,options.down,
             options.EMAX,options.EMIN,options.YMAX]
 
 ################################################################################
@@ -76,7 +74,7 @@ if __name__ == '__main__':
 
     #####################################################
     # set input file
-    dname,oname,atom,\
+    dname,atom,\
             NO_WINDOW_FLAG,ALL_FLAG,\
             OPT_UP,OPT_DN,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
@@ -102,7 +100,7 @@ if __name__ == '__main__':
     #####################################################
     # makes instance ( Read DOSCAR )
 #   dos = SAEnv.ReadVaspDoscar(dname)
-    dos = SAEnv.ReadLobDos()
+    dos = SAEnv.ReadLobDos(dname)
 
     nspin = dos.nspin
     natom = dos.natom
