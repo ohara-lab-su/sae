@@ -8,26 +8,6 @@
 #   Vldos.pl 完全互換(のはず)
 #   python 版は OUTCAR or vasprun.xml のみ利用
 #
-#  ReadDoscar Class (ReadDoscar.py) 利用
-#
-#  [Method]
-#
-#   ISPIN = dos.ispin()
-#   LORBIT = dos.lorbit()
-#   NATOM = dos.natom()
-#   TITLE =  dos.title()
-#   EMAX = dos.emax()
-#   EMIN = dos.emin()
-#   NEDOS = dos.nedos()
-#   EFERMI = dos.efermi()
-#
-#   ENG = dos.eng()
-#   TDOS = dos.tdos(spin=1)
-#   INTTDOS = dos.inttdos(spin=1)
-#   PDOS = dos.pdos(lm=0,spin=1)
-#   LDOS = dos.ldos(l=0,spin=1)   # LORIBT=11 の時は自動で要素をsumする
-#
-#
 ################################################################################
 #
 # 2015.01.14
@@ -66,17 +46,11 @@ def options():
     name = 'DOSCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
+    parser.add_option(  '-i','--input', dest='INPUT')
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
-
-    if len(args) > 0:
-        name=args[0]
+    if options.INPUT: name=options.INPUT
+    if len(args) > 0: name=args[0]
 
     return name
 
@@ -92,16 +66,15 @@ if __name__ == '__main__':
     # set output device
     out = sys.stdout
 
-    NSPIN = dos.get_ispin()
-    LORBIT = dos.get_lorbit()
-    NATOM = dos.get_natom()
-    TITLE =  dos.get_title()
-    EMAX = dos.get_emax()
-    EMIN = dos.get_emin()
-    NEDOS = dos.get_nedos()
-    EFERMI = dos.get_efermi()
-
-    ENG = dos.get_eng()
+    NSPIN = dos.ispin
+    LORBIT = dos.lorbit
+    NATOM = dos.natom
+    TITLE =  dos.title
+    EMAX = dos.emax
+    EMIN = dos.emin
+    NEDOS = dos.nedos
+    EFERMI = dos.efermi
+    ENG = dos.eng
 
 # 最初からごつい構造体を返すMethodを作っておく(超高速) --> おすすめ
 # perl 版とほぼ同じ速度

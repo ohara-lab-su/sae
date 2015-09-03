@@ -78,6 +78,23 @@ class ReadLobCohp(object):
 #       for i in range(self.nbond):
 #           print self.bond_index[i],':',self.bond_leng[i]
 
+
+        # ペア情報を分解して保存
+        self.bond_par_index = []
+        self.bond_par = []
+        for i in self.bond_index:
+            li =  i.split('->')
+            par_index = []
+            par = []
+            for l in li:
+                par_index.append(re.sub('\d','',l))
+                par.append(re.sub('\D','',l))
+            self.bond_par_index.append(par_index)
+            self.bond_par.append(par)
+
+#       print self.bond_par
+#       print self.bond_par_index
+
         for i in range(self.nedos):
 
             line = i+2+self.nbond
@@ -108,6 +125,14 @@ class ReadLobCohp(object):
     # 全ボンドペアの原子種の情報(0番はAverage)
     def get_bond_index(self):
         return self.bond_index
+
+    # ボンドのペア情報[i][j], iボンドの数, jボンドペア(基本的に0,1のみ)
+    def get_bond_par(self):
+        return self.bond_par
+
+    # ボンドのペア情報[i][j], iボンドの数, jボンドペア(基本的に0,1のみ)
+    def get_bond_par_index(self):
+        return self.bond_par_index
 
     # 最大のボンド長を持つ原子ペアの添え字
     def get_bond_max_index(self):

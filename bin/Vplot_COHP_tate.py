@@ -112,6 +112,11 @@ if __name__ == '__main__':
     cohp = SAE.ReadLobCohp()
     cohp_x = cohp.get_eng()
 
+    if OPT_PAIR:
+        for i in OPT_PAIR:
+            par_label = cohp.bond_index[int(i)]
+            print i,par_label
+
     ######################################################## DOS
     plt.subplot(121)
     for s in spin_list:
