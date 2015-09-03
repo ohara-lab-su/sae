@@ -217,7 +217,10 @@ gnuplot 形式は index を活用しています。
 - Vplot\_Crystal.py
 - Vplot\_CrystalAnimeMD.py
 - Vplot\_CrystalAnimePOSCAR.py
-- <b>Vplot\_COHP_LDOSm.py</b> : Vplot\_LDOSm.py と同等。DOSCAR の代わりに DOSCAR.lobster を読み出す。
+- <b>Vplot\_COHP_LDOSm.py</b> : Vplot\_LDOSm.py と同等。
+DOSCAR の代わりに DOSCAR.lobster を読み出します。
+- <b>Vplot\_COHP_PDOS.py</b> : Vplot\_PDOS.py と同等。
+DOSCAR の代わりに DOSCAR.lobster を読み出します。
 - <b>Vplot\_LDOS.py</b> : DOSCAR および PROCAR ファイルを用いて局所状態密度を一段組でプロットします。
 引数を指定することで、特定の原子種ごとにプロットします（特定原子種の局所状態密度をプロット)。
 描画範囲の指定など多くのオプション機能を持つ多機能のプロットプログラムとなっています。
