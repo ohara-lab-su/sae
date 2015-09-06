@@ -15,6 +15,9 @@
 #
 ##########################################################################
 #
+# 2015.09.07
+#  get_pdos() メッソッドの大規模な修正（lm引数モードの大規模修正)
+#
 # 2015.09.01
 #  TDOS パート down-spin にバグ(INT-DOSを読んでいた) を発見、修正
 #
@@ -198,7 +201,18 @@ class ReadLobDos(object):
     def get_pdos_all(self):
         return self.pdos_all
 
+    ################################################################
+    # 2015.09.07
+    #   lm=数字、以外にも軌道成分の記号で指定できるように変更した
+    #   主量子数の異なるものは通常は足し合わせる
+    #   s 軌道を指定したら 4s と 5s 軌道あったら足し合わせる
+    #   もしくは lm の記号に主量子数を付けたとき（ 4s と指定したら）
+    #   軌道は主量子数も含めて選択的になる
+    #
     def get_pdos(self, lm=0, atom=0, spin=0):
+
+        pdos = np.zeros(self.nedos)
+
         if isinstance(spin, str):
             if spin == 'nonmag':
                 spin = 0
@@ -210,7 +224,78 @@ class ReadLobDos(object):
                 spin = 1
             if spin == 'down':
                 spin = 1
-        return self.pdos_all[:, lm, atom, spin]
+
+        if isinstance(lm, str):
+
+            orbit_name = lm
+            lml = lm.lower()
+
+            if lml == 'py':
+                orbit_name = 'p_y'
+            if lml == 'pz':
+                orbit_name = 'p_z'
+            if lml == 'px':
+                orbit_name = 'p_x'
+            if lml == 'dxy' or \
+                    lml == 'xy' or \
+                    lml == 'yx' or \
+                    lml == 'dyx' or \
+                    lml == 'd_yx':
+                orbit_name = 'd_xy'
+            if lml == 'dyz' or \
+                    lml == 'yz' or \
+                    lml == 'zy' or \
+                    lml == 'dzy' or \
+                    lml == 'd_zy':
+                orbit_name = 'd_yz'
+            if lml == 'dz2' or \
+                    lml == 'd_z2' or \
+                    lml == 'dz^2' or \
+                    lml == 'z2' or \
+                    lml == 'z^2' or \
+                    lml == 'd_3z2' or \
+                    lml == 'd3z^2' or \
+                    lml == '3z2' or \
+                    lml == '3z^2' or \
+                    lml == 'r2' or \
+                    lml == 'r^2' or \
+                    lml == 'dr^2' or \
+                    lml == 'd_r^2' or \
+                    lml == 'd_r2' or \
+                    lml == '3z2-r2' or \
+                    lml == '3z^2-r^2' or \
+                    lml == 'd_3z2-r2' or \
+                    lml == 'd_3z^2-r^2':
+                orbit_name = 'd_z^2'
+            if lml == 'dxz' or \
+                    lml == 'xz' or \
+                    lml == 'dzx' or \
+                    lml == 'zx' or \
+                    lml == 'd_zx':
+                orbit_name = 'd_xz'
+            if lml == 'x^2-y^2' or \
+                    lml == 'd_x2-y2' or \
+                    lml == 'x2-y2' or \
+                    lml == 'dx2' or \
+                    lml == 'x2' or \
+                    lml == 'x^2' or \
+                    lml == 'dx^2' or \
+                    lml == 'dy2' or \
+                    lml == 'y2' or \
+                    lml == 'y^2' or \
+                    lml == 'dy^2':
+                orbit_name = 'd_x^2-y^2'
+
+            lm = -1
+            for orbit in self.orbit_index_j[atom]:
+                lm += 1
+                if re.match('^\d'+orbit_name, orbit):
+                    pdos[:] = self.pdos_all[:, lm, atom, spin]
+#                   print lm,orbit_name
+        else:
+            pdos[:] = self.pdos_all[:, lm, atom, spin]
+
+        return pdos
 
     ################################################################
     #   0 からスタート
@@ -332,7 +417,9 @@ if __name__ == '__main__':
     dos = SAEnv.ReadLobDos()
 
 #   dos.get_ldos()
-    dos.get_ldos_all()
+#   dos.get_ldos_all()
+    dos.get_pdos(lm = 'px')
+#   dos.get_pdos(lm = 'r2')
 
 #   # atom=0, spin=0 の lm: 1 から 3 まで足し合わせた pdos を出力
 #   pdos = dos.get_pdos_sum(1,3,atom=0,spin=0)

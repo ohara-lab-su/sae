@@ -10,10 +10,18 @@
 #
 ################################################################################
 #
+# 2015.09.07
+#  自動モードを止めて手動モードのみに(hex,cubic選択)
+#  軌道成分の指定部分を直接数字の指定は出来ない（計算ごとに異なる）
+#  ため、実際に計算している成分から、たとえば、px のみの番号を取得する
+#  などの仕様に変更した。
+#  --> それにともなって Vplod_PDOS.py から少しだけ変更
+#
 # 2015.09.03
 #  lobster 版へブランチ
 #  ---> いきなり頓挫、lm 分解モードが lobster DOSCAR だと、原子種に依存する
 #       そのため対称性分解モードがそのままでは移植できないことに気がつく。
+#       ---> auto-mode を停止で対応(デフォルトは full-lm モード)
 #
 ################################################################################
 #
@@ -51,7 +59,7 @@ __version__    = "0.1.0"
 ################################################################################
 
 import sys
-import os
+#import os
 #import gzip
 import optparse
 #import numpy as np
@@ -59,7 +67,7 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -69,19 +77,12 @@ import matplotlib.cm as cm
 ################################################################################
 def options():
 
-    dname = 'DOSCAR'
-    oname = 'OUTCAR'
+    dname = 'DOSCAR.lobster'
 
     parser = optparse.OptionParser()
     parser.add_option(  '-d','--doscar', dest='DOSCAR',)
-    parser.add_option( '-o', '--outcar', dest='OUTCAR',)
     parser.add_option( '-n', '--nw', action='store_true', default=False,)
     parser.add_option( '-l', '--landscape', action='store_true', default=False,)
-    parser.add_option( '--auto',
-                      action='store_true',
-                      default=False,
-                      dest='AUTO',
-    )
     parser.add_option( '--hexagonal',
                       action='store_true',
                       default=False,
@@ -109,20 +110,19 @@ def options():
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
-    if options.OUTCAR: oname=options.OUTCAR
 
-
-    return [dname,oname,\
-            options.nw,options.landscape,\
-            options.AUTO,options.HEX,options.CUBIC,options.SPD,options.SP,\
+    return [dname,
+            options.nw,options.landscape,
+            options.HEX,options.CUBIC,options.SPD,options.SP,
             options.EMAX,options.EMIN,options.YMAX,options.ATOM]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    dname,oname,NO_WINDOW_FLAG,LANDSCAPE_FLAG,\
-            AUTO_FLAG,HEX_FLAG,CUBIC_FLAG,SPD_FLAG,SP_FLAG,\
+    dname,\
+            NO_WINDOW_FLAG,LANDSCAPE_FLAG,\
+            HEX_FLAG,CUBIC_FLAG,SPD_FLAG,SP_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_ATOM = options()
 
     if HEX_FLAG:
@@ -133,8 +133,6 @@ if __name__ == '__main__':
         print "SPD(lm=0,1,2,,,,9) MODE"
     elif SP_FLAG:
         print "Selective s-orbital and p-orbital MODE (disable d-orbital plot)"
-    elif AUTO_FLAG:
-        print "Automatic Symmetry MODE"
     else:
         print "Default (lm=0,1,2,,,,9) MODE"
 
@@ -151,16 +149,17 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadVaspDoscar(dname)
+#   dos = SAEnv.ReadVaspDoscar(dname)
+    dos = SAEnv.ReadLobDos(dname)
 
-    NSPIN = dos.get_ispin()
-    LORBIT = dos.get_lorbit()
-    NATOM = dos.get_natom()
-    TITLE =  dos.get_title()
-    EMAX = dos.get_emax()
-    EMIN = dos.get_emin()
-    NEDOS = dos.get_nedos()
-    EFERMI = dos.get_efermi()
+    NSPIN = dos.ispin
+    LORBIT = dos.lorbit
+    NATOM = dos.natom
+#   TITLE =  dos.title
+    TITLE =  'DOSCAR.lobster'
+    EMAX = dos.emax
+    EMIN = dos.emin
+    NEDOS = dos.nedos
 
     if NATOM <  atom+1:
         sys.exit("STOP: NATOM="+str(NATOM))
@@ -168,16 +167,7 @@ if __name__ == '__main__':
     if LORBIT <= 10:
         sys.exit("STOP: LORIBT="+str(LORBIT))
 
-    # makes instance ( Read OUTCAR )
-    if os.path.exists(oname) or os.path.exists(oname+'.gz'):
-        FLAG_OUTCAR=True
-        outcar = SAE.ReadVaspOutcar(oname)
-        NION = outcar.get_nion()
-        atoms = outcar.get_atoms_index()
-        atoms_j = outcar.get_atoms_j()
-        point_sym = outcar.get_point_symmetry()
-
-    ENG = dos.get_eng()
+    ENG = dos.eng
 
     ############################################################################
     # matplotlib
@@ -198,29 +188,44 @@ if __name__ == '__main__':
     # block のリスト
 
     # for s,p,d
-    list1_1=[0]         # 0:s
-    list1_2=[1,2,3]     # 1:p_y, 2:p_z, 3:p_x
-    list1_3=[4,5,6,7,8] # 4:d_xy, 5:d_yz, 6:d_3z2-r2, 7:d_xz, 8:d_x2-y2
+#   list1_1=[0]         # 0:s
+#   list1_2=[1,2,3]     # 1:p_y, 2:p_z, 3:p_x
+#   list1_3=[4,5,6,7,8] # 4:d_xy, 5:d_yz, 6:d_3z2-r2, 7:d_xz, 8:d_x2-y2
+    list1_1=['s']
+    list1_2=['p_y','p_z','p_x']
+    list1_3=['d_xy','d_yz','d_3z2-r2','d_xz','d_x2-y2']
     list1 = [list1_1,list1_2,list1_3]
 
     # for cubic
-    list2_1=[0]         # 0:s
-    list2_2=[1,2,3]     # 1:p_y, 2:p_z, 3:p_x
-    list2_3=[4,5,7]     # 4:d_xy, 5:d_yz, 7:d_zx    (t2g)
-    list2_4=[6,8]       # 6:d_3z2-r2, 8:d_x2-y2     (eg)
+#   list2_1=[0]         # 0:s
+#   list2_2=[1,2,3]     # 1:p_y, 2:p_z, 3:p_x
+#   list2_3=[4,5,7]     # 4:d_xy, 5:d_yz, 7:d_zx    (t2g)
+#   list2_4=[6,8]       # 6:d_3z2-r2, 8:d_x2-y2     (eg)
+    list2_1=['s']
+    list2_2=['p_y','p_z','p_x']
+    list2_3=['d_xy','d_yz','d_zx']
+    list2_4=['d_3z2-r2','d_x2-y2']
     list2 = [list2_1,list2_2,list2_3,list2_4]
 
     # for hexagonal (without s,p )
-    list3_1=[0,1,2,3]   # 0:s, 1:p_y, 2:p_z, 3:p_x
-    list3_2=[5,7]       # 5:d_yz, 7:d_xz
-    list3_3=[4,8]       # 4:d_yz, 8:d_x2-y2
-    list3_4=[6]         # 6:d_3z2-r2
+#   list3_1=[0,1,2,3]   # 0:s, 1:p_y, 2:p_z, 3:p_x
+#   list3_2=[5,7]       # 5:d_yz, 7:d_xz
+#   list3_3=[4,8]       # 4:d_yz, 8:d_x2-y2
+#   list3_4=[6]         # 6:d_3z2-r2
+    list3_1=['s','p_y','p_x']
+    list3_2=['d_yz','d_xz']
+    list3_3=['d_yz','d_x2-y2']
+    list3_4=['d_3z2-r2']
+
     list3 = [list3_1,list3_2,list3_3,list3_4]
 
     # for hexagonal (s-orbital and p-orbital MODE)
-    list4_1=[0]         # 0:s
-    list4_2=[2]         # 2:p_z
-    list4_3=[1,3]       # 1:p_y, 3:p_x
+#   list4_1=[0]         # 0:s
+#   list4_2=[2]         # 2:p_z
+#   list4_3=[1,3]       # 1:p_y, 3:p_x
+    list4_1=['s']         # 0:s
+    list4_2=['p_z']         # 2:p_z
+    list4_3=['p_y','p_x']
     list4 = [list4_1,list4_2,list4_3]
 
     ############################################################################
@@ -234,23 +239,6 @@ if __name__ == '__main__':
         block_list = list2
     elif SPD_FLAG:
         block_list = list1
-    elif AUTO_FLAG and FLAG_OUTCAR:
-        point_sym = outcar.get_point_symmetry()
-        print "Point Symmetry =",point_sym
-        if point_sym[0:1] == 'O':  # O_h
-            CUBIC_FLAG=True
-            block_list = list2
-            print "Cubic MODE"
-        elif point_sym[0:1] == 'D': # D_3h
-            HEX_FLAG=True
-            block_list = list3
-            print "Hexagonal MODE"
-        elif point_sym == 'D_6h':
-            HEX_FLAG=True
-            block_list = list3
-            print "Hexgonal MODE"
-        else:
-            block_list = list1
     else:
         block_list = list1
 
@@ -269,14 +257,9 @@ if __name__ == '__main__':
 
             # ラベルの作成
             if blk == nblock-1:
-                if FLAG_OUTCAR:
-                    atom_label =str(atoms[atoms_j[atom]])+str(atom+1)
-                    if spin == 1:
-                        print "Atom =",atom+1,atom_label
-                else:
-                    atom_label =str(atom)
-                    if spin == 1:
-                        print "Atom =",atom+1
+                atom_label =str(atom)
+                if spin == 1:
+                    print "Atom =",atom+1
 
             # 描画軸の作成
             plt.axes([ orgx,orgy, 0.80, size ])
@@ -293,14 +276,15 @@ if __name__ == '__main__':
             ####################################################################
             # グラフ描画ブロック
             lm_list = block_list[blk]
+            ll = 0
             for lm in lm_list:
 
-                orbit = SAE.get_vasp_orbital_info(lm)
-
-                c = cm.prism(float(lm+1)/9)
+                c = cm.prism(float(ll+1)/9)
                 PDOS = dos.get_pdos(lm=lm,atom=atom,spin=spin)
-                plt.plot(ENG-EFERMI,PDOS, linestyle="-", color=c, linewidth=2, \
-                        label=str(atom_label)+" "+str(orbit))
+                plt.plot(ENG, PDOS, linestyle="-", color=c, linewidth=2, \
+                        label=str(atom_label)+" "+str(lm))
+
+                ll += 1
 
 #           plt.xticks([])
 #           if blk != (nblock-1):

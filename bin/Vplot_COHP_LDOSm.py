@@ -47,7 +47,7 @@ import matplotlib.cm as cm
 ################################################################################
 def options():
 
-    dname = 'DOSCAR.lobsetr'
+    dname = 'DOSCAR.lobster'
     atom = 1 # 0番から始まる
 
     parser = optparse.OptionParser()
@@ -84,9 +84,9 @@ if __name__ == '__main__':
 
     #####################################################
     # オプションの確認
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print "Emax =",OPT_EMAX
+    if OPT_EMIN: print "Emin =",OPT_EMIN
+    if OPT_YMAX: print "COHP Ymax=",OPT_YMAX
 
     if OPT_UP:
         print "SPIN-UP"
@@ -104,10 +104,12 @@ if __name__ == '__main__':
     # makes instance ( Read DOSCAR )
 #   dos = SAEnv.ReadVaspDoscar(dname)
     dos = SAEnv.ReadLobDos(dname)
+#   dos = SAEnv.ReadLobDos()
 
     nspin = dos.nspin
     natom = dos.natom
-    title =  dos.title
+#   title =  dos.title
+    title =  'DOSCAR.lobster'
     efermi = dos.efermi
     eng = dos.eng
     atoms_index_j = dos.atoms_index_j

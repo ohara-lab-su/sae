@@ -64,6 +64,8 @@ def options():
     parser.add_argument('-u', '--up', action='store_true', default=False)
     parser.add_argument('-d', '--dn', action='store_true', default=False)
     parser.add_argument('--spin', action='store_true', default=False)
+    parser.add_argument('--sp', action='store_true', default=False)
+    parser.add_argument('--spd', action='store_true', default=True)
     parser.add_argument('-p', '--pair', nargs='*')
 #   options,  args = parser.parse_args()
     options = parser.parse_args()
@@ -71,7 +73,8 @@ def options():
     return [options.nw,
             options.DMAX,
             options.EMAX, options.EMIN, options.YMAX, options.YMIN,
-            options.up, options.dn, options.spin, options.pair]
+            options.up, options.dn, options.spin,
+            options.sp, options.spd, options.pair]
 
 ##########################################################################
 if __name__ == '__main__':
@@ -79,7 +82,9 @@ if __name__ == '__main__':
     # set options file
     NO_WINDOW_FLAG,\
         OPT_DMAX, OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_YMIN, \
-        OPT_UP, OPT_DN, OPT_SPIN, OPT_PAIR = options()
+        OPT_UP, OPT_DN, OPT_SPIN,\
+        OPT_SP, OPT_SPD,\
+        OPT_PAIR = options()
 
     if OPT_DMAX: print "Dmax=", OPT_DMAX
     if OPT_EMAX: print "Emax=", OPT_EMAX
@@ -107,10 +112,12 @@ if __name__ == '__main__':
     ##########################################################################
 
     # plot する l軌道のリスト
-    orbit_list = [0,1,2]
-    orbit_index = ['s','p','d']
-#   orbit_list = [0,1]
-#   orbit_index = ['s','p']
+    if OPT_SPD:
+        orbit_list = [0,1,2]
+        orbit_index = ['s','p','d']
+    if OPT_SP:
+        orbit_list = [0,1]
+        orbit_index = ['s','p']
 
     spin_list = [0]
     if OPT_UP:
@@ -159,6 +166,7 @@ if __name__ == '__main__':
             sizey = sizey_dos0/(float(norbit)*2+2)
             sizey_cohp = sizey_cohp0/(float(norbit)*2+2)
 
+    print 'ORBIT_LIST= ',orbit_list
     print 'SPIN_LIST = ',spin_list
 
     ######################################################## COHP Average
