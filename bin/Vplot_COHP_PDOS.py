@@ -80,50 +80,34 @@ def options():
     dname = 'DOSCAR.lobster'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-d','--doscar', dest='DOSCAR',)
-    parser.add_option( '-n', '--nw', action='store_true', default=False,)
-    parser.add_option( '-l', '--landscape', action='store_true', default=False,)
-    parser.add_option( '--hexagonal',
-                      action='store_true',
-                      default=False,
-                      dest='HEX',
-    )
-    parser.add_option( '--cubic',
-                      action='store_true',
-                      default=False,
-                      dest='CUBIC',
-    )
-    parser.add_option( '--spd',
-                      action='store_true',
-                      default=False,
-                      dest='SPD',
-    )
-    parser.add_option( '--sp',
-                      action='store_true',
-                      default=False,
-                      dest='SP',
-    )
-    parser.add_option(  '--emax', dest='EMAX',)
-    parser.add_option(  '--emin', dest='EMIN',)
-    parser.add_option(  '--ymax', dest='YMAX',)
-    parser.add_option(  '--atom', dest='ATOM',)
+    parser.add_option('-d','--doscar', dest='DOSCAR',)
+    parser.add_option('-n', '--nw', action='store_true', default=False,)
+    parser.add_option('-l', '--landscape', action='store_true', default=False,)
+    parser.add_option('--hexagonal', action='store_true', default=False,)
+    parser.add_option('--cubic', action='store_true', default=False,)
+    parser.add_option('--spd', action='store_true', default=False,)
+    parser.add_option('--sp', action='store_true', default=False,)
+    parser.add_option('--emax', dest='EMAX',)
+    parser.add_option('--emin', dest='EMIN',)
+    parser.add_option('--ymax', dest='YMAX',)
+    parser.add_option('--atom', dest='ATOM',)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
 
     return [dname,
             options.nw,options.landscape,
-            options.HEX,options.CUBIC,options.SPD,options.SP,
-            options.EMAX,options.EMIN,options.YMAX,options.ATOM]
+            options.hexagonal, options.cubic, options.spd, options.sp,
+            options.EMAX, options.EMIN, options.YMAX, options.ATOM]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
     dname,\
-            NO_WINDOW_FLAG,LANDSCAPE_FLAG,\
-            HEX_FLAG,CUBIC_FLAG,SPD_FLAG,SP_FLAG,\
-            OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_ATOM = options()
+            NO_WINDOW_FLAG, LANDSCAPE_FLAG,\
+            HEX_FLAG, CUBIC_FLAG, SPD_FLAG, SP_FLAG,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_ATOM = options()
 
     if HEX_FLAG:
         print "Hexagonal MODE"
@@ -334,9 +318,9 @@ if __name__ == '__main__':
                     xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=16 )
                     yl = plt.ylabel("DOS/eV", fontsize=16)
 
-            if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
-            if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
-            if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
+            if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX) )
+            if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN) )
+            if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
             if spin == 0:
                 leg = plt.legend(fontsize=9)   # 凡例Box

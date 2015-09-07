@@ -192,9 +192,9 @@ if __name__ == '__main__':
             plt.xticks([])
             plt.ylabel("")
             plt.ylim( ymin=0 )
-            if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
-            if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
-            if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
+            if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX) )
+            if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN) )
+            if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
             orgy = orgy + ysize + off
             j += 1

@@ -192,6 +192,8 @@ class ReadFdmSd(object):
                             float(self.datlines[i].split()[row])
                     row += 1
 
+        self.emax = max(self.eng)
+        self.emin = min(self.eng)
 
     ####################################################
     # lm の順番は -1,0,1, -2,-1,0,2,,,,,
@@ -332,6 +334,11 @@ class ReadFdmSd(object):
     def get_eng(self):
         return self.eng
 
+    def get_emin(self):
+        return self.emin
+
+    def get_emax(self):
+        return self.emax
 
 ###############################################################################
 def options():

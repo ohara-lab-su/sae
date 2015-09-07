@@ -219,9 +219,9 @@ if __name__ == '__main__':
 
         if spin == 0: yl = plt.ylabel("DOS/eV", fontsize=20 )
 
-        if OPT_EMAX: plt.xlim( xmax=int(OPT_EMAX) )
-        if OPT_EMIN: plt.xlim( xmin=int(OPT_EMIN) )
-        if OPT_YMAX: plt.ylim( ymax=int(OPT_YMAX) )
+        if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX) )
+        if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN) )
+        if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
         if NSPIN == 2:
             if spin == 0:
