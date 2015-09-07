@@ -173,6 +173,9 @@ if __name__ == '__main__':
     # matplotlib
 
 #   plt.rcParams['font.family']       = 'Times New Roman'
+#   plt.rcParams['font.size']         = 14  # ラベル等のフォントサイズ
+#   plt.rcParams['legend.fontsize']   = 5   # レジェンドのフォントサイズ
+#   plt.rcParams['axes.linewidth']    = 1.5 # 軸の太さを設定。目盛りは変わらない
     plt.rcParams['font.size']         = 14  # ラベル等のフォントサイズ
     plt.rcParams['legend.fontsize']   = 5   # レジェンドのフォントサイズ
     plt.rcParams['axes.linewidth']    = 1.5 # 軸の太さを設定。目盛りは変わらない
@@ -347,13 +350,13 @@ if __name__ == '__main__':
 #   plt.ylim([0,200])
 
     if LANDSCAPE_FLAG:
-        plt.savefig("PDOS"+str(atom+1)+".eps")
-        plt.savefig("PDOS"+str(atom+1)+".pdf")
-        plt.savefig("PDOS"+str(atom+1)+".png")
+        plt.savefig("COHP_PDOS"+str(atom+1)+".eps")
+        plt.savefig("COHP_PDOS"+str(atom+1)+".pdf")
+        plt.savefig("COHP_PDOS"+str(atom+1)+".png")
     else:
-        plt.savefig("PDOS"+str(atom+1)+".eps",orientation = 'portrait')
-        plt.savefig("PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
-        plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait')
+        plt.savefig("COPHP_PDOS"+str(atom+1)+".eps",orientation = 'portrait')
+        plt.savefig("COPHP_PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
+        plt.savefig("COPHP_PDOS"+str(atom+1)+".png",orientation = 'portrait')
 
     if not NO_WINDOW_FLAG:
         plt.show()

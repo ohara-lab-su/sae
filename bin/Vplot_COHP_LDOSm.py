@@ -140,8 +140,11 @@ if __name__ == '__main__':
 
         #####################################################
         #
-        plt.rcParams['font.size']         = 16
-        plt.rcParams['legend.fontsize']   = 10
+#       plt.rcParams['font.size']         = 16
+#       plt.rcParams['legend.fontsize']   = 10
+#       plt.rcParams['axes.linewidth']    = 1.5
+        plt.rcParams['font.size']         = 14
+        plt.rcParams['legend.fontsize']   = 5
         plt.rcParams['axes.linewidth']    = 1.5
         plt.figure(figsize=(7.00, 9.89))  # for portrait
 

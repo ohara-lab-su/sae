@@ -62,6 +62,9 @@ def options():
     parser.add_option('--ymax', dest='YMAX',)
     options,  args = parser.parse_args()
 
+    ## 注意)
+    ## all モードは描画せずに、ファイルだけ全部出力するモード
+
     if options.DOSCAR: dname = options.DOSCAR
     if options.OUTCAR: oname = options.OUTCAR
     if options.atom: atom = int(options.atom)
@@ -97,7 +100,7 @@ if __name__ == '__main__':
         print "SPIN-DOWN"
         spin = 1
     else:
-        print "NONMAGNETIC"
+        print "NONMAGNETIC or SPIN-UP "
         spin = 0
 
     atom -= 1
@@ -107,6 +110,8 @@ if __name__ == '__main__':
     dos = SAE.ReadVaspDoscar(dname)
 
     nspin = dos.get_ispin()
+    print "NSPIN = ",nspin
+
     natom = dos.get_natom()
     title = dos.get_title()
     efermi = dos.get_efermi()

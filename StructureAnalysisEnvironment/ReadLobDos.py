@@ -88,6 +88,7 @@ class ReadLobDos(object):
                              float(self.datlines[6 + i].split()\
                              [1 + spin * (self.nspin - 1) + self.nspin])
 
+        # total DOS パート&ヘッダをスキップ(PDOSパートの先頭行)
         j0 = 6 + i + 1
 
         # partial DOS part

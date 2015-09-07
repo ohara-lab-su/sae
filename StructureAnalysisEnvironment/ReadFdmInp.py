@@ -329,6 +329,7 @@ class ReadFdmInp(SAEnv.Method):
 
         # 共通仕様
         self.title = self.filout
+        self.nspin = self.ispin
         self.system = self.title
         self.vasp_version = None
         self.selective = False

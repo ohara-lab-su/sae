@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2015.09.07
+#  pdos を軌道成分名 or l,m の指定でゲットできるようにした
+#
 # 2015.08.18
 #  lmax の抽出を _bav.txt ファイルではなくて 実際に計算している _sd*.txt
 #  のヘッダから行うように変更。それに伴って _bav.txt の利用を前面停止
@@ -62,13 +65,14 @@ class ReadFdmSd(object):
                  suffix='_sd0.txt',
                  inpname='read_pdb.inp',
                  bavname=None,
-                 absorber=None,
+                 absorber=None,              ### absorber=[] :matrix
                  weight=None):
 
         if bavname is None:
             bavname = sdname
 
         ############################## self.datlines ##########################
+        # 複数の sd ファイルを読んで平均化する
         # sum
         if absorber is None:
             print "---- ReadFdmSd ----"
@@ -170,7 +174,7 @@ class ReadFdmSd(object):
 
             for ll in range(self.lmax + 1):
                 m0 = 0
-                for m in range(-ll, ll + 1):  # m,s成分分解
+                for m in range(-ll, ll + 1):  # m,spin成分分解
                     for s in range(self.ispin):
                         # 成分 and 積分
                         self.ylm[i - 1, ll, m0, s] = \
@@ -188,6 +192,115 @@ class ReadFdmSd(object):
                             float(self.datlines[i].split()[row])
                     row += 1
 
+
+    ####################################################
+    # lm の順番は -1,0,1, -2,-1,0,2,,,,,
+    #
+    #  Ylm : 「real」 spherical harmonics
+    # l=1
+    #  m=-1: p_y
+    #  m= 0: p_z
+    #  m= 1: p_x
+    #
+    # l=2
+    #  m=-2: d_xy
+    #  m=-1: d_yz
+    #  m= 0: d_z2
+    #  m= 1: d_xz
+    #  m= 2: d_x2-y2
+    #
+    def get_pdos(self, l=0, m=0, lm=None, spin=0):
+
+#       pdos = np.zeros((self.nedos, self.lmax, self.mmax, self.nspin))
+
+        if lm != None and isinstance(lm, str):
+
+            orbit_name = lm
+            lml = lm.lower()
+            if lml == 's':
+                orbit_name = 's'
+                l=0
+                m=0
+            if lml == 'py' or lml == 'p_y':
+                orbit_name = 'p_y'
+                l=1
+                m=-1
+            if lml == 'pz' or lml == 'p_z':
+                orbit_name = 'p_z'
+                l=1
+                m=0
+            if lml == 'px' or lml == 'p_x':
+                orbit_name = 'p_x'
+                l=1
+                m=1
+            if lml == 'dxy' or \
+                    lml == 'd_xy' or \
+                    lml == 'xy' or \
+                    lml == 'yx' or \
+                    lml == 'dyx' or \
+                    lml == 'd_yx':
+                orbit_name = 'd_xy'
+                l=2
+                m=-2
+            if lml == 'dyz' or \
+                    lml == 'd_yz' or \
+                    lml == 'yz' or \
+                    lml == 'zy' or \
+                    lml == 'dzy' or \
+                    lml == 'd_zy':
+                orbit_name = 'd_yz'
+                l=2
+                m=-1
+            if lml == 'dz2' or \
+                    lml == 'd_z^2' or \
+                    lml == 'd_z2' or \
+                    lml == 'dz^2' or \
+                    lml == 'z2' or \
+                    lml == 'z^2' or \
+                    lml == 'd_3z2' or \
+                    lml == 'd3z^2' or \
+                    lml == '3z2' or \
+                    lml == '3z^2' or \
+                    lml == 'r2' or \
+                    lml == 'r^2' or \
+                    lml == 'dr^2' or \
+                    lml == 'd_r^2' or \
+                    lml == 'd_r2' or \
+                    lml == '3z2-r2' or \
+                    lml == '3z^2-r^2' or \
+                    lml == 'd_3z2-r2' or \
+                    lml == 'd_3z^2-r^2':
+                orbit_name = 'd_z^2'
+                l=2
+                m=0
+            if lml == 'dxz' or \
+                    lml == 'd_xz' or \
+                    lml == 'xz' or \
+                    lml == 'dzx' or \
+                    lml == 'zx' or \
+                    lml == 'd_zx':
+                orbit_name = 'd_xz'
+                l=2
+                m=1
+            if lml == 'x^2-y^2' or \
+                    lml == 'd_x^2-y^2' or \
+                    lml == 'd_x2-y2' or \
+                    lml == 'x2-y2' or \
+                    lml == 'dx2' or \
+                    lml == 'x2' or \
+                    lml == 'x^2' or \
+                    lml == 'dx^2' or \
+                    lml == 'dy2' or \
+                    lml == 'y2' or \
+                    lml == 'y^2' or \
+                    lml == 'dy^2':
+                orbit_name = 'd_x^2-y^2'
+                l=2
+                m=2
+
+        return self.ylm[:,l,m,spin]
+
+    ####################################################
     # LDOS(NEDOS,L,SPIN)
     def get_ldos(self, l=0, spin=0):
 
@@ -223,8 +336,8 @@ class ReadFdmSd(object):
 ###############################################################################
 def options():
 
-    #   name = 'Cu'
-    name = 'Fe'
+    name = 'Cu'
+#   name = 'Fe'
     suffix = '_sd0.txt'
 
     parser = optparse.OptionParser()

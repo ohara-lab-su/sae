@@ -199,9 +199,9 @@ if __name__ == '__main__':
 #   plt.xlim([-10,10])
 #   plt.ylim([0,200])
 
-    plt.savefig("COHP.eps")
-    plt.savefig("COHP.pdf")
-    plt.savefig("COHP.png")
+    plt.savefig("COHP_tate.eps")
+    plt.savefig("COHP_tate.pdf")
+    plt.savefig("COHP_tate.png")
 
     if not NO_WINDOW_FLAG:
         plt.show()
