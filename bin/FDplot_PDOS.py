@@ -6,6 +6,11 @@
 # FDMNES
 #   特定原子の PDOS 多段組
 #
+#   平均化機能は付けていない
+#   DOSやXANESの平均化が欲しいときは FDplot_XAS.py -a 1 2 3 -w 55 -x 10
+#   などとして、FDplot_XAS.py を用いて、 filout_0.txt filout_0_sd0.txt を
+#   作成してから -c -s オプションなどを用いてプロットする
+#
 ################################################################################
 #
 # 2015.09.07
@@ -43,12 +48,18 @@ def options():
     inpname = 'read_pdb.inp'
 
     parser = optparse.OptionParser()
-    parser.add_option('-i','--inpname', dest='INPUT')
-    parser.add_option('-f','--filout')
-    parser.add_option('-a','--atom')
+    parser.add_option('-i', '--inp', '--inpname', dest='INPUT')
+    parser.add_option('-c', '--conv', '--convname', dest='convname')
+    parser.add_option('-t', '--txt', '--textname', dest='txt')
+    parser.add_option('-f', '--filout', '--filoutname', dest='filout')
+    parser.add_option('--filbav', '--bavname', dest='bavname')
+    parser.add_option('-s', '--sd', '--sdname', dest='sdname')
+    parser.add_option('-a', '--atom')
     parser.add_option('--emax')
     parser.add_option('--emin')
+    parser.add_option('--ymax')
     parser.add_option('--label')
+    parser.add_option('-o', '--outsuffix')
     parser.add_option('-b', '--broad', action='store_true', default=False)
     parser.add_option('-x', '--xas', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
@@ -59,22 +70,28 @@ def options():
     if options.INPUT: inpname=options.INPUT
     if len(args) > 0: inpname=args[0]
 
-    return [inpname, options.filout, options.atom, options.label,
-            options.emax, options.emin,
+    return [inpname,
+            options.convname, options.txt, options.filout, options.bavname,
+            options.sdname,
+            options.atom, options.label, options.outsuffix,
+            options.emax, options.emin, options.ymax,
             options.broad, options.fermi, options.xas,
             options.sp, options.spd]
 
 ################################################################################
 if __name__ == '__main__':
 
-    inpname, filout, atom, LABEL,\
-            OPT_EMAX, OPT_EMIN,\
+    inpname, convname, txtname, filout, bavname, sdname,\
+            atom, LABEL, OUTSUFFIX,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
             FLAG_SP, FLAG_SPD = options()
+
 
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
+    if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
     if atom: print "ATOM=", atom
 
     if not atom: atom = 0
@@ -130,23 +147,36 @@ if __name__ == '__main__':
     ###########################################################################
 
     inp = SAEnv.ReadFdmInp(inpname)
-    if not filout: filout = inp.filout
 
-#   bav = SAE.ReadFdmBav(filout)
-    txt = SAEnv.ReadFdm(filout,'.txt')
-    conv = SAEnv.ReadFdmConv(filout, suffix_conv)
-    sd0 = SAEnv.ReadFdmSd(filout, '_sd0.txt')
-    sd = SAEnv.ReadFdmSd(filout, suffix_sd)
+    if filout is None: filout = inp.filout
+    if convname is None: convname = filout
+    if txtname is None: txtname = filout
+    if bavname is None: bavname = filout
+    if sdname is None: sdname = filout
+
+    print ""
+    print "inpname (.inp)                     =", inpname
+    print "filoutname                         =", filout
+    print "txtname  (original XAS and Eferm)  =", txtname
+    print "convname (convolution file)        =", convname
+    print "bavname (log file)                 =", bavname
+    print ""
+
+    conv = SAEnv.ReadFdmConv(convname, suffix_conv)
+#   bav = SAE.ReadFdmBav(bavname)
+    txt = SAEnv.ReadFdm(txtname,'.txt')
+    sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
+    sd = SAEnv.ReadFdmSd(sdname, suffix_sd)
 
     ispin = inp.ispin
 
-    if not OPT_EMAX:
+    if OPT_EMAX is None:
         emax = sd.emax
         emax0 = sd0.emax
         if emax0 > emax: emax = emax0
         print "EMAX = ",emax
 
-    if not OPT_EMIN:
+    if OPT_EMIN is None:
         emin = sd.emin
         emin0 = sd0.emin
         if emin0 < emin: emin = emin0
@@ -193,12 +223,16 @@ if __name__ == '__main__':
         xmin_XAS, xmax_XAS, ymin_XAS, ymax_XAS = plt.axis()
         if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
         if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+        if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
         if FLAG_BROAD:
             dos_p = txt.xas
             eng_p = txt.eng + eng_off
             plt.plot(eng_p, dos_p, linewidth=1, color=color, label='XAS')
             plt.ylim(ymax=ymax_XAS)
+            if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+            if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+            if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
@@ -253,9 +287,14 @@ if __name__ == '__main__':
 
 #   plt.ylabel("Absorption [arb. unit]")
 
-    plt.savefig("PDOS"+str(atom)+".eps")
-    plt.savefig("PDOS"+str(atom)+".pdf")
-    plt.savefig("PDOS"+str(atom)+".png")
+    if OUTSUFFIX:
+        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+".eps")
+        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+".pdf")
+        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+".png")
+    else:
+        plt.savefig("PDOS"+str(atom)+".eps")
+        plt.savefig("PDOS"+str(atom)+".pdf")
+        plt.savefig("PDOS"+str(atom)+".png")
 
     plt.show()
 

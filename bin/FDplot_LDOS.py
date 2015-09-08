@@ -75,8 +75,8 @@ if __name__ == '__main__':
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
 
-    if not atom: atom=0
-    if not orbit: orbit=1
+    if not atom: atom = 0
+    if not orbit: orbit = 1
 
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
@@ -197,7 +197,10 @@ if __name__ == '__main__':
         eng = sd.get_eng() + eng_off
 
         num += 1
-        label = str(atom)+'-'+orbit
+        if LABEL:
+            label = LABEL+'-'+orbit
+        else:
+            label = str(atom)+'-'+orbit
         color = cm.prism((num+1)*10)
 
         plt.plot(eng, dos, linewidth=2, color=color, label=label)

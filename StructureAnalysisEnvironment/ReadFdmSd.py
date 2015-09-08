@@ -8,6 +8,10 @@
 #
 ###############################################################################
 #
+# 2015.09.08
+#  sd 平均化情報の出力（ファイル出力）を修正
+#  それにあせて sd ファイルのヘッダー出力なども追加
+#
 # 2015.09.07
 #  pdos を軌道成分名 or l,m の指定でゲットできるようにした
 #
@@ -81,9 +85,10 @@ class ReadFdmSd(object):
             print "inpname         = ", inpname
             print "-------------------"
             self.datlines, self.num = SAE.read_dataline(sdname + suffix)
+            self.header =  self.datlines[0]
         else:
             print "--- ReadFdmSd ------"
-            print "    average mode ---"
+            print "--- average mode ---"
             sdname0 = bavname + '_' + str(absorber[0]) + suffix
             row, num = SAE.read_row(sdname0, column=1)
             if weight is None:
@@ -96,25 +101,51 @@ class ReadFdmSd(object):
             dsum = np.zeros((num, row))
             dtmp = np.zeros((num, row))
             numdata = np.zeros((num, row))
+
             for i in range(len(absorber)):
+
                 sdname = bavname + '_' + str(absorber[i]) + suffix
                 print "sum : ", sdname
                 datatmp, num0 = SAE.read_dataline(sdname)
-                for i in range(1, num):     # 一行目は除く
+
+                if i == 0:
+                    self.header =  datatmp[0]
+
+                # 間違い？を発見、明らかに間違いっぽいが念のため取っておく(15.09.08)
+               #for i in range(1, num):     # 一行目は除く
+               #    for r in range(1, row):  # Energy は除く
+               #        dtmp[i, r] = datatmp[i].split()[r]
+               #dsum = dtmp + dsum
+
+                for j in range(1, num):     # 一行目は除く
                     for r in range(1, row):  # Energy は除く
-                        dtmp[i, r] = datatmp[i].split()[r]
+                        dtmp[j, r] = datatmp[j].split()[r]
                 dsum = dtmp + dsum
+
             numdata = dsum / n_site  # 平均値を出す
+
+            for i in range(1,num):
+                numdata[i,0] = datatmp[i].split()[0] # Energy行
 
             # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
             listdata = list(numdata)
             self.datlines = []
             self.datlines.append('')  # dummy '1st-line'
             for i in range(1, num):
-                self.datlines.append(''.join(str(listdata[i])).
-                                     replace('\n', '').replace('[', '').replace(']', ''))
+                self.datlines.append(''.
+                        join(str(listdata[i])).
+                        replace('\n', '').
+                        replace('[', '').
+                        replace(']', ''))
+
+            # 最後に header を追加
+            self.datlines[0] = self.header
+
             self.num = num
         ############################## self.datlines ##########################
+
+        # 合計した sd ファイルを丸ごと保存
+        self.sd = self.datlines
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
 #       bav = SAE.ReadFdmBav(bavname)
@@ -122,8 +153,9 @@ class ReadFdmSd(object):
 
         # get lmax
         # _sd*.txt で実際に出力されている lmax の最大値をゲットする
-        nl = len(self.datlines[0].split())
-        tmp = self.datlines[0].split()[nl - 1]
+        # ヘッダの一番最後のrawをゲットして加工する
+        nl = len(self.header.split())
+        tmp = self.header.split()[nl-1]
         tmp = re.sub('.*\(', '', tmp)
         self.lmax = int(re.sub('\).*', '', tmp))
 
@@ -340,6 +372,17 @@ class ReadFdmSd(object):
     def get_emax(self):
         return self.emax
 
+    def get_header(self):
+        return self.header
+
+    # 読み込んだ sd ファイルの行数
+    def get_num(self):
+        return self.num
+
+    # 読み込んだ sd ファイル丸ごと(平均化したら、平均化した値)
+    def get_sd(self):
+        return self.sd
+
 ###############################################################################
 def options():
 
@@ -362,7 +405,7 @@ def options():
 if __name__ == '__main__':
 
     name, suffix = options()
-    conv = ReadFdmSd(name, suffix)
+    sd = ReadFdmSd(name, suffix)
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
