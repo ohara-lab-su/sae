@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2015.09.08
+#  .txt の平均化 Method を追加
+#
 # 2015.08.11
 #  fdmnes_win64.exe を windows7 で動かした時と windows8 で動かしたときの
 #  動作の違いを吸収するように重名に記述を変更しなおした。
@@ -33,7 +36,7 @@ __version__ = "0.0.1"
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ###############################################################################
@@ -41,7 +44,7 @@ import StructureAnalysisEnvironment as SAE
 
 class ReadFdm(object):
 
-    def __init__(self, cname, suffix='.txt'):
+    def __init__(self, cname, suffix='.txt', weight=1.0):
 
         name = cname.replace(suffix, '')
         suffix0 = cname.replace(name, '')
@@ -49,7 +52,9 @@ class ReadFdm(object):
             suffix = '.txt'
             cname = name + suffix
 
-        self.datlines, self.num = SAE.read_dataline(cname)
+        self.suffix = suffix
+        self.datlines, self.num = SAEnv.read_dataline(cname)
+        self.header = self.datlines[0]
 
         self.eng = np.zeros(self.num - 2)
         self.xas = np.zeros(self.num - 2)
@@ -77,26 +82,60 @@ class ReadFdm(object):
 
         self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
 
+    # ヘッダー項目
     def get_eedge(self):
         self.E_edge = self.E_edge if hasattr(self, 'E_edge') else None
         return self.E_edge
 
+    # ヘッダー項目
     def get_efermi(self):
         self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
         return self.E_Fermi
 
+    # ヘッダー項目
     def get_e_fermi(self):
         self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
         return self.E_Fermi
 
+    # ヘッダー項目
     def get_z(self):
         self.Z = self.Z if hasattr(self, 'Z') else None
         return self.Z
 
+    # ヘッダー項目
     def get_eng(self):
         return self.eng
 
     def get_xas(self):
+        return self.xas
+
+    def get_header(self):
+        return self.header
+
+    ###########################################################################
+    # allsite のときの複数の *.txt の平均を取る
+    # filout = Pd のとき allsite ならばとして結果を出力したとする
+    # Pd_1.txt
+    # Pd_2.txt
+    # Pd_3.txt
+    # このとき、average_txt(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
+    # 平均を self.xas に返す
+    #
+    # non-spin
+    def average_txt(self, name, absorber, weight=None):
+        if weight is None:
+            n_site = float(len(absorber))
+        else:
+            print "weight : ", weight
+            n_site = float(weight)
+        s_xas = np.zeros(self.num - 2)
+        for site in absorber:
+            txtname = name + "_" + str(site) + self.suffix
+            datlines, num = SAEnv.read_dataline(txtname)
+            print "sum : ", txtname
+            for i in range(2, self.num):
+                s_xas[i - 2] = float(datlines[i].split()[1]) + s_xas[i - 2]
+        self.xas = s_xas / n_site
         return self.xas
 
 ###############################################################################
@@ -152,15 +191,13 @@ def options():
     options, args = parser.parse_args()
 
 #   if not os.path.exists(name):
-#       name0 = SAE.find_datfile1('_conv.txt')
+#       name0 = SAEnv.find_datfile1('_conv.txt')
 #       if name0 is None:
 #           name0 = name
 #   name = name0
 
-    if options.INPUT:
-        name = options.INPUT
-    if len(args) > 0:
-        name = args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     return name, suffix
 

@@ -39,7 +39,7 @@ import os
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ###############################################################################
@@ -52,10 +52,10 @@ class ReadFdmConv(object):
         if not os.path.exists(cname + suffix):
             cname = cname.replace(suffix, '')
 
-        self.datlines, self.num = SAE.read_dataline(cname + suffix)
+        self.datlines, self.num = SAEnv.read_dataline(cname + suffix)
 
         self.name = cname
-        self.conv_suffix = suffix
+        self.suffix = suffix
         self.eng = np.zeros(self.num - 1)
         self.xas = np.zeros(self.num - 1)
 
@@ -78,6 +78,7 @@ class ReadFdmConv(object):
     # このとき、average_conv(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
     # 平均を self.xas に返す
     #
+    # non-spin
 #   def average_conv(self,name,*allsite):
     def average_conv(self, name, absorber, weight=None):
         if weight is None:
@@ -88,8 +89,8 @@ class ReadFdmConv(object):
         s_xas = np.zeros(self.num - 1)
        # print absorber
         for site in absorber:
-            convname = name + "_" + str(site) + self.conv_suffix
-            datlines, num = SAE.read_dataline(convname)
+            convname = name + "_" + str(site) + self.suffix
+            datlines, num = SAEnv.read_dataline(convname)
             print "sum : ", convname
             for i in range(1, self.num):
                 s_xas[i - 1] = float(datlines[i].split()[1]) + s_xas[i - 1]
@@ -148,7 +149,7 @@ def options():
     options, args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAE.find_datfile1(suffix)
+        name0 = SAEnv.find_datfile1(suffix)
         name0 = name0.replace(suffix, '')
         if name0 is not None:
             name0 = name

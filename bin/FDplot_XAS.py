@@ -38,6 +38,9 @@
 ##########################################################################
 #
 # 2015.09.08
+#  _0.txt _0_conv.txt _0_sd0.txt 出力系を追加・修正
+#
+# 2015.09.08
 #  オプション、ファイル名取得系を整理整頓
 #
 # 2015.07.06
@@ -184,12 +187,25 @@ if __name__ == '__main__':
     else:
         filout = filoutname
 
+    if AV:
+        print "--- average mode ---"
+        print "Absorber =",AV
+
+    if WE:
+        print "XANES Weight =",WE
+    if WEDOS:
+        print "DOS Weight   =",WEDOS
+
+    if AV:
+        print ""
+
     ##########################################################################
     # txt
     # conv
     #     計算結果の読み込み (平均化で最初に指定したabsorberから)
     #     convol の値は 平均化モードで Method により上書きされる
     if AV:
+        print ""
         print "--- average mode ---"
         print "Textname (edge anf fermi)         [base] =",\
                 filout+'_'+str(AV[0])
@@ -208,25 +224,20 @@ if __name__ == '__main__':
         conv = SAE.ReadFdmConv(convolname, '_conv.txt')
 
     ##########################################################################
-    # bavname
-    # conv_average
+    # txt
+    # conv
     #     平均化モードのとき txt インスタンスの結果を上書き(平均の結果にする)
     #     平均化モードの時に filbav 名を取得(平均化モードでは必須)
     if AV:
-        if bavname:
-            filbav = bavname
-        else:
-            filbav = filout
-        print "Bavname (logfile) for Avarage (_bav.txt) =", filbav
-
-        print ""
-        print "--- average mode ---"
         if WE:
-            conv.xas = conv.average_conv(filbav, AV, weight=WE)
+            conv.xas = conv.average_conv(filout, AV, weight=WE)
+            txt.xas = txt.average_txt(filout, AV, weight=WE)
         else:
-            conv.xas = conv.average_conv(filbav, AV)
+            conv.xas = conv.average_conv(filout, AV)
+            txt.xas = txt.average_txt(filout, AV)
 
         print ""
+
     ##########################################################################
     # sd
     #    DOS モードで fileout TAG から元の計算のログファイル名を入手
@@ -272,28 +283,37 @@ if __name__ == '__main__':
                                inpname=inpname)
 
         print ""
+
     ##########################################################################
     # *_0_conv.txt ファイルへ結果出力
     if AV:
-        try:
-            outav = open(filbav + '_' + str(0) + '_conv.txt', 'w')
-        except:
-            outav.close()
 
+        outav = open(filout + '_0_conv.txt', 'w')
         print >> outav, ""
         for i in range(len(conv.eng)):
             print >> outav, "  %14.8f %14.8f" % (conv.eng[i], conv.xas[i])
+        outav.close()
 
-        print "WRITE: ",filbav+'_'+str(0)+'_conv.txt'
+        print "WRITE: ",filout+'_0_conv.txt'
+
+    ##########################################################################
+    # *_0.txt ファイルへ結果出力
+    if AV:
+
+        outtxt = open(filout + '_0.txt', 'w')
+        print >> outtxt, "%s" %( txt.header )
+        print >> outtxt, "    Energy    <xanes>  "
+        for i in range(len(txt.eng)):
+            print >> outtxt, "  %14.3f %14.8f" % (txt.eng[i], txt.xas[i])
+        outtxt.close()
+
+        print "WRITE: ",filout+'_0.txt'
 
     ##########################################################################
     # *_0_sd0.txt へ平均化の結果出力
     if FLAG_DOS and AV:
-        try:
-            outsd = open(filout + '_0_sd0.txt', 'w')
-        except:
-            outsd.close()
 
+        outsd = open(filout + '_0_sd0.txt', 'w')
         print >> outsd, "%s" %(sd.header)
         for i in range(1,sd.num):
             print >> outsd, "%s" % (sd.sd[i])
