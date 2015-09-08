@@ -48,7 +48,9 @@ def options():
     parser.add_option('-a','--atom')
     parser.add_option('--emax')
     parser.add_option('--emin')
-    parser.add_option('--xas', action='store_true', default=False)
+    parser.add_option('--label')
+    parser.add_option('-b', '--broad', action='store_true', default=False)
+    parser.add_option('-x', '--xas', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
@@ -57,19 +59,20 @@ def options():
     if options.INPUT: inpname=options.INPUT
     if len(args) > 0: inpname=args[0]
 
-    return [inpname, options.filout, options.atom,
+    return [inpname, options.filout, options.atom, options.label,
             options.emax, options.emin,
-            options.fermi, options.xas,
+            options.broad, options.fermi, options.xas,
             options.sp, options.spd]
 
 ################################################################################
 if __name__ == '__main__':
 
-    inpname, filout, atom, \
+    inpname, filout, atom, LABEL,\
             OPT_EMAX, OPT_EMIN,\
-            FLAG_FERMI, FLAG_XAS,\
+            FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
             FLAG_SP, FLAG_SPD = options()
 
+    if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
     if atom: print "ATOM=", atom
@@ -90,9 +93,9 @@ if __name__ == '__main__':
 
     orgx = 0.170
     orgy = 0.080
-    off = 0.010
+    off = 0.016
     xsize = 0.75
-    ysize0 = 0.83
+    ysize0 = 0.81
 
     ###########################################################################
 
@@ -181,17 +184,21 @@ if __name__ == '__main__':
         xas = conv.get_xas()
         engx = conv.get_eng() + eng_off
 
-        label = 'XAS'
+        label = 'XAS (with broadening)'
         color = cm.prism((num+1)*10)
 
-        plt.plot(engx, xas, linewidth=2, color=color, label=label)
+        plt.plot(engx, xas, linewidth=2, color='black', label=label)
+        plt.ticklabel_format(axis='x', useOffset=False)
         plt.axvline(x=EF0, color='black', linewidth=1)
-#       xmin, xmax, ymin, ymax = plt.axis()
+        xmin_XAS, xmax_XAS, ymin_XAS, ymax_XAS = plt.axis()
+        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
 
-#       dos_p = sd0.get_ldos(l='p')
-#       eng_p = sd0.get_eng()
-#       plt.plot(eng_p, dos_p, linewidth=1, color='black', label='absorber')
-#       plt.xlim([xmin, xmax])
+        if FLAG_BROAD:
+            dos_p = txt.xas
+            eng_p = txt.eng + eng_off
+            plt.plot(eng_p, dos_p, linewidth=1, color=color, label='XAS')
+            plt.ylim(ymax=ymax_XAS)
 
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
@@ -217,10 +224,14 @@ if __name__ == '__main__':
             eng = sd.get_eng() + eng_off
 
             num += 1
-            label = str(atom)+'-'+orbit
+            if not LABEL:
+                label = str(atom)+'-'+orbit
+            else:
+                label = str(LABEL)+'-'+orbit
             color = cm.prism((num+1)*10)
 
             plt.plot(eng, dos, linewidth=2, color=color, label=label)
+            plt.ticklabel_format(axis='x', useOffset=False)
             plt.axvline(x=EF0, color='black', linewidth=1)
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
@@ -233,7 +244,7 @@ if __name__ == '__main__':
             leg = plt.legend(loc='upper right')
             leg.get_frame().set_alpha(0.5)
 
-        if blk == 2: plt.ylabel("Absorption [arb. unit]")
+        if blk == 1: plt.ylabel("DOS [state/eV]")
         if blk == 2 and FLAG_XAS: plt.xticks([])
         if not blk == 2: plt.xticks([])
 
