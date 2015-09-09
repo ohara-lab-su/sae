@@ -91,7 +91,8 @@ def options():
     return [inpname,
             options.convname, options.txtname, options.filout, options.bavname,
             options.sdname, options.name,
-            options.atom, options.label, options.outsuffix,
+            options.atom, options.label,
+            options.outsuffix,
             options.emax, options.emin, options.ymax, options.dmax,
             options.broad, options.fermi, options.xas,
             options.sp, options.spd, options.dosweight, options.nw]
@@ -235,10 +236,16 @@ if __name__ == '__main__':
         print "     - E_edge - E_fermi"
         eng_off - txt.E_Fermi - txt.E_edge
 
-    EF0 = txt.E_edge + txt.E_Fermi
+    if FLAG_FERMI:
+        EF0 = 0.0
+        label_fermi = "Energy above Fermi [eV]"
+    else:
+        EF0 = txt.E_edge + txt.E_Fermi
+        label_fermi = "Photon Energy [eV]"
 
     ######################################### plot XAS
     num = 0
+    XTICKS_FLAG = False
     if FLAG_XAS:
         plt.axes([orgx, orgy, xsize, ysize])
 
@@ -270,15 +277,16 @@ if __name__ == '__main__':
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
 
-        plt.xlabel("Photon Energy [eV]")
-#       plt.xlabel("Energy above Fermi [eV]")
+        # label & xticks
         plt.ylabel("Absorption [arb. unit]")
+        if not XTICKS_FLAG:
+            plt.xlabel(label_fermi)
+            XTICKS_FLAG = True
 
         orgy = orgy + ysize + off
 
     ######################################### plot LDOS
     spin = 0
-    XTICKS_FLAG = True
     for blk in range(nblock-1,-1,-1):
 
         plt.axes([orgx, orgy, xsize, ysize])
@@ -313,8 +321,7 @@ if __name__ == '__main__':
             print orbit,": ymax =",dmax0,ymax0
 
             if XTICKS_FLAG and not FLAG_XAS:
-#               plt.xlabel("Energy above Fermi [eV]")
-                plt.xlabel("Photon Energy [eV]")
+                plt.xlabel(label_fermi)
                 XTICKS_FLAG  = False
 
             leg = plt.legend(loc='upper right')
@@ -329,14 +336,19 @@ if __name__ == '__main__':
 
 #   plt.ylabel("Absorption [arb. unit]")
 
-    if OUTSUFFIX:
-        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+".eps")
-        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+".pdf")
-        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+".png")
+    if FLAG_FERMI:
+        fermi = '_fermi'
     else:
-        plt.savefig("PDOS"+str(atom)+".eps")
-        plt.savefig("PDOS"+str(atom)+".pdf")
-        plt.savefig("PDOS"+str(atom)+".png")
+        fermi = ''
+
+    if OUTSUFFIX:
+        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+fermi+".eps")
+        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+fermi+".pdf")
+        plt.savefig("PDOS"+str(atom)+str(OUTSUFFIX)+fermi+".png")
+    else:
+        plt.savefig("PDOS"+str(atom)+fermi+".eps")
+        plt.savefig("PDOS"+str(atom)+fermi+".pdf")
+        plt.savefig("PDOS"+str(atom)+fermi+".png")
 
     if not FLAG_NW:
         plt.show()

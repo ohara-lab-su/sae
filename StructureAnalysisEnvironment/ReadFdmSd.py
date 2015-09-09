@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2015.09.09
+#   TDOS および INTTDOS が未完成だったので修正した
+#
 # 2015.09.08
 #   DOS の最大レンジ自動取得
 #
@@ -234,9 +237,10 @@ class ReadFdmSd(object):
                 np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
         self.intylm = \
                 np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
-        self.dos = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
-        self.tdos = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
-        self.intt = np.zeros((self.num - 1, self.ispin))
+        self.ldos_all = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
+        self.tdos_all = np.zeros((self.num - 1, self.ispin))
+        self.intldos_all = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
+        self.inttdos_all = np.zeros((self.num - 1, self.ispin))
         self.eng = np.zeros(self.num - 1)
 
         for i in range(1, self.num):
@@ -244,15 +248,16 @@ class ReadFdmSd(object):
             self.eng[i - 1] = float(self.datlines[i].split()[row])
             row += 1
 
+            # INTTDOS  Int_t(u), Int_t(d)
             for s in range(self.ispin):
-                self.intt[i - 1, s] = float(self.datlines[i].split()[row])
+                self.inttdos_all[i - 1, s] = float(self.datlines[i].split()[row])
                 row += 1
 
+            # PDOS & INTPDOS
             for ll in range(self.lmax + 1):
                 m0 = 0
-                for m in range(-ll, ll + 1):  # m,spin成分分解
+                for m in range(-ll, ll + 1):  # m,spin成分分解 n(0,0),,,
                     for s in range(self.ispin):
-                        # 成分 and 積分
                         self.ylm[i - 1, ll, m0, s] = \
                             float(self.datlines[i].split()[row])
                         row += 1
@@ -260,12 +265,18 @@ class ReadFdmSd(object):
                             float(self.datlines[i].split()[row])
                         row += 1
                     m0 += 1
-                for s in range(self.ispin):  # l軌道のsum
-                    self.dos[i - 1, ll, s] = \
+                for s in range(self.ispin):  # l軌道のsum n_l(0,0),,,
+                    self.ldos_all[i - 1, ll, s] = \
                             float(self.datlines[i].split()[row])
+                    self.tdos_all[i - 1, s] = \
+                            float(self.datlines[i].split()[row]) + \
+                            self.tdos_all[i - 1, s]
                     row += 1
-                    self.tdos[i - 1, ll, s] = \
+                    self.intldos_all[i - 1, ll, s] = \
                             float(self.datlines[i].split()[row])
+                    self.inttdos_all[i - 1, s] = \
+                            float(self.datlines[i].split()[row]) + \
+                            self.inttdos_all[i -1, s]
                     row += 1
 
         self.emax = max(self.eng)
@@ -409,9 +420,49 @@ class ReadFdmSd(object):
             if spin == 'down':
                 spin = 1
 
-        self.ldos = self.dos[:, l, spin]
+        self.ldos = self.ldos_all[:, l, spin]
         return self.ldos
 
+    ####################################################
+    # INTLDOS(NEDOS,L,SPIN)
+    def get_intldos(self, l=0, spin=0):
+
+        if isinstance(l, str):
+            if l == 's' and self.lmax >= 0:
+                l = 0
+            if l == 'p' and self.lmax >= 1:
+                l = 1
+            if l == 'd' and self.lmax >= 2:
+                l = 2
+            if l == 'f' and self.lmax >= 3:
+                l = 3
+
+        if isinstance(spin, str):
+            if spin == 'nonmag':
+                spin = 0
+            if spin == 'non':
+                spin = 0
+            if spin == 'up':
+                spin = 0
+            if spin == 'dn':
+                spin = 1
+            if spin == 'down':
+                spin = 1
+
+        self.intldos = self.intldos_all[:, l, spin]
+        return self.intldos
+
+    ####################################################
+    # TDOS(NEDOS,SPIN)
+    def get_tdos(self, spin=0):
+        return self.tdos_all[:, spin]
+
+    ####################################################
+    # INTTDOS(NEDOS,SPIN)
+    def get_inttdos(self, spin=0):
+        return self.inttdos_all[:, spin]
+
+    ####################################################
     def get_eng(self):
         return self.eng
 

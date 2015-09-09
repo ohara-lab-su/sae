@@ -8,6 +8,7 @@
 #   拙作シェルスクリプト版 vplo_PDOS* ほぼすべての
 #   機能を有するまとめプログラム(オプションで制御)
 #
+#   atom は 1 番から(内部的には0番からなので内部的に変換する)
 #
 ################################################################################
 #
@@ -82,6 +83,7 @@ def options():
     parser.add_option(  '--emax', dest='EMAX',)
     parser.add_option(  '--emin', dest='EMIN',)
     parser.add_option(  '--ymax', dest='YMAX',)
+    #  atom は 1 番から(内部的には0番からなので内部的に変換する)
     parser.add_option(  '--atom', dest='ATOM',)
     options,  args = parser.parse_args()
 

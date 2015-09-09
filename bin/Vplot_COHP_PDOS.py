@@ -8,6 +8,8 @@
 #   Vplot_PDOS.py とほぼ同等
 #     DOSCAR の代わりに DOSCAR.lobster を読み込む
 #
+#   atom は 1 番から(内部的には0番からなので内部的に変換する)
+#
 ################################################################################
 #
 # 2015.09.07
@@ -90,7 +92,8 @@ def options():
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
-    parser.add_option('--atom', dest='ATOM',)
+    #  atom は 1 番から(内部的には0番からなので内部的に変換する)
+    parser.add_option('-a', '--atom', dest='ATOM',)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
@@ -326,21 +329,30 @@ if __name__ == '__main__':
                 leg = plt.legend(fontsize=9)   # 凡例Box
                 leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
-
     ############################################################################
-
 
 #   plt.xlim([-10,10])
 #   plt.ylim([0,200])
 
-    if LANDSCAPE_FLAG:
-        plt.savefig("COHP_PDOS"+str(atom+1)+".eps")
-        plt.savefig("COHP_PDOS"+str(atom+1)+".pdf")
-        plt.savefig("COHP_PDOS"+str(atom+1)+".png")
+    if HEX_FLAG:
+        foot = 'hex'
+    elif CUBIC_FLAG:
+        foot = 'cubic'
+    elif SPD_FLAG:
+        foot = 'spd'
+    elif SP_FLAG:
+        foot = 'sp'
     else:
-        plt.savefig("COPHP_PDOS"+str(atom+1)+".eps",orientation = 'portrait')
-        plt.savefig("COPHP_PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
-        plt.savefig("COPHP_PDOS"+str(atom+1)+".png",orientation = 'portrait')
+        foot = ''
+
+    if LANDSCAPE_FLAG:
+        plt.savefig("COHP_PDOS"+str(atom+1)+"_"+foot+".eps")
+        plt.savefig("COHP_PDOS"+str(atom+1)+"_"+foot+".pdf")
+        plt.savefig("COHP_PDOS"+str(atom+1)+"_"+foot+".png")
+    else:
+        plt.savefig("COPHP_PDOS"+str(atom+1)+"_"+foot+".eps", orientation = 'portrait')
+        plt.savefig("COPHP_PDOS"+str(atom+1)+"_"+foot+".pdf", orientation = 'portrait')
+        plt.savefig("COPHP_PDOS"+str(atom+1)+"_"+foot+".png", orientation = 'portrait')
 
     if not NO_WINDOW_FLAG:
         plt.show()

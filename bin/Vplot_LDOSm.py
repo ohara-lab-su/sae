@@ -7,6 +7,8 @@
 #
 #  Wplot_LDOSm.py (2015.04.22とほぼ同等になるように作成)
 #
+#   atom は 1 番から(内部的には0番からなので内部的に変換する)
+#
 ##########################################################################
 #
 # 2015.04.22
@@ -52,6 +54,7 @@ def options():
     parser = optparse.OptionParser()
     parser.add_option('-d', '--doscar', dest='DOSCAR', default=dname,)
     parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
+    # atom は 1 番から(内部的には0番からなので内部的に変換する)
     parser.add_option('-a', '--atom', )
     parser.add_option('--up', action='store_true', default=False,)
     parser.add_option('--down', action='store_true', default=False,)
@@ -184,9 +187,9 @@ if __name__ == '__main__':
         xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20)
         yl = plt.ylabel("DOS/eV", fontsize=20)
         plt.ylim(ymin=0)
-        if OPT_EMAX: plt.xlim(xmax=int(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=int(OPT_EMIN))
-        if OPT_YMAX: plt.ylim(ymax=int(OPT_YMAX))
+        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+        if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
         orgy = orgy + ysize + off
 
@@ -209,9 +212,9 @@ if __name__ == '__main__':
             plt.xticks([])
             plt.ylabel("")
             plt.ylim(ymin=0)
-            if OPT_EMAX: plt.xlim(xmax=int(OPT_EMAX))
-            if OPT_EMIN: plt.xlim(xmin=int(OPT_EMIN))
-            if OPT_YMAX: plt.ylim(ymax=int(OPT_YMAX))
+            if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+            if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+            if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
             orgy = orgy + ysize + off
             j += 1

@@ -9,6 +9,8 @@
 #  2) 指定したCOHP描画のペア原子が二つ以上の時は LDOS モードは OFF
 #      かわりに COHP をペアごとに分割表示モードに
 #
+#      par は 1 番から (0番はAverage)
+#
 ##########################################################################
 #
 # 2015.09.01
@@ -66,6 +68,7 @@ def options():
     parser.add_argument('--spin', action='store_true', default=False)
     parser.add_argument('--sp', action='store_true', default=False)
     parser.add_argument('--spd', action='store_true', default=True)
+    #  par は 1 番から (0番はAverage)
     parser.add_argument('-p', '--pair', nargs='*')
 #   options,  args = parser.parse_args()
     options = parser.parse_args()
@@ -348,20 +351,26 @@ if __name__ == '__main__':
 
 
     ##########################################################################
+    if OPT_SPD:
+        foot = 'spd'
+    elif OPT_SP:
+        foot = 'sp'
+    else:
+        foot = ''
 
     if OPT_PAIR:
         if len(OPT_PAIR) > 1:
-            plt.savefig("COHP_pair.eps")
-            plt.savefig("COHP_pair.pdf")
-            plt.savefig("COHP_pair.png")
+            plt.savefig("COHP_pair"+"_"+foot+".eps")
+            plt.savefig("COHP_pair"+"_"+foot+".pdf")
+            plt.savefig("COHP_pair"+"_"+foot+".png")
         else:
-            plt.savefig("COHP_p"+str(OPT_PAIR[0])+".eps")
-            plt.savefig("COHP_p"+str(OPT_PAIR[0])+".pdf")
-            plt.savefig("COHP_p"+str(OPT_PAIR[0])+".png")
+            plt.savefig("COHP_p"+str(OPT_PAIR[0])+"_"+foot+".eps")
+            plt.savefig("COHP_p"+str(OPT_PAIR[0])+"_"+foot+".pdf")
+            plt.savefig("COHP_p"+str(OPT_PAIR[0])+"_"+foot+".png")
     else:
-        plt.savefig("COHP.eps")
-        plt.savefig("COHP.pdf")
-        plt.savefig("COHP.png")
+        plt.savefig("COHP"+"_"+foot+".eps")
+        plt.savefig("COHP"+"_"+foot+".pdf")
+        plt.savefig("COHP"+"_"+foot+".png")
 
     if not NO_WINDOW_FLAG:
         plt.show()
