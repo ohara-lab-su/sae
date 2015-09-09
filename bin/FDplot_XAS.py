@@ -125,11 +125,12 @@ def options():
 #   parser = optparse.OptionParser()
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--inp', '--inpname', dest='INPUT',)
-    parser.add_argument('-c', '--conv', '--convolution',dest='conv')
-    parser.add_argument('-t', '--txt', '--textname',dest='txt')
+    parser.add_argument('-c', '--conv', '--convolution', dest='convname')
+    parser.add_argument('-t', '--txt', '--textname',dest='txtname')
     parser.add_argument('-f', '--filout', '--filoutname', dest='filout')
     parser.add_argument('--filbav', '--bavname', dest='bavname')
     parser.add_argument('-s', '--sd', '--sdname', dest='sdname')
+    parser.add_argument('--name',)
     parser.add_argument('--emax',)
     parser.add_argument('--emin',)
     parser.add_argument('--ymax',)
@@ -151,9 +152,14 @@ def options():
     if options.INPUT: inpname = options.INPUT
     if not os.path.exists(inpname): inpname = 'conv.inp'
 
+    if options.name:
+        options.convname = options.name
+        options.txtname = options.name
+        options.sdname = options.name
+
     return [inpname,
-            options.conv, options.txt, options.filout, options.bavname,
-            options.sdname,
+            options.convname, options.txtname, options.filout, options.bavname,
+            options.sdname, options.name,
             options.emax, options.emin, options.ymax, options.dmax,
             options.spin,
             options.fermi, options.nonsubtract,
@@ -164,7 +170,7 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
 
-    inpname, convolname, textname, filoutname, bavname, sdname,\
+    inpname, convolname, textname, filoutname, bavname, sdname, allname,\
         OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
         FLAG_SPIN,\
         FLAG_fermi, FLAG_subt,\
@@ -198,6 +204,11 @@ if __name__ == '__main__':
 
     if AV:
         print ""
+
+    if allname:
+        convolname = allname
+        textname = allname
+        sdname = allname
 
     ##########################################################################
     # txt

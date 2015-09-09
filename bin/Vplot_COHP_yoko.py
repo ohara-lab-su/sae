@@ -349,9 +349,19 @@ if __name__ == '__main__':
 
     ##########################################################################
 
-    plt.savefig("COHP.eps")
-    plt.savefig("COHP.pdf")
-    plt.savefig("COHP.png")
+    if OPT_PAIR:
+        if len(OPT_PAIR) > 1:
+            plt.savefig("COHP_pair.eps")
+            plt.savefig("COHP_pair.pdf")
+            plt.savefig("COHP_pair.png")
+        else:
+            plt.savefig("COHP_p"+str(OPT_PAIR[0])+".eps")
+            plt.savefig("COHP_p"+str(OPT_PAIR[0])+".pdf")
+            plt.savefig("COHP_p"+str(OPT_PAIR[0])+".png")
+    else:
+        plt.savefig("COHP.eps")
+        plt.savefig("COHP.pdf")
+        plt.savefig("COHP.png")
 
     if not NO_WINDOW_FLAG:
         plt.show()

@@ -9,6 +9,12 @@
 ###############################################################################
 #
 # 2015.09.08
+#   DOS の最大レンジ自動取得
+#
+# 2015.09.08
+#   非平均化もーどで DOS の Weight の計算が出来るようにした
+#
+# 2015.09.08
 #  sd 平均化情報の出力（ファイル出力）を修正
 #  それにあせて sd ファイルのヘッダー出力なども追加
 #
@@ -56,7 +62,7 @@ import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ###############################################################################
@@ -79,18 +85,56 @@ class ReadFdmSd(object):
         # 複数の sd ファイルを読んで平均化する
         # sum
         if absorber is None:
+
             print "---- ReadFdmSd ----"
             print "sdname + suffix = ", sdname + suffix
 #           print "bavname_bav.txt = ",bavname+'_bav.txt'
             print "inpname         = ", inpname
             print "-------------------"
-            self.datlines, self.num = SAE.read_dataline(sdname + suffix)
+            self.datlines, self.num = SAEnv.read_dataline(sdname + suffix)
             self.header =  self.datlines[0]
+
+            # weight で各要素を割る
+            if weight is not None:
+
+                print "--- ReadFdmSd ------"
+                print "--- weight mode ----"
+                print " weight =", weight
+
+                sdname0 = sdname + suffix
+                row, num = SAEnv.read_row(sdname0, column=1)
+
+                numdata = np.zeros((num, row))
+
+                for j in range(1,num): # 一行目は除く
+                    for r in range(1,row): # Energy は除く
+                        numdata[j,r] = \
+                              float(self.datlines[j].split()[r])/float(weight)
+
+                # Energy 行追加
+                for i in range(1,num):
+                    numdata[i,0] = float(self.datlines[i].split()[0])
+
+                # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
+                listdata = list(numdata)
+                self.datlines = []
+                self.datlines.append('')  # dummy '1st-line'
+                for i in range(1, num):
+                    self.datlines.append(''.
+                            join(str(listdata[i])).
+                            replace('\n', '').
+                            replace('[', '').
+                            replace(']', ''))
+
+                # 最後に header を追加
+                self.datlines[0] = self.header
+
         else:
             print "--- ReadFdmSd ------"
             print "--- average mode ---"
             sdname0 = bavname + '_' + str(absorber[0]) + suffix
-            row, num = SAE.read_row(sdname0, column=1)
+            row, num = SAEnv.read_row(sdname0, column=1)
+
             if weight is None:
                 n_site = float(len(absorber))
             else:
@@ -106,7 +150,7 @@ class ReadFdmSd(object):
 
                 sdname = bavname + '_' + str(absorber[i]) + suffix
                 print "sum : ", sdname
-                datatmp, num0 = SAE.read_dataline(sdname)
+                datatmp, num0 = SAEnv.read_dataline(sdname)
 
                 if i == 0:
                     self.header =  datatmp[0]
@@ -148,8 +192,8 @@ class ReadFdmSd(object):
         self.sd = self.datlines
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
-#       bav = SAE.ReadFdmBav(bavname)
-        inp = SAE.ReadFdmInp(inpname)
+#       bav = SAEnv.ReadFdmBav(bavname)
+        inp = SAEnv.ReadFdmInp(inpname)
 
         # get lmax
         # _sd*.txt で実際に出力されている lmax の最大値をゲットする
@@ -226,6 +270,7 @@ class ReadFdmSd(object):
 
         self.emax = max(self.eng)
         self.emin = min(self.eng)
+        self.ymax = 0.0
 
     ####################################################
     # lm の順番は -1,0,1, -2,-1,0,2,,,,,
@@ -332,7 +377,11 @@ class ReadFdmSd(object):
                 l=2
                 m=2
 
-        return self.ylm[:,l,m,spin]
+        self.pdos =  self.ylm[:,l,m,spin]
+        self.ymax = max(self.pdos)
+
+        return self.pdos
+#       return self.ylm[:,l,m,spin]
 
     ####################################################
     # LDOS(NEDOS,L,SPIN)
@@ -371,6 +420,9 @@ class ReadFdmSd(object):
 
     def get_emax(self):
         return self.emax
+
+    def get_ymax(self):
+        return self.ymax
 
     def get_header(self):
         return self.header

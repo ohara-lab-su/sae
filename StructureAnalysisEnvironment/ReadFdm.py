@@ -82,6 +82,8 @@ class ReadFdm(object):
 
         self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
 
+    ###########################################################################
+
     # ヘッダー項目
     def get_eedge(self):
         self.E_edge = self.E_edge if hasattr(self, 'E_edge') else None

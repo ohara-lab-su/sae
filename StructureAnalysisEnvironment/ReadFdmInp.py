@@ -76,11 +76,10 @@ from ase.io.wien2k import *  # suing coorsys
 
 class ReadFdmInp(SAEnv.Method):
 
-    def __init__(self,
-                 cname='POSCAR.inp', suffix='.inp',
+    def __init__(self, inpname, suffix='.inp',
                  sort=True, atoms_index=None):
 
-        self.datlines, self.num = SAEnv.read_dataline(cname)
+        self.datlines, self.num = SAEnv.read_dataline(inpname)
         self.datlines, self.num = SAEnv.del_comment(self.datlines)
 
         magnetism_reg = re.compile('.*Magnetism.*', re.IGNORECASE)

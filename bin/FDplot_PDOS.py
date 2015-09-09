@@ -13,6 +13,15 @@
 #
 ################################################################################
 #
+# 2015.09.08
+#  DOS の最大レンジ自動取得
+#
+# 2015.09.08
+#   DOS のウェイト追加
+#
+# 2015.09.08
+#  conv, txt, sd の同名指定オプション --name を追加
+#
 # 2015.09.07
 #  startup
 #
@@ -50,14 +59,16 @@ def options():
     parser = optparse.OptionParser()
     parser.add_option('-i', '--inp', '--inpname', dest='INPUT')
     parser.add_option('-c', '--conv', '--convname', dest='convname')
-    parser.add_option('-t', '--txt', '--textname', dest='txt')
+    parser.add_option('-t', '--txt', '--textname', dest='txtname')
     parser.add_option('-f', '--filout', '--filoutname', dest='filout')
     parser.add_option('--filbav', '--bavname', dest='bavname')
     parser.add_option('-s', '--sd', '--sdname', dest='sdname')
+    parser.add_option('--name')
     parser.add_option('-a', '--atom')
     parser.add_option('--emax')
     parser.add_option('--emin')
     parser.add_option('--ymax')
+    parser.add_option('--dmax')
     parser.add_option('--label')
     parser.add_option('-o', '--outsuffix')
     parser.add_option('-b', '--broad', action='store_true', default=False)
@@ -65,39 +76,57 @@ def options():
     parser.add_option('--fermi', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
+    parser.add_option('--dosweight',)  # for LDOS
+    parser.add_option('--nw', action='store_true', default=False)
     options,args = parser.parse_args()
 
     if options.INPUT: inpname=options.INPUT
     if len(args) > 0: inpname=args[0]
 
+    if options.name:
+        options.convname = options.name
+        options.txtname = options.name
+        options.sdname = options.name
+
     return [inpname,
-            options.convname, options.txt, options.filout, options.bavname,
-            options.sdname,
+            options.convname, options.txtname, options.filout, options.bavname,
+            options.sdname, options.name,
             options.atom, options.label, options.outsuffix,
-            options.emax, options.emin, options.ymax,
+            options.emax, options.emin, options.ymax, options.dmax,
             options.broad, options.fermi, options.xas,
-            options.sp, options.spd]
+            options.sp, options.spd, options.dosweight, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
-    inpname, convname, txtname, filout, bavname, sdname,\
+    inpname, convname, txtname, filout, bavname, sdname, allname,\
             atom, LABEL, OUTSUFFIX,\
-            OPT_EMAX, OPT_EMIN, OPT_YMAX,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
-            FLAG_SP, FLAG_SPD = options()
+            FLAG_SP, FLAG_SPD, WEDOS, FLAG_NW = options()
 
 
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
     if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
+    if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
     if atom: print "ATOM=", atom
 
     if not atom: atom = 0
 
+    if WEDOS:
+        print "DOS Weight =",WEDOS
+    else:
+        WEDOS = 1.0
+
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
+
+    if allname:
+        convolname = allname
+        textname = allname
+        sdname = allname
 
     ###########################################################################
 
@@ -165,8 +194,10 @@ if __name__ == '__main__':
     conv = SAEnv.ReadFdmConv(convname, suffix_conv)
 #   bav = SAE.ReadFdmBav(bavname)
     txt = SAEnv.ReadFdm(txtname,'.txt')
-    sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
-    sd = SAEnv.ReadFdmSd(sdname, suffix_sd)
+    sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
+#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
+#   sd = SAEnv.ReadFdmSd(sdname, suffix_sd)
+    sd = SAEnv.ReadFdmSd(sdname, suffix_sd,weight=WEDOS)
 
     ispin = inp.ispin
 
@@ -221,6 +252,7 @@ if __name__ == '__main__':
         plt.ticklabel_format(axis='x', useOffset=False)
         plt.axvline(x=EF0, color='black', linewidth=1)
         xmin_XAS, xmax_XAS, ymin_XAS, ymax_XAS = plt.axis()
+        plt.ylim(ymin=0.0)
         if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
         if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
         if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
@@ -230,6 +262,7 @@ if __name__ == '__main__':
             eng_p = txt.eng + eng_off
             plt.plot(eng_p, dos_p, linewidth=1, color=color, label='XAS')
             plt.ylim(ymax=ymax_XAS)
+            plt.ylim(ymin=0.0)
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
             if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
@@ -251,11 +284,15 @@ if __name__ == '__main__':
         plt.axes([orgx, orgy, xsize, ysize])
         lm_list = block_list[blk]
 
+        dmax0 = 0.0
         for orbit in lm_list:
 
-            print "orbit = ",orbit
             dos = sd.get_pdos(lm=orbit,spin=spin)
             eng = sd.get_eng() + eng_off
+
+            dmax = sd.ymax
+            if dmax0 < dmax:
+                dmax0 = dmax
 
             num += 1
             if not LABEL:
@@ -267,8 +304,13 @@ if __name__ == '__main__':
             plt.plot(eng, dos, linewidth=2, color=color, label=label)
             plt.ticklabel_format(axis='x', useOffset=False)
             plt.axvline(x=EF0, color='black', linewidth=1)
+            plt.ylim(ymin=0.00)
+            if not OPT_DMAX: plt.ylim(ymax=float(dmax0))
+            if OPT_DMAX: plt.ylim(ymax=float(OPT_DMAX))
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+            xmin0, xmax0, ymin0, ymax0 = plt.axis()
+            print orbit,": ymax =",dmax0,ymax0
 
             if XTICKS_FLAG and not FLAG_XAS:
 #               plt.xlabel("Energy above Fermi [eV]")
@@ -296,7 +338,8 @@ if __name__ == '__main__':
         plt.savefig("PDOS"+str(atom)+".pdf")
         plt.savefig("PDOS"+str(atom)+".png")
 
-    plt.show()
+    if not FLAG_NW:
+        plt.show()
 
     plt.close('all')
 
