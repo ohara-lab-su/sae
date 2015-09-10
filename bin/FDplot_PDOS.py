@@ -71,12 +71,12 @@ def options():
     parser.add_option('--dmax')
     parser.add_option('--label')
     parser.add_option('-o', '--outsuffix')
+    parser.add_option('--dosweight',)  # for LDOS
     parser.add_option('-b', '--broad', action='store_true', default=False)
     parser.add_option('-x', '--xas', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
-    parser.add_option('--dosweight',)  # for LDOS
     parser.add_option('--nw', action='store_true', default=False)
     options,args = parser.parse_args()
 
@@ -252,6 +252,13 @@ if __name__ == '__main__':
         xas = conv.get_xas()
         engx = conv.get_eng() + eng_off
 
+        # makes xticks
+        plt.ylabel("Absorption [arb. unit]")
+        if not XTICKS_FLAG:
+            plt.xlabel(label_fermi)
+            XTICKS_FLAG = True
+
+        # makes label & color
         label = 'XAS (with broadening)'
         color = cm.prism((num+1)*10)
 
@@ -260,9 +267,6 @@ if __name__ == '__main__':
         plt.axvline(x=EF0, color='black', linewidth=1)
         xmin_XAS, xmax_XAS, ymin_XAS, ymax_XAS = plt.axis()
         plt.ylim(ymin=0.0)
-        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
-        if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
         if FLAG_BROAD:
             dos_p = txt.xas
@@ -270,18 +274,13 @@ if __name__ == '__main__':
             plt.plot(eng_p, dos_p, linewidth=1, color=color, label='XAS')
             plt.ylim(ymax=ymax_XAS)
             plt.ylim(ymin=0.0)
-            if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-            if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
-            if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
+
+        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+        if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
-
-        # label & xticks
-        plt.ylabel("Absorption [arb. unit]")
-        if not XTICKS_FLAG:
-            plt.xlabel(label_fermi)
-            XTICKS_FLAG = True
 
         orgy = orgy + ysize + off
 
@@ -302,6 +301,12 @@ if __name__ == '__main__':
             if dmax0 < dmax:
                 dmax0 = dmax
 
+            # makes xticks
+            if not XTICKS_FLAG:
+                plt.xlabel(label_fermi)
+                XTICKS_FLAG  = True
+
+            # makes label & color
             num += 1
             if not LABEL:
                 label = str(atom)+'-'+orbit
@@ -313,16 +318,13 @@ if __name__ == '__main__':
             plt.ticklabel_format(axis='x', useOffset=False)
             plt.axvline(x=EF0, color='black', linewidth=1)
             plt.ylim(ymin=0.00)
+
             if not OPT_DMAX: plt.ylim(ymax=float(dmax0))
             if OPT_DMAX: plt.ylim(ymax=float(OPT_DMAX))
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
             xmin0, xmax0, ymin0, ymax0 = plt.axis()
             print orbit,": ymax =",dmax0,ymax0
-
-            if XTICKS_FLAG and not FLAG_XAS:
-                plt.xlabel(label_fermi)
-                XTICKS_FLAG  = False
 
             leg = plt.legend(loc='upper right')
             leg.get_frame().set_alpha(0.5)
@@ -334,7 +336,7 @@ if __name__ == '__main__':
         orgy = orgy + ysize + off
 
 
-#   plt.ylabel("Absorption [arb. unit]")
+    ###############################################################
 
     if FLAG_FERMI:
         fermi = '_fermi'

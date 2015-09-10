@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.09.10
+#  多数のオプション装備
+#
 # 2015.09.07
 #  startup
 #   スピン非対応
@@ -55,7 +58,7 @@ def options():
     # atom におけるl成分をすべて足す(total)
     parser.add_option('-t','--total', action='store_true', default=False)
     # total の積分
-    parser.add_option('--inttotal', action='store_true', default=False)
+    parser.add_option('--intdos', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
     options,args = parser.parse_args()
 
@@ -66,7 +69,7 @@ def options():
             options.atom,  options.label,
             options.emax, options.emin,
             options.broad, options.fermi, options.xas,
-            options.total, options.inttotal]
+            options.total, options.intdos]
 
 ################################################################################
 if __name__ == '__main__':
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     inpname, filout, atom, LABEL,\
             OPT_EMAX, OPT_EMIN,\
             FLAG_BROAD, \
-            FLAG_FERMI, FLAG_XAS, FLAG_TOTAL, FLAG_INTTOTAL = options()
+            FLAG_FERMI, FLAG_XAS, FLAG_TOTAL, FLAG_INTDOS = options()
 
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
@@ -87,19 +90,18 @@ if __name__ == '__main__':
     suffix_conv = '_conv.txt'
 
     ###########################################################################
-    ###########################################################################
 
     plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
-    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    plt.rcParams['font.size']       = 15  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 13  # レジェンドのフォントサイズ
     plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
 
     orgx = 0.170
     orgy = 0.080
-    off = 0.010
-    xsize = 0.75
+    off = 0.015
+    xsize = 0.72
     ysize0 = 0.83
 
     ###########################################################################
@@ -174,25 +176,28 @@ if __name__ == '__main__':
     num = 0
     XTICKS_FLAG = False
     if FLAG_XAS:
+
         plt.axes([orgx, orgy, xsize, ysize])
 
         xas = conv.get_xas()
         engx = conv.get_eng() + eng_off
 
+        # makes label & color
         label = 'XAS (with broadening)'
         color = cm.prism((num+1)*10)
 
         plt.plot(engx, xas, linewidth=2, color='black', label=label)
         plt.axvline(x=EF0, color='black', linewidth=1)
         xmin_XAS, xmax_XAS, ymin_XAS, ymax_XAS = plt.axis()
-        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
 
         if FLAG_BROAD:
             dos_p = txt.xas
             eng_p = txt.eng + eng_off
             plt.plot(eng_p, dos_p, linewidth=1, color=color, label='XAS')
             plt.ylim(ymax=ymax_XAS)
+
+        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
 
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
@@ -205,28 +210,40 @@ if __name__ == '__main__':
 
         orgy = orgy + ysize + off
 
-    ######################################### plot TDOS / atom
+    ######################################### plot Total DOS / atom
     #
     eng = sd.get_eng() + eng_off
     if FLAG_TOTAL:
+
         plt.axes([orgx, orgy, xsize, ysize])
 
         tdos = sd.get_tdos(spin=spin)
 
-        num += 1
-        color = cm.prism((num+1)*10)
+        if FLAG_INTDOS:
+            inttdos = sd.get_inttdos(spin=spin)
 
-        plt.plot(eng, tdos, linewidth=2, color=color, label='total')
-        plt.axvline(x=EF0, color='black', linewidth=1)
-        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
-
-        # label & xticks
+        # makes  xticks
+        plt.ylabel("TDOS [state/eV]")
         if not XTICKS_FLAG:
             plt.xlabel(label_fermi)
             XTICKS_FLAG = True
         else:
             plt.xticks([])
+
+        # makes color
+        num += 1
+        color = cm.prism((num+1)*10)
+
+        plt.plot(eng, tdos, linewidth=2, color=color, label='total')
+        plt.axvline(x=EF0, color='black', linewidth=1)
+
+        if FLAG_INTDOS:
+            ay = plt.twinx()
+            ay.plot(eng, inttdos, linewidth=2, color='black', label='INTtotal')
+            yl = plt.ylabel("INTTDOS [n]")
+
+        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
 
         orgy = orgy + ysize + off
 
@@ -234,10 +251,23 @@ if __name__ == '__main__':
     #
     orb = 0
     for orbit in orbit_list:
+
         plt.axes([orgx, orgy, xsize, ysize])
 
-        dos = sd.get_ldos(l=orbit, spin=spin)
+        ldos = sd.get_ldos(l=orbit, spin=spin)
 
+        if FLAG_INTDOS:
+            intldos = sd.get_intldos(l=orbit, spin=spin)
+
+        # makes xticks
+        if orb == 0: plt.ylabel("LDOS [state/eV]")
+        if not XTICKS_FLAG:
+            plt.xlabel(label_fermi)
+            XTICKS_FLAG = True
+        else:
+            plt.xticks([])
+
+        # makes label & color
         num += 1
         if LABEL:
             label = LABEL+'-'+orbit
@@ -245,18 +275,16 @@ if __name__ == '__main__':
             label = str(atom)+'-'+orbit
         color = cm.prism((num+1)*10)
 
-        plt.plot(eng, dos, linewidth=2, color=color, label=label)
+        plt.plot(eng, ldos, linewidth=2, color=color, label=label)
         plt.axvline(x=EF0, color='black', linewidth=1)
+
+        if FLAG_INTDOS:
+            ay = plt.twinx()
+            ay.plot(eng, intldos, linewidth=2, color='black', label='INT'+label)
+            if orb == 0: yl = plt.ylabel("INTTDOS [n]")
+
         if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
         if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
-
-        # label & xticks
-        if orb == 0: plt.ylabel("DOS [state/eV]")
-        if not XTICKS_FLAG:
-            plt.xlabel(label_fermi)
-            XTICKS_FLAG = True
-        else:
-            plt.xticks([])
 
         leg = plt.legend(loc='upper right')
         leg.get_frame().set_alpha(0.5)
