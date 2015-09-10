@@ -48,46 +48,97 @@ def options():
 
     parser = optparse.OptionParser()
     parser.add_option('-i','--inpname', dest='INPUT',)
-    parser.add_option('-f','--filout')
+    parser.add_option('-f','--filout', '--filoutname', dest='filoutname')
+    parser.add_option('-c', '--conv', '--convname', dest='convname')
+    parser.add_option('-t', '--txt', '--txtname', dest='txtname')
+    parser.add_option('-s', '--sd', '--sdname', dest='sdname')
+    parser.add_option('--filbav', '--bavname', dest='bavname')
+    parser.add_option('--name')
     parser.add_option('-a','--atom',)
     parser.add_option('--emax')
     parser.add_option('--emin')
+    parser.add_option('--ymax')  # XAS の ymax
+    parser.add_option('--dmax')  # DOS の ymax共通
     parser.add_option('--label')
+    parser.add_option('--outsuffix')
+    parser.add_option('--weight')     # for XAS weight
+    parser.add_option('--dosweight')  # for LDOS
     parser.add_option('-b', '--broad', action='store_true', default=False)
-    parser.add_option('-x', '--xas', action='store_true', default=False)
-    # atom におけるl成分をすべて足す(total)
-    parser.add_option('-t','--total', action='store_true', default=False)
-    # total の積分
+    parser.add_option('--xas', action='store_true', default=False)
+    parser.add_option('--total', action='store_true', default=False)
     parser.add_option('--intdos', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
+    parser.add_option('--sp', action='store_true', default=False)
+    parser.add_option('--spd', action='store_true', default=False)
+    parser.add_option('--up', action='store_true', default=False)
+    parser.add_option('--dn', '--down', action='store_true', default=False, dest='dn')
+    parser.add_option('--spin', action='store_true', default=False)
+    parser.add_option('--nw', action='store_true', default=False)
     options,args = parser.parse_args()
 
     if options.INPUT: inpname = options.INPUT
     if len(args) > 0: inpname = args[0]
 
-    return [inpname, options.filout,
+    if options.name:
+        options.convname = options.name
+        options.txtname = options.name
+        options.sdname = options.name
+
+    return [inpname,
+            options.convname, options.txtname,
+            options.filoutname, options.bavname,
+            options.sdname, options.name,
             options.atom,  options.label,
-            options.emax, options.emin,
+            options.outsuffix,
+            options.emax, options.emin, options.ymax, options.dmax,
             options.broad, options.fermi, options.xas,
-            options.total, options.intdos]
+            options.up, options.dn, options.spin,
+            options.sp, options.spd, options.dosweight, options.weight,
+            options.total, options.intdos, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
-    inpname, filout, atom, LABEL,\
-            OPT_EMAX, OPT_EMIN,\
-            FLAG_BROAD, \
-            FLAG_FERMI, FLAG_XAS, FLAG_TOTAL, FLAG_INTDOS = options()
+    inpname, convname, txtname, filout, bavname, sdname, allname,\
+            atom, LABEL, OUTSUFFIX,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
+            FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
+            FLAG_UP, FLAG_DN, FLAG_SPIN,\
+            FLAG_SP, FLAG_SPD, WEDOS, WE,\
+            FLAG_TOTAL, FLAG_INTDOS, FLAG_NW = options()
 
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
+    if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
+    if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
 
     if not atom: atom = 0
     spin = 0
+    if FLAG_UP:
+        nspin = 1
+        spin = 0
+        spin_list = [0]
+    if FLAG_DN:
+        nspin = 1
+        spin = 1
+        spin_list = [1]
+    if FLAG_SPIN:
+        nspin = 2
+        spin_list = [0,1]
+
+    if WEDOS:
+        print "DOS Weight =",WEDOS
+    else:
+        WEDOS = None
 
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
+
+    if allname:
+        convolname = allname
+        txtname = allname
+        sdname = allname
 
     ###########################################################################
 
@@ -106,13 +157,51 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    orbit_list = ['s','p','d']
+    inp = SAEnv.ReadFdmInp(inpname)
 
+    if not filout: filout = inp.filout
+    if convname is None: convname = filout
+    if txtname is None: txtname = filout
+    if bavname is None: bavname = filout
+    if sdname is None: sdname = filout
+
+    print ""
+    print "inpname    (.inp)                  =", inpname
+    print "filoutname                         =", filout
+    print "txtname    (original XAS and Eferm)=", txtname
+    print "convname   (convolution file)      =", convname
+    print "bavname    (log file)              =", bavname
+    print ""
+
+#   bav = SAE.ReadFdmBav(name0)
+    txt = SAEnv.ReadFdm(txtname,'.txt')
+    conv = SAEnv.ReadFdmConv(convname, suffix_conv)
+#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
+    sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
+
+    ispin = inp.ispin
+
+    ###########################################################################
+
+    # 選択した atom の最大の lmax を取得して表示する軌道をチョイス
+    lmax = sd.lmax
+
+    if lmax == 0:
+        orbit_list = ['s']
+    elif lmax == 1:
+        orbit_list = ['s','p']
+    elif lmax == 2:
+        orbit_list = ['s','p','d']
+    else:
+        orbit_list = ['s','p','d']
+
+    # オービタルの数にあわせた多段組の調整
     if FLAG_TOTAL:
         norbit = len(orbit_list)+1
     else:
         norbit = len(orbit_list)
 
+    # XANES プロットを追加するときはさらに調整
     if FLAG_XAS:
         ysize = ysize0/(norbit+1)
     else:
@@ -120,28 +209,13 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    inp = SAEnv.ReadFdmInp(inpname)
-    if not filout: filout = inp.filout
-
-#   bav = SAE.ReadFdmBav(name0)
-    txt = SAEnv.ReadFdm(filout,'.txt')
-    conv = SAEnv.ReadFdmConv(filout, suffix_conv)
-    sd0 = SAEnv.ReadFdmSd(filout, '_sd0.txt')
-    sd = SAEnv.ReadFdmSd(filout, suffix_sd)
-
-    ispin = inp.ispin
-
     if not OPT_EMAX:
         emax = sd.emax
-        emax0 = sd0.emax
-        if emax0 > emax: emax = emax0
-        print "EMAX = ",emax
+        print "EMAX = ", emax
 
     if not OPT_EMIN:
         emin = sd.emin
-        emin0 = sd0.emin
-        if emin0 < emin: emin = emin0
-        print "EMIN = ",emin
+        print "EMIN = ", emin
 
     ################################################ convert Energy
     # PhotoEnegy モードで計算した時と同じ結果を返す

@@ -486,6 +486,10 @@ class ReadFdmSd(object):
     def get_sd(self):
         return self.sd
 
+    # 読み込んだ sd ファイルに基づいて lmax を抽出
+    def get_lmax(self):
+        return self.lmax
+
 ###############################################################################
 def options():
 

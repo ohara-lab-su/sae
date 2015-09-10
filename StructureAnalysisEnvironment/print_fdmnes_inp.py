@@ -117,6 +117,8 @@ def print_fdmnes_inp0(outname='read_pdb.inp',atoms=None,MOL=False):
     print >> out, ""
     print >> out, " Convolution"
     print >> out, ""
+    print >> out, "!Nonexc"
+    print >> out, ""
     print >> out, " End"
     print >> out, ""
 

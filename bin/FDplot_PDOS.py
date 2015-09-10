@@ -58,25 +58,31 @@ def options():
 
     parser = optparse.OptionParser()
     parser.add_option('-i', '--inp', '--inpname', dest='INPUT')
+    parser.add_option('-f', '--filout', '--filoutname', dest='filoutname')
     parser.add_option('-c', '--conv', '--convname', dest='convname')
-    parser.add_option('-t', '--txt', '--textname', dest='txtname')
-    parser.add_option('-f', '--filout', '--filoutname', dest='filout')
-    parser.add_option('--filbav', '--bavname', dest='bavname')
+    parser.add_option('-t', '--txt', '--txtname', dest='txtname')
     parser.add_option('-s', '--sd', '--sdname', dest='sdname')
+    parser.add_option('--filbav', '--bavname', dest='bavname')
     parser.add_option('--name')
     parser.add_option('-a', '--atom')
     parser.add_option('--emax')
     parser.add_option('--emin')
-    parser.add_option('--ymax')
-    parser.add_option('--dmax')
+    parser.add_option('--ymax')  # XAS の ymax
+    parser.add_option('--dmax')  # DOS の ymax共通
     parser.add_option('--label')
-    parser.add_option('-o', '--outsuffix')
-    parser.add_option('--dosweight',)  # for LDOS
+    parser.add_option('--outsuffix')
+    parser.add_option('--weight')
+    parser.add_option('--dosweight')  # for LDOS
     parser.add_option('-b', '--broad', action='store_true', default=False)
     parser.add_option('-x', '--xas', action='store_true', default=False)
+    parser.add_option('--total', action='store_true', default=False)
+    parser.add_option('--intdos', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
+    parser.add_option('--up', action='store_true', default=False)
+    parser.add_option('--dn', '--down', action='store_true', default=False, dest='dn')
+    parser.add_option('--spin', action='store_true', default=False)
     parser.add_option('--nw', action='store_true', default=False)
     options,args = parser.parse_args()
 
@@ -89,13 +95,16 @@ def options():
         options.sdname = options.name
 
     return [inpname,
-            options.convname, options.txtname, options.filout, options.bavname,
+            options.convname, options.txtname,
+            options.filoutname, options.bavname,
             options.sdname, options.name,
             options.atom, options.label,
             options.outsuffix,
             options.emax, options.emin, options.ymax, options.dmax,
             options.broad, options.fermi, options.xas,
-            options.sp, options.spd, options.dosweight, options.nw]
+            options.up, options.dn, options.spin,
+            options.sp, options.spd, options.dosweight, options.weight,
+            options.total, options.intdos, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
@@ -104,7 +113,9 @@ if __name__ == '__main__':
             atom, LABEL, OUTSUFFIX,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
-            FLAG_SP, FLAG_SPD, WEDOS, FLAG_NW = options()
+            FLAG_UP, FLAG_DN, FLAG_SPIN,\
+            FLAG_SP, FLAG_SPD, WEDOS, WE,\
+            FLAG_TOTAL, FLAG_INTDOS, FLAG_NW = options()
 
 
     if FLAG_BROAD: FLAG_XAS = True
@@ -115,18 +126,30 @@ if __name__ == '__main__':
     if atom: print "ATOM=", atom
 
     if not atom: atom = 0
+    spin = 0
+    if FLAG_UP:
+        nspin = 1
+        spin = 0
+        spin_list = [0]
+    if FLAG_DN:
+        nspin = 1
+        spin = 1
+        spin_list = [1]
+    if FLAG_SPIN:
+        nspin = 2
+        spin_list = [0,1]
 
     if WEDOS:
         print "DOS Weight =",WEDOS
     else:
-        WEDOS = 1.0
+        WEDOS = None
 
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
 
     if allname:
         convolname = allname
-        textname = allname
+        txtname = allname
         sdname = allname
 
     ###########################################################################
@@ -158,22 +181,6 @@ if __name__ == '__main__':
     list4_3=['p_y','p_x']
     list4 = [list4_1, list4_2, list4_3]
 
-    if FLAG_SPD:
-        print "ORBITAL MODE: Default Orbitals"
-        block_list = list1
-    elif FLAG_SP:
-        print "ORBITAL MODE: s-orbital and p-orbital"
-        block_list = list4
-    else:
-        print "ORBITAL MODE: Default Orbitals"
-        block_list = list1
-
-    nblock = len(block_list)
-    if FLAG_XAS:
-        ysize = ysize0/(nblock+1)
-    else:
-        ysize = ysize0/(nblock)
-
     ###########################################################################
 
     inp = SAEnv.ReadFdmInp(inpname)
@@ -185,33 +192,53 @@ if __name__ == '__main__':
     if sdname is None: sdname = filout
 
     print ""
-    print "inpname (.inp)                     =", inpname
+    print "inpname    (.inp)                  =", inpname
     print "filoutname                         =", filout
-    print "txtname  (original XAS and Eferm)  =", txtname
-    print "convname (convolution file)        =", convname
-    print "bavname (log file)                 =", bavname
+    print "txtname    (original XAS and Eferm)=", txtname
+    print "convname   (convolution file)      =", convname
+    print "bavname    (log file)              =", bavname
     print ""
 
-    conv = SAEnv.ReadFdmConv(convname, suffix_conv)
 #   bav = SAE.ReadFdmBav(bavname)
     txt = SAEnv.ReadFdm(txtname,'.txt')
-    sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
-#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
-#   sd = SAEnv.ReadFdmSd(sdname, suffix_sd)
-    sd = SAEnv.ReadFdmSd(sdname, suffix_sd,weight=WEDOS)
+    conv = SAEnv.ReadFdmConv(convname, suffix_conv)
+#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
+    sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
 
+    ###########################################################################
+
+    # 選択した atom の最大の lmax を取得
+    lmax = sd.lmax
+
+    if FLAG_SPD and lmax >= 2:
+        print "ORBITAL MODE: Default Orbitals"
+        block_list = list1
+    elif FLAG_SP and lmax >= 1:
+        print "ORBITAL MODE: s-orbital and p-orbital"
+        block_list = list4
+    elif lmax == 1:
+        print "ORBITAL MODE: s-orbital and p-orbital"
+        block_list = list4
+    elif lmax >= 2:
+        print "ORBITAL MODE: Default Orbitals"
+        block_list = list1
+
+    nblock = len(block_list)
+    if FLAG_XAS:
+        ysize = ysize0/(nblock+1)
+    else:
+        ysize = ysize0/(nblock)
+
+    ###########################################################################
+
     if OPT_EMAX is None:
         emax = sd.emax
-        emax0 = sd0.emax
-        if emax0 > emax: emax = emax0
         print "EMAX = ",emax
 
     if OPT_EMIN is None:
         emin = sd.emin
-        emin0 = sd0.emin
-        if emin0 < emin: emin = emin0
         print "EMIN = ",emin
 
     ############################################ convert Energy (set eng_off)
