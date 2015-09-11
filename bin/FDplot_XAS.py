@@ -135,15 +135,17 @@ def options():
     parser.add_argument('--emin',)
     parser.add_argument('--ymax',)
     parser.add_argument('--dmax',)
-    parser.add_argument('--spin', action='store_true', default=False,)
     parser.add_argument('--fermi', action='store_true', default=False,)
     parser.add_argument('-n', '--nonsubtract', action='store_true', default=False,)
     parser.add_argument('-b', '--broad', action='store_true', default=False,)
     parser.add_argument('-d', '--dos', action='store_true', default=False,)
     parser.add_argument('-o', '--obs', action='store_true', default=False,)
     parser.add_argument('-a', '--absorber', nargs='*')
-    parser.add_argument('-w', '--weight',)  # for XAS
-    parser.add_argument('-x', '--dosweight',)  # for LDOS
+    parser.add_argument('-w', '--weight')  # for XAS
+    parser.add_argument('-x', '--dosweight')  # for LDOS
+    parser.add_argument('--up', action='store_true', default=False)
+    parser.add_argument('--dn', '--down', action='store_true', default=False, dest='dn')
+    parser.add_argument('--spin', action='store_true', default=False)
     parser.add_argument('--nw', action='store_true', default=False)
 #   options, args = parser.parse_args()
     options = parser.parse_args()
@@ -160,10 +162,10 @@ def options():
             options.convname, options.txtname, options.filout, options.bavname,
             options.sdname, options.name,
             options.emax, options.emin, options.ymax, options.dmax,
-            options.spin,
             options.fermi, options.nonsubtract,
             options.broad, options.dos, options.obs,
             options.absorber, options.weight, options.dosweight,
+            options.up, options.dn, options.spin,
             options.nw]
 
 ###############################################################################
@@ -171,9 +173,9 @@ if __name__ == '__main__':
 
     inpname, convolname, textname, filoutname, bavname, sdname, allname,\
         OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
-        FLAG_SPIN,\
         FLAG_fermi, FLAG_subt,\
-        FLAG_B, FLAG_DOS, FLAG_OBS, AV, WE, WEDOS, FLAG_NW = options()
+        FLAG_B, FLAG_DOS, FLAG_OBS, AV, WE, WEDOS,\
+        FLAG_UP, FLAG_DN, FLAG_SPIN, FLAG_NW = options()
 
     ##########################################################################
     # inpname

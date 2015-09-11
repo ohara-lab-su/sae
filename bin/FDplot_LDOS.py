@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2015.09.11
+#  spin 対応版
+#
 # 2015.09.10
 #  多数のオプション装備
 #
@@ -114,18 +117,6 @@ if __name__ == '__main__':
     if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
 
     if not atom: atom = 0
-    spin = 0
-    if FLAG_UP:
-        nspin = 1
-        spin = 0
-        spin_list = [0]
-    if FLAG_DN:
-        nspin = 1
-        spin = 1
-        spin_list = [1]
-    if FLAG_SPIN:
-        nspin = 2
-        spin_list = [0,1]
 
     if WEDOS:
         print "DOS Weight =",WEDOS
@@ -144,7 +135,7 @@ if __name__ == '__main__':
 
     plt.rcParams['font.family']     = 'Times New Roman'
     plt.rcParams['font.size']       = 15  # ラベル等のフォントサイズ
-    plt.rcParams['legend.fontsize'] = 13  # レジェンドのフォントサイズ
+    plt.rcParams['legend.fontsize'] = 10  # レジェンドのフォントサイズ
     plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
@@ -153,7 +144,8 @@ if __name__ == '__main__':
     orgy = 0.080
     off = 0.015
     xsize = 0.72
-    ysize0 = 0.83
+#   ysize0 = 0.83
+    ysize0 = 0.75
 
     ###########################################################################
 
@@ -180,6 +172,10 @@ if __name__ == '__main__':
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
+    if ispin >=2:
+        print ""
+        print "Current calculation is Magnetic: SPIN MODE"
+        print ""
 
     ###########################################################################
 
@@ -195,11 +191,33 @@ if __name__ == '__main__':
     else:
         orbit_list = ['s','p','d']
 
+    norbit = len(orbit_list)
+
+    # spin の有無と spin の描画モードでの多段組の数よびスピンリストの変更
+    nspin = 1
+    spin_list = [0]
+    spin_suffix = ['']
+    spin_out = ''
+    if FLAG_UP:
+        nspin = 1
+        spin_list = [0]
+        spin_suffix = ['_up','']
+        spin_out = '_up'
+    if FLAG_DN:
+        nspin = 1
+        spin_list = [1]
+        spin_suffix = ['','_dn']
+        spin_out = '_dn'
+    if FLAG_SPIN:
+        nspin = 2
+        spin_list = [1,0]
+        spin_suffix = ['_up', '_dn']
+        spin_out = '_spin'
+        norbit = norbit * 2
+
     # オービタルの数にあわせた多段組の調整
     if FLAG_TOTAL:
-        norbit = len(orbit_list)+1
-    else:
-        norbit = len(orbit_list)
+        norbit += 1
 
     # XANES プロットを追加するときはさらに調整
     if FLAG_XAS:
@@ -209,18 +227,10 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    if not OPT_EMAX:
-        emax = sd.emax
-        print "EMAX = ", emax
-
-    if not OPT_EMIN:
-        emin = sd.emin
-        print "EMIN = ", emin
-
     ################################################ convert Energy
     # PhotoEnegy モードで計算した時と同じ結果を返す
     if not inp.get_energygpho() and not FLAG_FERMI:
-        print "current mode is Fermi"
+        print "Current mode is Fermi"
         print "---> convert to PhotoEnergy"
         print "     + E_edge"
         eng_off =  txt.E_edge
@@ -246,7 +256,15 @@ if __name__ == '__main__':
         EF0 = txt.E_edge + txt.E_Fermi
         label_fermi = "Photon Energy [eV]"
 
-    ######################################### plot XAS
+    if not OPT_EMAX:
+        emax = sd.emax + EF0
+        print "EMAX = ", emax
+
+    if not OPT_EMIN:
+        emin = sd.emin + EF0
+        print "EMIN = ", emin
+
+    ######################################### plot XAS ( with broadning )
     num = 0
     XTICKS_FLAG = False
     if FLAG_XAS:
@@ -258,20 +276,34 @@ if __name__ == '__main__':
 
         # makes label & color
         label = 'XAS (with broadening)'
-        color = cm.prism((num+1)*10)
 
+        # !!!!! plot XAS !!!!!!
         plt.plot(engx, xas, linewidth=2, color='black', label=label)
         plt.axvline(x=EF0, color='black', linewidth=1)
         xmin_XAS, xmax_XAS, ymin_XAS, ymax_XAS = plt.axis()
+        plt.ylim(ymin=0.0)
 
+        # !!!!! plot XAS ( non broad ) !!!!!!
         if FLAG_BROAD:
-            dos_p = txt.xas
+
             eng_p = txt.eng + eng_off
-            plt.plot(eng_p, dos_p, linewidth=1, color=color, label='XAS')
-            plt.ylim(ymax=ymax_XAS)
+            for spin in spin_list:
+
+                xas_r = txt.get_xas(spin=spin)
+                num += 1
+                color = cm.prism((num)*10)
+                label = 'XAS'+spin_suffix[spin]
+
+                plt.plot(eng_p, xas_r, linewidth=1, color=color, label=label)
+                plt.ylim(ymax=ymax_XAS)
+                plt.ylim(ymin=0.0)
+
+        if not OPT_EMAX: plt.xlim(xmax=emax)
+        if not OPT_EMIN: plt.xlim(xmin=emin)
 
         if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
         if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+        if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
@@ -289,82 +321,125 @@ if __name__ == '__main__':
     eng = sd.get_eng() + eng_off
     if FLAG_TOTAL:
 
-        plt.axes([orgx, orgy, xsize, ysize])
-
-        tdos = sd.get_tdos(spin=spin)
-
-        if FLAG_INTDOS:
-            inttdos = sd.get_inttdos(spin=spin)
-
-        # makes  xticks
-        plt.ylabel("TDOS [state/eV]")
-        if not XTICKS_FLAG:
-            plt.xlabel(label_fermi)
-            XTICKS_FLAG = True
-        else:
-            plt.xticks([])
-
-        # makes color
         num += 1
-        color = cm.prism((num+1)*10)
+        for spin in spin_list:
 
-        plt.plot(eng, tdos, linewidth=2, color=color, label='total')
-        plt.axvline(x=EF0, color='black', linewidth=1)
+            plt.axes([orgx, orgy, xsize, ysize])
 
-        if FLAG_INTDOS:
-            ay = plt.twinx()
-            ay.plot(eng, inttdos, linewidth=2, color='black', label='INTtotal')
-            yl = plt.ylabel("INTTDOS [n]")
+            tdos = sd.get_tdos(spin=spin)
 
-        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+            if FLAG_INTDOS:
+                inttdos = sd.get_inttdos(spin=spin)
 
-        orgy = orgy + ysize + off
+            # makes  xticks
+            plt.ylabel("TDOS")
+            if not XTICKS_FLAG:
+                plt.xlabel(label_fermi)
+                XTICKS_FLAG = True
+            else:
+                plt.xticks([])
+
+            # makes color
+            color = cm.prism((num+1)*10)
+            label = 'total'+spin_suffix[spin]
+            labelt = 'INT'+spin_suffix[spin]
+
+            # !!!!! plot TDOS !!!!!!
+            plt.plot(eng, tdos, linewidth=2, color=color, label=label)
+            plt.axvline(x=EF0, color='black', linewidth=1)
+
+            # down spin 反転
+            if FLAG_SPIN and spin == 1:
+                xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
+                plt.ylim([ymax_dn,0])
+
+            # !!!!! plot INT TDOS !!!!!!
+            if FLAG_INTDOS:
+                ay = plt.twinx()
+                ay.plot(eng, inttdos, linewidth=2, color='black', label=labelt)
+                yl = plt.ylabel("INTTDOS")
+
+            # INTDOS: down spin 反転
+            if FLAG_INTDOS and FLAG_SPIN and spin == 1:
+                xmin_idn, xmax_idn, ymin_idn, ymax_idn = plt.axis()
+                plt.ylim([ymax_idn,0])
+
+            if not OPT_EMAX: plt.xlim(xmax=emax)
+            if not OPT_EMIN: plt.xlim(xmin=emin)
+
+            if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+            if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+
+            leg = plt.legend(loc='upper right')
+            leg.get_frame().set_alpha(0.5)
+
+            orgy = orgy + ysize
+        orgy = orgy + off
 
     ######################################### plot LDOS / atom
     #
     orb = 0
     for orbit in orbit_list:
 
-        plt.axes([orgx, orgy, xsize, ysize])
-
-        ldos = sd.get_ldos(l=orbit, spin=spin)
-
-        if FLAG_INTDOS:
-            intldos = sd.get_intldos(l=orbit, spin=spin)
-
-        # makes xticks
-        if orb == 0: plt.ylabel("LDOS [state/eV]")
-        if not XTICKS_FLAG:
-            plt.xlabel(label_fermi)
-            XTICKS_FLAG = True
-        else:
-            plt.xticks([])
-
-        # makes label & color
         num += 1
-        if LABEL:
-            label = LABEL+'-'+orbit
-        else:
-            label = str(atom)+'-'+orbit
-        color = cm.prism((num+1)*10)
+        for spin in spin_list:
 
-        plt.plot(eng, ldos, linewidth=2, color=color, label=label)
-        plt.axvline(x=EF0, color='black', linewidth=1)
+            plt.axes([orgx, orgy, xsize, ysize])
 
-        if FLAG_INTDOS:
-            ay = plt.twinx()
-            ay.plot(eng, intldos, linewidth=2, color='black', label='INT'+label)
-            if orb == 0: yl = plt.ylabel("INTTDOS [n]")
+            ldos = sd.get_ldos(l=orbit, spin=spin)
 
-        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+            if FLAG_INTDOS:
+                intldos = sd.get_intldos(l=orbit, spin=spin)
 
-        leg = plt.legend(loc='upper right')
-        leg.get_frame().set_alpha(0.5)
+            # makes xticks
+            if orb == 0: plt.ylabel("LDOS")
+            if not XTICKS_FLAG:
+                plt.xlabel(label_fermi)
+                XTICKS_FLAG = True
+            else:
+                plt.xticks([])
 
+            # makes label & color
+            if LABEL:
+                label = LABEL+'-'+orbit
+            else:
+                label = str(atom)+'-'+orbit
+            color = cm.prism((num+1)*10)
+            label = label+spin_suffix[spin]
+            labelt = 'INT'+label
+
+            # !!!!! plot LDOS !!!!!!
+            plt.plot(eng, ldos, linewidth=2, color=color, label=label)
+            plt.axvline(x=EF0, color='black', linewidth=1)
+
+            # DOS: down spin 反転
+            if FLAG_SPIN and spin == 1:
+                xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
+                plt.ylim([ymax_dn,0])
+
+            # !!!!! plot INT LDOS !!!!!!
+            if FLAG_INTDOS:
+                ay = plt.twinx()
+                ay.plot(eng, intldos, linewidth=2, color='black', label=labelt)
+                if orb == 0: yl = plt.ylabel("INTTDOS")
+
+            # INTDOS: down spin 反転
+            if FLAG_INTDOS and FLAG_SPIN and spin == 1:
+                xmin_idn, xmax_idn, ymin_idn, ymax_idn = plt.axis()
+                plt.ylim([ymax_idn,0])
+
+            if not OPT_EMAX: plt.xlim(xmax=emax)
+            if not OPT_EMIN: plt.xlim(xmin=emin)
+
+            if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+            if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+
+            leg = plt.legend(loc='upper right')
+            leg.get_frame().set_alpha(0.5)
+
+            orgy = orgy + ysize
         orb += 1
-        orgy = orgy + ysize + off
+        orgy = orgy + off
 
     #########################################
 
@@ -373,11 +448,12 @@ if __name__ == '__main__':
     else:
         fermi=''
 
-    plt.savefig("LDOS"+str(atom)+fermi+".eps")
-    plt.savefig("LDOS"+str(atom)+fermi+".pdf")
-    plt.savefig("LDOS"+str(atom)+fermi+".png")
+    plt.savefig("LDOS"+str(atom)+spin_out+fermi+".eps")
+    plt.savefig("LDOS"+str(atom)+spin_out+fermi+".pdf")
+    plt.savefig("LDOS"+str(atom)+spin_out+fermi+".png")
 
-    plt.show()
+    if not FLAG_NW:
+        plt.show()
 
     plt.close('all')
 

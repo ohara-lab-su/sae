@@ -8,6 +8,10 @@
 #
 ###############################################################################
 #
+# 2015.09.11
+#  .txt の生データーのスピン対応
+#    XAS のデーター構造が変わるので注意
+#
 # 2015.09.08
 #  .txt の平均化 Method を追加
 #
@@ -57,7 +61,6 @@ class ReadFdm(object):
         self.header = self.datlines[0]
 
         self.eng = np.zeros(self.num - 2)
-        self.xas = np.zeros(self.num - 2)
 
         # 一行目のイコールで結ばれたところまでの変数の数のカウント
         count = 0
@@ -76,11 +79,24 @@ class ReadFdm(object):
                   float(self.datlines[0].replace(',', ' ').split()[i - count])
             self.__dict__[var] = value
 
+        # スピン計算の有無を類推
+        if len(self.datlines[2].split()) >=3:
+            self.nspin = 2
+        else:
+            self.nspin = 1
+
+        # XANES スペクトル(生データを読み込み)
+        self.xas_all = np.zeros((self.num - 2, self.nspin))
         for i in range(2, self.num):
             self.eng[i - 2] = float(self.datlines[i].split()[0])
-            self.xas[i - 2] = float(self.datlines[i].split()[1])
+
+            for spin in range(self.nspin):
+                self.xas_all[i - 2, spin] = \
+                        float(self.datlines[i].split()[1+spin])
 
         self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+        self.ispin = self.nspin
+        self.xas = self.xas_all[:,0]
 
     ###########################################################################
 
@@ -108,8 +124,11 @@ class ReadFdm(object):
     def get_eng(self):
         return self.eng
 
-    def get_xas(self):
-        return self.xas
+    def get_xas_all(self):
+        return self.xas_all
+
+    def get_xas(self, spin=0):
+        return self.xas_all[:,spin]
 
     def get_header(self):
         return self.header
@@ -124,19 +143,23 @@ class ReadFdm(object):
     # 平均を self.xas に返す
     #
     # non-spin
-    def average_txt(self, name, absorber, weight=None):
+    def average_txt(self, name, absorber, spin=0, weight=None):
         if weight is None:
             n_site = float(len(absorber))
         else:
             print "weight : ", weight
             n_site = float(weight)
-        s_xas = np.zeros(self.num - 2)
+
+        s_xas = np.zeros((self.num - 2, self.nspin))
         for site in absorber:
+
             txtname = name + "_" + str(site) + self.suffix
             datlines, num = SAEnv.read_dataline(txtname)
             print "sum : ", txtname
+
             for i in range(2, self.num):
-                s_xas[i - 2] = float(datlines[i].split()[1]) + s_xas[i - 2]
+                s_xas[i - 2, spin] = float(datlines[i].split()[1+spin-1]) \
+                                     + s_xas[i - 2, spin]
         self.xas = s_xas / n_site
         return self.xas
 

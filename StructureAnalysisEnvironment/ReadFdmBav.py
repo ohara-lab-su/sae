@@ -50,8 +50,12 @@ class ReadFdmBav(object):
         r2_reg = re.compile('.*Transformation Crystal Bases.*Bases R2.*')
         positions_reg = re.compile('.*Cluster: atom positions in order.*')
 
+        nspin_reg = re.compile('.*Magnetic calculation')
+
         self.t = np.zeros((3, 3))
 #       self.position = []
+
+        self.nspin = 1  # default nonmag
 
         for i in range(self.num):
 
@@ -75,6 +79,10 @@ class ReadFdmBav(object):
                     if not len(self.datlines[i]):
                         break
                 self.lmax = l
+
+            # Magnetic? or Nonmag
+            if bool(nspin_reg.match(self.datlines[i])):
+                self.nspin = 2
 
             # 吸収端
             if bool(threshold_reg.match(self.datlines[i])):
@@ -125,6 +133,11 @@ class ReadFdmBav(object):
                         break
                 self.natom = j
                 self.position = np.array(self.position)
+
+        self.ispin = self.nspin
+
+    def get_nspin(self):
+        return self.nspin
 
     def get_natom(self):
         self.natom = self.natom if hasattr(self, 'natom') else 0

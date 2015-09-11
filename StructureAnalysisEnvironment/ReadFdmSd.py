@@ -8,6 +8,10 @@
 #
 ###############################################################################
 #
+# 2015.09.11
+#   lmax 判定の新バージョン(2015.08.18)が
+#   spin に対して動作が不完全だったので修正
+#
 # 2015.09.09
 #   TDOS および INTTDOS が未完成だったので修正した
 #
@@ -204,7 +208,10 @@ class ReadFdmSd(object):
         nl = len(self.header.split())
         tmp = self.header.split()[nl-1]
         tmp = re.sub('.*\(', '', tmp)
-        self.lmax = int(re.sub('\).*', '', tmp))
+        try:
+            self.lmax = int(re.sub('\).*', '', tmp)) # nonmag 版
+        except:
+            self.lmax = int(re.sub(',.*\).*', '', tmp))  # spin 版
 
 #      # _bav.txt ファイルから吸収原子の lmax を抽出する
 #       self.lmax = int(bav.get_lmax())
