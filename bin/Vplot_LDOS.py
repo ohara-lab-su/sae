@@ -19,6 +19,9 @@
 #
 ################################################################################
 #
+# 2015.09.11
+#    plot の仕方を少し変更
+#
 # 2015.01.29
 #    Y軸(DOS軸) の下限の設定のバグを修正
 #
@@ -124,14 +127,16 @@ if __name__ == '__main__':
     # makes instance ( Read DOSCAR )
     dos = SAE.ReadVaspDoscar(dname)
 
-    NSPIN = dos.get_ispin()
-    LORBIT = dos.get_lorbit()
-    NATOM = dos.get_natom()
-    TITLE =  dos.get_title()
-    EMAX = dos.get_emax()
-    EMIN = dos.get_emin()
-    NEDOS = dos.get_nedos()
-    EFERMI = dos.get_efermi()
+    NSPIN = dos.ispin
+    LORBIT = dos.lorbit
+    NATOM = dos.natom
+    TITLE =  dos.title
+    EMAX = dos.emax
+    EMIN = dos.emin
+    NEDOS = dos.nedos
+    EFERMI = dos.efermi
+
+    ENG = dos.eng
 
     # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
@@ -144,31 +149,39 @@ if __name__ == '__main__':
 #           print atom,atoms_j[atom], atoms[atoms_j[atom]]
 #       print ""
 
-    ENG = dos.get_eng()
-
     ############################################################################
     # matplotlib
 
 #   plt.rcParams['font.family'] = 'Times New Roman'
-    plt.rcParams['font.size']         = 20  # ラベル等のフォントサイズ
+    plt.rcParams['font.size']         = 18  # ラベル等のフォントサイズ
     plt.rcParams['legend.fontsize']   = 10  # レジェンドのフォントサイズ
     plt.rcParams['axes.linewidth']    = 1.5 # 軸の太さを設定。目盛りは変わらない
 
 #   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 
+    orgx = 0.130
+    orgy = 0.130
+    xsize = 0.80
+    ysize0 = 0.80
+    ysize = 0.80/NSPIN
+
+    if NSPIN == 1:
+        spin_list = [0]
+    if NSPIN == 2:
+        spin_list = [1,0]
 
     ############################################################################
-    for spin in range(NSPIN):
+    for spin in spin_list:
 
+        plt.axes([orgx, orgy, xsize, ysize])
+
+        # makes title & xlabel
         if NSPIN == 1:
-            plt.axes([ 0.130,0.130, 0.80,0.80 ])  # 一段組の原点(x,y), 幅(x,y)
             plt.title(TITLE)
-        if NSPIN == 2:
-            if spin == 0:
-                plt.axes([ 0.130,0.530, 0.80,0.40 ])  # 二段組の上側(y幅半分) up-spin
-                plt.title(TITLE)
-            if spin == 1:
-                plt.axes([ 0.130,0.130, 0.80,0.40 ])  # 二段組の下段( down-spin )
+            plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
+        if NSPIN == 2 and spin == 0: plt.title(TITLE)
+        if NSPIN == 2 and spin == 1:
+            plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
 
         j=0
         for atom in plot_atoms:
@@ -178,6 +191,7 @@ if __name__ == '__main__':
                     sys.exit("STOP:INPUT ERROR, atom= 0")
             atom -= 1
 
+            # makes label
             if FLAG_OUTCAR:
                 atom_label =str(atoms[atoms_j[atom]])+str(atom+1)
                 if NSPIN == 1:
@@ -223,20 +237,21 @@ if __name__ == '__main__':
         if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN) )
         if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
-        if NSPIN == 2:
-            if spin == 0:
-                plt.xticks([])
-            if spin == 1:
-                # y 軸反転
-                xmin,xmax,ymin,ymax = plt.axis()
-                plt.ylim([ymax,0])
+        if NSPIN == 2 and spin == 0:
+            plt.xticks([])
+        if NSPIN == 2 and spin == 1:
+            # y 軸反転
+            xmin,xmax,ymin,ymax = plt.axis()
+            plt.ylim([ymax,0])
 
         # EF0
         plt.axvline(x=0,color="black",linewidth=1)
 
+        orgy = orgy + ysize
+
+
     ############################################################################
 
-    plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
 
     leg = plt.legend(fontsize=12)   # 凡例Box
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)

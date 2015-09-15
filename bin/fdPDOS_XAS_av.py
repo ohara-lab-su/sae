@@ -148,9 +148,9 @@ if __name__ == '__main__':
     conv_3 = SAEnv.ReadFdmConv(fil_3, suffix='_conv.txt')
     conv_1 = conv
 
-    txt = SAEnv.ReadFdm(fil_1, suffix='.txt')
-    txt_2 = SAEnv.ReadFdm(fil_2, suffix='.txt')
-    txt_3 = SAEnv.ReadFdm(fil_3, suffix='.txt')
+    txt = SAEnv.ReadFdmTxt(fil_1, suffix='.txt')
+    txt_2 = SAEnv.ReadFdmTxt(fil_2, suffix='.txt')
+    txt_3 = SAEnv.ReadFdmTxt(fil_3, suffix='.txt')
     txt_1 = txt
 
     s_sd0 = '_sd0.txt'

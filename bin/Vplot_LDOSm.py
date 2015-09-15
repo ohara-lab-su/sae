@@ -11,6 +11,9 @@
 #
 ##########################################################################
 #
+# 2015.09.15
+#  両スピンモード(上下分割で反転表示)を追加
+#
 # 2015.04.22
 #    startup
 #
@@ -56,8 +59,9 @@ def options():
     parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
     # atom は 1 番から(内部的には0番からなので内部的に変換する)
     parser.add_option('-a', '--atom', )
-    parser.add_option('--up', action='store_true', default=False,)
-    parser.add_option('--down', action='store_true', default=False,)
+    parser.add_option('--up', action='store_true', default=False)
+    parser.add_option('--down', action='store_true', default=False)
+    parser.add_option('--spin', action='store_true', default=False)
     parser.add_option('--all', dest='ALL', action='store_true', default=False,)
     parser.add_option('-n', '--nw', action='store_true', default=False,)
     parser.add_option('--emax', dest='EMAX',)
@@ -77,7 +81,7 @@ def options():
 
     return [dname, oname, atom,
             options.nw, options.ALL,
-            options.up, options.down,
+            options.up, options.down, options.spin,
             options.EMAX, options.EMIN, options.YMAX]
 
 ##########################################################################
@@ -87,7 +91,7 @@ if __name__ == '__main__':
     # set input file
     dname, oname, atom,\
         NO_WINDOW_FLAG, ALL_FLAG,\
-        OPT_UP, OPT_DN,\
+        FLAG_UP, FLAG_DN, FLAG_SPIN,\
         OPT_EMAX, OPT_EMIN, OPT_YMAX = options()
 
     #####################################################
@@ -96,36 +100,59 @@ if __name__ == '__main__':
     if OPT_EMIN: print "Emin=", OPT_EMIN
     if OPT_YMAX: print "Ymax=", OPT_YMAX
 
-    if OPT_UP:
-        print "SPIN-UP"
-        spin = 0
-    elif OPT_DN:
-        print "SPIN-DOWN"
-        spin = 1
-    else:
-        print "NONMAGNETIC or SPIN-UP "
-        spin = 0
-
     atom -= 1
+
+    #####################################################
+    # plot する l軌道のリスト
+    orbit_list = ['s','p','d']
+#   orbit_list = ['s','p','d','f']
+
+    norbit0 = len(orbit_list)
+
+    orgx = 0.150
+    orgy = 0.080
+    off = 0.015
+    xsize = 0.75
+    ysize0 = 0.71
 
     #####################################################
     # makes instance ( Read DOSCAR )
     dos = SAE.ReadVaspDoscar(dname)
 
-    nspin = dos.get_ispin()
-    print "NSPIN = ",nspin
-
-    natom = dos.get_natom()
-    title = dos.get_title()
-    efermi = dos.get_efermi()
-    eng = dos.get_eng()
-
-    FLAG_SPIN = False
-    if nspin >= 2:
-        FLAG_SPIN = True
+    natom = dos.natom
+    title = dos.title
+    efermi = dos.efermi
+    eng = dos.eng
 
     #####################################################
-    # makes instance ( Read OUTCAR )
+    nspin = dos.ispin
+
+    print "NSPIN = ",nspin
+    FLAG_SPIN = False
+
+    if FLAG_UP:
+        print "SPIN-UP"
+        spin = 0
+        spin_list = [0]
+        spin_name = ['_up','']
+    elif FLAG_DN:
+        print "SPIN-DOWN"
+        spin = 1
+        spin_list = [1]
+        spin_name = ['','_dn']
+    elif FLAG_SPIN or nspin >=2:
+        print "BOTH SPIN ( UP, DOWN-SPIN )"
+        spin = 1
+        spin_list = [1,0]
+        spin_name = ['_up','_dn']
+        norbit = norbit0 * 2
+        FLAG_SPIN = True
+    else:
+        print "NONMAGNETIC or SPIN-UP "
+        spin = 0
+
+    #####################################################
+    # 原子種の名前をゲットかのうならばゲットする
     if os.path.exists(oname) or os.path.exists(oname + '.gz'):
         FLAG_OUTCAR = True
         outcar = SAE.ReadVaspOutcar(oname)
@@ -163,68 +190,115 @@ if __name__ == '__main__':
 
         #####################################################
         #
-        plt.rcParams['font.size'] = 18
+        plt.rcParams['font.size'] = 15
         plt.rcParams['legend.fontsize'] = 10
         plt.rcParams['axes.linewidth'] = 1.5
         plt.figure(figsize=(7.00, 9.89))  # for portrait
 
-        orgx = 0.150
-        orgy = 0.080
-        off = 0.034
-        xsize = 0.75
-        ysize = 0.74 / 4
+        ysize = ysize0 / (norbit+1)
 
+        XTICKS_FLAG = False
         #####################################################
         # plot TDOS
-        plt.axes([orgx, orgy, xsize, ysize])
-        tdos = dos.get_tdos(spin)
-        plt.plot(eng - efermi, tdos, color="black", linewidth=2, label='total')
-        plt.axvline(x=0, color="black", linewidth=1)
-
-        leg = plt.legend(fontsize=12)
-        leg.get_frame().set_alpha(0.5)
-
-        xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20)
-        yl = plt.ylabel("DOS/eV", fontsize=20)
-        plt.ylim(ymin=0)
-        if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-        if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
-        if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
-
-        orgy = orgy + ysize + off
-
-        #####################################################
-        # plot LDOS
-        orbit_list = ['s', 'p', 'd']
-        j = 1
-        for orbit in range(0, 3):  # s(0),p(1),d(2)
+        for spin in spin_list:
 
             plt.axes([orgx, orgy, xsize, ysize])
-            c = cm.prism(j * 20 / 4)
-            ldos = dos.get_ldos(orbit, atom, spin)
-            plt.plot(eng - efermi, ldos, linestyle="-",
-                     color=c, linewidth=2, label=atom_label + "-" + orbit_list[orbit])
+
+            tdos = dos.get_tdos(spin)
+
+            # makes label
+            label='total'+spin_name[spin]
+
+            # !!!!! plot TDOS !!!!!
+            plt.plot(eng - efermi, tdos, color="black", linewidth=2, label=label)
             plt.axvline(x=0, color="black", linewidth=1)
 
-            leg = plt.legend(fontsize=12)
-            leg.get_frame().set_alpha(0.5)
+            # ytics の調整
+            if FLAG_SPIN:
+                plt.locator_params(axis='y', nbins=4)
 
-            plt.xticks([])
-            plt.ylabel("")
-            plt.ylim(ymin=0)
+            # makes xticks
+            if not XTICKS_FLAG:
+                xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=15)
+                yl = plt.ylabel("DOS/eV", fontsize=15)
+                XTICKS_FLAG = True
+            else:
+                plt.xticks([])
+
+            # down spin 反転
+            if FLAG_SPIN and spin == 1:
+                xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
+                plt.ylim([ymax_dn,0])
+            else:
+                plt.ylim(ymin=0)
+
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
             if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
-            orgy = orgy + ysize + off
+            leg = plt.legend(fontsize=12)
+            leg.get_frame().set_alpha(0.5)
+
+            orgy = orgy + ysize
+        orgy = orgy + off
+
+        #####################################################
+        # plot LDOS
+        j = 1
+        for orbit in range(len(orbit_list)):
+
+            for spin in spin_list:
+
+                plt.axes([orgx, orgy, xsize, ysize])
+
+                d = dos.get_ldos(orbit, atom, spin)
+                e = eng - efermi
+
+                # makes color & label
+                c = cm.prism(j * 20 / norbit0)
+                lab = atom_label +"_"+orbit_list[orbit]+spin_name[spin]
+
+                # !!!!! plot LDOS !!!!!
+                plt.plot(e, d, linestyle="-", color=c, linewidth=2, label=lab)
+                plt.axvline(x=0, color="black", linewidth=1)
+
+                # ytics の調整
+                if FLAG_SPIN:
+                    plt.locator_params(axis='y', nbins=4)
+
+                # makex xticks
+                if spin == 0:
+                    plt.ylim(ymin=0)
+                    xmin_up, xmax_up, ymin_up, ymax_up = plt.axis()
+                    plt.ylim([0,ymax_up])
+
+                # DOS: down spin 反転
+                if FLAG_SPIN and spin == 1:
+                    xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
+                    plt.ylim([ymax_dn,0])
+
+                leg = plt.legend(fontsize=12)
+                leg.get_frame().set_alpha(0.5)
+
+                plt.xticks([])
+                plt.ylabel("")
+
+                if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+                if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+                if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
+
+                orgy = orgy + ysize
+            orgy = orgy +off
             j += 1
+
         #####################################################
 
+        # makes title
         if FLAG_SPIN:
-            if OPT_UP:
+            if FLAG_UP:
                 plt.title(title + "  spin-up (" +
                           str(atom_label) + ") ", fontsize=18)
-            if OPT_DN:
+            if FLAG_DN:
                 plt.title(title + "  spin-down (" +
                           str(atom_label) + ") ", fontsize=18)
         else:

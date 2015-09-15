@@ -70,7 +70,7 @@ if __name__ == '__main__':
     name0 = inp.get_filout()
 
     ###########################################################################
-#   txt = SAE.ReadFdm(name0,'.txt')
+#   txt = SAE.ReadFdmTxt(name0,'.txt')
 #   bav = SAE.ReadFdmBav(name0)
     sd = SAE.ReadFdmSd(name0,suffix_sd)
     ###########################################################################

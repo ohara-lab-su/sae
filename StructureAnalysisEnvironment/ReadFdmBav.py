@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2015.09.11
+#  scf ループ関係の情報吸い出しを追加
+#
 # 2015.06.25
 #  R2 bases に対応した cluster: atom positions 吸い出しに対応
 #
@@ -49,6 +52,10 @@ class ReadFdmBav(object):
         threshold_reg = re.compile('.*Threshold:.*')
         r2_reg = re.compile('.*Transformation Crystal Bases.*Bases R2.*')
         positions_reg = re.compile('.*Cluster: atom positions in order.*')
+        scf_flag_reg = re.compile('.*Self consistent calculation')
+        scf_max_reg = re.compile('.*Maximum number of iteration')
+        scf_end_reg = re.compile('.*Begining of cycle.*')
+        scf_toten_reg = re.compile('.*Unit cell energy.*')
 
         nspin_reg = re.compile('.*Magnetic calculation')
 
@@ -56,8 +63,27 @@ class ReadFdmBav(object):
 #       self.position = []
 
         self.nspin = 1  # default nonmag
+        self.SCF = False
+        self.n_scf_loop = 0
+        self.scf_toten = []
 
         for i in range(self.num):
+
+            # SCF 計算のチェック
+            if bool(scf_flag_reg.match(self.datlines[i])):
+                self.SCF = True
+
+            # scf ループの最大値
+            if bool(scf_max_reg.match(self.datlines[i])):
+                self.nsw = int(self.datlines[i].split()[5])
+
+            # scf ループ数のカウント
+            if bool(scf_end_reg.match(self.datlines[i])):
+                self.n_scf_loop = int(self.datlines[i].split()[3])
+
+            # scf ループ毎の unit cell の全エネルギー
+            if bool(scf_toten_reg.match(self.datlines[i])):
+                self.scf_toten.append(self.datlines[i])
 
             # 全原子数の検索
             if bool(ngroup_reg.match(self.datlines[i])):
@@ -135,6 +161,7 @@ class ReadFdmBav(object):
                 self.position = np.array(self.position)
 
         self.ispin = self.nspin
+        self.scf_toten = np.array(self.scf_toten)
 
     def get_nspin(self):
         return self.nspin
@@ -201,13 +228,17 @@ if __name__ == '__main__':
     position = bav.get_position()
     atoms_index_j = bav.get_atoms_index_j()
 
+    print "n_ion_loop", bav.n_scf_loop
+    for i in range(bav.n_scf_loop):
+        print bav.scf_toten[i]
+
     print "natom =", natom
     print "lmax = ", lmax
     print "edge = ", edge
     print "t    = "
     print t
 
-    for i in range(natom):
-        print "%s %10.6f %10.6f %10.6f" \
-          % (atoms_index_j[i], position[i, 0], position[i, 1], position[i, 2])
+#   for i in range(natom):
+#       print "%s %10.6f %10.6f %10.6f" \
+#         % (atoms_index_j[i], position[i, 0], position[i, 1], position[i, 2])
 #       print position[i][0],position[i][1],position[i][2]

@@ -46,7 +46,7 @@ import StructureAnalysisEnvironment as SAEnv
 ###############################################################################
 
 
-class ReadFdm(object):
+class ReadFdmTxt(object):
 
     def __init__(self, cname, suffix='.txt', weight=1.0):
 
@@ -143,7 +143,7 @@ class ReadFdm(object):
     # 平均を self.xas に返す
     #
     # non-spin
-    def average_txt(self, name, absorber, spin=0, weight=None):
+    def average(self, name, absorber, spin=0, weight=None):
         if weight is None:
             n_site = float(len(absorber))
         else:

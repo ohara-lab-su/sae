@@ -119,9 +119,9 @@ if __name__ == '__main__':
 
     ## 計算結果の読み込み
     if AV:
-        txt = SAE.ReadFdm(filout+'_'+str(AV[0]),'.txt')
+        txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]),'.txt')
     else:
-        txt = SAE.ReadFdm(filout,'.txt')
+        txt = SAE.ReadFdmTxt(filout,'.txt')
 
     print "E_edge   =",txt.E_edge
     print "E_fermi  =",txt.E_Fermi

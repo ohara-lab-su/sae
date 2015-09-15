@@ -68,7 +68,7 @@ from ReadPwPdos import *
 from ReadPwXanes import *
 
 ### class for FDMNES
-from ReadFdm import *
+from ReadFdmTxt import *
 from ReadFdmConv import *
 from ReadFdmInp import *
 from ReadFdmBav import *

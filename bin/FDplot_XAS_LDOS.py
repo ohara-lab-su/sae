@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    txt = SAEnv.ReadFdm(filout,'.txt')
+    txt = SAEnv.ReadFdmTxt(filout,'.txt')
     conv = SAEnv.ReadFdmConv(filout, suffix_conv)
     sd0 = SAEnv.ReadFdmSd(filout, '_sd0.txt')
 

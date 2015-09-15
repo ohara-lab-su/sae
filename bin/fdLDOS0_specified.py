@@ -77,7 +77,7 @@ if __name__ == '__main__':
 #   inp = SAE.ReadFdmInp(inpname)
 #   filout = inp.get_filout()
 #   ispin = inp.get_ispin()
-#   txt = SAE.ReadFdm(name0,'.txt')
+#   txt = SAE.ReadFdmTxt(name0,'.txt')
 #   bav = SAE.ReadFdmBav(name0)
     ###########################################################################
 

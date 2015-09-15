@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
 
     # データーの分解
-    txt = SAE.ReadFdm(filout,'.txt')
+    txt = SAE.ReadFdmTxt(filout,'.txt')
     conv = SAE.ReadFdmConv(convout,'_conv.txt')
     print "E_edge                                              =",txt.E_edge
     print "E_fermi                                             =",txt.E_Fermi

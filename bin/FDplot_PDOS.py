@@ -190,7 +190,7 @@ if __name__ == '__main__':
     print ""
 
 #   bav = SAE.ReadFdmBav(bavname)
-    txt = SAEnv.ReadFdm(txtname,'.txt')
+    txt = SAEnv.ReadFdmTxt(txtname,'.txt')
     conv = SAEnv.ReadFdmConv(convname, suffix_conv)
 #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
@@ -231,12 +231,13 @@ if __name__ == '__main__':
         spin_list = [0]
         spin_suffix = ['_up','']
         spin_out = '_up'
-    if FLAG_DN:
+    elif FLAG_DN:
         nspin = 1
         spin_suffix = ['','_dn']
         spin_list = [1]
         spin_out = '_dn'
-    if FLAG_SPIN:
+    elif FLAG_SPIN or ispin >=2:
+        FLAG_SPIN = True
         nspin = 2
         spin_list = [1,0]
         spin_suffix = ['_up','_dn']

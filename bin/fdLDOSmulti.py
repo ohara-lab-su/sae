@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     ###########################################################################
     # f0: sd0
-    txt = SAE.ReadFdm('BaTiO3_R3m')
+    txt = SAE.ReadFdmTxt('BaTiO3_R3m')
     sd_sd0 = SAE.ReadFdmSd('BaTiO3_R3m',suffix='_sd0.txt',inpname='read_pdb.inp')
 
     ef = txt.E_edge + txt.E_fermi
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     ###########################################################################
     # f1: sd1
-#   txt = SAE.ReadFdm(BASE+'BaTiO3_R3m')
+#   txt = SAE.ReadFdmTxt(BASE+'BaTiO3_R3m')
     sd_sd1 = SAE.ReadFdmSd('BaTiO3_R3m',suffix='_sd1.txt',inpname='read_pdb.inp')
 
 #   ef = txt.E_edge + txt.E_fermi
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     ###########################################################################
     # f2: sd2
-#   txt = SAE.ReadFdm(BASE+'BaTiO3_R3m')
+#   txt = SAE.ReadFdmTxt(BASE+'BaTiO3_R3m')
     sd_sd2 = SAE.ReadFdmSd('BaTiO3_R3m',suffix='_sd2.txt',inpname='read_pdb.inp')
 
 #   ef = txt.E_edge + txt.E_fermi

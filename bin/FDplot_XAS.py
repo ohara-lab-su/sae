@@ -13,7 +13,7 @@
 #
 #   Kエッジ版
 #
-#   SPIN 対応版
+#   SPIN 暫定対応版
 #    ただし、read_pdb.inp と conv.inp 両対応を意識して、自動判別ではなく
 #    -s もしくは --spin オプション時に強制的に対応させる
 #    spin の計算で -s をつけていない時は up-spin の DOS を描く
@@ -221,7 +221,7 @@ if __name__ == '__main__':
         print "--- average mode ---"
         print "Textname (edge anf fermi)         [base] =",\
                 filout+'_'+str(AV[0])
-        txt = SAE.ReadFdm(filout+'_'+str(AV[0]), '.txt')
+        txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]), '.txt')
 
         print "Convolution base name             [base] =",\
                 filout+'_'+str(AV[0])
@@ -230,7 +230,7 @@ if __name__ == '__main__':
         if textname is None: textname = filout
         if convolname is None: convolname = filout
         print "Textname (edge anf fermi)         (.txt) =", textname
-        txt = SAE.ReadFdm(textname, '.txt')  # Read Edge and Efermi
+        txt = SAE.ReadFdmTxt(textname, '.txt')  # Read Edge and Efermi
 
         print "Convolution base name        (_conv.txt) =", convolname
         conv = SAE.ReadFdmConv(convolname, '_conv.txt')
@@ -243,10 +243,10 @@ if __name__ == '__main__':
     if AV:
         if WE:
             conv.xas = conv.average_conv(filout, AV, weight=WE)
-            txt.xas = txt.average_txt(filout, AV, weight=WE)
+            txt.xas = txt.average(filout, AV, weight=WE)
         else:
             conv.xas = conv.average_conv(filout, AV)
-            txt.xas = txt.average_txt(filout, AV)
+            txt.xas = txt.average(filout, AV)
 
         print ""
 
@@ -513,9 +513,14 @@ if __name__ == '__main__':
 
     ##########################################################################
 
-    plt.savefig("XAS.eps")
-    plt.savefig("XAS.pdf")
-    plt.savefig("XAS.png")
+    if allname:
+        plt.savefig("XAS_"+allname+".eps")
+        plt.savefig("XAS_"+allname+".pdf")
+        plt.savefig("XAS_"+allname+".png")
+    else:
+        plt.savefig("XAS.eps")
+        plt.savefig("XAS.pdf")
+        plt.savefig("XAS.png")
 
     if not FLAG_NW:
         plt.show()
