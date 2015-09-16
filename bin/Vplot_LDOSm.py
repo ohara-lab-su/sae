@@ -59,6 +59,7 @@ def options():
     parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
     # atom は 1 番から(内部的には0番からなので内部的に変換する)
     parser.add_option('-a', '--atom', )
+    parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--up', action='store_true', default=False)
     parser.add_option('--down', action='store_true', default=False)
     parser.add_option('--spin', action='store_true', default=False)
@@ -81,6 +82,7 @@ def options():
 
     return [dname, oname, atom,
             options.nw, options.ALL,
+            options.sp,
             options.up, options.down, options.spin,
             options.EMAX, options.EMIN, options.YMAX]
 
@@ -90,7 +92,8 @@ if __name__ == '__main__':
     #####################################################
     # set input file
     dname, oname, atom,\
-        NO_WINDOW_FLAG, ALL_FLAG,\
+        FLAG_NW, ALL_FLAG,\
+        FLAG_SP,\
         FLAG_UP, FLAG_DN, FLAG_SPIN,\
         OPT_EMAX, OPT_EMIN, OPT_YMAX = options()
 
@@ -102,18 +105,22 @@ if __name__ == '__main__':
 
     atom -= 1
 
-    #####################################################
-    # plot する l軌道のリスト
-    orbit_list = ['s','p','d']
-#   orbit_list = ['s','p','d','f']
-
-    norbit0 = len(orbit_list)
-
     orgx = 0.150
     orgy = 0.080
     off = 0.015
     xsize = 0.75
     ysize0 = 0.71
+
+    #####################################################
+    # plot する l軌道のリスト
+    if FLAG_SP:
+        orbit_list = ['s','p']
+    else:
+        orbit_list = ['s','p','d']
+
+#   orbit_list = ['s','p','d','f']
+
+    norbit0 = len(orbit_list)
 
     #####################################################
     # makes instance ( Read DOSCAR )
@@ -128,36 +135,47 @@ if __name__ == '__main__':
     nspin = dos.ispin
 
     print "NSPIN = ",nspin
-    FLAG_SPIN = False
 
+    FLAG_SPIN = False
+    norbit = norbit0
     if FLAG_UP:
         print "SPIN-UP"
         spin = 0
         spin_list = [0]
         spin_name = ['_up','']
+        spin_out = '_up'
     elif FLAG_DN:
         print "SPIN-DOWN"
         spin = 1
         spin_list = [1]
         spin_name = ['','_dn']
+        spin_out = '_dn'
     elif FLAG_SPIN or nspin >=2:
         print "BOTH SPIN ( UP, DOWN-SPIN )"
         spin = 1
         spin_list = [1,0]
         spin_name = ['_up','_dn']
+        spin_out = '_spin'
         norbit = norbit0 * 2
         FLAG_SPIN = True
     else:
         print "NONMAGNETIC or SPIN-UP "
         spin = 0
+        spin_list = [0]
+        spin_name = ['']
+        spin_out = ''
+
+    ysize = ysize0 / (norbit+1)
 
     #####################################################
     # 原子種の名前をゲットかのうならばゲットする
     if os.path.exists(oname) or os.path.exists(oname + '.gz'):
         FLAG_OUTCAR = True
         outcar = SAE.ReadVaspOutcar(oname)
-        atoms = outcar.get_atoms_index()
-        atoms_j = outcar.get_atoms_j()
+        atoms_index_j = outcar.atoms_index_j
+
+#       atoms = outcar.get_atoms_index()
+#       atoms_j = outcar.get_atoms_j()
 #       for atom in range(natom):
 #           print atom,atoms_j[atom], atoms[atoms_j[atom]]
 #       print ""
@@ -165,26 +183,22 @@ if __name__ == '__main__':
     #####################################################
     # makes label
     if FLAG_OUTCAR:
-        atom_label = str(atoms[atoms_j[atom]]) + str(atom + 1)
-        if nspin == 1:
-            print "atom =", atom + 1, atom_label
-        else:
-            print "atom(spin) =", atom + 1, "(" + str(spin + 1) + ")", atom_label
+#       atom_label = str(atoms[atoms_j[atom]]) + str(atom + 1)
+        atom_label = atoms_index_j[atom] + str(atom + 1)
+        print "atom =", atom + 1, atom_label+spin_out
     else:
         atom_label = str(atom)
-        if nspin == 1:
-            print "atom =", atom + 1
-        else:
-            print "atom(spin) =", atom + 1, "(" + str(spin + 1) + ")"
+        print "atom =", atom + 1, atom_label+spin_out
 
     #####################################################
-    print "IONS: ", atoms
     if ALL_FLAG:
         a1 = 0
         a2 = natom
     else:
         a1 = int(atom)
         a2 = int(atom) + 1
+
+    print "plot atom number: #"+str(a1)+" - #"+str(a2)
 
     for atom in range(a1, a2):
 
@@ -195,7 +209,6 @@ if __name__ == '__main__':
         plt.rcParams['axes.linewidth'] = 1.5
         plt.figure(figsize=(7.00, 9.89))  # for portrait
 
-        ysize = ysize0 / (norbit+1)
 
         XTICKS_FLAG = False
         #####################################################
@@ -294,24 +307,24 @@ if __name__ == '__main__':
         #####################################################
 
         # makes title
-        if FLAG_SPIN:
-            if FLAG_UP:
-                plt.title(title + "  spin-up (" +
-                          str(atom_label) + ") ", fontsize=18)
-            if FLAG_DN:
-                plt.title(title + "  spin-down (" +
-                          str(atom_label) + ") ", fontsize=18)
-        else:
-            plt.title(title + "  (" + str(atom_label) + ") ", fontsize=18)
+#       if FLAG_SPIN:
+#           if FLAG_UP:
+#               plt.title(title + "  spin-up (" +
+#                         str(atom_label) + ") ", fontsize=18)
+#           if FLAG_DN:
+#               plt.title(title + "  spin-down (" +
+#                         str(atom_label) + ") ", fontsize=18)
+#       else:
+#           plt.title(title + "  (" + str(atom_label) + ") ", fontsize=18)
 
 #       plt.xlim([-10,10])
 #       plt.ylim([0,200])
 
-        plt.savefig("LDOS" + str(atom + 1) + ".eps")
-        plt.savefig("LDOS" + str(atom + 1) + ".pdf")
-        plt.savefig("LDOS" + str(atom + 1) + ".png")
+        plt.savefig("LDOS" + str(atom + 1) + spin_out + ".eps")
+        plt.savefig("LDOS" + str(atom + 1) + spin_out + ".pdf")
+        plt.savefig("LDOS" + str(atom + 1) + spin_out + ".png")
 
-        if not NO_WINDOW_FLAG:
+        if not FLAG_NW:
             plt.show()
 
         plt.close('all')
