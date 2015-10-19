@@ -80,7 +80,7 @@ if __name__ == '__main__':
     print "OUTPUT POSCAR file = ",poscarname
 
     atoms = read(cifname,format='cif')
-#   atoms.center()
+    atoms.center()
 
     atoms.write(poscarname,format='vasp',direct=True,vasp5=True)
 

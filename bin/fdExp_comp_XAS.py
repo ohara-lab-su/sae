@@ -27,14 +27,14 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-import sys
+#import sys
 #import gzip
 import os
-import re
+#import re
 import optparse
-import numpy as np
+#import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -50,7 +50,7 @@ def options():
     options,args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAE.find_datfile1('_conv.txt')
+        name0 = SAEnv.find_datfile1('_conv.txt')
         if name0 is None:
             name0 = name
     name = name0
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
 
     #######################################################
-#   conv = SAE.ReadFdmConv('Au_conv_Fermi.txt')
+#   conv = SAEnv.ReadFdmConv('Au_conv_Fermi.txt')
     #######################################################
 
     E_edge = 0.0
@@ -90,17 +90,17 @@ if __name__ == '__main__':
 #   times = 35
     times = 1.0
     ###########################################################################
-    conv = SAE.ReadFdmConv('Au',suffix='_conv.txt')
-    plt.plot(conv.eng+E_edge,conv.xas*times,color='red',linewidth=1,label='FDM Green R3')
+    conv = SAEnv.ReadFdmConv('Au',suffix='_conv.txt')
+    plt.plot(conv.eng+E_edge, conv.xas*times, color='red', linewidth=1, label='FDM Green R3')
 
     ###########################################################################
-    nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
-    plt.plot(nor.eng,nor.nor,color='blue',linewidth=1,label='exp.')
+    nor = SAEnv.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+    plt.plot(nor.eng, nor.nor, color='blue', linewidth=1, label='exp.')
 #   plt.plot(nor.eng - nor.e0 ,nor.nor,color='blue',linewidth=1,label='exp.')
 
     timesP = 1.0
 #   ###########################################################################
-#   pw = SAE.ReadPwXanes('xanes.dat')
+#   pw = SAEnv.ReadPwXanes('xanes.dat')
 #   plt.plot(pw.eng+E_edge,pw.xas*timesP,color='green',linewidth=1,label='PWSCF fch')
 
 

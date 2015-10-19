@@ -78,8 +78,8 @@ if __name__ == '__main__':
     name,outname,MOL = options()
 
     cell = SAEnv.Read(filename=name,code='VASP')
-    cell.write(code='FDMNES',outname=outname,STD=True)
-    cell.write(code='FDMNES',outname=outname)
+    cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
+    cell.write(code='FDMNES',outname=outname,MOL=MOL)
 
 ## ASE version
 #   atoms = read_vasp(name)

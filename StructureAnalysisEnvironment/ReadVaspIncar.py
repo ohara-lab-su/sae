@@ -64,6 +64,7 @@ class ReadVaspIncar(object):
         ngzf_reg = re.compile('.*NGZF', re.IGNORECASE)
         npar_reg = re.compile('.*NPAR', re.IGNORECASE)
         isym_reg = re.compile('.*ISYM', re.IGNORECASE)
+        gga_reg = re.compile('.*GGA', re.IGNORECASE)
 
         # defaults
         self.ispin = 1
@@ -82,12 +83,18 @@ class ReadVaspIncar(object):
         self.nedos = 301
         self.lreal = False
         self.isym = 1
+        self.gga = None
+        self.nelm = 60
 
         for i in range(self.num):
 
             # SYSTEM
             if bool(title_reg.match(self.datlines[i])):
                 self.title = str(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # GGA
+            if bool(gga_reg.match(self.datlines[i])):
+                self.gga = str(re.sub('.*=','',self.datlines[i]).split()[0])
 
             # NSW
             if bool(nsw_reg.match(self.datlines[i])):
@@ -124,7 +131,6 @@ class ReadVaspIncar(object):
             # NELM
             if bool(nelm_reg.match(self.datlines[i])):
                 self.nelm = int(re.sub('.*=','',self.datlines[i]).split()[0])
-                print self.nelm
 
             # SMASS
             if bool(smass_reg.match(self.datlines[i])):
@@ -192,6 +198,10 @@ class ReadVaspIncar(object):
     def get_nbands(self):
         self.nbands = self.nbands if hasattr(self, 'nbands') else None
         return self.nbands
+
+    def get_gga(self):
+        self.gga = self.gga if hasattr(self, 'gga') else None
+        return self.gga
 
     def get_isym(self):
         self.isym = self.isym if hasattr(self, 'isym') else 1

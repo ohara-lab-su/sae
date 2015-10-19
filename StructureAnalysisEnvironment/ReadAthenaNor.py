@@ -5,6 +5,7 @@
 #
 # Read Athena Normalize Data ( *.txt.nor )
 #
+# コメントアウトを除いて energy, XANES 形式に並んだだけのファイル
 #
 ###############################################################################
 #
@@ -60,6 +61,7 @@ class ReadAthenaNor(object):
             if bool(E0_reg.match(line)):
                 self.e0 = float(re.sub('E0=', '', line.split()[2]))
 
+            # コメントアウトを除いて x,y 形式に並んだだけのファイル
             if not bool(comment_reg.match(line)):
                 self.eng.append(float(line.split()[0]))
                 self.nor.append(float(line.split()[1]))

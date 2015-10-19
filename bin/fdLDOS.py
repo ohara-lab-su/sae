@@ -29,7 +29,7 @@ __version__    = "0.0.1"
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -66,13 +66,13 @@ if __name__ == '__main__':
     if not orbit:
         orbit=1
 
-    inp = SAE.ReadFdmInp(inpname)
+    inp = SAEnv.ReadFdmInp(inpname)
     name0 = inp.get_filout()
 
     ###########################################################################
-#   txt = SAE.ReadFdmTxt(name0,'.txt')
-#   bav = SAE.ReadFdmBav(name0)
-    sd = SAE.ReadFdmSd(name0,suffix_sd)
+#   txt = SAEnv.ReadFdmTxt(name0,'.txt')
+#   bav = SAEnv.ReadFdmBav(name0)
+    sd = SAEnv.ReadFdmSd(name0, suffix_sd)
     ###########################################################################
 
     ispin = inp.get_ispin()
@@ -95,11 +95,11 @@ if __name__ == '__main__':
 
     plt.axes([orgx,orgy,xsize,ysize])
 
-    plt.plot(eng,dos,linewidth=2,label='DOS')
+    plt.plot(eng, dos, linewidth=2, label='DOS')
 
 #   plt.xlabel("Energy above Fermi [eV]")
 #   plt.ylabel("Absorption [arb. unit]")
-    plt.axvline(x=0,color='black',linewidth=1)
+    plt.axvline(x=0, color='black', linewidth=1)
 
 #   leg = plt.legend(fontsize=12,loc='lower right')
 #   leg = plt.legend(loc='lower right')

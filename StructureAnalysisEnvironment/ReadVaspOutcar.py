@@ -190,13 +190,16 @@ class ReadVaspOutcar(object):
         isym_reg = re.compile('.*ISYM', re.IGNORECASE)
         ibrion_reg = re.compile('.*IBRION', re.IGNORECASE)
         nwrite_reg = re.compile('.*NWRITE', re.IGNORECASE)
-        efermi_reg = re.compile('^.*E-fermi')
-
-        iter_reg = re.compile('.*-- Iteration', re.IGNORECASE)
-        toten_ion_reg = re.compile('.*free  energy   TOTEN', re.IGNORECASE)
+        encut_reg = re.compile('.*ENCUT', re.IGNORECASE)
 
         nions_reg = re.compile('.*number of ions.*NIONS.*', re.IGNORECASE)
         ion_type_reg = re.compile('.*ions per type', re.IGNORECASE)
+
+        # for Iter
+        iter_reg = re.compile('.*-- Iteration', re.IGNORECASE)
+        toten_ion_reg = re.compile('.*free  energy   TOTEN', re.IGNORECASE)
+        volume_ion_reg = re.compile('.*volume of cell', re.IGNORECASE)
+        efermi_reg = re.compile('^.*E-fermi')
 
         self.t = np.zeros((3, 3))
         self.rec_t = np.zeros((3, 3))
@@ -208,9 +211,12 @@ class ReadVaspOutcar(object):
 
         self.atoms = []
         self.atoms_index = []
-        self.toten_ion = []
+        self.volume_ion = []
 
-        for i in range(self.num):
+        i = 0
+        ####################### Iter ループ前の情報 #######################
+#       for j in range(self.num):
+        while not bool(iter_reg.match(self.datlines[i])):
 
             # title
             if bool(title_reg.match(self.datlines[i])):
@@ -266,6 +272,10 @@ class ReadVaspOutcar(object):
             if bool(nwrite_reg.match(self.datlines[i])):
                 self.nwrite = int(self.datlines[i].split()[2])
 
+            # ENCUT
+            if bool(encut_reg.match(self.datlines[i])):
+                self.encut = float(self.datlines[i].split()[2])
+
             # nion ( VASP 公式では TYPES に相当 )
             if bool(ion_type_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
@@ -283,20 +293,6 @@ class ReadVaspOutcar(object):
             if bool(ion_type_reg.match(self.datlines[i])):
                 for ion in range(self.nion):
                     self.atoms.append(int(self.datlines[i].split()[4 + ion]))
-
-            # current の iter number をゲット(最後には全Iter番号が入る)
-            # get_n_ion_loop (旧名) get_iter_num
-            if bool(iter_reg.match(self.datlines[i])):
-                self.n_ion_loop = int(self.datlines[i].split()[
-                                      2].replace('(', ''))
-
-            # Total Free Energy
-            if bool(toten_ion_reg.match(self.datlines[i])):
-                self.toten_ion.append(float(self.datlines[i].split()[4]))
-
-            # Fermi Energy
-            if bool(efermi_reg.match(self.datlines[i])):
-                self.efermi = self.datlines[i].split()[2]
 
             # t and recipcola
             if bool(rec_reg.match(self.datlines[i])):
@@ -364,6 +360,47 @@ class ReadVaspOutcar(object):
                 self.rec_t[0, 2] = rec3_x
                 self.rec_t[1, 2] = rec3_y
                 self.rec_t[2, 2] = rec3_z
+
+            # Volume ( Befor Iter )
+            if bool(volume_ion_reg.match(self.datlines[i])):
+                self.volume_ion.append(float(self.datlines[i].split()[4]))
+
+            i += 1
+
+
+        ###################### for Iter and Ion ##########################
+        self.toten_ion = []
+
+        for j in range(self.num - i):
+
+            # current の iter number をゲット(最後には全Iter番号が入る)
+            # get_n_ion_loop (旧名) get_iter_num
+            if bool(iter_reg.match(self.datlines[i])):
+                self.n_ion_loop = \
+                        int(self.datlines[i].split()[2].replace('(', ''))
+
+            # Total Free Energy
+            if bool(toten_ion_reg.match(self.datlines[i])):
+                self.toten_ion.append(float(self.datlines[i].split()[4]))
+
+            # Volume (Iter)
+            if bool(volume_ion_reg.match(self.datlines[i])):
+                self.volume_ion.append(float(self.datlines[i].split()[4]))
+
+            # Fermi Energy
+            if bool(efermi_reg.match(self.datlines[i])):
+                self.efermi = self.datlines[i].split()[2]
+
+            i += 1
+
+
+        ##################### after Iter Loop #############################
+
+        # last total_energy
+        self.toten = self.toten_ion[self.n_ion_loop-1]
+
+        # last Volume # initial 状態(計算前)があるので loop + 1
+        self.volume = self.volume_ion[self.n_ion_loop]
 
         # makes atoms_index
         # VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
@@ -482,6 +519,9 @@ class ReadVaspOutcar(object):
 
     def get_toten_ion(self):
         return self.toten_ion
+
+    def get_volume_ion(self):
+        return self.volume_ion
 
     def get_efermi(self):
         return self.efermi
@@ -620,7 +660,11 @@ class ReadVaspOutcar(object):
 
         return self.ETOTAL
 
+    def get_toten(self):
+        return self.toten
 
+    def get_volume(self):
+        return self.volume
 
 ##########################################################################
 if __name__ == '__main__':

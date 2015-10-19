@@ -32,7 +32,7 @@ import os
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -49,7 +49,7 @@ def options():
     options,args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAE.find_datfile1('_conv.txt')
+        name0 = SAEnv.find_datfile1('_conv.txt')
         name0 = name0.replace(suffix,'')
         if name0 is None:
             name0 = name
@@ -64,10 +64,10 @@ def options():
 if __name__ == '__main__':
 
     name,suffix = options()
-    conv = SAE.ReadFdmConv(name,suffix)
+    conv = SAEnv.ReadFdmConv(name,suffix)
 
-    eng = conv.get_eng()
-    xas = conv.get_xas()
+    eng = conv.eng
+    xas = conv.xas
 
     plt.rcParams['font.family']     = 'Times New Roman'
     plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
@@ -84,11 +84,11 @@ if __name__ == '__main__':
 
     plt.axes([orgx,orgy,xsize,ysize])
 
-    plt.plot(eng,xas,linewidth=2,label='XAS')
+    plt.plot(eng, xas, linewidth=2, label='XAS')
 
     plt.xlabel("Energy above Fermi [eV]")
     plt.ylabel("Absorption [arb. unit]")
-    plt.axvline(x=0,color='black',linewidth=1)
+    plt.axvline(x=0, color='black', linewidth=1)
 
 #   leg = plt.legend(fontsize=12,loc='lower right')
     leg = plt.legend(loc='lower right')

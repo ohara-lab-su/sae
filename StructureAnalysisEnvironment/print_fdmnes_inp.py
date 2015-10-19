@@ -32,7 +32,7 @@ __version__    = "0.1.1"
 #import os
 import sys
 #import optparse
-#import numpy as np
+import numpy as np
 
 import StructureAnalysisEnvironment as SAEnv
 
@@ -59,6 +59,8 @@ def print_fdmnes_inp0(outname='read_pdb.inp',atoms=None,MOL=False):
 
     print >> out, "! FDMNES indata file"
     print >> out, ""
+    print >> out, "!Nonexc"
+    print >> out, ""
     print >> out, " Absorber"
     print >> out, "  1"
     print >> out, "! allsite"
@@ -80,7 +82,10 @@ def print_fdmnes_inp0(outname='read_pdb.inp',atoms=None,MOL=False):
     print >> out, ""
     print >> out, " Relativism"
     print >> out, ""
+    print >> out, " Convolution"
     print >> out, "!No_Fermi"
+    print >> out, "!Efermi"
+    print >> out, "!Estart"
     print >> out, ""
     print >> out, "!SCF"
     print >> out, "!R_self"
@@ -118,10 +123,6 @@ def print_fdmnes_inp0(outname='read_pdb.inp',atoms=None,MOL=False):
     print >> out, "!Adimp"
     print >> out, "! 0.20"
     print >> out, ""
-    print >> out, " Convolution"
-    print >> out, ""
-    print >> out, "!Nonexc"
-    print >> out, ""
     print >> out, " End"
     print >> out, ""
 
@@ -151,6 +152,8 @@ def print_fdmnes_inp1(outname='read_pdb.inp',cell=None,MOL=False):
 
     print >> out, "! FDMNES indata file"
     print >> out, ""
+    print >> out, "!Nonexc"
+    print >> out, ""
     print >> out, " Absorber"
     print >> out, "  1"
     print >> out, "! allsite"
@@ -172,7 +175,10 @@ def print_fdmnes_inp1(outname='read_pdb.inp',cell=None,MOL=False):
     print >> out, ""
     print >> out, " Relativism"
     print >> out, ""
+    print >> out, " Convolution"
     print >> out, "!No_Fermi"
+    print >> out, "!Efermi"
+    print >> out, "!Estart"
     print >> out, ""
     print >> out, "!SCF"
     print >> out, "!R_self"
@@ -208,10 +214,6 @@ def print_fdmnes_inp1(outname='read_pdb.inp',cell=None,MOL=False):
     print >> out, ""
     print >> out, "!Adimp"
     print >> out, "! 0.20"
-    print >> out, ""
-    print >> out, " Convolution"
-    print >> out, ""
-    print >> out, "!Nonexc"
     print >> out, ""
     print >> out, " End"
     print >> out, ""

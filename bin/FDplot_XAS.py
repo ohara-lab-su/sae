@@ -139,7 +139,8 @@ def options():
     parser.add_argument('-n', '--nonsubtract', action='store_true', default=False,)
     parser.add_argument('-b', '--broad', action='store_true', default=False,)
     parser.add_argument('-d', '--dos', action='store_true', default=False,)
-    parser.add_argument('-o', '--obs', action='store_true', default=False,)
+#   parser.add_argument('-o', '--obs', action='store_true', default=False,)
+    parser.add_argument('-o', '--obs')
     parser.add_argument('-a', '--absorber', nargs='*')
     parser.add_argument('-w', '--weight')  # for XAS
     parser.add_argument('-x', '--dosweight')  # for LDOS
@@ -174,7 +175,7 @@ if __name__ == '__main__':
     inpname, convolname, textname, filoutname, bavname, sdname, allname,\
         OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
         FLAG_fermi, FLAG_subt,\
-        FLAG_B, FLAG_DOS, FLAG_OBS, AV, WE, WEDOS,\
+        FLAG_B, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
         FLAG_UP, FLAG_DN, FLAG_SPIN, FLAG_NW = options()
 
     ##########################################################################
@@ -491,8 +492,11 @@ if __name__ == '__main__':
 
     ##########################################################################
     # Athena data plot
-    if FLAG_OBS:
-        obs_file = filout + '_obs.txt.nor'
+    if OPT_OBS:
+        if os.path.exists(OPT_OBS):
+            obs_file = OPT_OBS
+        else:
+            obs_file = filout + '_obs.txt.nor'
         if not os.path.exists(obs_file):
             sys.exit("STOP: " + obs_file + " not found")
 

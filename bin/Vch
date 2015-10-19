@@ -39,7 +39,7 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -60,13 +60,15 @@ if __name__ == '__main__':
     if not os.path.exists('POSCAR'): sys.exit("STOP: POSCAR not found")
     if not os.path.exists('POTCAR'): sys.exit("STOP: POTCAR not found")
 
-    # Read INCAR file
-    incar = SAE.ReadVaspIncar()
+    incar = SAEnv.ReadVaspIncar()
+    poscar = SAEnv.ReadVaspPoscar()
+    potcar = SAEnv.ReadVaspPotcar()
 
     if incar.ispin > 1:
         print ""
-        print "ISPIN =",incar.ispin
+        print "ISPIN  =",incar.ispin
 
+    print "GGA    =",incar.gga
     print ""
     print "ISMEAR =",incar.ismear
     print "SIGMA  =",incar.sigma
@@ -74,6 +76,7 @@ if __name__ == '__main__':
         print "NBANDS = ",incar.nbands
 
     print ""
+    print "NELM   = ",incar.nelm
     print "NSW    = ",incar.nsw
 
 
@@ -84,7 +87,7 @@ if __name__ == '__main__':
     print "EDIFFG = ",incar.ediffg
 
 
-    kpoints = SAE.ReadVaspKpoints()
+    kpoints = SAEnv.ReadVaspKpoints()
     kx,ky,kz = kpoints.get_kpoints()
     print ""
     print "Kx     = ",kx
@@ -92,7 +95,6 @@ if __name__ == '__main__':
     print "Kz     = ",kz
 
     if incar.nsw > 0:
-        poscar = SAE.ReadVaspPoscar()
         poscar.get_selective()
         print ""
         if poscar.selective:
@@ -113,4 +115,28 @@ if __name__ == '__main__':
 
     print ""
     print "NPAR   = ",incar.npar
+
+    print ""
+    print "---- POSCAR ----"
+    print "",
+    for i in range(len(poscar.atoms_index)):
+        print poscar.atoms_index[i]+" ",
+    print ""
+    print "",
+    for i in range(len(poscar.atoms)):
+        print str(poscar.atoms[i])+" ",
+    print ""
+
+    print ""
+    print "---- POTCAR ----"
+    print "",
+    for i in range(len(poscar.atoms_index)):
+        print potcar.atoms_index[i]+" ",
+    print ""
+    print " (zval)"
+    print "",
+    for i in range(len(potcar.atoms_zval)):
+        print str(potcar.atoms_zval[i])+" ",
+    print ""
+
 

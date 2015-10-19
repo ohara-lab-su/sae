@@ -32,7 +32,7 @@ import os
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -49,7 +49,7 @@ def options():
     options,args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAE.find_datfile1('_conv.txt')
+        name0 = SAEnv.find_datfile1('_conv.txt')
         name0 = name0.replace(suffix,'')
         if name0 is None:
             name0 = name
@@ -64,7 +64,7 @@ def options():
 if __name__ == '__main__':
 
     name,suffix = options()
-#   conv = SAE.ReadFdmConv(name)
+#   conv = SAEnv.ReadFdmConv(name)
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     plt.axes([orgx,orgy,xsize,ysize])
 
 #    #######################################################
-#    nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+#    nor = SAEnv.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
 #    plt.plot(nor.eng,nor.nor,color='blue',linewidth=1,label='exp.')
 #    #######################################################
 
@@ -92,10 +92,10 @@ if __name__ == '__main__':
     E_edge   = 0.0
     E_fermi  = -5.41217
 
-#   conv = SAE.ReadFdmConv(name,suffix)
+#   conv = SAEnv.ReadFdmConv(name, suffix)
 
-    conv = SAE.ReadFdmConv('R3.0/Au',suffix)
-    plt.plot(conv.eng+E_edge,conv.xas,linewidth=2,label='XAS')
+    conv = SAEnv.ReadFdmConv('R3.0/Au', suffix)
+    plt.plot(conv.eng+E_edge, conv.xas, linewidth=2, label='XAS')
 
     plt.ticklabel_format(axis='x',useOffset=False)
     plt.xlabel("Energy above Fermi [eV]")

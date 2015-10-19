@@ -76,7 +76,8 @@ if __name__ == '__main__':
     atoms = read(pdbname,format='pdb')
     atoms.center()
 
-    atoms.write(poscarname,format='vasp',direct=True,vasp5=True)
-    atoms.write(structname,format='struct')
+#   atoms.write(poscarname,format='vasp',direct=True,vasp5=True)
+    atoms.write(poscarname,format='vasp',vasp5=True,sort=True)
+#   atoms.write(structname,format='struct')
 
 

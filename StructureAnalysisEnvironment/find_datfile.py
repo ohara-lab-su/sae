@@ -69,7 +69,7 @@ def find_datfile(suffix):
 
     suffix0 = re.sub('^\.','',suffix)
     filelist = glob.glob("*."+suffix0)
-    datname=None
+    datname = None
     if len(filelist) == 1:
         datname = re.sub('.'+suffix0,'',filelist[0])
 
@@ -93,7 +93,7 @@ def find_datfile1(tail):
 def find_datfiles(suffix):
 
     filelist = glob.glob("*."+str(suffix))
-    datnames=None
+    datnames = None
     datnames = []
     for i in filelist:
         datnames.append(re.sub('.'+str(suffix),'',i))
