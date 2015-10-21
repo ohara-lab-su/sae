@@ -81,7 +81,9 @@ if __name__ == '__main__':
 
 
     if incar.nsw > 0:
+        print ""
         print "IBRION = ",incar.ibrion
+        print ""
 
     print "EDIFF  = ",incar.ediff
     print "EDIFFG = ",incar.ediffg
@@ -89,6 +91,17 @@ if __name__ == '__main__':
 
     kpoints = SAEnv.ReadVaspKpoints()
     kx,ky,kz = kpoints.get_kpoints()
+    if kpoints.FLAGS[5]:
+        gamma_FLAG = True
+        monk_FLAG = False
+        print ""
+        print "Gamma"
+    else:
+        gamma_FLAG = False
+        monk_FLAG = True
+        print ""
+        print "Monk"
+
     print ""
     print "Kx     = ",kx
     print "Ky     = ",ky
@@ -112,6 +125,9 @@ if __name__ == '__main__':
         print "NGXF   = ",incar.ngxf
         print "NGYF   = ",incar.ngyf
         print "NGZF   = ",incar.ngzf
+
+    print ""
+    print "LREAL  = ",incar.lreal
 
     print ""
     print "NPAR   = ",incar.npar

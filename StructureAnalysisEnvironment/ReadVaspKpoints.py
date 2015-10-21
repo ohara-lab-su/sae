@@ -16,6 +16,9 @@
 #
 ################################################################################
 #
+# 2015.10.21
+#  インスタンス重視の方針変更にしたがって大幅改変
+#
 # 2015.01.28
 #  title の取得における末尾までの空白削除を追加
 #
@@ -71,52 +74,34 @@ import numpy as np
 
 #import re
 #from copy import deepcopy
+import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 class ReadVaspKpoints(object):
 
-    def __init__(self,name='KPOINTS'):
+    def __init__(self, KPOINTS='KPOINTS'):
 
-        if os.path.exists(name):
-            GZIP=False
-        elif os.path.exists(name+".gz"):
-            GZIP=True
-        else:
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+        self.datlines, self.num = SAEnv.read_dataline(KPOINTS)
 
-        try:
-            if GZIP:
-                tmp = gzip.open(name+".gz")
-            else:
-                tmp = open(name)
-            datfile = tmp.read()
-        except:
-            tmp.close()
-            sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
-        finally:
-            tmp.close()
+        # 一行目: コメント(実質的には K-POINTS としか書かない)
+        self.title = re.sub(' *$','', str(self.datlines[0]))
 
-        self.datlines = datfile.split('\n')
-        self.num = len(self.datlines)
+        ############################### K-Mesh 作成情報
+        # mode-チェック (auto-mode or line-mode のチェック)
+        # 二行目が0のときは auto-mode, 0以外の時は手動(hand) or line-mode
+        auto_FLAG = False  # FLAGS[0]  auto
+        line_FLAG = False  # FLAGS[1]  line
+        hand_FLAG = False  # FLAGS[2]  hand
+        car_FLAG = False   # FLAGS[3]  cartesian
+        rec_FLAG = False   # FLAGS[4]  reciprocal
+        gamma_FLAG = False # FLAGS[5]  gamma
+        monk_FLAG = False  # FLAGS[6]  monk
 
-    # title のゲット(正直この情報は使わない)
-    def get_title(self):
-        src = str(self.datlines[0])
-        self.title = re.sub(' *$','',src)
-        return self.title
-
-    # mode-チェック (auto-mode or line-mode のチェック)
-    # 二行目が0のときは auto-mode, 0以外の時は手動(hand) or line-mode
-    def get_kpoints_mode(self): # VASP 的には SYSTEM に相当かと
-        auto_FLAG = False  # FLAGS[0]
-        line_FLAG = False  # FLAGS[1]
-        hand_FLAG = False  # FLAGS[2]
-        car_FLAG  = False  # FLAGS[3]
-        rec_FLAG  = False  # FLAGS[4]
         i = 0
+        # 非auto-mode の時
         if int(self.datlines[1]) > 0:
-
             mode_line = str(self.datlines[2].split()[0])
+
             if mode_line[0:1] == 'L' or mode_line[0:1] == 'l':
                 line_FLAG = True
                 i += 1
@@ -124,35 +109,39 @@ class ReadVaspKpoints(object):
                 hand_FLAG = True
 
             mode_line = str(self.datlines[2+i].split()[0])
+
             if mode_line[0:1] == 'c' or mode_line[0:1] == 'C':
                 car_FLAG = True
             elif mode_line[0:1] == 'r' or mode_line[0:1] == 'R':
                 rec_FLAG = True
+
+        # auto-mode の時
         else:
             auto_FLAG = True
+            mode_line = str(self.datlines[2].split()[0])
 
-        self.FLAGS = [auto_FLAG,line_FLAG,hand_FLAG,car_FLAG,rec_FLAG]
-        return self.FLAGS
+            if mode_line[0:1] == 'g' or mode_line[0:1] == 'G':
+                gamma_FLAG = True
+            elif mode_line[0:1] == 'm' or mode_line[0:1] == 'M':
+                monk_FLAG = True
 
+        self.FLAGS = auto_FLAG, line_FLAG, hand_FLAG,\
+                car_FLAG, rec_FLAG, gamma_FLAG, monk_FLAG
 
-    # K-points 情報の入手  (!!! 注意:auto-mode のみの動作 !!!)
-    def get_kpoints(self):
-        FLAGS = self.get_kpoints_mode()
-        if FLAGS[0]:
-            tmp = self.datlines[3].split()
-            self.kx = int(tmp[0])
-            self.ky = int(tmp[1])
-            self.kz = int(tmp[2])
-
-        return [self.kx,self.ky,self.kz]
-
-    # K-points 情報の入手 (auto-mode では kx, ky, kz を返す)
-    def get_kpoints_array(self):
-        FLAGS = self.get_kpoints_mode()
-
-        if not FLAGS[0]:
+        ############################# K-Mesh 情報 (手動 or 自動)
+        # 四行目 for auto-mode
+        self.kx = 0
+        self.ky = 0
+        self.kz = 0
+        if auto_FLAG:
+            self.kx = int(self.datlines[3].split()[0])
+            self.ky = int(self.datlines[3].split()[1])
+            self.kz = int(self.datlines[3].split()[2])
+            self.kpoints_array = np.zeros((1,3))
+            self.kpoints_array[0,:] = self.kx, self.ky, self.kz
+        else:
             start = 3
-            if FLAGS[1]:
+            if line_FLAG:
                 start += 1
 
             # 空白行を削除したことによる行数の減少を考慮した、K点配列数の確保
@@ -161,52 +150,48 @@ class ReadVaspKpoints(object):
                 if len(self.datlines[i]) > 0:
                     j += 1
 
-            kpoints_array_num = j
-
-            if FLAGS[1]:
-                kpoints_array = np.zeros((kpoints_array_num,3))
-            elif FLAGS[2]:
-                kpoints_array_num = int(self.datlines[1])
-                kpoints_array = np.zeros((kpoints_array_num,3))
-
-            j = 0
-            for i in range(start,self.num):
-                if len(self.datlines[i]) > 0:
-                    kpoints_array[j,0] = float(self.datlines[i].split()[0])
-                    kpoints_array[j,1] = float(self.datlines[i].split()[1])
-                    kpoints_array[j,2] = float(self.datlines[i].split()[2])
-                    j += 1
-                    if j >= kpoints_array_num:
-                        break
-        else:
-            x,y,z = self.get_kpoints()
-            kpoints_array = np.zeros((1,3))
-            kpoints_array[0,:] = x,y,z
-
-        return kpoints_array
-
-    # K-points 情報の入手 (auto-mode では動作しない)
-    def get_kpoints_array_num(self):
-        FLAGS = self.get_kpoints_mode()
-        self.kpoints_array_num = 0
-        if not FLAGS[0]:
-            start = 3
-            if FLAGS[1]:
-                start += 1
-            j = 0
-            for i in range(start,self.num):
-                if len(self.datlines[i]) > 0:
-                    j += 1
             self.kpoints_array_num = j
 
+            if line_FLAG:
+                self.kpoints_array = np.zeros((self.kpoints_array_num,3))
+            elif hand_FLAG:
+                self.kpoints_array_num = int(self.datlines[1])
+                self.kpoints_array = np.zeros((self.kpoints_array_num,3))
+
+            j = 0
+            for i in range(start,self.num):
+                if len(self.datlines[i]) > 0:
+                    self.kpoints_array[j,0] = float(self.datlines[i].split()[0])
+                    self.kpoints_array[j,1] = float(self.datlines[i].split()[1])
+                    self.kpoints_array[j,2] = float(self.datlines[i].split()[2])
+                    j += 1
+                    if j >= self.kpoints_array_num:
+                        break
+
+    ############################################################################
+
+    def get_title(self):
+        return self.title
+
+    def get_kpoints_mode(self): # auto-mode, cartesian, monk, gamma,,,
+        return self.FLAGS
+
+    def get_kpoints(self):
+        return [self.kx,self.ky,self.kz]
+
+    def get_kpoints_array(self):
+        return self.kpoints_array
+
+    def get_kpoints_array_num(self):
         return self.kpoints_array_num
 
     ############################################################################
     #  kpoints_array で求めたKPOINTS の line 情報から
     #  各逆格子のゾーンにおける距離を求める method の実装
+    #  OUTCAR の読み込みが必須
     def get_kpoints_vector(self,outcarname):
 
-        import StructureAnalysisEnvironment as SAE
+        import StructureAnalysisEnvironment as SAEnv
         import math
 
         # get kpoints
@@ -214,7 +199,7 @@ class ReadVaspKpoints(object):
 
         # get reciprocal vector
 #       outcarname = 'OUTCAR'
-        outcar = SAE.ReadOutcar(outcarname)
+        outcar = SAEnv.ReadVaspOutcar(outcarname)
         kpoints_type = outcar.get_kpoints_type()
         rec_t = outcar.get_reciprocal_t_init()
 
