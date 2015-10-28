@@ -16,6 +16,10 @@
 #
 ################################################################################
 #
+# 2015.10.29
+#    キャプション移動オプション
+#    LMAX 判定による f軌道オプション
+#
 # 2015.01.29
 #    Y軸(DOS軸) の下限の設定のバグを修正
 #
@@ -69,26 +73,29 @@ def options():
     oname = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-d','--doscar', dest='DOSCAR', default=dname,)
-    parser.add_option( '-o', '--outcar', dest='OUTCAR', default=oname,)
-    parser.add_option( '-n', '--nw', action='store_true', default=False, dest='NOWINDOW',)
-    parser.add_option(  '--emax', dest='EMAX',)
-    parser.add_option(  '--emin', dest='EMIN',)
-    parser.add_option(  '--ymax', dest='YMAX',)
+    parser.add_option('-d','--doscar', dest='DOSCAR', default=dname,)
+    parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
+    parser.add_option('-n', '--nw', action='store_true', default=False, dest='NOWINDOW',)
+    parser.add_option('--emax', dest='EMAX',)
+    parser.add_option('--emin', dest='EMIN',)
+    parser.add_option('--ymax', dest='YMAX',)
+    # legend の right と left の切り替え
+    parser.add_option('--left', action='store_true')
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
     if options.OUTCAR: oname=options.OUTCAR
 
-    return [dname,oname,\
-            options.NOWINDOW,options.EMAX,options.EMIN,options.YMAX]
+    return [dname, oname,
+            options.NOWINDOW, options.EMAX, options.EMIN, options.YMAX,
+            options.left]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    dname,oname,NO_WINDOW_FLAG,\
-            OPT_EMAX,OPT_EMIN,OPT_YMAX= options()
+    dname, oname, NO_WINDOW_FLAG,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, FLAG_LEFT = options()
 
     if OPT_EMAX: print "Emax=",OPT_EMAX
     if OPT_EMIN: print "Emin=",OPT_EMIN
@@ -108,6 +115,7 @@ if __name__ == '__main__':
     EMIN = dos.get_emin()
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
+    LMAX = dos.lmax
 
     # makes instance ( Read OUTCAR )
     outcar = SAE.ReadVaspOutcar(oname)
@@ -167,10 +175,17 @@ if __name__ == '__main__':
             plt.plot(ENG-EFERMI,ADOS, linestyle="-", color=c, linewidth=2, label=atom+'-p')
             j += 1
 
-            c = cm.prism(float(j)/(3*NION))
-            ADOS = dos.get_ldos_ion(2,ion,spin)
-            plt.plot(ENG-EFERMI,ADOS, linestyle="--", color=c, linewidth=2, label=atom+'-d')
-            j += 1
+            if LMAX >= 2:
+                c = cm.prism(float(j)/(3*NION))
+                ADOS = dos.get_ldos_ion(2,ion,spin)
+                plt.plot(ENG-EFERMI,ADOS, linestyle="--", color=c, linewidth=2, label=atom+'-d')
+                j += 1
+
+            if LMAX >= 3:
+                c = cm.prism(float(j)/(3*NION))
+                ADOS = dos.get_ldos_ion(3,ion,spin)
+                plt.plot(ENG-EFERMI,ADOS, linestyle="-.", color=c, linewidth=2, label=atom+'-f')
+                j += 1
 
             # Y軸の調整
             plt.ylim( ymin=0 )
@@ -200,7 +215,11 @@ if __name__ == '__main__':
 
     plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
 
-    leg = plt.legend(fontsize=12)   # 凡例Box
+    if FLAG_LEFT:
+        leg = plt.legend(fontsize=12, loc='upper left')   # 凡例Box
+    else:
+        leg = plt.legend(fontsize=12)   # 凡例Box
+
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
 #   plt.xlim([-10,10])

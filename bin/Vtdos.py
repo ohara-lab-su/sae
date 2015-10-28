@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2015.10.28
+#   フェルミレベルに関してのオプションを追加
+#
 # 2015.01.14 startup
 #    get_tdos & get_inttdos テスト用を兼ねる
 #
@@ -43,25 +46,22 @@ def options():
     name = 'DOSCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
+    parser.add_option('-i','--input', dest='INPUT')
+    # スイッチが入ると Ef = 0 のスイッチが 'off' になる
+    parser.add_option('--fermi', action='store_true',default=False,)
     options,  args = parser.parse_args()
 
-    if options.INPUT:
-        name=options.INPUT
+    if options.INPUT: name=options.INPUT
 
-    if len(args) > 0:
-        name=args[0]
+    if len(args) > 0: name=args[0]
 
-    return name
+    return name, options.fermi
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    name = options()
+    name, FERMI_FLAG = options()
 
     # makes instance ( Read DOSCAR )
     dos = SAE.ReadVaspDoscar(name)
@@ -76,14 +76,22 @@ if __name__ == '__main__':
     EMAX = dos.get_emax()
     EMIN = dos.get_emin()
     NEDOS = dos.get_nedos()
-    EFERMI = dos.get_efermi()
 
     ENG = dos.get_eng()
 
+    print >> out, ""
+    print >> out, ""
+    print >> out, ""
+
+    if FERMI_FLAG:
+        EFERMI = 0.0
+        print >> out, "## EF = 0"
+    else:
+        EFERMI = dos.get_efermi()
+        print >> out, "## EF = ", EFERMI
+    print >> out, "## Energy = E - EF"
+
     for spin in range(NSPIN):
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
         print >> out, "##"
         print >> out, "## INFILE= ",name
         print >> out, "## ISPIN = ",NSPIN

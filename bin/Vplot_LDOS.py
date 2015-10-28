@@ -19,6 +19,10 @@
 #
 ################################################################################
 #
+# 2015.10.28
+#    plot する site(atom) の指定をオプションありでも出来るようにした
+#    ただし、一つのサイトのみ
+#
 # 2015.09.11
 #    plot の仕方を少し変更
 #
@@ -80,16 +84,18 @@ def options():
     oname = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-d','--doscar', dest='DOSCAR', default=dname,)
+    parser.add_option( '-d','--doscar', dest='DOSCAR', default=dname,)
     parser.add_option( '-o', '--outcar', dest='OUTCAR', default=oname,)
     parser.add_option( '-n', '--nw', action='store_true', default=False,)
-    parser.add_option(  '--emax', dest='EMAX',)
-    parser.add_option(  '--emin', dest='EMIN',)
-    parser.add_option(  '--ymax', dest='YMAX',)
+    parser.add_option( '--emax', dest='EMAX',)
+    parser.add_option( '--emin', dest='EMIN',)
+    parser.add_option( '--ymax', dest='YMAX',)
+    parser.add_option( '-a', '--atom',)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
     if options.OUTCAR: oname=options.OUTCAR
+    if options.atom: options.atom = int(options.atom)
 
     plot_atoms=[]
     if len(args) > 0:
@@ -98,9 +104,11 @@ def options():
     else:
         plot_atoms = [1]
 
-    return [dname,oname,\
-            options.nw,\
-            options.EMAX,options.EMIN,options.YMAX,plot_atoms]
+
+    return [dname, oname,
+            options.nw,
+            options.EMAX, options.EMIN, options.YMAX,
+            options.atom, plot_atoms]
 
 ################################################################################
 if __name__ == '__main__':
@@ -108,6 +116,7 @@ if __name__ == '__main__':
     # set input file
     dname,oname,NO_WINDOW_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,\
+            plot_atom,\
             plot_atoms = options()
 
     if OPT_EMAX: print "Emax=",OPT_EMAX
@@ -120,6 +129,10 @@ if __name__ == '__main__':
         for i in plot_atoms:
             print i,
         print ""
+    elif plot_atom:
+        plot_atoms[0] = plot_atom
+
+    print plot_atoms
 
     # set output device
     out = sys.stdout
@@ -252,16 +265,20 @@ if __name__ == '__main__':
 
     ############################################################################
 
-
     leg = plt.legend(fontsize=12)   # 凡例Box
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
 #   plt.xlim([-10,10])
 #   plt.ylim([0,200])
 
-    plt.savefig("LDOS.eps")
-    plt.savefig("LDOS.pdf")
-    plt.savefig("LDOS.png")
+    if plot_atom:
+        plt.savefig("LDOS"+str(plot_atom)+".eps")
+        plt.savefig("LDOS"+str(plot_atom)+".pdf")
+        plt.savefig("LDOS"+str(plot_atom)+".png")
+    else:
+        plt.savefig("LDOS.eps")
+        plt.savefig("LDOS.pdf")
+        plt.savefig("LDOS.png")
 
     if not NO_WINDOW_FLAG:
         plt.show()

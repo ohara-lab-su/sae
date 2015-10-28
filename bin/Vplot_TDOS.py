@@ -10,14 +10,18 @@
 #
 #   1) gnuplot の代わりに matplotlib を用いる
 #   2) Vldos.py などは用いない
-#   3) 内部的には直接 ReadDoscar クラス(ReadDoscar.py)を用いる
-#      そもそも ReadDoscar クラスは matplotlib からの利用を念頭に構造化している
+#   3) 内部的には直接 ReadVaspDoscar クラス(ReadVaspDoscar.py)を用いる
+#      そもそも ReadVaspDoscar クラスは matplotlib からの利用を念頭に
+#      構造化している
 #
 #   4) 引数処理(局所状態密度の原子選択や、対称性による軌道選択)などは
 #      別プログラムで、それぞれ対応になるので、ほぼ vplot_LDOS* シリーズと
 #      同じファイル構成になる。
 #
 ################################################################################
+#
+# 2015.10.28
+#   f軌道対応 & キャプション移動オプション
 #
 # 2015.01.29
 #    Y軸(DOS軸) の下限の設定のバグを修正
@@ -81,11 +85,22 @@ def options():
     parser.add_option('-p', '--portrait', action='store_true', default=False, dest='PORTRAIT',)
     # 積分状態密度同時プロットオプション
     parser.add_option('--inttdos', action='store_true', default=False)
-    # spd-all を off するスイッチ
+    # spd-all を 'off' するスイッチ
     parser.add_option('--spd', action='store_true', default=False)
+    # f-all を 'on' にするスイッチ
+    parser.add_option('-f', action='store_true', default=False)
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--ymax', dest='YMAX',)
     parser.add_option('--emin', dest='EMIN',)
+    # NSPIN=2 のときに、片方のスピンだけを表示するオプション
+    parser.add_option('--up', action='store_true')
+    parser.add_option('--dn', action='store_true')
+    # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+    parser.add_option('--vbm', action='store_true')
+    # efermi を 0 ではなく shift した値を使う
+    parser.add_option('--shift')
+    # legend の right と left の切り替え
+    parser.add_option('--left', action='store_true')
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
@@ -94,18 +109,20 @@ def options():
 #   if options.OPT_EMAX:
 #       print options.OPT_EMAX
 
-    return [dname,oname,
-            options.NOWINDOW,options.PORTRAIT,
-            options.inttdos, options.spd,
-            options.EMAX,options.EMIN,options.YMAX]
+    return [dname, oname,
+            options.NOWINDOW, options.PORTRAIT,
+            options.inttdos, options.spd, options.f,
+            options.EMAX, options.EMIN, options.YMAX,
+            options.up, options.dn, options.vbm, options.shift, options.left]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    dname,oname,NO_WINDOW_FLAG,PORTRAIT_FLAG,\
-            FLAG_INTTDOS, FLAG_SPD,\
-            OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
+    dname, oname, NO_WINDOW_FLAG, PORTRAIT_FLAG,\
+            FLAG_INTTDOS, FLAG_SPD, FLAG_F,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            FLAG_UP, FLAG_DN, FLAG_VBM, OPT_SHIFT, FLAG_LEFT = options()
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
@@ -138,8 +155,18 @@ if __name__ == '__main__':
     EMIN = dos.emin
     NEDOS = dos.nedos
     EFERMI = dos.efermi
+    LMAX = dos.lmax
 
     ENG = dos.eng
+
+    if FLAG_VBM:
+        print "EF SHIFT"
+        EFERMI0 = dos.efermi
+        EFERMI = dos.get_vbm()
+        print EFERMI0, EFERMI
+
+    if OPT_SHIFT:
+        EFERMI = float(OPT_SHIFT)
 
     ############################################################################
     # matplotlib
@@ -162,7 +189,19 @@ if __name__ == '__main__':
     sizex = 0.75
     sizey0 = 0.80
 
-    for spin in range(NSPIN):
+    if NSPIN >=2:
+        spin_list = [0,1]
+        if FLAG_UP:
+            spin_list = [0]
+            NSPIN = 1
+        if FLAG_DN:
+            spin_list = [1]
+            NSPIN = 1
+    else:
+        spin_list = [0]
+
+#   for spin in range(NSPIN):
+    for spin in spin_list:
 
         if NSPIN == 1:
             sizey = sizey0
@@ -207,6 +246,9 @@ if __name__ == '__main__':
 
             TDOS = dos.get_tdos_spd(2,spin)
             plt.plot(ENG-EFERMI,TDOS, color="blue", linewidth=2, label='ALL-d')
+            if FLAG_F or LMAX >= 3:
+                TDOS = dos.get_tdos_spd(3,spin)
+                plt.plot(ENG-EFERMI,TDOS, color="yellow", linewidth=2, label='ALL-f')
 
         # Y軸の調整
         plt.ylim( ymin=0 )
@@ -237,7 +279,11 @@ if __name__ == '__main__':
 
     plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
 
-    leg = plt.legend(fontsize=12)   # 凡例Box
+    if FLAG_LEFT:
+        leg = plt.legend(fontsize=12, loc='upper left')
+    else:
+        leg = plt.legend(fontsize=12)   # 凡例Box
+
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
     xmin,xmax,ymin,ymax = plt.axis()

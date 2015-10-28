@@ -11,6 +11,12 @@
 #
 ##########################################################################
 #
+# 2015.10.28
+#  VBM を取得するためのルーチン追加
+#
+# 2015.10.28
+#  軌道成分の対応を f 軌道まで拡張,および一般化
+#
 # 2015.08.17
 #   古いバージョンをブランチ(動作版のバックアップ)
 #   新しいブランチ版はインスタンス重視に切り替える
@@ -89,7 +95,7 @@ __status__ = "alpha"
 __version__ = "0.1.00"
 ##########################################################################
 
-#import sys
+import sys
 #import os
 #import gzip
 import re
@@ -115,7 +121,7 @@ class ReadVaspDoscar(object):
         self.emax = float(self.datlines[5].split()[0])  # EMAX
         self.emin = float(self.datlines[5].split()[1])  # EMIN
         self.nedos = int(self.datlines[5].split()[2])  # NEDOS
-        self.efermi = float(self.datlines[5].split()[3])  # EFERMI
+        self.efermi = float(self.datlines[5].split()[3])  # EFERMI (for TDOS)
 
         # DOSCAR のTOTAL-DOS 情報列からspin情報を推測する
         if len(self.datlines[7].split()) >= 4:  # 4列以上だと SPIN ありは確実
@@ -130,14 +136,59 @@ class ReadVaspDoscar(object):
         else:
             self.lorbit = 10  # or 0
 
+        # lmax の取得 (atom 毎でチェックして、最大の値が全体に適応される)
+        #
+        #  5 = 1(ene) +  4 ( s1 + p3 )             --> l_max = 1, nonmag
+        # 10 = 1(ene) +  9 ( s1 + p3 + d5 )        --> l_max = 2, nonmag
+        # 17 = 1(ene) + 16 ( s1 + p3 + d5 + f7 )   --> l_max = 3, nonmag
+        #
+        #  9 = 1(ene) +  8 ( s1 + p3 )*2           --> l_max = 1, spin
+        # 19 = 1(ene) + 18 ( s1 + p3 + d5 )*2      --> l_max = 2, spin
+        # 33 = 1(ene) + 32 ( s1 + p3 + d5 + f7 )*2 --> l_max = 3, spin
+        #
+        lm_num = 0
+        for atom0 in range(self.natom):
+            _lm_num  = len(self.datlines
+                         [6 + self.nedos * (atom0+ 1 ) + 1 +atom0].split())
+            if lm_num < _lm_num:
+                lm_num = _lm_num
+
+        # l_max と spin の見積もり
+        if lm_num == 5:
+            self.lmax = 1
+            _spin = 1
+        elif lm_num == 10:
+            self.lmax = 2
+            _spin = 1
+        elif lm_num == 17:
+            self.lmax = 3
+            _spin = 1
+        elif lm_num == 9:
+            self.lmax = 1
+            _spin = 2
+        elif lm_num == 19:
+            self.lmax = 2
+            _spin = 2
+        elif lm_num == 33:
+            self.lmax = 3
+            _spin = 2
+        if not _spin == self.nspin:
+            sys.exit("STOP: inconsistency  spin")
+
+        lm_max = 0
+        for l in range(self.lmax+1):
+            lm_max += ( 2*l +1 )*self.nspin
+       #print 'l_max', self.lmax
+       #print 'lm_max', lm_max
+
         #######################################################################
         # for DOS , atom と spin は 0 から始める(spin=0 --> up-spin)
         #
-        l_max = 3
-        if self.lorbit >= 11:
-            lm_max = 9
-        else:
-            lm_max = 3
+       #l_max = 3
+       #if self.lorbit >= 11:
+       #    lm_max = 9
+       #else:
+       #    lm_max = 3
 
         self.eng = np.zeros((self.nedos))
 
@@ -145,7 +196,7 @@ class ReadVaspDoscar(object):
         self.intdos_all = np.zeros((self.nedos, self.nspin))
 
         self.pdos_all = np.zeros((self.nedos, lm_max, self.natom, self.nspin))
-        self.ldos_all = np.zeros((self.nedos, l_max, self.natom, self.nspin))
+        self.ldos_all = np.zeros((self.nedos, self.lmax+1, self.natom, self.nspin))
 
         for i in range(self.nedos):
             self.eng[i] = float(self.datlines[6 + i].split()[0])  # from TDOS
@@ -169,40 +220,54 @@ class ReadVaspDoscar(object):
                 if self.lorbit >= 11:
                     f = 1
 
-                    # 0:s
-                    for lm in range(0, 1):
-                        for ispin in range(self.nspin):
-                            self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
-                            self.ldos_all[i, 0, atom0, ispin] = \
-                                self.ldos_all[i, 0, atom0,
-                                              ispin] + float(tmp[f])
-                            f += 1
+                    if self.lmax >= 0:
+                        # 0:s
+                        for lm in range(0, 1):
+                            for ispin in range(self.nspin):
+                                self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
+                                self.ldos_all[i, 0, atom0, ispin] = \
+                                    self.ldos_all[i, 0, atom0, ispin] \
+                                    + float(tmp[f])
+                                f += 1
 
-                    # 1:p_y,2:p_z,3:p_x
-                    for lm in range(1, 4):
-                        for ispin in range(self.nspin):
-                            self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
-                            self.ldos_all[i, 1, atom0, ispin] = \
-                                self.ldos_all[i, 1, atom0,
-                                              ispin] + float(tmp[f])
-                            f += 1
+                    if self.lmax >= 1:
+                        # 1:p_y,2:p_z,3:p_x
+                        for lm in range(1, 4):
+                            for ispin in range(self.nspin):
+                                self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
+                                self.ldos_all[i, 1, atom0, ispin] = \
+                                    self.ldos_all[i, 1, atom0, ispin] \
+                                    + float(tmp[f])
+                                f += 1
 
-                    # 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
-                    for lm in range(4, 9):
-                        for ispin in range(self.nspin):
-                            self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
-                            self.ldos_all[i, 2, atom0, ispin] = \
-                                self.ldos_all[i, 2, atom0,
-                                              ispin] + float(tmp[f])
-                            f += 1
+                    if self.lmax >= 2:
+                        # 4:d_xy,5:d_yz,6:d_3z2-r2,7:d_xz,8:d_x2-y2
+                        for lm in range(4, 9):
+                            for ispin in range(self.nspin):
+                                self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
+                                self.ldos_all[i, 2, atom0, ispin] = \
+                                    self.ldos_all[i, 2, atom0, ispin] \
+                                    + float(tmp[f])
+                                f += 1
+
+                    if self.lmax >= 3:
+                        # 5: f-orbitals
+                        for lm in range(9, 16):
+                            for ispin in range(self.nspin):
+                                self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
+                                self.ldos_all[i, 3, atom0, ispin] = \
+                                    self.ldos_all[i, 3, atom0, ispin] \
+                                    + float(tmp[f])
+                                f += 1
 
                 else:
                     f = 1
-                    for lm in range(lm_max):
+                    for lm in range(self.lmax+1):
                         # 0:eng
                         # 1:lm=0: s
                         # 2:lm=1: p
                         # 3:lm=2: d
+                        # 5:lm=4: f
                         for ispin in range(self.nspin):
                             self.pdos_all[i, lm, atom0, ispin] = float(tmp[f])
                             f += 1
@@ -210,6 +275,34 @@ class ReadVaspDoscar(object):
                     self.ldos_all = self.pdos_all
 
     ##########################################################################
+    ## EF 近傍の0.2 eV で VBM を探す
+    def get_vbm(self,spin=0):
+        METAL = True
+        EPS = 0.00001
+
+        for i in range(self.nedos):
+            if abs(self.eng[i] - self.efermi) <= 0.2:
+
+                if self.tdos_all[i,spin] < EPS:
+                    METAL = False
+                    self.e_vbm = float(self.eng[i-1])
+                    break
+                   #vbm_tdos = self.tdos_all[i-1,spin]
+
+       #print "METAL=",METAL
+        if not METAL:
+            pass
+           #print "E(VBM) = ",self.e_vbm
+           #print "E(VBM) - EF = ",self.e_vbm -self.efermi
+        else:
+            self.e_vbm = 0.0
+
+        return self.e_vbm
+
+    ##########################################################################
+    def get_lmax(self):
+        return self.lmax
+
     def get_ispin(self):
         return self.nspin
 
@@ -294,18 +387,14 @@ class ReadVaspDoscar(object):
 
     def get_ldos(self, l=0, atom=0, spin=0):
         if isinstance(l, str):
-            if l == 's':
+            if l.upper() == 'S':
                 l = 0
-            if l == 'p':
+            if l.upper() == 'P':
                 l = 1
-            if l == 'd':
+            if l.upper() == 'D':
                 l = 2
-            if l == 'S':
-                l = 0
-            if l == 'P':
-                l = 1
-            if l == 'D':
-                l = 2
+            if l.upper() == 'F':
+                l = 3
         if isinstance(spin, str):
             if spin == 'nonmag':
                 spin = 0
@@ -325,41 +414,47 @@ class ReadVaspDoscar(object):
     def get_tdos_spd(self, l=0, spin=0):
 
         if isinstance(l, str):
-            if l == 's':
+            if l.upper() == 'S':
                 l = 0
-            if l == 'p':
+            if l.upper() == 'P':
                 l = 1
-            if l == 'd':
+            if l.upper() == 'D':
                 l = 2
-            if l == 'S':
-                l = 0
-            if l == 'P':
-                l = 1
-            if l == 'D':
-                l = 2
+            if l.upper() == 'F':
+                l = 3
 
-        l_max = 3
-        tdos_spd = np.zeros((self.nedos, l_max, self.nspin))
+       #l_max = 3
+        tdos_spd = np.zeros((self.nedos, self.lmax+1, self.nspin))
 
         for atom0 in range(self.natom):
             if self.lorbit >= 11:
-                for lm in range(0, 1):
-                    for ispin in range(self.nspin):
-                        tdos_spd[:, 0, ispin] = \
-                            tdos_spd[:, 0, ispin] + \
-                            self.pdos_all[:, lm, atom0, ispin]
-                for lm in range(1, 4):
-                    for ispin in range(self.nspin):
-                        tdos_spd[:, 1, ispin] = \
-                            tdos_spd[:, 1, ispin] + \
-                            self.pdos_all[:, lm, atom0, ispin]
-                for lm in range(4, 9):
-                    for ispin in range(self.nspin):
-                        tdos_spd[:, 2, ispin] = \
-                            tdos_spd[:, 2, ispin] + \
-                            self.pdos_all[:, lm, atom0, ispin]
+                if self.lmax >= 0:
+                    for lm in range(0, 1):
+                        for ispin in range(self.nspin):
+                            tdos_spd[:, 0, ispin] = \
+                                tdos_spd[:, 0, ispin] + \
+                                self.pdos_all[:, lm, atom0, ispin]
+                if self.lmax >= 1:
+                    for lm in range(1, 4):
+                        for ispin in range(self.nspin):
+                            tdos_spd[:, 1, ispin] = \
+                                tdos_spd[:, 1, ispin] + \
+                                self.pdos_all[:, lm, atom0, ispin]
+                if self.lmax >= 2:
+                    for lm in range(4, 9):
+                        for ispin in range(self.nspin):
+                            tdos_spd[:, 2, ispin] = \
+                                tdos_spd[:, 2, ispin] + \
+                                self.pdos_all[:, lm, atom0, ispin]
+                if self.lmax >= 3:
+                    for lm in range(9, 16):
+                        for ispin in range(self.nspin):
+                            tdos_spd[:, 3, ispin] = \
+                                tdos_spd[:, 3, ispin] + \
+                                self.pdos_all[:, lm, atom0, ispin]
+
             else:
-                for l in range(l_max):
+                for l in range(self.lmax+1):
                     for ispin in range(self.nspin):
                         tdos_spd[:, l, ispin] = \
                             tdos_spd[:, l, ispin] + \
@@ -395,29 +490,38 @@ class ReadVaspDoscar(object):
         NION = outcar.get_nion()
         ATOMS_J = outcar.get_atoms_j()
 
-        l_max = 3
-        ldos_ion = np.zeros((self.nedos, l_max, NION, self.nspin))
+       #l_max = 3
+        ldos_ion = np.zeros((self.nedos, self.lmax+1 , NION, self.nspin))
 
         for atom in range(NATOM):
             ion1 = ATOMS_J[atom]
             if self.lorbit >= 11:
-                for lm in range(0, 1):
-                    for ispin in range(self.nspin):
-                        ldos_ion[:, 0, ion1, ispin] = \
-                            ldos_ion[:, 0, ion1, ispin] + \
-                            self.pdos_all[:, lm, atom, ispin]
-                for lm in range(1, 4):
-                    for ispin in range(self.nspin):
-                        ldos_ion[:, 1, ion1, ispin] = \
-                            ldos_ion[:, 1, ion1, ispin] + \
-                            self.pdos_all[:, lm, atom, ispin]
-                for lm in range(4, 9):
-                    for ispin in range(self.nspin):
-                        ldos_ion[:, 2, ion1, ispin] = \
-                            ldos_ion[:, 2, ion1, ispin] + \
-                            self.pdos_all[:, lm, atom, ispin]
+                if self.lmax >= 0:
+                    for lm in range(0, 1):
+                        for ispin in range(self.nspin):
+                            ldos_ion[:, 0, ion1, ispin] = \
+                                ldos_ion[:, 0, ion1, ispin] + \
+                                self.pdos_all[:, lm, atom, ispin]
+                if self.lmax >= 1:
+                    for lm in range(1, 4):
+                        for ispin in range(self.nspin):
+                            ldos_ion[:, 1, ion1, ispin] = \
+                                ldos_ion[:, 1, ion1, ispin] + \
+                                self.pdos_all[:, lm, atom, ispin]
+                if self.lmax >= 2:
+                    for lm in range(4, 9):
+                        for ispin in range(self.nspin):
+                            ldos_ion[:, 2, ion1, ispin] = \
+                                ldos_ion[:, 2, ion1, ispin] + \
+                                self.pdos_all[:, lm, atom, ispin]
+                if self.lmax >= 3:
+                    for lm in range(9, 16):
+                        for ispin in range(self.nspin):
+                            ldos_ion[:, 3, ion1, ispin] = \
+                                ldos_ion[:, 3, ion1, ispin] + \
+                                self.pdos_all[:, lm, atom, ispin]
             else:
-                for l in range(l_max):
+                for l in range(self.lmax+1):
                     for ispin in range(self.nspin):
                         ldos_ion[:, l, ion1, ispin] = \
                             ldos_ion[:, l, ion1, ispin] + \
@@ -442,30 +546,39 @@ class ReadVaspDoscar(object):
         NION = outcar.get_nion()
         ATOMS_J = outcar.get_atoms_j()
 
-        l_max = 3
-        ldos_ion = np.zeros((self.nedos, l_max, NION, self.nspin))
+       #l_max = 3
+        ldos_ion = np.zeros((self.nedos, self.lmax+1, NION, self.nspin))
 
         for atom in range(NATOM):
             ion1 = ATOMS_J[atom]
             for i in range(self.nedos):
                 if self.lorbit >= 11:
-                    for lm in range(0, 1):
-                        for ispin in range(self.nspin):
-                            ldos_ion[:, 0, ion1, ispin] = \
-                                ldos_ion[:, 0, ion1, ispin] + \
-                                self.pdos_all[:, lm, atom, ispin]
-                    for lm in range(1, 4):
-                        for ispin in range(self.nspin):
-                            ldos_ion[:, 1, ion1, ispin] = \
-                                ldos_ion[:, 1, ion1, ispin] + \
-                                self.pdos_all[:, lm, atom, ispin]
-                    for lm in range(4, 9):
-                        for ispin in range(self.nspin):
-                            ldos_ion[:, 2, ion1, ispin] = \
-                                ldos_ion[i, 2, ion1, ispin] + \
-                                self.pdos_all[:, lm, atom, ispin]
+                    if self.lmax >= 0:
+                        for lm in range(0, 1):
+                            for ispin in range(self.nspin):
+                                ldos_ion[:, 0, ion1, ispin] = \
+                                    ldos_ion[:, 0, ion1, ispin] + \
+                                    self.pdos_all[:, lm, atom, ispin]
+                    if self.lmax >= 1:
+                        for lm in range(1, 4):
+                            for ispin in range(self.nspin):
+                                ldos_ion[:, 1, ion1, ispin] = \
+                                    ldos_ion[:, 1, ion1, ispin] + \
+                                    self.pdos_all[:, lm, atom, ispin]
+                    if self.lmax >= 2:
+                        for lm in range(4, 9):
+                            for ispin in range(self.nspin):
+                                ldos_ion[:, 2, ion1, ispin] = \
+                                    ldos_ion[i, 2, ion1, ispin] + \
+                                    self.pdos_all[:, lm, atom, ispin]
+                    if self.lmax >= 3:
+                        for lm in range(9, 16):
+                            for ispin in range(self.nspin):
+                                ldos_ion[:, 3, ion1, ispin] = \
+                                    ldos_ion[i, 3, ion1, ispin] + \
+                                    self.pdos_all[:, lm, atom, ispin]
                 else:
-                    for l in range(l_max):
+                    for l in range(self.lmax+1):
                         for ispin in range(self.nspin):
                             ldos_ion[:, l, ion1, ispin] = \
                                 ldos_ion[:, l, ion1, ispin] + \
@@ -513,6 +626,8 @@ if __name__ == '__main__':
     print "EMIN   = ", dos.emin, EMIN
     print "NEDOS  = ", dos.nedos, NEDOS
     print "EFERMI = ", dos.efermi, EFERMI
+
+    dos.get_vbm()
 
     ENG = dos.get_eng()
    # TDOS = dos.get_tdos(0)                   # spin=0 (up-spin)

@@ -26,7 +26,7 @@ __version__    = "0.0.0"
 ################################################################################
 
 #import sys
-#import os
+import os
 import re
 #import gzip
 #import numpy as np
@@ -65,6 +65,8 @@ class ReadVaspIncar(object):
         npar_reg = re.compile('.*NPAR', re.IGNORECASE)
         isym_reg = re.compile('.*ISYM', re.IGNORECASE)
         gga_reg = re.compile('.*GGA', re.IGNORECASE)
+        istart_reg = re.compile('.*ISTART', re.IGNORECASE)
+        icharg_reg = re.compile('.*ICHARG', re.IGNORECASE)
 
         # defaults
         self.ispin = 1
@@ -86,7 +88,22 @@ class ReadVaspIncar(object):
         self.gga = None
         self.nelm = 60
 
+        # check current file
+        if os.path.exists('WAVECAR'):
+            self.istart = 1
+        else:
+            self.istart = 0
+
         for i in range(self.num):
+
+            # ISTART
+            if bool(istart_reg.match(self.datlines[i])):
+                self.istart = int(re.sub('.*=','',self.datlines[i]).split()[0])
+
+            # ICHARG
+            if bool(icharg_reg.match(self.datlines[i])):
+                self.icharg = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                print 'self.icharg',self.icharg
 
             # SYSTEM
             if bool(title_reg.match(self.datlines[i])):
@@ -163,9 +180,24 @@ class ReadVaspIncar(object):
             if bool(npar_reg.match(self.datlines[i])):
                 self.npar = int(re.sub('.*=','',self.datlines[i]).split()[0])
 
+        # check ISTART and ICHARG
+        try:
+            self.icharg
+        except:
+            if self.istart == 0:
+                self.icharg = 2
+            else:
+                self.icharg = 0
+
     def get_title(self):
         self.title = self.title if hasattr(self.__class__.__name__,'title') else 'unknown system'
         return self.title
+
+    def get_istart(self):
+        return self.istart
+
+    def get_icharg(self):
+        return self.icharg
 
     def get_system(self):
         self.system = self.system if hasattr(self, 'system') else 'unknown system'
@@ -269,6 +301,8 @@ if __name__ == '__main__':
     NGXF = incar.get_ngxf()
     NGYF = incar.get_ngyf()
     NGZF = incar.get_ngyf()
+    ISTART = incar.get_istart()
+    ICHARG = incar.get_icharg()
 
 #   print "TITLE  :", TITLE
     print "SYSTEM :", SYSTEM
@@ -285,3 +319,6 @@ if __name__ == '__main__':
     print "NGYF   :", NGYF
     print "NGZF   :", NGZF
 
+    print ""
+    print "ISTART :", ISTART
+    print "ICHARG :", ICHARG
