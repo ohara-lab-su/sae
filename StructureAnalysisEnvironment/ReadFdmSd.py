@@ -92,6 +92,7 @@ class ReadFdmSd(object):
         # 複数の sd ファイルを読んで平均化する
         # sum
         if absorber is None:
+            #### absoer が None --> 読み込んだファイルが一つだけの時
 
             print "---- ReadFdmSd ----"
             print "sdname + suffix = ", sdname + suffix
@@ -137,6 +138,8 @@ class ReadFdmSd(object):
                 self.datlines[0] = self.header
 
         else:
+            #### absoer not None --> 読み込んだファイルが複数の時
+
             print "--- ReadFdmSd ------"
             print "--- average mode ---"
             sdname0 = bavname + '_' + str(absorber[0]) + suffix

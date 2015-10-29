@@ -47,7 +47,7 @@ import StructureAnalysisEnvironment as SAEnv
 
 class ReadFdmConv(object):
 
-    def __init__(self, cname, suffix='_conv.txt', weight=1.0):
+    def __init__(self, cname, suffix='_conv.txt', weight=None):
 
         if not os.path.exists(cname + suffix):
             cname = cname.replace(suffix, '')
@@ -59,9 +59,12 @@ class ReadFdmConv(object):
         self.eng = np.zeros(self.num - 1)
         self.xas = np.zeros(self.num - 1)
 
+        if weight is None:
+            weight = 1.0
+
         for i in range(1, self.num):
             self.eng[i - 1] = float(self.datlines[i].split()[0])
-            self.xas[i - 1] = float(self.datlines[i].split()[1]) / weight
+            self.xas[i - 1] = float(self.datlines[i].split()[1]) / float(weight)
 
     def get_eng(self):
         return self.eng

@@ -48,7 +48,7 @@ import StructureAnalysisEnvironment as SAEnv
 
 class ReadFdmTxt(object):
 
-    def __init__(self, cname, suffix='.txt', weight=1.0):
+    def __init__(self, cname, suffix='.txt', weight=None):
 
         name = cname.replace(suffix, '')
         suffix0 = cname.replace(name, '')
@@ -61,6 +61,11 @@ class ReadFdmTxt(object):
         self.header = self.datlines[0]
 
         self.eng = np.zeros(self.num - 2)
+
+        if weight is None:
+            weight = 1.0
+        else:
+            print 'ReadFdmTxt(weight='+str(weight)+')'
 
         # 一行目のイコールで結ばれたところまでの変数の数のカウント
         count = 0
@@ -92,7 +97,7 @@ class ReadFdmTxt(object):
 
             for spin in range(self.nspin):
                 self.xas_all[i - 2, spin] = \
-                        float(self.datlines[i].split()[1+spin])
+                        float(self.datlines[i].split()[1+spin]) / weight
 
         self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
         self.ispin = self.nspin

@@ -56,21 +56,31 @@ def options():
     parser.add_option('-t', '--txt', '--txtname', dest='txtname')
     parser.add_option('-s', '--sd', '--sdname', dest='sdname')
     parser.add_option('--filbav', '--bavname', dest='bavname')
+    # name: conv, txt, sd ファイル名指定を一括する
     parser.add_option('--name')
-    parser.add_option('-a','--atom',)
+    # output: output するファイル名を指定する
+    parser.add_option('--output')
+    parser.add_option('-a','--atom',) # DOS のサイト指定 ( _sd*.txt )
     parser.add_option('--emax')
     parser.add_option('--emin')
     parser.add_option('--ymax')  # XAS の ymax
     parser.add_option('--dmax')  # DOS の ymax共通
     parser.add_option('--label')
     parser.add_option('--outsuffix')
-    parser.add_option('--weight')     # for XAS weight
+    parser.add_option('--weight')     # for XAS (xasとtxt weightの同時設定)
+    parser.add_option('--xasweight')  # for XAS with convolution
+    parser.add_option('--txtweight')  # for XAS without convolution
     parser.add_option('--dosweight')  # for LDOS
+    # broad: XAS without broad を描く
     parser.add_option('-b', '--broad', action='store_true', default=False)
+    # xas: XAS with broad を描く
     parser.add_option('--xas', action='store_true', default=False)
     parser.add_option('--total', action='store_true', default=False)
     parser.add_option('--intdos', action='store_true', default=False)
+    # fermi: EF --> 0
     parser.add_option('--fermi', action='store_true', default=False)
+    parser.add_option('--s', action='store_true', default=False)
+    parser.add_option('--p', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
     parser.add_option('--up', action='store_true', default=False)
@@ -87,27 +97,35 @@ def options():
         options.txtname = options.name
         options.sdname = options.name
 
-    return [inpname,
+    return [options.output, options.outsuffix,
+            inpname,
             options.convname, options.txtname,
-            options.filoutname, options.bavname,
-            options.sdname, options.name,
+            options.filoutname, options.bavname, options.sdname,
+            options.name,
             options.atom,  options.label,
-            options.outsuffix,
             options.emax, options.emin, options.ymax, options.dmax,
             options.broad, options.fermi, options.xas,
             options.up, options.dn, options.spin,
-            options.sp, options.spd, options.dosweight, options.weight,
+            options.s, options.p, options.sp, options.spd,
+            options.weight,
+            options.dosweight, options.xasweight, options.txtweight,
             options.total, options.intdos, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
-    inpname, convname, txtname, filout, bavname, sdname, allname,\
-            atom, LABEL, OUTSUFFIX,\
+    outputname, OUTSUFFIX,\
+            inpname,\
+            convname, txtname,\
+            filout, bavname, sdname, \
+            allname,\
+            atom, LABEL,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
             FLAG_UP, FLAG_DN, FLAG_SPIN,\
-            FLAG_SP, FLAG_SPD, WEDOS, WE,\
+            FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, \
+            WE,\
+            WEDOS, WEXAS, WETXT,\
             FLAG_TOTAL, FLAG_INTDOS, FLAG_NW = options()
 
     if FLAG_BROAD: FLAG_XAS = True
@@ -119,9 +137,29 @@ if __name__ == '__main__':
     if not atom: atom = 0
 
     if WEDOS:
-        print "DOS Weight =",WEDOS
+        print "Weight for DOS =",WEDOS
+        WEDOS = float(WEDOS)
     else:
         WEDOS = None
+
+    if WE:
+        print "Weight for XAS",WE
+        WEXAS = float(WE)
+        WETXT = float(WE)
+
+    if WETXT:
+        print "Weight for XAS without convolution =",WETXT
+        WETXT = float(WETXT)
+    else:
+        WETXT = None
+
+    if WEXAS:
+        WEXAS = float(WEXAS)
+        print "Weight for XAS with convolution =",WE
+    else:
+        WEXAS = None
+
+    ###########################################################################
 
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
@@ -166,8 +204,8 @@ if __name__ == '__main__':
     print ""
 
 #   bav = SAE.ReadFdmBav(name0)
-    txt = SAEnv.ReadFdmTxt(txtname,'.txt')
-    conv = SAEnv.ReadFdmConv(convname, suffix_conv)
+    txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
+    conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WE)
 #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
@@ -190,6 +228,13 @@ if __name__ == '__main__':
         orbit_list = ['s','p','d']
     else:
         orbit_list = ['s','p','d']
+
+    if FLAG_S:
+        orbit_list = ['s']
+    if FLAG_P:
+        orbit_list = ['p']
+    if FLAG_SP:
+        orbit_list = ['s','p']
 
     norbit = len(orbit_list)
 
@@ -434,6 +479,7 @@ if __name__ == '__main__':
 
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+            if OPT_DMAX: plt.ylim(ymax=float(OPT_DMAX))
 
             leg = plt.legend(loc='upper right')
             leg.get_frame().set_alpha(0.5)
@@ -449,9 +495,15 @@ if __name__ == '__main__':
     else:
         fermi=''
 
-    plt.savefig("LDOS"+str(atom)+spin_out+fermi+".eps")
-    plt.savefig("LDOS"+str(atom)+spin_out+fermi+".pdf")
-    plt.savefig("LDOS"+str(atom)+spin_out+fermi+".png")
+    if outputname:
+        _head = outputname+"_"
+        print "output header =", outputname
+    else:
+        _head = 'LDOS'
+
+    plt.savefig(_head + str(atom) + spin_out + fermi + ".eps")
+    plt.savefig(_head + str(atom) + spin_out + fermi + ".pdf")
+    plt.savefig(_head + str(atom) + spin_out + fermi + ".png")
 
     if not FLAG_NW:
         plt.show()

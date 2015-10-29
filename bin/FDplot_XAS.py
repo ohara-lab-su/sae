@@ -130,17 +130,22 @@ def options():
     parser.add_argument('-t', '--txt', '--textname',dest='txtname')
     parser.add_argument('-s', '--sd', '--sdname', dest='sdname')
     parser.add_argument('--filbav', '--bavname', dest='bavname')
+    # name: conv, txt, sd ファイル名を一括する
     parser.add_argument('--name',)
+    # output: output するファイル名を指定する
+    parser.add_argument('--output',)
     parser.add_argument('--emax',)
     parser.add_argument('--emin',)
     parser.add_argument('--ymax',)
     parser.add_argument('--dmax',)
     parser.add_argument('--fermi', action='store_true', default=False,)
     parser.add_argument('-n', '--nonsubtract', action='store_true', default=False,)
+    # broad: XAS with broad のみを描く( FDplot_LDOS の brad option と逆 )
     parser.add_argument('-b', '--broad', action='store_true', default=False,)
     parser.add_argument('-d', '--dos', action='store_true', default=False,)
 #   parser.add_argument('-o', '--obs', action='store_true', default=False,)
     parser.add_argument('-o', '--obs')
+    # absorber: 指定した absorber 原子を平均化してプロット
     parser.add_argument('-a', '--absorber', nargs='*')
     parser.add_argument('-w', '--weight')  # for XAS
     parser.add_argument('-x', '--dosweight')  # for LDOS
@@ -159,7 +164,8 @@ def options():
         options.txtname = options.name
         options.sdname = options.name
 
-    return [inpname,
+    return [options.output,
+            inpname,
             options.convname, options.txtname, options.filout, options.bavname,
             options.sdname, options.name,
             options.emax, options.emin, options.ymax, options.dmax,
@@ -172,7 +178,8 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
 
-    inpname, convolname, textname, filoutname, bavname, sdname, allname,\
+    outputname,\
+        inpname, convolname, textname, filoutname, bavname, sdname, allname,\
         OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
         FLAG_fermi, FLAG_subt,\
         FLAG_B, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
@@ -517,14 +524,20 @@ if __name__ == '__main__':
 
     ##########################################################################
 
-    if allname:
-        plt.savefig("XAS_"+allname+".eps")
-        plt.savefig("XAS_"+allname+".pdf")
-        plt.savefig("XAS_"+allname+".png")
+    if outputname:
+        _head = outputname+'_'
+        print "output header = ", outputname
     else:
-        plt.savefig("XAS.eps")
-        plt.savefig("XAS.pdf")
-        plt.savefig("XAS.png")
+        _head = 'XAS_'
+
+    if allname:
+        plt.savefig(_head + allname + ".eps")
+        plt.savefig(_head + allname + ".pdf")
+        plt.savefig(_head + allname + ".png")
+    else:
+        plt.savefig(_head + ".eps")
+        plt.savefig(_head + ".pdf")
+        plt.savefig(_head + ".png")
 
     if not FLAG_NW:
         plt.show()
