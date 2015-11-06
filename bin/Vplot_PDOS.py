@@ -71,38 +71,51 @@ def options():
     oname = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-d','--doscar', dest='DOSCAR',)
-    parser.add_option( '-o', '--outcar', dest='OUTCAR',)
-    parser.add_option( '-n', '--nw', action='store_true', default=False,)
-    parser.add_option( '-l', '--landscape', action='store_true', default=False,)
-    parser.add_option( '--auto', action='store_true', default=False,)
-    parser.add_option( '--hexagonal', action='store_true', default=False,)
-    parser.add_option( '--cubic', action='store_true', default=False,)
-    parser.add_option( '--spd', action='store_true', default=False,)
-    parser.add_option( '--sp', action='store_true', default=False,)
-    parser.add_option(  '--emax', dest='EMAX',)
-    parser.add_option(  '--emin', dest='EMIN',)
-    parser.add_option(  '--ymax', dest='YMAX',)
+    parser.add_option('-d','--doscar', dest='DOSCAR',)
+    parser.add_option('-o', '--outcar', dest='OUTCAR',)
+    parser.add_option('--auto', action='store_true', default=False,)
+    parser.add_option('--hexagonal', action='store_true', default=False,)
+    parser.add_option('--cubic', action='store_true', default=False,)
+    parser.add_option('--sp', action='store_true', default=False,)
+    parser.add_option('--spd', action='store_true', default=False,)
+    parser.add_option('--emax', dest='EMAX',)
+    parser.add_option('--emin', dest='EMIN',)
+    parser.add_option('--ymax', dest='YMAX',)
     #  atom は 1 番から(内部的には0番からなので内部的に変換する)
-    parser.add_option(  '--atom', dest='ATOM',)
+    parser.add_option('--atom', dest='ATOM',)
+    # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+    parser.add_option('--vbm', action='store_true', default=False)
+    # efermi を 0 ではなく shift した値を使う
+    parser.add_option('--shift')
+    # landscape モード切替
+    parser.add_option('-l', '--landscape', action='store_true', default=False,)
+    # legend の　right と left の切り替え
+    parser.add_option('--left', action='store_true')
+    # EF0 のラインを消す
+    parser.add_option('--noef', action='store_true')
+    parser.add_option('-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
     if options.OUTCAR: oname=options.OUTCAR
 
     return [dname,oname,
-            options.nw,options.landscape,
             options.auto,
             options.hexagonal,options.cubic,options.spd,options.sp,
-            options.EMAX,options.EMIN,options.YMAX,options.ATOM]
+            options.EMAX,options.EMIN,options.YMAX,options.ATOM,
+            options.vbm, options.shift,
+            options.landscape, options.left, options.noef, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    dname,oname,NO_WINDOW_FLAG,LANDSCAPE_FLAG,\
-            AUTO_FLAG,HEX_FLAG,CUBIC_FLAG,SPD_FLAG,SP_FLAG,\
-            OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_ATOM = options()
+    dname,oname,\
+            AUTO_FLAG, \
+            HEX_FLAG, CUBIC_FLAG, SPD_FLAG, SP_FLAG,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_ATOM,\
+            FLAG_VBM, OPT_SHIFT, \
+            FLAG_LANDSCAPE, FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
     if HEX_FLAG:
         print "Hexagonal MODE"
@@ -141,6 +154,15 @@ if __name__ == '__main__':
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
 
+    if FLAG_VBM:
+        print "EF SHIFT"
+        EFERMI0 = dos.efermi
+        EFERMI = dos.get_vbm()
+        print EFERMI0, EFERMI
+
+    if OPT_SHIFT:
+        EFERMI = float(OPT_SHIFT)
+
     if NATOM <  atom+1:
         sys.exit("STOP: NATOM="+str(NATOM))
 
@@ -168,7 +190,7 @@ if __name__ == '__main__':
 
 #   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 
-    if not LANDSCAPE_FLAG:
+    if not FLAG_LANDSCAPE:
 #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 #       plt.figure(figsize=(8.27, 11.69)) # for portrait
         plt.figure(figsize=(7.00, 9.89))  # for portrait
@@ -301,7 +323,8 @@ if __name__ == '__main__':
 
             ####################################################################
             # EF0
-            plt.axvline(x=0,color="black",linewidth=1)
+            if not FLAG_NOEF:
+                plt.axvline(x=0,color="black",linewidth=1)
 
             ################################################################
             # DOSのY軸(DOS軸)原点をセットする(稀に必須)
@@ -355,7 +378,7 @@ if __name__ == '__main__':
 #   plt.xlim([-10,10])
 #   plt.ylim([0,200])
 
-    if LANDSCAPE_FLAG:
+    if FLAG_LANDSCAPE:
         plt.savefig("PDOS"+str(atom+1)+".eps")
         plt.savefig("PDOS"+str(atom+1)+".pdf")
         plt.savefig("PDOS"+str(atom+1)+".png")
@@ -364,7 +387,7 @@ if __name__ == '__main__':
         plt.savefig("PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
         plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait')
 
-    if not NO_WINDOW_FLAG:
+    if not FLAG_NW:
         plt.show()
 
     plt.close('all')

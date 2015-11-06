@@ -52,14 +52,23 @@ def options():
 
     parser = optparse.OptionParser()
     parser.add_option( '-d','--doscar', dest='DOSCAR', default=dname,)
+    # atom は 1番から(内部的には0番からなので内部的に変換している)
     parser.add_option( '-a', '--atom', )
+    # 全サイトの原子のLDOSをまとめてプロット(大量にあると意味不明になる)
+    parser.add_option( '--all', dest='ALL',action='store_true', default=False,)
+    # s-orbital のみプロット
+    parser.add_option( '--s', action='store_true', default=False)
+    # p-orbital のみプロット
+    parser.add_option( '--p', action='store_true', default=False)
+    # sp-orbital のみプロット
+    parser.add_option( '--sp', action='store_true', default=False)
     parser.add_option( '--up', action='store_true', default=False,)
     parser.add_option( '--down', action='store_true', default=False,)
-    parser.add_option( '--all', dest='ALL',action='store_true', default=False,)
-    parser.add_option( '-n', '--nw', action='store_true', default=False,)
     parser.add_option( '--emax', dest='EMAX',)
     parser.add_option( '--emin', dest='EMIN',)
     parser.add_option( '--ymax', dest='YMAX',)
+    parser.add_option( '--left', action='store_true', default=False)
+    parser.add_option( '-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
@@ -67,20 +76,26 @@ def options():
     if options.ALL: options.nw = True
     if len(args) > 0: atom = int(args[0])
 
-    return [dname,atom,
-            options.nw,options.ALL,
-            options.up,options.down,
-            options.EMAX,options.EMIN,options.YMAX]
+    return [dname,
+            atom, options.ALL,
+            options.s, options.p, options.sp,
+            options.up, options.down,
+            options.EMAX, options.EMIN, options.YMAX,
+            options.left,
+            options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
     #####################################################
     # set input file
-    dname,atom,\
-            NO_WINDOW_FLAG,ALL_FLAG,\
-            OPT_UP,OPT_DN,\
-            OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
+    dname, \
+            atom, ALL_FLAG,\
+            FLAG_S, FLAG_P, FLAG_SP, \
+            OPT_UP, OPT_DN,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            FLAG_LEFT,\
+            NO_WINDOW_FLAG = options()
 
     #####################################################
     # オプションの確認
@@ -99,6 +114,27 @@ if __name__ == '__main__':
         spin=0
 
     atom -= 1
+
+    orgx = 0.150
+    orgy = 0.080
+    off = 0.034
+    xsize  = 0.75
+    ysize0 = 0.74
+#   ysize = 0.74/4
+
+
+    #####################################################
+    # plot する l軌道のリスト
+    if FLAG_S:
+        orbit_list = ['s']
+    elif FLAG_P:
+        orbit_list = ['p']
+    elif FLAG_SP:
+        orbit_list = ['s', 'p']
+    else:
+        orbit_list = ['s','p','d']
+
+    norbit0 = len(orbit_list)
 
     #####################################################
     # makes instance ( Read DOSCAR )
@@ -119,6 +155,7 @@ if __name__ == '__main__':
     if nspin >=2:
         FLAG_SPIN = True
 
+    ysize = ysize0/(float(norbit0)+1.)
 
     #####################################################
     # makes label
@@ -148,12 +185,6 @@ if __name__ == '__main__':
         plt.rcParams['axes.linewidth']    = 1.5
         plt.figure(figsize=(7.00, 9.89))  # for portrait
 
-        orgx = 0.150
-        orgy = 0.080
-        off = 0.034
-        xsize = 0.75
-        ysize = 0.74/4
-
         #####################################################
         # plot TDOS
         plt.axes([ orgx,orgy, xsize, ysize ])
@@ -162,6 +193,8 @@ if __name__ == '__main__':
         plt.axvline(x=0,color="black",linewidth=1)
 
         leg = plt.legend(fontsize=12)
+        if FLAG_LEFT:
+            leg = plt.legend(loc='upper left')
         leg.get_frame().set_alpha(0.5)
 
         xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
@@ -175,18 +208,21 @@ if __name__ == '__main__':
 
         #####################################################
         # plot LDOS
-        orbit_list = ['s','p','d']
         j=1
-        for orbit in range(0,3): # s(0),p(1),d(2)
+#       for orbit in range(0,3): # s(0),p(1),d(2)
+        for orbit in orbit_list:
 
             plt.axes([ orgx,orgy, xsize, ysize ])
             c = cm.prism(j*20/4)
-            ldos = dos.get_ldos(orbit,atom,spin)
+            ldos = dos.get_ldos(l=orbit,atom=atom,spin=spin)
             plt.plot(eng,ldos, linestyle="-", \
-                    color=c, linewidth=2, label=atom_label+"-"+orbit_list[orbit])
+                    color=c, linewidth=2, label=atom_label+"-"+str(orbit))
+#                   color=c, linewidth=2, label=atom_label+"-"+orbit_list[orbit])
             plt.axvline(x=0,color="black",linewidth=1)
 
             leg = plt.legend(fontsize=12)
+            if FLAG_LEFT:
+                leg = plt.legend(loc='upper left')
             leg.get_frame().set_alpha(0.5)
 
             plt.xticks([])

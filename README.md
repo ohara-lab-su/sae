@@ -128,7 +128,8 @@ FDplot\_XAS.py では Absorber の状態密度プロット機能はあります�
 局所状態密度解析を行うときはこちらをベースにすると便利だと思います。
 - <b>fdLDOS0_specified.py</b> : fdLDOS.py とほぼ同等ですが、FDplot\_XAS.py に実装されているのと同じく、局所DOSの規格化オプション（サイトごとや原子ごとに直す）も使われていますので、それらの機能確認を使いこなしてプロットするためのサンプルも兼ねた基本プログラムとなっています。
 - <b>fdPDOS_XAS_av.py</b> : FDplot\_PDOS.py をベースとしてます。複数の計算結果を平均化してプロットするなど、複数の計算結果に直接アクセスするようにしています。ケースバーケースで作り替える必要があります。
-- fdLDOSmulti.py
+- <b>fdLDOSmulti.py</b> : FDplob\_LDOS.py をベースとして、多段組を手動作りの最小構成サンプル。subplot を使っている。書き換える必要があるが、ひな形としては柔軟性が回ので実用的。
+- <b>fdMulti.py</b> : FDplob\_LDOS.py をベースとして、多段組を手動作りの最小構成サンプル。subplot を使わずに数値で値を入れている。fdLDOSmulti.py より小回りがきく。(subplotを使いこなせば良いという話もあるが、そこまでしなくてももっと気楽につかえる。)
 - fdXAS.py
 - fdXAS\_specified.py
 

@@ -75,27 +75,36 @@ def options():
     parser = optparse.OptionParser()
     parser.add_option('-d','--doscar', dest='DOSCAR', default=dname,)
     parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
-    parser.add_option('-n', '--nw', action='store_true', default=False, dest='NOWINDOW',)
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+    parser.add_option('--vbm', action='store_true')
+    # efermi を 0 ではなく shift した値を使う
+    parser.add_option('--shift')
     # legend の right と left の切り替え
     parser.add_option('--left', action='store_true')
+    # EF0 のラインを消す
+    parser.add_option('--noef', action='store_true')
+    parser.add_option('-n', '--nw', action='store_true', default=False, dest='NOWINDOW',)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
     if options.OUTCAR: oname=options.OUTCAR
 
     return [dname, oname,
-            options.NOWINDOW, options.EMAX, options.EMIN, options.YMAX,
-            options.left]
+            options.EMAX, options.EMIN, options.YMAX,
+            options.vbm, options.shift,
+            options.left, options.noef, options.NOWINDOW]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    dname, oname, NO_WINDOW_FLAG,\
-            OPT_EMAX, OPT_EMIN, OPT_YMAX, FLAG_LEFT = options()
+    dname, oname,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            FLAG_VBM, OPT_SHIFT, \
+            FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
     if OPT_EMAX: print "Emax=",OPT_EMAX
     if OPT_EMIN: print "Emin=",OPT_EMIN
@@ -116,6 +125,15 @@ if __name__ == '__main__':
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
     LMAX = dos.lmax
+
+    if FLAG_VBM:
+        print "EF SHIFT"
+        EFERMI0 = dos.efermi
+        EFERMI = dos.get_vbm()
+        print EFERMI0, EFERMI
+
+    if OPT_SHIFT:
+        EFERMI = float(OPT_SHIFT)
 
     # makes instance ( Read OUTCAR )
     outcar = SAE.ReadVaspOutcar(oname)
@@ -159,7 +177,7 @@ if __name__ == '__main__':
             if NSPIN ==1:
                 print "ion = ",ion+1,atoms[ion]
             else:
-                print "ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion]
+                print "ion (spin) : ",ion+1,"("+str(spin+1)+")",atoms[ion]
             atom = str(atoms[ion])
 
             # autumn, bone, cool, copper, flag, gray, hot, hsv,
@@ -194,11 +212,11 @@ if __name__ == '__main__':
             yl = plt.ylabel("DOS/eV", fontsize=20 )
 
         if OPT_EMAX:
-            plt.xlim( xmax=int(OPT_EMAX) )
+            plt.xlim( xmax=float(OPT_EMAX) )
         if OPT_EMIN:
-            plt.xlim( xmin=int(OPT_EMIN) )
+            plt.xlim( xmin=float(OPT_EMIN) )
         if OPT_YMAX:
-            plt.ylim( ymax=int(OPT_YMAX) )
+            plt.ylim( ymax=float(OPT_YMAX) )
 
         if NSPIN == 2 :
             if spin == 0:
@@ -209,7 +227,8 @@ if __name__ == '__main__':
                 plt.ylim([ymax,0])
 
         # EF0
-        plt.axvline(x=0,color="black",linewidth=1)
+        if not FLAG_NOEF:
+            plt.axvline(x=0,color="black",linewidth=1)
 
     ############################################################################
 
@@ -229,7 +248,7 @@ if __name__ == '__main__':
     plt.savefig("ADOS.pdf")
     plt.savefig("ADOS.png")
 
-    if not NO_WINDOW_FLAG:
+    if not FLAG_NW:
         plt.show()
 
     plt.close('all')

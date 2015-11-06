@@ -67,6 +67,7 @@ def options():
     parser.add_option('-s', '--sd', '--sdname', dest='sdname')
     parser.add_option('--filbav', '--bavname', dest='bavname')
     parser.add_option('--name')
+    parser.add_option('--output')
     parser.add_option('-a', '--atom')
     parser.add_option('--emax')
     parser.add_option('--emin')
@@ -74,19 +75,26 @@ def options():
     parser.add_option('--dmax')  # DOS の ymax共通
     parser.add_option('--label')
     parser.add_option('--outsuffix')
-    parser.add_option('--weight')
+    parser.add_option('--weight')     # 同時設定
+    parser.add_option('--xasweight')  # for XAS with convolution
+    parser.add_option('--txtweight')  # for XAS without convolution
     parser.add_option('--dosweight')  # for LDOS
     parser.add_option('-b', '--broad', action='store_true', default=False)
     parser.add_option('-x', '--xas', action='store_true', default=False)
     parser.add_option('--total', action='store_true', default=False)
     parser.add_option('--intdos', action='store_true', default=False)
     parser.add_option('--fermi', action='store_true', default=False)
+    parser.add_option('--s', action='store_true', default=False)
+    parser.add_option('--p', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
     parser.add_option('--up', action='store_true', default=False)
     parser.add_option('--dn', '--down', action='store_true', default=False, dest='dn')
     parser.add_option('--spin', action='store_true', default=False)
+    # pdf のみ出力 ( default は pdf ,png ,eps 出力 )
+    parser.add_option('--pdf', action='store_true', default=False)
     parser.add_option('--nw', action='store_true', default=False)
+
     options,args = parser.parse_args()
 
     if options.INPUT: inpname=options.INPUT
@@ -97,42 +105,71 @@ def options():
         options.txtname = options.name
         options.sdname = options.name
 
-    return [inpname,
+    return [options.output, options.outsuffix,
+            inpname,
             options.convname, options.txtname,
-            options.filoutname, options.bavname,
-            options.sdname, options.name,
+            options.filoutname, options.bavname, options.sdname,
+            options.name,
             options.atom, options.label,
-            options.outsuffix,
             options.emax, options.emin, options.ymax, options.dmax,
             options.broad, options.fermi, options.xas,
             options.up, options.dn, options.spin,
-            options.sp, options.spd, options.dosweight, options.weight,
-            options.total, options.intdos, options.nw]
+            options.s, options.p, options.sp, options.spd,
+            options.weight,
+            options.dosweight, options.xasweight, options.txtweight,
+            options.total, options.intdos, options.pdf, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
-    inpname, convname, txtname, filout, bavname, sdname, allname,\
-            atom, LABEL, OUTSUFFIX,\
+    outputname, OUTSUFFIX,\
+            inpname, \
+            convname, txtname, \
+            filout, bavname, sdname, \
+            allname,\
+            atom, LABEL,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
             FLAG_UP, FLAG_DN, FLAG_SPIN,\
-            FLAG_SP, FLAG_SPD, WEDOS, WE,\
-            FLAG_TOTAL, FLAG_INTDOS, FLAG_NW = options()
+            FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, \
+            WE,\
+            WEDOS, WEXAS, WETXT, \
+            FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
 
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
     if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
     if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
+
     if atom: print "ATOM=", atom
 
     if not atom: atom = 0
 
     if WEDOS:
-        print "DOS Weight =",WEDOS
+        print "Weight for DOS =", WEDOS
+        WEDOS = float(WEDOS)
     else:
         WEDOS = None
+
+    if WE:
+        print "Weight for XAS", WE
+        WEXAS = float(WE)
+        WETXT = float(WE)
+
+    if WETXT:
+        print "Weight for XAS without convolution =", WETXT
+        WETXT = float(WETXT)
+    else:
+        WETXT = None
+
+    if WEXAS:
+        print "Weight for XAS with convolution =", WEXAS
+        WEXAS = float(WEXAS)
+    else:
+        WEXAS = None
+
+    ###########################################################################
 
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
@@ -190,8 +227,8 @@ if __name__ == '__main__':
     print ""
 
 #   bav = SAE.ReadFdmBav(bavname)
-    txt = SAEnv.ReadFdmTxt(txtname,'.txt')
-    conv = SAEnv.ReadFdmConv(convname, suffix_conv)
+    txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
+    conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
 #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
@@ -346,6 +383,7 @@ if __name__ == '__main__':
 
         orgy = orgy + ysize + off
 
+#   print "XTICKS", XTICKS_FLAG
     ######################################### plot PDOS
     #
     eng = sd.eng + eng_off
@@ -366,10 +404,6 @@ if __name__ == '__main__':
                 if dmax0 < dmax:
                     dmax0 = dmax
 
-                # makes xticks
-                if not XTICKS_FLAG:
-                    plt.xlabel(label_fermi)
-                    XTICKS_FLAG  = True
 
                 # makes label & color
                 num += 1
@@ -400,17 +434,28 @@ if __name__ == '__main__':
                 xmin0, xmax0, ymin0, ymax0 = plt.axis()
                #print orbit,": ymax =",dmax0,ymax0
 
+                if FLAG_XAS:
+                    plt.xticks([])
+                else:
+                    if not blk == (nblock - 1):
+                        plt.xticks([])
+                    if blk == (nblock - 1):
+                        if spin == 0 and nspin == 2:
+                            plt.xticks([])
+
+                # makes label
+                if not XTICKS_FLAG:
+                    plt.xlabel(label_fermi)
+                    XTICKS_FLAG  = True
+
                 leg = plt.legend(loc='upper right')
                 leg.get_frame().set_alpha(0.5)
 
-                if FLAG_XAS: plt.xticks([])
-                if blk == (nblock - 1) and spin == 0: plt.xticks([])
-                if not blk == (nblock - 1): plt.xticks([])
 
             orgy = orgy + ysize
 
         if blk == 1: plt.ylabel("DOS [state/eV]")
-        if blk == 2 and FLAG_XAS: plt.xticks([])
+#       if blk == 2 and FLAG_XAS: plt.xticks([])
 
         orgy = orgy + off
 
@@ -421,14 +466,21 @@ if __name__ == '__main__':
     else:
         fermi = ''
 
-    if OUTSUFFIX:
-        out_suffix = str(OUTSUFFIX)
+    if outputname:
+        _head = outputname+"_"
+        print "output header =", outputname
     else:
-        out_suffix = ''
+        _head = "PDOS"
 
-    plt.savefig("PDOS"+str(atom)+out_suffix+spin_out+fermi+".eps")
-    plt.savefig("PDOS"+str(atom)+out_suffix+spin_out+fermi+".pdf")
-    plt.savefig("PDOS"+str(atom)+out_suffix+spin_out+fermi+".png")
+    if OUTSUFFIX:
+        _outsuffix = str(OUTSUFFIX)
+    else:
+        _outsuffix = ''
+
+    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".pdf")
+    if not FLAG_PDF:
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
 
     if not FLAG_NW:
         plt.show()

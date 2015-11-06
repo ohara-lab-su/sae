@@ -84,13 +84,24 @@ def options():
     oname = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option( '-d','--doscar', dest='DOSCAR', default=dname,)
-    parser.add_option( '-o', '--outcar', dest='OUTCAR', default=oname,)
-    parser.add_option( '-n', '--nw', action='store_true', default=False,)
-    parser.add_option( '--emax', dest='EMAX',)
-    parser.add_option( '--emin', dest='EMIN',)
-    parser.add_option( '--ymax', dest='YMAX',)
-    parser.add_option( '-a', '--atom',)
+    parser.add_option('-d','--doscar', dest='DOSCAR', default=dname,)
+    parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
+    # atom は 1番から(内部的には0番からなので内部的に変換する)
+    parser.add_option('-a', '--atom',)
+    parser.add_option('--emax', dest='EMAX',)
+    parser.add_option('--emin', dest='EMIN',)
+    parser.add_option('--ymax', dest='YMAX',)
+    # total のプロットを 'off' にするスイッチ
+    parser.add_option('--total', action='store_true', default=False)
+    # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+    parser.add_option('--vbm', action='store_true', default=False)
+    # efermi を 0 ではなく shift した値を使う
+    parser.add_option('--shift')
+    # legend の right と left の切り替え
+    parser.add_option('--left', action='store_true', default=False)
+    # EF0 のラインを消す
+    parser.add_option('--noef', action='store_true', default=False)
+    parser.add_option('-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
@@ -106,18 +117,23 @@ def options():
 
 
     return [dname, oname,
-            options.nw,
             options.EMAX, options.EMIN, options.YMAX,
-            options.atom, plot_atoms]
+            options.atom, plot_atoms,
+            options.total,
+            options.vbm, options.shift,
+            options.left, options.noef, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
 
     # set input file
-    dname,oname,NO_WINDOW_FLAG,\
+    dname,oname,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,\
             plot_atom,\
-            plot_atoms = options()
+            plot_atoms,\
+            FLAG_TOT, \
+            FLAG_VBM, OPT_SHIFT, \
+            FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
     if OPT_EMAX: print "Emax=",OPT_EMAX
     if OPT_EMIN: print "Emin=",OPT_EMIN
@@ -148,8 +164,18 @@ if __name__ == '__main__':
     EMIN = dos.emin
     NEDOS = dos.nedos
     EFERMI = dos.efermi
+    LMAX = dos.lmax
 
     ENG = dos.eng
+
+    if FLAG_VBM:
+        print "EF SHIFT"
+        EFERMI0 = dos.efermi
+        EFERMI = dos.get_vbm()
+        print EFERMI0, EFERMI
+
+    if OPT_SHIFT:
+        EFERMI = float(OPT_SHIFT)
 
     # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
@@ -218,28 +244,40 @@ if __name__ == '__main__':
                 else:
                     print "atom(spin) =",atom+1,"("+str(spin+1)+")"
 
-            INTTDOS = dos.get_inttdos(spin)
-            TDOS = dos.get_tdos(spin)
-#           plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
-            plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
+            if not FLAG_TOT:
+                INTTDOS = dos.get_inttdos(spin)
+                TDOS = dos.get_tdos(spin)
+#               plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
+                plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
 
             # autumn, bone, cool, copper, flag, gray, hot, hsv,
             # jet, pink, prism, spring, summer, winter, spectral
 
-            c = cm.prism(float(j)/(NATOM*3))
-            LDOS = dos.get_ldos(0,atom,spin)
-            plt.plot(ENG-EFERMI,LDOS, linestyle=":", color=c, linewidth=2, label=atom_label+'-s')
+            c = cm.prism(float(j)/(NATOM*(LMAX+1)))
+            LDOS = dos.get_ldos(l='s',atom=atom,spin=spin)
+           #plt.plot(ENG-EFERMI,LDOS, linestyle=":", color=c, linewidth=2, label=atom_label+'-s')
+            plt.plot(ENG-EFERMI,LDOS, linestyle="-", color=c, linewidth=2, label=atom_label+'-s')
             j += 1
 
-            c = cm.prism(float(j)/(NATOM*3))
-            LDOS = dos.get_ldos(1,atom,spin)
-            plt.plot(ENG-EFERMI,LDOS, linestyle="-", color=c, linewidth=2, label=atom_label+'-p')
-            j += 1
+            if LMAX >= 1:
+                c = cm.prism(float(j)/(NATOM*(LMAX+1)))
+                LDOS = dos.get_ldos(l='p',atom=atom,spin=spin)
+                plt.plot(ENG-EFERMI,LDOS, linestyle="-", color=c, linewidth=2, label=atom_label+'-p')
+                j += 1
 
-            c = cm.prism(float(j)/(NATOM*3))
-            LDOS = dos.get_ldos(2,atom,spin)
-            plt.plot(ENG-EFERMI,LDOS, linestyle="--", color=c, linewidth=2, label=atom_label+'-d')
-            j += 1
+            if LMAX >= 2:
+                c = cm.prism(float(j)/(NATOM*(LMAX+1)))
+                LDOS = dos.get_ldos(l='d',atom=atom,spin=spin)
+               #plt.plot(ENG-EFERMI,LDOS, linestyle="--", color=c, linewidth=2, label=atom_label+'-d')
+                plt.plot(ENG-EFERMI,LDOS, linestyle="-", color=c, linewidth=2, label=atom_label+'-d')
+                j += 1
+
+            if LMAX >= 3:
+                c = cm.prism(float(j)/(NATOM*(LMAX+1)))
+                LDOS = dos.get_ldos(l='f',atom=atom,spin=spin)
+               #plt.plot(ENG-EFERMI,LDOS, linestyle="-.", color=c, linewidth=2, label=atom_label+'-f')
+                plt.plot(ENG-EFERMI,LDOS, linestyle="-", color=c, linewidth=2, label=atom_label+'-f')
+                j += 1
 
             # Y軸の調整
             plt.ylim( ymin=0 )
@@ -258,7 +296,8 @@ if __name__ == '__main__':
             plt.ylim([ymax,0])
 
         # EF0
-        plt.axvline(x=0,color="black",linewidth=1)
+        if not FLAG_NOEF:
+            plt.axvline(x=0,color="black",linewidth=1)
 
         orgy = orgy + ysize
 
@@ -266,6 +305,8 @@ if __name__ == '__main__':
     ############################################################################
 
     leg = plt.legend(fontsize=12)   # 凡例Box
+    if FLAG_LEFT:
+        leg = plt.legend(loc='upper left')
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
 #   plt.xlim([-10,10])
@@ -280,7 +321,7 @@ if __name__ == '__main__':
         plt.savefig("LDOS.pdf")
         plt.savefig("LDOS.png")
 
-    if not NO_WINDOW_FLAG:
+    if not FLAG_NW:
         plt.show()
 
     plt.close('all')

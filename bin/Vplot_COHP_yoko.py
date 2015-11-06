@@ -68,6 +68,7 @@ def options():
     parser.add_argument('--spin', action='store_true', default=False)
     parser.add_argument('--sp', action='store_true', default=False)
     parser.add_argument('--spd', action='store_true', default=True)
+    parser.add_argument('--left', action='store_true', default=False)
     #  par は 1 番から (0番はAverage)
     parser.add_argument('-p', '--pair', nargs='*')
 #   options,  args = parser.parse_args()
@@ -77,7 +78,7 @@ def options():
             options.DMAX,
             options.EMAX, options.EMIN, options.YMAX, options.YMIN,
             options.up, options.dn, options.spin,
-            options.sp, options.spd, options.pair]
+            options.sp, options.spd, options.left, options.pair]
 
 ##########################################################################
 if __name__ == '__main__':
@@ -87,6 +88,7 @@ if __name__ == '__main__':
         OPT_DMAX, OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_YMIN, \
         OPT_UP, OPT_DN, OPT_SPIN,\
         OPT_SP, OPT_SPD,\
+        OPT_LEFT, \
         OPT_PAIR = options()
 
     if OPT_DMAX: print "Dmax=", OPT_DMAX
@@ -118,7 +120,9 @@ if __name__ == '__main__':
     if OPT_SPD:
         orbit_list = [0,1,2]
         orbit_index = ['s','p','d']
+        foot = 'spd'
     if OPT_SP:
+        foot = 'sp'
         orbit_list = [0,1]
         orbit_index = ['s','p']
 
@@ -133,11 +137,15 @@ if __name__ == '__main__':
         spin_list = [0,1]
 
     # TOTAL DOS & PDOS
+    print '--- READ DOSCAR.lobster'
     dos = SAE.ReadLobDos()
+    print '    END'
     dos_x = dos.eng
 
     # COHP Average
+    print '--- READ COHPCAR.lobster'
     cohp = SAE.ReadLobCohp()
+    print '    END'
     cohp_x = cohp.eng
 
     # ペアプロットするかどうかの判断
@@ -228,6 +236,8 @@ if __name__ == '__main__':
     plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=14)
 
     leg = plt.legend(fontsize=9)   # 凡例Box
+    if OPT_LEFT:
+        leg = plt.legend(loc='lower left')
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
     ######################################################## TDOS
@@ -257,6 +267,8 @@ if __name__ == '__main__':
     plt.ylabel("DOS/eV", fontsize=14)
 
     leg = plt.legend(fontsize=9)   # 凡例Box
+    if OPT_LEFT:
+        leg = plt.legend(loc='lower left')
     leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
 
@@ -298,6 +310,8 @@ if __name__ == '__main__':
                 plt.xticks([])
 
             leg = plt.legend(fontsize=9)   # 凡例Box
+            if OPT_LEFT:
+                leg = plt.legend(loc='lower left')
             leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
             ci += 1
 
@@ -347,16 +361,12 @@ if __name__ == '__main__':
                 orb += 1
 
                 leg = plt.legend(fontsize=9)   # 凡例Box
+                if OPT_LEFT:
+                    leg = plt.legend(loc='lower left')
                 leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
 
 
     ##########################################################################
-    if OPT_SPD:
-        foot = 'spd'
-    elif OPT_SP:
-        foot = 'sp'
-    else:
-        foot = ''
 
     if OPT_PAIR:
         if len(OPT_PAIR) > 1:

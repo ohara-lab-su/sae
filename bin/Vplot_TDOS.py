@@ -96,11 +96,13 @@ def options():
     parser.add_option('--up', action='store_true')
     parser.add_option('--dn', action='store_true')
     # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
-    parser.add_option('--vbm', action='store_true')
+    parser.add_option('--vbm', action='store_true', default=False)
     # efermi を 0 ではなく shift した値を使う
     parser.add_option('--shift')
     # legend の right と left の切り替え
-    parser.add_option('--left', action='store_true')
+    parser.add_option('--left', action='store_true', default=False)
+    # EF0 のラインを消す
+    parser.add_option('--noef', action='store_true', default=False)
     options,  args = parser.parse_args()
 
     if options.DOSCAR: dname=options.DOSCAR
@@ -113,7 +115,9 @@ def options():
             options.NOWINDOW, options.PORTRAIT,
             options.inttdos, options.spd, options.f,
             options.EMAX, options.EMIN, options.YMAX,
-            options.up, options.dn, options.vbm, options.shift, options.left]
+            options.up, options.dn,
+            options.vbm, options.shift,
+            options.left, options.noef]
 
 ################################################################################
 if __name__ == '__main__':
@@ -122,7 +126,9 @@ if __name__ == '__main__':
     dname, oname, NO_WINDOW_FLAG, PORTRAIT_FLAG,\
             FLAG_INTTDOS, FLAG_SPD, FLAG_F,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, \
-            FLAG_UP, FLAG_DN, FLAG_VBM, OPT_SHIFT, FLAG_LEFT = options()
+            FLAG_UP, FLAG_DN, \
+            FLAG_VBM, OPT_SHIFT, \
+            FLAG_LEFT, FLAG_NOEF = options()
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
@@ -254,7 +260,8 @@ if __name__ == '__main__':
         plt.ylim( ymin=0 )
 
         # EF0
-        plt.axvline(x=0,color="black",linewidth=1)
+        if not FLAG_NOEF:
+            plt.axvline(x=0,color="black",linewidth=1)
 
        ## for BCC-Fe
        #plt.xlim([-10,10])
@@ -273,7 +280,8 @@ if __name__ == '__main__':
                 plt.ylim([ymax,0.0])
 
         # EF0
-        plt.axvline(x=0,color="black",linewidth=1)
+        if not FLAG_NOEF:
+            plt.axvline(x=0,color="black",linewidth=1)
 
   ##########################################################################
 

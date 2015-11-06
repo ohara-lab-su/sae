@@ -59,7 +59,7 @@ def options():
     # name: conv, txt, sd ファイル名指定を一括する
     parser.add_option('--name')
     # output: output するファイル名を指定する
-    parser.add_option('--output')
+    parser.add_option('--output', '--head', dest='output')
     parser.add_option('-a','--atom',) # DOS のサイト指定 ( _sd*.txt )
     parser.add_option('--emax')
     parser.add_option('--emin')
@@ -74,7 +74,8 @@ def options():
     # broad: XAS without broad を描く
     parser.add_option('-b', '--broad', action='store_true', default=False)
     # xas: XAS with broad を描く
-    parser.add_option('--xas', action='store_true', default=False)
+    parser.add_option('-x', '--xas', action='store_true', default=False)
+    # total: total-DOS を描く
     parser.add_option('--total', action='store_true', default=False)
     parser.add_option('--intdos', action='store_true', default=False)
     # fermi: EF --> 0
@@ -116,9 +117,7 @@ if __name__ == '__main__':
 
     outputname, OUTSUFFIX,\
             inpname,\
-            convname, txtname,\
-            filout, bavname, sdname, \
-            allname,\
+            convname, txtname, filout, bavname, sdname, allname,\
             atom, LABEL,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
@@ -137,25 +136,25 @@ if __name__ == '__main__':
     if not atom: atom = 0
 
     if WEDOS:
-        print "Weight for DOS =",WEDOS
+        print "Weight for DOS =", WEDOS
         WEDOS = float(WEDOS)
     else:
         WEDOS = None
 
     if WE:
-        print "Weight for XAS",WE
+        print "Weight for XAS", WE
         WEXAS = float(WE)
         WETXT = float(WE)
 
     if WETXT:
-        print "Weight for XAS without convolution =",WETXT
+        print "Weight for XAS without convolution =", WETXT
         WETXT = float(WETXT)
     else:
         WETXT = None
 
     if WEXAS:
+        print "Weight for XAS with convolution =", WEXAS
         WEXAS = float(WEXAS)
-        print "Weight for XAS with convolution =",WE
     else:
         WEXAS = None
 
@@ -205,7 +204,7 @@ if __name__ == '__main__':
 
 #   bav = SAE.ReadFdmBav(name0)
     txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
-    conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WE)
+    conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
 #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
@@ -501,9 +500,14 @@ if __name__ == '__main__':
     else:
         _head = 'LDOS'
 
-    plt.savefig(_head + str(atom) + spin_out + fermi + ".eps")
-    plt.savefig(_head + str(atom) + spin_out + fermi + ".pdf")
-    plt.savefig(_head + str(atom) + spin_out + fermi + ".png")
+    if OUTSUFFIX:
+        _outsuffix = str(OUTSUFFIX)
+    else:
+        _outsuffix = ''
+
+    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
+    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".pdf")
+    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
 
     if not FLAG_NW:
         plt.show()

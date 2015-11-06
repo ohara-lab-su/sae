@@ -59,15 +59,39 @@ def options():
     parser.add_option('-o', '--outcar', dest='OUTCAR', default=oname,)
     # atom は 1 番から(内部的には0番からなので内部的に変換する)
     parser.add_option('-a', '--atom', )
+    # 全サイトの原子のLDOSをまとめてプロット(大量にあると意味不明になる)
+    parser.add_option('--all', dest='ALL', action='store_true', default=False,)
+    # s-orbital のみプロット
+    parser.add_option('--s', action='store_true',default=False)
+    # p-orbital のみプロット
+    parser.add_option('--p', action='store_true', default=False)
+    # d-orbital のみプロット
+    parser.add_option('--d', action='store_true', default=False)
+    # f-orbital のみプロット
+    parser.add_option('--f', action='store_true', default=False)
+    # sp-orbital プロット
     parser.add_option('--sp', action='store_true', default=False)
+    # spd-orbital プロット
+    parser.add_option('--spd', action='store_true', default=False)
+    # spdf-orbital プロット
+    parser.add_option('--spdf', action='store_true', default=False)
+    # total DOS プロットナシにするフラグ
+    parser.add_option('--total', action='store_true', default=False)
     parser.add_option('--up', action='store_true', default=False)
     parser.add_option('--down', action='store_true', default=False)
     parser.add_option('--spin', action='store_true', default=False)
-    parser.add_option('--all', dest='ALL', action='store_true', default=False,)
-    parser.add_option('-n', '--nw', action='store_true', default=False,)
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+    parser.add_option('--vbm', action='store_true', default=False)
+    # efermi を 0 ではなく shift した値を使う
+    parser.add_option('--shift')
+    # legend の right と left の切り替え
+    parser.add_option('--left', action='store_true', default=False)
+    # EF0 のラインを消す
+    parser.add_option('--noef', action='store_true', default=False)
+    parser.add_option('-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
     ## 注意)
@@ -80,22 +104,31 @@ def options():
     if len(args) > 0:
         atom = int(args[0])
 
-    return [dname, oname, atom,
-            options.nw, options.ALL,
-            options.sp,
+    return [dname, oname,
+            atom, options.ALL,
+            options.s, options.p, options.d, options.f,
+            options.sp, options.spd, options.spdf,
+            options.total,
             options.up, options.down, options.spin,
-            options.EMAX, options.EMIN, options.YMAX]
+            options.EMAX, options.EMIN, options.YMAX,
+            options.vbm, options.shift,
+            options.left, options.noef,
+            options.nw]
 
 ##########################################################################
 if __name__ == '__main__':
 
     #####################################################
     # set input file
-    dname, oname, atom,\
-        FLAG_NW, ALL_FLAG,\
-        FLAG_SP,\
-        FLAG_UP, FLAG_DN, FLAG_SPIN,\
-        OPT_EMAX, OPT_EMIN, OPT_YMAX = options()
+    dname, oname, \
+            atom, ALL_FLAG,\
+            FLAG_S, FLAG_P, FLAG_D, FLAG_F,\
+            FLAG_SP, FLAG_SPD, FLAG_SPDF,\
+            FLAG_TOT,\
+            FLAG_UP, FLAG_DN, FLAG_SPIN,\
+            OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            FLAG_VBM, OPT_SHIFT, \
+            FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
     #####################################################
     # オプションの確認
@@ -112,17 +145,6 @@ if __name__ == '__main__':
     ysize0 = 0.71
 
     #####################################################
-    # plot する l軌道のリスト
-    if FLAG_SP:
-        orbit_list = ['s','p']
-    else:
-        orbit_list = ['s','p','d']
-
-#   orbit_list = ['s','p','d','f']
-
-    norbit0 = len(orbit_list)
-
-    #####################################################
     # makes instance ( Read DOSCAR )
     dos = SAE.ReadVaspDoscar(dname)
 
@@ -130,9 +152,57 @@ if __name__ == '__main__':
     title = dos.title
     efermi = dos.efermi
     eng = dos.eng
+    nspin = dos.ispin
+    lmax = dos.lmax
+
+    if FLAG_VBM:
+        print "EF SHIFT"
+        efermi0 = dos.efermi
+        efermi = dos.get_vbm()
+        print efermi0, efermi
+
+    if OPT_SHIFT:
+        efermi = float(OPT_SHIFT)
 
     #####################################################
-    nspin = dos.ispin
+    # plot する l軌道のリスト
+    if FLAG_S:
+        orbit_list = ['s']
+        orbit_out = '_s'
+    elif FLAG_P:
+        orbit_list = ['p']
+        orbit_out = '_p'
+    elif FLAG_D:
+        orbit_list = ['d']
+        orbit_out = '_d'
+    elif FLAG_F:
+        orbit_list = ['f']
+        orbit_out = '_f'
+    elif FLAG_SP:
+        orbit_list = ['s','p']
+        orbit_out = '_sp'
+    elif FLAG_SPD:
+        orbit_list = ['s','p','d']
+        orbit_out = '_spd'
+    elif FLAG_SPDF:
+        orbit_list = ['s','p','d','f']
+        orbit_out = '_spdf'
+    else:
+        if lmax <= 1:
+            orbit_list = ['s','p']
+            orbit_out = '_sp'
+        if lmax <= 2:
+            orbit_list = ['s','p','d']
+            orbit_out = '_spd'
+        if lmax <= 3:
+            orbit_list = ['s','p','d','f']
+            orbit_out = '_spdf'
+
+#   orbit_list = ['s','p','d','f']
+
+    norbit0 = len(orbit_list)
+
+    #####################################################
 
     print "NSPIN = ",nspin
 
@@ -194,11 +264,11 @@ if __name__ == '__main__':
     if ALL_FLAG:
         a1 = 0
         a2 = natom
+        print "plot atom number: #"+str(a1)+" - #"+str(a2)
     else:
         a1 = int(atom)
         a2 = int(atom) + 1
-
-    print "plot atom number: #"+str(a1)+" - #"+str(a2)
+        print "plot atom number: #"+str(a2)
 
     for atom in range(a1, a2):
 
@@ -213,71 +283,85 @@ if __name__ == '__main__':
         XTICKS_FLAG = False
         #####################################################
         # plot TDOS
-        for spin in spin_list:
+        if not FLAG_TOT:
+            for spin in spin_list:
 
-            plt.axes([orgx, orgy, xsize, ysize])
+                plt.axes([orgx, orgy, xsize, ysize])
 
-            tdos = dos.get_tdos(spin)
+                tdos = dos.get_tdos(spin)
 
-            # makes label
-            label='total'+spin_name[spin]
+                # makes label
+                label='total'+spin_name[spin]
 
-            # !!!!! plot TDOS !!!!!
-            plt.plot(eng - efermi, tdos, color="black", linewidth=2, label=label)
-            plt.axvline(x=0, color="black", linewidth=1)
+                # !!!!! plot TDOS !!!!!
+                plt.plot(eng - efermi, tdos, color="black", linewidth=2, label=label)
+                if not FLAG_NW:
+                    plt.axvline(x=0, color="black", linewidth=1)
 
-            # ytics の調整
-            if FLAG_SPIN:
-                plt.locator_params(axis='y', nbins=4)
+                # ytics の調整
+                if FLAG_SPIN:
+                    plt.locator_params(axis='y', nbins=4)
 
-            # makes xticks
-            if not XTICKS_FLAG:
-                xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=15)
-                yl = plt.ylabel("DOS/eV", fontsize=15)
-                XTICKS_FLAG = True
-            else:
-                plt.xticks([])
+                # makes xticks
+                if not XTICKS_FLAG:
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=15)
+                    yl = plt.ylabel("DOS/eV", fontsize=15)
+                    XTICKS_FLAG = True
+                else:
+                    plt.xticks([])
 
-            # down spin 反転
-            if FLAG_SPIN and spin == 1:
-                xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
-                plt.ylim([ymax_dn,0])
-            else:
-                plt.ylim(ymin=0)
+                # down spin 反転
+                if FLAG_SPIN and spin == 1:
+                    xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
+                    plt.ylim([ymax_dn,0])
+                else:
+                    plt.ylim(ymin=0)
 
-            if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
-            if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
-            if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
+                if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
+                if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
+                if OPT_YMAX: plt.ylim(ymax=float(OPT_YMAX))
 
-            leg = plt.legend(fontsize=12)
-            leg.get_frame().set_alpha(0.5)
+                leg = plt.legend(fontsize=12)
+                if FLAG_LEFT:
+                    leg = plt.legend(loc='upper left')
+                leg.get_frame().set_alpha(0.5)
 
-            orgy = orgy + ysize
-        orgy = orgy + off
+                orgy = orgy + ysize
+            orgy = orgy + off
 
         #####################################################
         # plot LDOS
         j = 1
-        for orbit in range(len(orbit_list)):
+#       for orbit in range(len(orbit_list)):
+        for orbit in orbit_list:
 
             for spin in spin_list:
 
                 plt.axes([orgx, orgy, xsize, ysize])
 
-                d = dos.get_ldos(orbit, atom, spin)
+                d = dos.get_ldos(l=orbit, atom=atom, spin=spin)
                 e = eng - efermi
 
                 # makes color & label
                 c = cm.prism(j * 20 / norbit0)
-                lab = atom_label +"_"+orbit_list[orbit]+spin_name[spin]
+               #lab = atom_label +"_" + orbit_list[orbit] + spin_name[spin]
+                lab = atom_label +"_" + str(orbit) + spin_name[spin]
 
                 # !!!!! plot LDOS !!!!!
                 plt.plot(e, d, linestyle="-", color=c, linewidth=2, label=lab)
-                plt.axvline(x=0, color="black", linewidth=1)
+                if not FLAG_NOEF:
+                    plt.axvline(x=0, color="black", linewidth=1)
 
                 # ytics の調整
                 if FLAG_SPIN:
                     plt.locator_params(axis='y', nbins=4)
+
+                if not XTICKS_FLAG:
+                    xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=15)
+                    yl = plt.ylabel("DOS/eV", fontsize=15)
+                    XTICKS_FLAG = True
+                else:
+                    plt.xticks([])
 
                 # makex xticks
                 if spin == 0:
@@ -291,9 +375,11 @@ if __name__ == '__main__':
                     plt.ylim([ymax_dn,0])
 
                 leg = plt.legend(fontsize=12)
+                if FLAG_LEFT:
+                    leg = plt.legend(loc='upper left')
                 leg.get_frame().set_alpha(0.5)
 
-                plt.xticks([])
+
                 plt.ylabel("")
 
                 if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
@@ -320,9 +406,9 @@ if __name__ == '__main__':
 #       plt.xlim([-10,10])
 #       plt.ylim([0,200])
 
-        plt.savefig("LDOS" + str(atom + 1) + spin_out + ".eps")
-        plt.savefig("LDOS" + str(atom + 1) + spin_out + ".pdf")
-        plt.savefig("LDOS" + str(atom + 1) + spin_out + ".png")
+        plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".eps")
+        plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".pdf")
+        plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".png")
 
         if not FLAG_NW:
             plt.show()

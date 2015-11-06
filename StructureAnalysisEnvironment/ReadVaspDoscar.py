@@ -387,13 +387,13 @@ class ReadVaspDoscar(object):
 
     def get_ldos(self, l=0, atom=0, spin=0):
         if isinstance(l, str):
-            if l.upper() == 'S':
+            if l == 's':
                 l = 0
-            if l.upper() == 'P':
+            if l == 'p':
                 l = 1
-            if l.upper() == 'D':
+            if l == 'd':
                 l = 2
-            if l.upper() == 'F':
+            if l == 'f':
                 l = 3
         if isinstance(spin, str):
             if spin == 'nonmag':
