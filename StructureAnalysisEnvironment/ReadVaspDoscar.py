@@ -193,7 +193,7 @@ class ReadVaspDoscar(object):
         self.eng = np.zeros((self.nedos))
 
         self.tdos_all = np.zeros((self.nedos, self.nspin))
-        self.intdos_all = np.zeros((self.nedos, self.nspin))
+        self.inttdos_all = np.zeros((self.nedos, self.nspin))
 
         self.pdos_all = np.zeros((self.nedos, lm_max, self.natom, self.nspin))
         self.ldos_all = np.zeros((self.nedos, self.lmax+1, self.natom, self.nspin))
@@ -206,11 +206,12 @@ class ReadVaspDoscar(object):
             if self.nspin >= 2:
                 self.tdos_all[i, 0] = float(dos_line[1])  # up-sin
                 self.tdos_all[i, 1] = float(dos_line[2])  # down-spin
-                self.intdos_all[i, 0] = float(dos_line[3])
-                self.intdos_all[i, 1] = float(dos_line[4])
+                self.inttdos_all[i, 0] = float(dos_line[3])
+                self.inttdos_all[i, 1] = float(dos_line[4])
             else:
                 self.tdos_all[i, 0] = float(dos_line[1])
-                self.intdos_all[i, 0] = float(dos_line[2])
+                self.inttdos_all[i, 0] = float(dos_line[2])
+
 
             for atom0 in range(self.natom):
 
@@ -273,6 +274,10 @@ class ReadVaspDoscar(object):
                             f += 1
 
                     self.ldos_all = self.pdos_all
+
+            # default
+            self.tdos = self.tdos_all[:, 0] # default spin=0
+            self.inttdos = self.inttdos_all[:, 0] # default spin=0
 
     ##########################################################################
     ## EF 近傍の0.2 eV で VBM を探す
@@ -367,7 +372,7 @@ class ReadVaspDoscar(object):
                 spin = 1
             if spin == 'down':
                 spin = 1
-        self.inttdos = self.intdos_all[:, spin]
+        self.inttdos = self.inttdos_all[:, spin]
         return self.inttdos
 
     def get_pdos(self, lm=0, atom=0, spin=0):

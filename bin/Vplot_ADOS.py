@@ -78,6 +78,8 @@ def options():
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # total を描かないスイッチ(default はFalse で、total を描く
+    parser.add_option('--total', action='store_true', default=False)
     # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
     parser.add_option('--vbm', action='store_true')
     # efermi を 0 ではなく shift した値を使う
@@ -94,7 +96,7 @@ def options():
 
     return [dname, oname,
             options.EMAX, options.EMIN, options.YMAX,
-            options.vbm, options.shift,
+            options.total, options.vbm, options.shift,
             options.left, options.noef, options.NOWINDOW]
 
 ################################################################################
@@ -103,7 +105,7 @@ if __name__ == '__main__':
     # set input file
     dname, oname,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, \
-            FLAG_VBM, OPT_SHIFT, \
+            FLAG_TOT, FLAG_VBM, OPT_SHIFT, \
             FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
     if OPT_EMAX: print "Emax=",OPT_EMAX
@@ -166,10 +168,11 @@ if __name__ == '__main__':
             if spin == 1:
                 plt.axes([ 0.130,0.130, 0.80,0.40 ])  # 二段組の下段( down-spin )
 
-        INTTDOS = dos.get_inttdos(spin)
-        TDOS = dos.get_tdos(spin)
-    #   plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
-        plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
+        if not FLAG_TOT:
+            INTTDOS = dos.get_inttdos(spin)
+            TDOS = dos.get_tdos(spin)
+    #       plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
+            plt.fill_between(ENG-EFERMI,TDOS, color='#cccccc', linewidth=2, label='total')
 
         j=0
         for ion in range(NION):
