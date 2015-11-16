@@ -44,7 +44,7 @@ import matplotlib.ticker as ptick
 ################################################################################
 def options():
 
-    name = 'read_pdb.inp'
+#   name = 'read_pdb.inp'
 #   name = 'POSCAR.inp'
 
 #   parser = optparse.OptionParser()
@@ -59,13 +59,23 @@ def options():
 #   options,args = parser.parse_args()
     options = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
+#   if options.INPUT: name=options.INPUT
 #   if len(args) > 0: name=args[0]
 
-    if not os.path.exists(name):
-        name = 'conv.inp'
+    ########## inpname 取得
+    if options.INPUT:
+        inpname = options.INPUT
+    else:
+        if os.path.exists('fdmfile.txt'):
+            fdmfiletxt = SAE.ReadFdmFdmfile()
+            inpname = fdmfiletxt.filout
+        else:
+            inpname = 'read_pdb.inp'
 
-    return name,options.emax,options.emin,options.ymax,\
+    if not os.path.exists(inpname) or inpname is None:
+        sys.exit(inpname+' file not fount')
+
+    return inpname,options.emax,options.emin,options.ymax,\
             options.fermi,options.obs,\
             options.average
 

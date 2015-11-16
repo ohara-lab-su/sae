@@ -64,7 +64,7 @@ __version__ = "0.0.1"
 
 import sys
 #import gzip
-#import os
+import os
 import re
 import optparse
 import numpy as np
@@ -80,13 +80,18 @@ class ReadFdmSd(object):
     def __init__(self,
                  sdname,
                  suffix='_sd0.txt',
-                 inpname='read_pdb.inp',
+                 inpname=None,
                  bavname=None,
                  absorber=None,              ### absorber=[] :matrix
                  weight=None):
 
         if bavname is None:
             bavname = sdname
+
+        if inpname is None:
+            inpfile = 'read_pdb.inp'
+            inpdir =  os.path.dirname(sdname)
+            inpname = inpdir + '/' + inpfile
 
         ############################## self.datlines ##########################
         # 複数の sd ファイルを読んで平均化する

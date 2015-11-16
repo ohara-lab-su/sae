@@ -23,7 +23,7 @@ __status__     = "alpha"
 __version__    = "0.1.1"
 ################################################################################
 
-#import sys
+import sys
 #import gzip
 import os
 #import re
@@ -37,20 +37,30 @@ import StructureAnalysisEnvironment as SAE
 ################################################################################
 def options():
 
-    name = 'read_pdb.inp'
+#   name = 'read_pdb.inp'
 #   name = 'POSCAR.inp'
 
     parser = optparse.OptionParser()
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,args = parser.parse_args()
 
+    ###### default inpname Žæ“¾
     if options.INPUT:
-        name=options.INPUT
+        inpname = options.INPUT
+    else:
+        if os.path.exists('fdmfile.txt'):
+            fdmfiletxt = SAE.ReadFdmFdmfile()
+            inpname = fdmfiletxt.filout
+        else:
+            inpname = 'read_pdb.inp'
+
+    if not os.path.exists(inpname) or inpname is None:
+        sys.exit(inpname+' file not fount')
 
     if len(args) > 0:
-        name=args[0]
+        inpname=args[0]
 
-    return name
+    return inpname
 
 ################################################################################
 if __name__ == '__main__':
@@ -61,12 +71,19 @@ if __name__ == '__main__':
     filout = out.get_filout()
     print 'fileout :',filout
 
-    filelist = glob.glob(filout+'*.txt')
+#   filelist = glob.glob(filout+'*.txt')
+    filelist = ['fdmnes_error.txt',
+                filout+".txt",
+                filout+"_bav.txt",
+                filout+"_conv.txt"]
 
-    print ""
+    filelist.extend(glob.glob(filout+'_sd*.txt'))
+
+#   print ""
     for i in filelist:
-        print "DELETE : "+i
-        os.remove(i)
+        if os.path.exists(i):
+            print "DELETE : "+i
+            os.remove(i)
 
     if os.path.exists('fdm.out'):
         print "DELETE : fdm.out"

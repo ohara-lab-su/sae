@@ -37,6 +37,9 @@
 #
 ##########################################################################
 #
+# 2015.11.23
+#  L2,L3 の計算に対応
+#
 # 2015.09.08
 #  _0.txt _0_conv.txt _0_sd0.txt 出力系を追加・修正
 #
@@ -119,11 +122,9 @@ import matplotlib.pyplot as plt
 ##########################################################################
 def options():
 
-    inpname = 'read_pdb.inp'
-#   inpname = 'POSCAR.inp'
-
 #   parser = optparse.OptionParser()
     parser = argparse.ArgumentParser()
+
     parser.add_argument('-i', '--inp', '--inpname', dest='INPUT',)
     parser.add_argument('-f', '--filout', '--filoutname', dest='filout')
     parser.add_argument('-c', '--conv', '--convolution', dest='convname')
@@ -138,7 +139,13 @@ def options():
     parser.add_argument('--emin',)
     parser.add_argument('--ymax',)
     parser.add_argument('--dmax',)
+    # 複数エッジ(L23)のときのプロットするエッジの指定(L23モードののみ対応)
+    parser.add_argument('--l2', action='store_true', default=False,)
+    parser.add_argument('--l3', action='store_true', default=False,)
+    parser.add_argument('--l23', action='store_true', default=False,)
+    # fermi level をゼロにする( default は photon energy に変換する)
     parser.add_argument('--fermi', action='store_true', default=False,)
+    # fermi level の変換を完全になくす
     parser.add_argument('-n', '--nonsubtract', action='store_true', default=False,)
     # broad: XAS with broad のみを描く( FDplot_LDOS の brad option と逆 )
     parser.add_argument('-b', '--broad', action='store_true', default=False,)
@@ -156,8 +163,18 @@ def options():
 #   options, args = parser.parse_args()
     options = parser.parse_args()
 
-    if options.INPUT: inpname = options.INPUT
-    if not os.path.exists(inpname): inpname = 'conv.inp'
+    ###### default inpname 取得
+    if options.INPUT:
+        inpname = options.INPUT
+    else:
+        if os.path.exists('fdmfile.txt'):
+            fdmfiletxt = SAE.ReadFdmFdmfile()
+            inpname = fdmfiletxt.filout
+        else:
+            inpname = 'read_pdb.inp'
+
+    if not os.path.exists(inpname) or inpname is None:
+        sys.exit(inpname+' file not fount')
 
     if options.name:
         options.convname = options.name
@@ -169,6 +186,7 @@ def options():
             options.convname, options.txtname, options.filout, options.bavname,
             options.sdname, options.name,
             options.emax, options.emin, options.ymax, options.dmax,
+            options.l2, options.l3, options.l23,
             options.fermi, options.nonsubtract,
             options.broad, options.dos, options.obs,
             options.absorber, options.weight, options.dosweight,
@@ -179,11 +197,29 @@ def options():
 if __name__ == '__main__':
 
     outputname,\
-        inpname, convolname, textname, filoutname, bavname, sdname, allname,\
+        inpname, \
+        convolname, textname, filoutname, bavname, \
+        sdname, allname, \
         OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
+        FLAG_L2, FLAG_L3, FLAG_L23, \
         FLAG_fermi, FLAG_subt,\
         FLAG_B, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
-        FLAG_UP, FLAG_DN, FLAG_SPIN, FLAG_NW = options()
+        FLAG_UP, FLAG_DN, FLAG_SPIN, \
+        FLAG_NW = options()
+
+    if FLAG_L2 or FLAG_L3:
+        print "2-edge mode (L23-mode)"
+        if FLAG_L2:
+            print "L2-edge mode"
+            edge = 'L2'
+        elif FLAG_L3:
+            print "L3-edge mode"
+            edge = 'L3'
+    else:
+        edge = 'K'
+
+    if (FLAG_L2 and FLAG_L3) or FLAG_L23:
+            print "L2,L3-edge mode"
 
     ##########################################################################
     # inpname
@@ -229,16 +265,16 @@ if __name__ == '__main__':
         print "--- average mode ---"
         print "Textname (edge anf fermi)         [base] =",\
                 filout+'_'+str(AV[0])
-        txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]), '.txt')
+        txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]), suffix='.txt', edge=edge)
 
         print "Convolution base name             [base] =",\
                 filout+'_'+str(AV[0])
-        conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]), '_conv.txt')
+        conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]), suffix='_conv.txt')
     else:
         if textname is None: textname = filout
         if convolname is None: convolname = filout
         print "Textname (edge anf fermi)         (.txt) =", textname
-        txt = SAE.ReadFdmTxt(textname, '.txt')  # Read Edge and Efermi
+        txt = SAE.ReadFdmTxt(textname, suffix='.txt', edge=edge)  # Read Edge and Efermi
 
         print "Convolution base name        (_conv.txt) =", convolname
         conv = SAE.ReadFdmConv(convolname, '_conv.txt')
@@ -528,16 +564,16 @@ if __name__ == '__main__':
         _head = outputname+'_'
         print "output header = ", outputname
     else:
-        _head = 'XAS_'
+        _head = 'XAS'
 
     if allname:
-        plt.savefig(_head + allname + ".eps")
-        plt.savefig(_head + allname + ".pdf")
-        plt.savefig(_head + allname + ".png")
+        plt.savefig(_head + "_" + allname + ".eps")
+        plt.savefig(_head + "_" + allname + ".pdf")
+        plt.savefig(_head + "_" + allname + ".png")
     else:
-        plt.savefig(_head + ".eps")
+#       plt.savefig(_head + ".eps")
         plt.savefig(_head + ".pdf")
-        plt.savefig(_head + ".png")
+#       plt.savefig(_head + ".png")
 
     if not FLAG_NW:
         plt.show()

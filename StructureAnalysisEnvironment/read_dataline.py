@@ -42,8 +42,7 @@ import os
 import gzip
 
 ##########################################################################
-
-
+#
 def read_dataline(name):
 
     if os.path.exists(name):
@@ -81,8 +80,7 @@ def read_dataline(name):
 ##########################################################################
 # read_dataline1
 # コメントアウト対応版
-
-
+#
 def read_dataline1(name):
 
     import re

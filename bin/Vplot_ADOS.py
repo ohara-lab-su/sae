@@ -78,6 +78,10 @@ def options():
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # up-spin のみプロット
+    parser.add_option('--up', action='store_true', default=False)
+    # dn-spin のみプロット
+    parser.add_option('--dn', '--down', dest='dn', action='store_true', default=False)
     # total を描かないスイッチ(default はFalse で、total を描く
     parser.add_option('--total', action='store_true', default=False)
     # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
@@ -96,6 +100,7 @@ def options():
 
     return [dname, oname,
             options.EMAX, options.EMIN, options.YMAX,
+            options.up, options.dn,
             options.total, options.vbm, options.shift,
             options.left, options.noef, options.NOWINDOW]
 
@@ -105,6 +110,7 @@ if __name__ == '__main__':
     # set input file
     dname, oname,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            FLAG_UP, FLAG_DN, \
             FLAG_TOT, FLAG_VBM, OPT_SHIFT, \
             FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
@@ -154,19 +160,32 @@ if __name__ == '__main__':
 
 #   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 
+    orgx = 0.150
+    orgy = 0.150
+#   off = 0.015
+    off = 0.0
+    xsize = 0.75
+    ysize0 = 0.75
 
     ############################################################################
-    for spin in range(NSPIN):
+    if NSPIN >=2:
+        spin_index=['up','dn']
+        if FLAG_UP:
+            spin_list=[0]
+            ysize = ysize0
+        elif FLAG_DN:
+            spin_list=[1]
+            ysize = ysize0
+        else:
+            spin_list=[1,0]  # down, up と'積む'
+            ysize = ysize0/2.
 
-        if NSPIN == 1:
-            plt.axes([ 0.130,0.130, 0.80,0.80 ])  # 一段組の原点(x,y), 幅(x,y)
-            plt.title(TITLE)
-        if NSPIN == 2:
-            if spin == 0:
-                plt.axes([ 0.130,0.530, 0.80,0.40 ])  # 二段組の上側(y幅半分) up-spin
-                plt.title(TITLE)
-            if spin == 1:
-                plt.axes([ 0.130,0.130, 0.80,0.40 ])  # 二段組の下段( down-spin )
+    ############################################################################
+#   for spin in range(NSPIN):
+    FLAG_YTICKS = False
+    for spin in spin_list:
+
+        plt.axes([orgx, orgy, xsize, ysize])
 
         if not FLAG_TOT:
             INTTDOS = dos.get_inttdos(spin)
@@ -177,51 +196,52 @@ if __name__ == '__main__':
         j=0
         for ion in range(NION):
 
-            if NSPIN ==1:
-                print "ion = ",ion+1,atoms[ion]
-            else:
-                print "ion (spin) : ",ion+1,"("+str(spin+1)+")",atoms[ion]
             atom = str(atoms[ion])
+            if NSPIN ==1:
+                print "ion = ",ion+1,atom
+            else:
+                print "ion (spin) : ",ion+1,"("+spin_index[spin]+")",atom
 
             # autumn, bone, cool, copper, flag, gray, hot, hsv,
             # jet, pink, prism, spring, summer, winter, spectral
 
             c = cm.prism(float(j)/(3*NION))
             ADOS = dos.get_ldos_ion(0,ion,spin)
-            plt.plot(ENG-EFERMI,ADOS, linestyle=":", color=c, linewidth=2, label=atom+'-s')
+            plt.plot(ENG - EFERMI,ADOS, linestyle=":", color=c, linewidth=2, label=atom+'-s')
             j += 1
 
             c = cm.prism(float(j)/(3*NION))
             ADOS = dos.get_ldos_ion(1,ion,spin)
-            plt.plot(ENG-EFERMI,ADOS, linestyle="-", color=c, linewidth=2, label=atom+'-p')
+            plt.plot(ENG - EFERMI,ADOS, linestyle="-", color=c, linewidth=2, label=atom+'-p')
             j += 1
 
             if LMAX >= 2:
                 c = cm.prism(float(j)/(3*NION))
                 ADOS = dos.get_ldos_ion(2,ion,spin)
-                plt.plot(ENG-EFERMI,ADOS, linestyle="--", color=c, linewidth=2, label=atom+'-d')
+                plt.plot(ENG - EFERMI,ADOS, linestyle="--", color=c, linewidth=2, label=atom+'-d')
                 j += 1
 
             if LMAX >= 3:
                 c = cm.prism(float(j)/(3*NION))
                 ADOS = dos.get_ldos_ion(3,ion,spin)
-                plt.plot(ENG-EFERMI,ADOS, linestyle="-.", color=c, linewidth=2, label=atom+'-f')
+                plt.plot(ENG - EFERMI,ADOS, linestyle="-.", color=c, linewidth=2, label=atom+'-f')
                 j += 1
 
             # Y軸の調整
             plt.ylim( ymin=0 )
 
-        if spin == 0:
+        # 最初のプロット(一番下に積んだブロック)における ylabel and xlabel 処理
+        if not FLAG_YTICKS:
             yl = plt.ylabel("DOS/eV", fontsize=20 )
+            xl = plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
+            FLAG_YTICKS = True
 
-        if OPT_EMAX:
-            plt.xlim( xmax=float(OPT_EMAX) )
-        if OPT_EMIN:
-            plt.xlim( xmin=float(OPT_EMIN) )
-        if OPT_YMAX:
-            plt.ylim( ymax=float(OPT_YMAX) )
+        if OPT_EMAX: plt.xlim( xmax=float(OPT_EMAX) )
+        if OPT_EMIN: plt.xlim( xmin=float(OPT_EMIN) )
+        if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
-        if NSPIN == 2 :
+        # 両スピン描画の時はdown-spin を反転表示させる
+        if (not FLAG_UP) and (not FLAG_DN):
             if spin == 0:
                 plt.xticks([])
             if spin == 1:
@@ -233,9 +253,17 @@ if __name__ == '__main__':
         if not FLAG_NOEF:
             plt.axvline(x=0,color="black",linewidth=1)
 
+        # 次のスピンの時の原点位置修正
+        orgy = orgy + off + ysize
+
     ############################################################################
 
-    plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
+    if FLAG_UP:
+        plt.title(TITLE+' (up-spin)')
+    elif FLAG_DN:
+        plt.title(TITLE+' (dn-spin)')
+    else:
+        plt.title(TITLE)
 
     if FLAG_LEFT:
         leg = plt.legend(fontsize=12, loc='upper left')   # 凡例Box

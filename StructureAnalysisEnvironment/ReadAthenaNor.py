@@ -69,6 +69,7 @@ class ReadAthenaNor(object):
 
         self.nor = np.array(self.nor)
         self.eng = np.array(self.eng)
+        self.xas = self.nor
 
     def get_nor(self):
         return self.nor

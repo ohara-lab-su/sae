@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2015.11.12
+#  L2,3に対応
+#
 # 2015.09.11
 #  .txt の生データーのスピン対応
 #    XAS のデーター構造が変わるので注意
@@ -36,7 +39,7 @@ __version__ = "0.0.1"
 #import sys
 #import gzip
 #import os
-#import re
+import re
 import optparse
 import numpy as np
 
@@ -48,7 +51,7 @@ import StructureAnalysisEnvironment as SAEnv
 
 class ReadFdmTxt(object):
 
-    def __init__(self, cname, suffix='.txt', weight=None):
+    def __init__(self, cname, suffix='.txt', edge='K', weight=None):
 
         name = cname.replace(suffix, '')
         suffix0 = cname.replace(name, '')
@@ -78,26 +81,48 @@ class ReadFdmTxt(object):
        # for i in range(count,len(self.datlines[0].split())):
            #var = str(self.datlines[0].split()[i].strip()).replace(',','')
            #value = float(self.datlines[0].split()[i-count])
+
         for i in range(count, len(self.datlines[0].replace(',', ' ').split())):
             var = str(self.datlines[0].replace(',', ' ').split()[i].strip())
             value = \
                   float(self.datlines[0].replace(',', ' ').split()[i - count])
             self.__dict__[var] = value
 
-        # スピン計算の有無を類推
-        if len(self.datlines[2].split()) >=3:
+        # スピン計算の有無を類推 & XANES の複数エッジの処理
+        #  L23 mode の spin ありには未対応(2015.11.12)
+        #
+        if isinstance(edge, str):
+            if edge == 'K':
+                edge = 0
+            if edge == 'L2':
+                edge = 0
+            if edge == 'L3':
+                edge = 1
+        print 'edge', edge
+
+        # エッジの把握
+        if len(self.datlines[1].split()) == 3:
+            if bool(re.match('.*\<xanes\>_L',self.datlines[1].split()[1])):
+                self.nspin = 1
+            else:
+                self.nspin = 2
+
+        # 複数エッジ with spin
+        elif len(self.datlines[1].split()) >= 4:
             self.nspin = 2
         else:
             self.nspin = 1
 
         # XANES スペクトル(生データを読み込み)
         self.xas_all = np.zeros((self.num - 2, self.nspin))
+
         for i in range(2, self.num):
             self.eng[i - 2] = float(self.datlines[i].split()[0])
 
+            # 複数エッジ未対応
             for spin in range(self.nspin):
                 self.xas_all[i - 2, spin] = \
-                        float(self.datlines[i].split()[1+spin]) / weight
+                        float(self.datlines[i].split()[1+spin+edge]) / weight
 
         self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
         self.ispin = self.nspin

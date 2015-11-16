@@ -40,9 +40,9 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-#import sys
+import sys
 #import gzip
-#import os
+import os
 #import re
 import optparse
 #import numpy as np
@@ -57,9 +57,8 @@ import matplotlib.cm as cm
 ################################################################################
 def options():
 
-    inpname = 'read_pdb.inp'
-
     parser = optparse.OptionParser()
+
     parser.add_option('-i', '--inp', '--inpname', dest='INPUT')
     parser.add_option('-f', '--filout', '--filoutname', dest='filoutname')
     parser.add_option('-c', '--conv', '--convname', dest='convname')
@@ -97,7 +96,19 @@ def options():
 
     options,args = parser.parse_args()
 
-    if options.INPUT: inpname=options.INPUT
+    ########## default inpname 取得
+    if options.INPUT:
+        inpname = options.INPUT
+    else:
+        if os.path.exists('fdmfile.txt'):
+            fdmfiletxt = SAEnv.ReadFdmFdmfile()
+            inpname = fdmfiletxt.filout
+        else:
+            inpname = 'read_pdb.inp'
+
+    if not os.path.exists(inpname) or inpname is None:
+        sys.exit(inpname+' file not fount')
+
     if len(args) > 0: inpname=args[0]
 
     if options.name:

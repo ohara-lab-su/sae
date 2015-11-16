@@ -38,32 +38,32 @@ import StructureAnalysisEnvironment as SAEnv
 import matplotlib.pyplot as plt
 
 
-################################################################################
-def options():
-
-    name = 'POSCAR'
-    suffix = '_conv.txt'
-
-    parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,args = parser.parse_args()
-
-    if not os.path.exists(name):
-        name0 = SAEnv.find_datfile1('_conv.txt')
-        name0 = name0.replace(suffix,'')
-        if name0 is None:
-            name0 = name
-        name = name0
-
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
-
-    return name,suffix
+#################################################################################
+#def options():
+#
+#    name = 'POSCAR'
+#    suffix = '_conv.txt'
+#
+#    parser = optparse.OptionParser()
+#    parser.add_option(  '-i','--input', dest='INPUT',)
+#    options,args = parser.parse_args()
+#
+#    if not os.path.exists(name):
+#        name0 = SAEnv.find_datfile1('_conv.txt')
+#        name0 = name0.replace(suffix,'')
+#        if name0 is None:
+#            name0 = name
+#        name = name0
+#
+#    if options.INPUT: name=options.INPUT
+#    if len(args) > 0: name=args[0]
+#
+#    return name,suffix
 
 ################################################################################
 if __name__ == '__main__':
 
-    name,suffix = options()
+#   name,suffix = options()
 #   conv = SAEnv.ReadFdmConv(name)
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
@@ -94,8 +94,9 @@ if __name__ == '__main__':
 
 #   conv = SAEnv.ReadFdmConv(name, suffix)
 
-    conv = SAEnv.ReadFdmConv('R3.0/Au', suffix)
-    plt.plot(conv.eng+E_edge, conv.xas, linewidth=2, label='XAS')
+    txt = SAEnv.ReadFdmTxt('R3.0/Au', suffix='.txt')
+    conv = SAEnv.ReadFdmConv('R3.0/Au', suffix='_conv.txt')
+    plt.plot(conv.eng - txt.E_Fermi, conv.xas, linewidth=2, label='XAS')
 
     plt.ticklabel_format(axis='x',useOffset=False)
     plt.xlabel("Energy above Fermi [eV]")
