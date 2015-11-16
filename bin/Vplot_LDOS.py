@@ -91,6 +91,8 @@ def options():
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # title
+    parser.add_option('--title',)
     # total のプロットを 'off' にするスイッチ
     parser.add_option('--total', action='store_true', default=False)
     # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
@@ -118,6 +120,7 @@ def options():
 
     return [dname, oname,
             options.EMAX, options.EMIN, options.YMAX,
+            options.title,
             options.atom, plot_atoms,
             options.total,
             options.vbm, options.shift,
@@ -129,6 +132,7 @@ if __name__ == '__main__':
     # set input file
     dname,oname,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,\
+            OPT_TITLE,\
             plot_atom,\
             plot_atoms,\
             FLAG_TOT, \
@@ -159,7 +163,6 @@ if __name__ == '__main__':
     NSPIN = dos.ispin
     LORBIT = dos.lorbit
     NATOM = dos.natom
-    TITLE =  dos.title
     EMAX = dos.emax
     EMIN = dos.emin
     NEDOS = dos.nedos
@@ -168,13 +171,22 @@ if __name__ == '__main__':
 
     ENG = dos.eng
 
+    if not OPT_TITLE:
+        TITLE =  dos.title
+    else:
+        TITLE = OPT_TITLE
+
     if FLAG_VBM:
-        print "EF SHIFT"
         EFERMI0 = dos.efermi
+        print "SEARCH VBM MODE"
+        print "  ORIGINAL EF =",
+        print EFERMI0
         EFERMI = dos.get_vbm()
-        print EFERMI0, EFERMI
+        print "          VBM =", EFERMI
 
     if OPT_SHIFT:
+        print "EF_SHIFT MODE"
+        print "     NEW EF ="
         EFERMI = float(OPT_SHIFT)
 
     # makes instance ( Read OUTCAR )

@@ -89,8 +89,8 @@ if __name__ == '__main__':
 #    #######################################################
 
 #   E_edge   = 8979.0
-    E_edge   = 0.0
-    E_fermi  = -5.41217
+#   E_edge   = 0.0
+#   E_fermi  = -5.41217
 
 #   conv = SAEnv.ReadFdmConv(name, suffix)
 

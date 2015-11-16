@@ -91,6 +91,7 @@ class ReadFdmTxt(object):
         # スピン計算の有無を類推 & XANES の複数エッジの処理
         #  L23 mode の spin ありには未対応(2015.11.12)
         #
+        print 'Edge mode = ', edge
         if isinstance(edge, str):
             if edge == 'K':
                 edge = 0
@@ -98,7 +99,6 @@ class ReadFdmTxt(object):
                 edge = 0
             if edge == 'L3':
                 edge = 1
-        print 'edge', edge
 
         # エッジの把握
         if len(self.datlines[1].split()) == 3:

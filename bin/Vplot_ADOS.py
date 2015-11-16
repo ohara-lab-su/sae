@@ -78,6 +78,8 @@ def options():
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # title
+    parser.add_option('--title',)
     # up-spin のみプロット
     parser.add_option('--up', action='store_true', default=False)
     # dn-spin のみプロット
@@ -100,6 +102,7 @@ def options():
 
     return [dname, oname,
             options.EMAX, options.EMIN, options.YMAX,
+            options.title,
             options.up, options.dn,
             options.total, options.vbm, options.shift,
             options.left, options.noef, options.NOWINDOW]
@@ -110,6 +113,7 @@ if __name__ == '__main__':
     # set input file
     dname, oname,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            OPT_TITLE,\
             FLAG_UP, FLAG_DN, \
             FLAG_TOT, FLAG_VBM, OPT_SHIFT, \
             FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
@@ -122,33 +126,45 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
+    print "READ "+dname
     dos = SAE.ReadVaspDoscar(dname)
+    print "END READ"
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
     NATOM = dos.get_natom()
-    TITLE =  dos.get_title()
     EMAX = dos.get_emax()
     EMIN = dos.get_emin()
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
+    ENG = dos.get_eng()
     LMAX = dos.lmax
 
+    if not OPT_TITLE:
+        TITLE =  dos.get_title()
+    else:
+        TITLE = OPT_TITLE
+
     if FLAG_VBM:
-        print "EF SHIFT"
         EFERMI0 = dos.efermi
+        print "SEARCH VBM MODE"
+        print "  ORIGINAL EF =",
+        print EFERMI0
         EFERMI = dos.get_vbm()
-        print EFERMI0, EFERMI
+        print "          VBM =", EFERMI
 
     if OPT_SHIFT:
+        print "EF_SHIFT MODE"
+        print "     NEW EF ="
         EFERMI = float(OPT_SHIFT)
 
     # makes instance ( Read OUTCAR )
+    print "READ "+oname
     outcar = SAE.ReadVaspOutcar(oname)
+    print "END READ"
+
     NION = outcar.get_nion()
     atoms = outcar.get_atoms_index()
-
-    ENG = dos.get_eng()
 
     ############################################################################
     # matplotlib
@@ -161,7 +177,7 @@ if __name__ == '__main__':
 #   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
 
     orgx = 0.150
-    orgy = 0.150
+    orgy = 0.143
 #   off = 0.015
     off = 0.0
     xsize = 0.75
@@ -169,16 +185,29 @@ if __name__ == '__main__':
 
     ############################################################################
     if NSPIN >=2:
+        print "SPIN MODE"
         spin_index=['up','dn']
         if FLAG_UP:
             spin_list=[0]
+            out_suffix='_up'
             ysize = ysize0
+            FLAG_BOTH_SPIN = False
         elif FLAG_DN:
             spin_list=[1]
+            out_suffix='_dn'
             ysize = ysize0
+            FLAG_BOTH_SPIN = False
         else:
             spin_list=[1,0]  # down, up と'積む'
+            out_suffix=''
             ysize = ysize0/2.
+            FLAG_BOTH_SPIN = True
+    else:
+        print "NONMAGNETIC MODE"
+        spin_list=[0]
+        out_suffix=''
+        ysize = ysize0
+        FLAG_BOTH_SPIN = False
 
     ############################################################################
 #   for spin in range(NSPIN):
@@ -241,7 +270,7 @@ if __name__ == '__main__':
         if OPT_YMAX: plt.ylim( ymax=float(OPT_YMAX) )
 
         # 両スピン描画の時はdown-spin を反転表示させる
-        if (not FLAG_UP) and (not FLAG_DN):
+        if FLAG_BOTH_SPIN:
             if spin == 0:
                 plt.xticks([])
             if spin == 1:
@@ -275,9 +304,9 @@ if __name__ == '__main__':
 #   plt.xlim([-10,10])
 #   plt.ylim([0,200])
 
-    plt.savefig("ADOS.eps")
-    plt.savefig("ADOS.pdf")
-    plt.savefig("ADOS.png")
+#   plt.savefig("ADOS"+out_suffix+".eps")
+    plt.savefig("ADOS"+out_suffix+".pdf")
+#   plt.savefig("ADOS"+out_suffix+".png")
 
     if not FLAG_NW:
         plt.show()
