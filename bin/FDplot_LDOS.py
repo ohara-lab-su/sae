@@ -86,6 +86,8 @@ def options():
     parser.add_option('--up', action='store_true', default=False)
     parser.add_option('--dn', '--down', action='store_true', default=False, dest='dn')
     parser.add_option('--spin', action='store_true', default=False)
+    # 逆のスイッチ: pdf のみ出力を disable にする (デフォルトは pdf のみ出力)
+    parser.add_option('--pdf', action='store_true', default=False)
     parser.add_option('--nw', action='store_true', default=False)
     options,args = parser.parse_args()
 
@@ -121,7 +123,7 @@ def options():
             options.s, options.p, options.sp, options.spd,
             options.weight,
             options.dosweight, options.xasweight, options.txtweight,
-            options.total, options.intdos, options.nw]
+            options.total, options.intdos, options.pdf, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
@@ -136,7 +138,7 @@ if __name__ == '__main__':
             FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, \
             WE,\
             WEDOS, WEXAS, WETXT,\
-            FLAG_TOTAL, FLAG_INTDOS, FLAG_NW = options()
+            FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
 
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
@@ -224,6 +226,11 @@ if __name__ == '__main__':
         print ""
         print "Current calculation is Magnetic: SPIN MODE"
         print ""
+
+    print ""
+    print "E_fermi =", txt.E_Fermi
+    print "E_edge  =", txt.E_edge
+    print ""
 
     ###########################################################################
 
@@ -516,9 +523,10 @@ if __name__ == '__main__':
     else:
         _outsuffix = ''
 
-    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
     plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".pdf")
-    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
+    if FLAG_PDF:
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
 
     if not FLAG_NW:
         plt.show()

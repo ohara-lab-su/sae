@@ -159,6 +159,8 @@ def options():
     parser.add_argument('--up', action='store_true', default=False)
     parser.add_argument('--dn', '--down', action='store_true', default=False, dest='dn')
     parser.add_argument('--spin', action='store_true', default=False)
+    # 逆のスイッチ:pdf のみ出力を diable にする ( default は pdf )
+    parser.add_option('--pdf', action='store_true', default=False)
     parser.add_argument('--nw', action='store_true', default=False)
 #   options, args = parser.parse_args()
     options = parser.parse_args()
@@ -191,7 +193,7 @@ def options():
             options.broad, options.dos, options.obs,
             options.absorber, options.weight, options.dosweight,
             options.up, options.dn, options.spin,
-            options.nw]
+            options.pdf, options.nw]
 
 ###############################################################################
 if __name__ == '__main__':
@@ -205,7 +207,7 @@ if __name__ == '__main__':
         FLAG_fermi, FLAG_subt,\
         FLAG_B, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
         FLAG_UP, FLAG_DN, FLAG_SPIN, \
-        FLAG_NW = options()
+        FLAG_PDF, FLAG_NW = options()
 
     if FLAG_L2 or FLAG_L3:
         print "2-edge mode (L23-mode)"
@@ -224,10 +226,11 @@ if __name__ == '__main__':
     ##########################################################################
     # inpname
     #    ベースとなる情報のinputfile名
-    print "inpname                                  =", inpname
+    print "inpname"
+    print "-------------------------> ",inpname
     inp = SAE.ReadFdmInp(inpname)
-    print " --> default filout name                 =", inp.filout
-    print ""
+    print "filout name"
+    print "-------------------------> ",inp.filout
 
     if not filoutname:
         calculation = inp.get_calculation()
@@ -263,20 +266,22 @@ if __name__ == '__main__':
     if AV:
         print ""
         print "--- average mode ---"
-        print "Textname (edge anf fermi)         [base] =",\
-                filout+'_'+str(AV[0])
+        print "text base name (.txt)"
+        print "------======-------------> ",filout+'_'+str(AV[0])
         txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]), suffix='.txt', edge=edge)
 
-        print "Convolution base name             [base] =",\
-                filout+'_'+str(AV[0])
+        print "convolution base name (_conv.txt)"
+        print "-----------======--------> ",filout+'_'+str(AV[0])
         conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]), suffix='_conv.txt')
     else:
         if textname is None: textname = filout
         if convolname is None: convolname = filout
-        print "Textname (edge anf fermi)         (.txt) =", textname
+        print "text base name  (.txt)"
+        print "-------------------------> ",textname
         txt = SAE.ReadFdmTxt(textname, suffix='.txt', edge=edge)  # Read Edge and Efermi
 
-        print "Convolution base name        (_conv.txt) =", convolname
+        print "convolution base name (_conv.txt)"
+        print "-------------------------> ",convolname
         conv = SAE.ReadFdmConv(convolname, '_conv.txt')
 
     ##########################################################################
@@ -304,11 +309,13 @@ if __name__ == '__main__':
            filbav = bavname
         else:
            filbav = filout
-        print "Bavname (logfile) for DOS     (_bav.txt) =", filbav
+        print "Bav base name (_bav.txt)"
+        print "-------------------------> ",filbav
 
         if AV:
             sdname = filout
-            print "Sdname base (=filout)        (?_sd0.txt) =", sdname
+            print "Sdname base (_sd0.txt)"
+            print "-------------------------> ",sdname
             print ""
             if WEDOS:
                 sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
@@ -332,7 +339,8 @@ if __name__ == '__main__':
                 sdname = sdname
             else:
                 sdname = filout
-            print "Sdname base name              (_sd0.txt) =", sdname
+            print "Sdname base name (_sd0.txt)"
+            print "-------------------------> ",sdname
             print ""
             sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
                                bavname=filbav,
@@ -567,13 +575,15 @@ if __name__ == '__main__':
         _head = 'XAS'
 
     if allname:
-        plt.savefig(_head + "_" + allname + ".eps")
         plt.savefig(_head + "_" + allname + ".pdf")
-        plt.savefig(_head + "_" + allname + ".png")
+        if FLAG_PDF:
+            plt.savefig(_head + "_" + allname + ".eps")
+            plt.savefig(_head + "_" + allname + ".png")
     else:
-#       plt.savefig(_head + ".eps")
         plt.savefig(_head + ".pdf")
-#       plt.savefig(_head + ".png")
+        if FLAG_PDF:
+            plt.savefig(_head + ".eps")
+            plt.savefig(_head + ".png")
 
     if not FLAG_NW:
         plt.show()

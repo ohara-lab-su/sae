@@ -90,7 +90,7 @@ def options():
     parser.add_option('--up', action='store_true', default=False)
     parser.add_option('--dn', '--down', action='store_true', default=False, dest='dn')
     parser.add_option('--spin', action='store_true', default=False)
-    # pdf のみ出力 ( default は pdf ,png ,eps 出力 )
+    # 逆のスイッチ:pdf のみ出力を diable にする ( default は pdf )
     parser.add_option('--pdf', action='store_true', default=False)
     parser.add_option('--nw', action='store_true', default=False)
 
@@ -489,7 +489,7 @@ if __name__ == '__main__':
         _outsuffix = ''
 
     plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".pdf")
-    if not FLAG_PDF:
+    if FLAG_PDF:
         plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
         plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
 

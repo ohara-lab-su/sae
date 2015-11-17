@@ -101,9 +101,9 @@ if __name__ == '__main__':
 #   plt.xlim( xmin=-10 )
 
 
-    plt.savefig("XAS.eps")
+#   plt.savefig("XAS.eps")
     plt.savefig("XAS.pdf")
-    plt.savefig("XAS.png")
+#   plt.savefig("XAS.png")
 
     plt.show()
 

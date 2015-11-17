@@ -193,9 +193,9 @@ if __name__ == '__main__':
 #   plt.xlabel("Energy above Fermi [eV]")
 #   plt.ylabel("Absorption [arb. unit]")
 
-    plt.savefig("XAS_LDOS"+str(atom)+".eps")
+#   plt.savefig("XAS_LDOS"+str(atom)+".eps")
     plt.savefig("XAS_LDOS"+str(atom)+".pdf")
-    plt.savefig("XAS_LDOS"+str(atom)+".png")
+#   plt.savefig("XAS_LDOS"+str(atom)+".png")
 
     plt.show()
 

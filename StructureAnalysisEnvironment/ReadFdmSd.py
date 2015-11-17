@@ -91,7 +91,10 @@ class ReadFdmSd(object):
         if inpname is None:
             inpfile = 'read_pdb.inp'
             inpdir =  os.path.dirname(sdname)
-            inpname = inpdir + '/' + inpfile
+            if inpdir:
+                inpname = inpdir + '/' + inpfile
+            else:
+                inpname = inpfile
 
         ############################## self.datlines ##########################
         # 複数の sd ファイルを読んで平均化する
