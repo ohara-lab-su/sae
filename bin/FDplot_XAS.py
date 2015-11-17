@@ -160,7 +160,7 @@ def options():
     parser.add_argument('--dn', '--down', action='store_true', default=False, dest='dn')
     parser.add_argument('--spin', action='store_true', default=False)
     # 逆のスイッチ:pdf のみ出力を diable にする ( default は pdf )
-    parser.add_option('--pdf', action='store_true', default=False)
+    parser.add_argument('--pdf', action='store_true', default=False)
     parser.add_argument('--nw', action='store_true', default=False)
 #   options, args = parser.parse_args()
     options = parser.parse_args()

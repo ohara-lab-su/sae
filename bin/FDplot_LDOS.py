@@ -50,7 +50,7 @@ def options():
     parser = optparse.OptionParser()
 
     parser.add_option('-i','--inpname', dest='INPUT',)
-    parser.add_option('-f','--filout', '--filoutname', dest='filoutname')
+    parser.add_option('-f', '--filout', '--filoutname', dest='filoutname')
     parser.add_option('-c', '--conv', '--convname', dest='convname')
     parser.add_option('-t', '--txt', '--txtname', dest='txtname')
     parser.add_option('-s', '--sd', '--sdname', dest='sdname')
@@ -64,6 +64,10 @@ def options():
     parser.add_option('--emin')
     parser.add_option('--ymax')  # XAS の ymax
     parser.add_option('--dmax')  # DOS の ymax共通
+    parser.add_option('--dmax_s')  # DOS-s max
+    parser.add_option('--dmax_p')  # DOS-p max
+    parser.add_option('--dmax_d')  # DOS-d max
+    parser.add_option('--dmax_f')  # DOS-f max
     parser.add_option('--label')
     parser.add_option('--outsuffix')
     parser.add_option('--weight')     # for XAS (xasとtxt weightの同時設定)
@@ -81,8 +85,10 @@ def options():
     parser.add_option('--fermi', action='store_true', default=False)
     parser.add_option('--s', action='store_true', default=False)
     parser.add_option('--p', action='store_true', default=False)
+    parser.add_option('--d', action='store_true', default=False)
     parser.add_option('--sp', action='store_true', default=False)
     parser.add_option('--spd', action='store_true', default=False)
+    parser.add_option('--spdf', action='store_true', default=False)
     parser.add_option('--up', action='store_true', default=False)
     parser.add_option('--dn', '--down', action='store_true', default=False, dest='dn')
     parser.add_option('--spin', action='store_true', default=False)
@@ -118,9 +124,10 @@ def options():
             options.name,
             options.atom,  options.label,
             options.emax, options.emin, options.ymax, options.dmax,
+            options.dmax_s, options.dmax_p, options.dmax_d, options.dmax_f,
             options.broad, options.fermi, options.xas,
             options.up, options.dn, options.spin,
-            options.s, options.p, options.sp, options.spd,
+            options.s, options.p, options.sp, options.spd, options.spdf,
             options.weight,
             options.dosweight, options.xasweight, options.txtweight,
             options.total, options.intdos, options.pdf, options.nw]
@@ -133,9 +140,10 @@ if __name__ == '__main__':
             convname, txtname, filout, bavname, sdname, allname,\
             atom, LABEL,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
+            OPT_DMAX_S, OPT_DMAX_P, OPT_DMAX_D, OPT_DMAX_F,\
             FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
             FLAG_UP, FLAG_DN, FLAG_SPIN,\
-            FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, \
+            FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, FLAG_SPDF,\
             WE,\
             WEDOS, WEXAS, WETXT,\
             FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
@@ -144,7 +152,12 @@ if __name__ == '__main__':
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
     if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
+
     if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
+    if OPT_DMAX_S: print "Ymax(s-orbit)=", OPT_DMAX_S
+    if OPT_DMAX_P: print "Ymax(p-orbit)=", OPT_DMAX_P
+    if OPT_DMAX_D: print "Ymax(d-orbit)=", OPT_DMAX_D
+    if OPT_DMAX_F: print "Ymax(f-orbit)=", OPT_DMAX_F
 
     if not atom: atom = 0
 
@@ -237,21 +250,29 @@ if __name__ == '__main__':
     # 選択した atom の最大の lmax を取得して表示する軌道をチョイス
     lmax = sd.lmax
 
+    # automatic
     if lmax == 0:
         orbit_list = ['s']
     elif lmax == 1:
         orbit_list = ['s','p']
     elif lmax == 2:
         orbit_list = ['s','p','d']
+    elif lmax == 3:
+        orbit_list = ['s','p','d','f']
     else:
         orbit_list = ['s','p','d']
 
+    # optional
     if FLAG_S:
         orbit_list = ['s']
     if FLAG_P:
         orbit_list = ['p']
     if FLAG_SP:
         orbit_list = ['s','p']
+    if FLAG_SPD:
+        orbit_list = ['s','p','d']
+    if FLAG_SPDF:
+        orbit_list = ['s','p','d','f']
 
     norbit = len(orbit_list)
 
@@ -497,6 +518,10 @@ if __name__ == '__main__':
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
             if OPT_DMAX: plt.ylim(ymax=float(OPT_DMAX))
+            if OPT_DMAX_S and orbit == 's': plt.ylim(ymax=float(OPT_DMAX_S))
+            if OPT_DMAX_P and orbit == 'p': plt.ylim(ymax=float(OPT_DMAX_P))
+            if OPT_DMAX_D and orbit == 'd': plt.ylim(ymax=float(OPT_DMAX_D))
+            if OPT_DMAX_F and orbit == 'f': plt.ylim(ymax=float(OPT_DMAX_F))
 
             leg = plt.legend(loc='upper right')
             leg.get_frame().set_alpha(0.5)
