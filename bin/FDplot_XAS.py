@@ -149,6 +149,9 @@ def options():
     parser.add_argument('-n', '--nonsubtract', action='store_true', default=False,)
     # broad: XAS with broad のみを描く( FDplot_LDOS の brad option と逆 )
     parser.add_argument('-b', '--broad', action='store_true', default=False,)
+    # xas: XAS non broad のみを描く
+    parser.add_argument('--xas', action='store_true', default=False,)
+    # dos: _sd0.txt を用いて LDOS をプロット (XASとの違いに注意)
     parser.add_argument('-d', '--dos', action='store_true', default=False,)
 #   parser.add_argument('-o', '--obs', action='store_true', default=False,)
     parser.add_argument('-o', '--obs')
@@ -171,7 +174,7 @@ def options():
     else:
         if os.path.exists('fdmfile.txt'):
             fdmfiletxt = SAE.ReadFdmFdmfile()
-            inpname = fdmfiletxt.filout
+            inpname = fdmfiletxt.get_filout()
         else:
             inpname = 'read_pdb.inp'
 
@@ -190,7 +193,7 @@ def options():
             options.emax, options.emin, options.ymax, options.dmax,
             options.l2, options.l3, options.l23,
             options.fermi, options.nonsubtract,
-            options.broad, options.dos, options.obs,
+            options.broad, options.xas, options.dos, options.obs,
             options.absorber, options.weight, options.dosweight,
             options.up, options.dn, options.spin,
             options.pdf, options.nw]
@@ -205,7 +208,7 @@ if __name__ == '__main__':
         OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
         FLAG_L2, FLAG_L3, FLAG_L23, \
         FLAG_fermi, FLAG_subt,\
-        FLAG_B, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
+        FLAG_B, FLAG_XAS, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
         FLAG_UP, FLAG_DN, FLAG_SPIN, \
         FLAG_PDF, FLAG_NW = options()
 
@@ -468,9 +471,13 @@ if __name__ == '__main__':
     else:
         plt.subplot(2, 1, 2)
 
-    if not FLAG_B:
+    # broad オプション ナシ( XAS の生スペクトルplot) or XAS オプションあり
+    if not FLAG_B or FLAG_XAS:
         plt.plot(txt.eng, txt.xas, color='green', linewidth=1, label='XAS')
-    plt.plot(conv.eng, conv.xas, color='red', linewidth=3, label='XAS broad')
+
+    # xas オプション ナシ
+    if not FLAG_XAS:
+        plt.plot(conv.eng, conv.xas, color='red', linewidth=3, label='XAS broad')
 
     plt.ticklabel_format(axis='x', useOffset=False)
 #   plt.ticklabel_format(axis='x',style='plain')

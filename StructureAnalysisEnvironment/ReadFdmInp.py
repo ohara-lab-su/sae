@@ -22,6 +22,9 @@
 #
 ###############################################################################
 #
+# 2015.11.20
+#  convolution 用の結晶構造情報が無いファイルに対する対応
+#
 # 2015.08.25
 #  統合化&Method でいろいろと分離
 #
@@ -244,7 +247,17 @@ class ReadFdmInp(SAEnv.Method):
                     if i == self.num:
                         break
 
+            else:
+                self.position = []
+                self.atoms_index_j = []
                #self.position = np.array(self.position)
+
+        # convolution などで filout 項目がないときは
+        # filout に calculation 名を渡す
+        try:
+            self.filout = self.filout
+        except:
+            self.filout = self.calculation
 
         ########################################
         # position を numpy array 化
