@@ -148,6 +148,24 @@ if __name__ == '__main__':
             WEDOS, WEXAS, WETXT,\
             FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
 
+    ###########################################################################
+
+    plt.rcParams['font.family']     = 'Times New Roman'
+    plt.rcParams['font.size']       = 15  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 10  # レジェンドのフォントサイズ
+    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
+
+    plt.figure(figsize=(7.00, 9.89))  # for portrait
+
+    orgx = 0.170
+    orgy = 0.080
+    off = 0.015
+    xsize = 0.72
+#   ysize0 = 0.83
+    ysize0 = 0.75
+
+    ###########################################################################
+
     if FLAG_BROAD: FLAG_XAS = True
     if OPT_EMAX: print "Emax=", OPT_EMAX
     if OPT_EMIN: print "Emin=", OPT_EMIN
@@ -158,8 +176,6 @@ if __name__ == '__main__':
     if OPT_DMAX_P: print "Ymax(p-orbit)=", OPT_DMAX_P
     if OPT_DMAX_D: print "Ymax(d-orbit)=", OPT_DMAX_D
     if OPT_DMAX_F: print "Ymax(f-orbit)=", OPT_DMAX_F
-
-    if not atom: atom = 0
 
     if WEDOS:
         print "Weight for DOS =", WEDOS
@@ -186,6 +202,13 @@ if __name__ == '__main__':
 
     ###########################################################################
 
+    inp = SAEnv.ReadFdmInp(inpname)
+
+    if not atom and not inp.nonexc:
+        atom = 0
+    if not atom and inp.nonexc:
+        atom = 1
+
     suffix_sd = '_sd'+str(atom)+'.txt'
     suffix_conv = '_conv.txt'
 
@@ -193,26 +216,6 @@ if __name__ == '__main__':
         convolname = allname
         txtname = allname
         sdname = allname
-
-    ###########################################################################
-
-    plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 15  # ラベル等のフォントサイズ
-    plt.rcParams['legend.fontsize'] = 10  # レジェンドのフォントサイズ
-    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
-
-    plt.figure(figsize=(7.00, 9.89))  # for portrait
-
-    orgx = 0.170
-    orgy = 0.080
-    off = 0.015
-    xsize = 0.72
-#   ysize0 = 0.83
-    ysize0 = 0.75
-
-    ###########################################################################
-
-    inp = SAEnv.ReadFdmInp(inpname)
 
     if not filout: filout = inp.filout
     if convname is None: convname = filout

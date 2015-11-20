@@ -147,49 +147,6 @@ if __name__ == '__main__':
             WEDOS, WEXAS, WETXT, \
             FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
 
-    if FLAG_BROAD: FLAG_XAS = True
-    if OPT_EMAX: print "Emax=", OPT_EMAX
-    if OPT_EMIN: print "Emin=", OPT_EMIN
-    if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
-    if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
-
-    if atom: print "ATOM=", atom
-
-    if not atom: atom = 0
-
-    if WEDOS:
-        print "Weight for DOS =", WEDOS
-        WEDOS = float(WEDOS)
-    else:
-        WEDOS = None
-
-    if WE:
-        print "Weight for XAS", WE
-        WEXAS = float(WE)
-        WETXT = float(WE)
-
-    if WETXT:
-        print "Weight for XAS without convolution =", WETXT
-        WETXT = float(WETXT)
-    else:
-        WETXT = None
-
-    if WEXAS:
-        print "Weight for XAS with convolution =", WEXAS
-        WEXAS = float(WEXAS)
-    else:
-        WEXAS = None
-
-    ###########################################################################
-
-    suffix_sd = '_sd'+str(atom)+'.txt'
-    suffix_conv = '_conv.txt'
-
-    if allname:
-        convolname = allname
-        txtname = allname
-        sdname = allname
-
     ###########################################################################
 
     plt.rcParams['font.family']     = 'Times New Roman'
@@ -221,7 +178,53 @@ if __name__ == '__main__':
 
     ###########################################################################
 
+    if FLAG_BROAD: FLAG_XAS = True
+    if OPT_EMAX: print "Emax=", OPT_EMAX
+    if OPT_EMIN: print "Emin=", OPT_EMIN
+    if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
+    if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
+
+    if atom: print "ATOM=", atom
+
+    if WEDOS:
+        print "Weight for DOS =", WEDOS
+        WEDOS = float(WEDOS)
+    else:
+        WEDOS = None
+
+    if WE:
+        print "Weight for XAS", WE
+        WEXAS = float(WE)
+        WETXT = float(WE)
+
+    if WETXT:
+        print "Weight for XAS without convolution =", WETXT
+        WETXT = float(WETXT)
+    else:
+        WETXT = None
+
+    if WEXAS:
+        print "Weight for XAS with convolution =", WEXAS
+        WEXAS = float(WEXAS)
+    else:
+        WEXAS = None
+
+    ###########################################################################
+
     inp = SAEnv.ReadFdmInp(inpname)
+
+    if not atom and not inp.nonexc:
+        atom = 0
+    if not atom and inp.nonexc:
+        atom = 1
+
+    suffix_sd = '_sd'+str(atom)+'.txt'
+    suffix_conv = '_conv.txt'
+
+    if allname:
+        convolname = allname
+        txtname = allname
+        sdname = allname
 
     if filout is None: filout = inp.filout
     if convname is None: convname = filout

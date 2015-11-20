@@ -85,6 +85,7 @@ class ReadFdmInp(SAEnv.Method):
         self.datlines, self.num = SAEnv.read_dataline(inpname)
         self.datlines, self.num = SAEnv.del_comment(self.datlines)
 
+        nonexec_reg = re.compile('.*Nonexc.*', re.IGNORECASE)
         magnetism_reg = re.compile('.*Magnetism.*', re.IGNORECASE)
         energygpho_reg = re.compile('.*Energpho.*', re.IGNORECASE)
         absorber_reg = re.compile('.*Absorber.*', re.IGNORECASE)
@@ -107,8 +108,12 @@ class ReadFdmInp(SAEnv.Method):
         self.position = []
         self.convolution = False
         self.center_abs = False
+        self.nonexc = False
 
         for i in range(self.num):
+
+            if bool(nonexec_reg.match(self.datlines[i])):
+                self.nonexc = True
 
             if bool(energygpho_reg.match(self.datlines[i])):
                 self.energygpho = True
@@ -361,6 +366,9 @@ class ReadFdmInp(SAEnv.Method):
     # for FDMNES  infomation
     def get_ispin(self):
         return self.ispin
+
+    def get_nonexc(self):
+        return self.nonexc
 
     def get_allsite(self):
         return self.allsite
