@@ -83,6 +83,8 @@ def options():
     parser.add_option('--ymax', dest='YMAX',)
     #  atom は 1 番から(内部的には0番からなので内部的に変換する)
     parser.add_option('--atom', dest='ATOM',)
+    # title
+    parser.add_option('--title',)
     # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
     parser.add_option('--vbm', action='store_true', default=False)
     # efermi を 0 ではなく shift した値を使う
@@ -93,6 +95,8 @@ def options():
     parser.add_option('--left', action='store_true')
     # EF0 のラインを消す
     parser.add_option('--noef', action='store_true')
+    # pdf,png,eps出力をonにする( default では pdf のみ)
+    parser.add_option('--pdf',)
     parser.add_option('-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
@@ -101,10 +105,12 @@ def options():
 
     return [dname,oname,
             options.auto,
-            options.hexagonal,options.cubic,options.spd,options.sp,
-            options.EMAX,options.EMIN,options.YMAX,options.ATOM,
+            options.hexagonal, options.cubic, options.spd, options.sp,
+            options.EMAX, options.EMIN, options.YMAX, options.ATOM,
+            options.title,
             options.vbm, options.shift,
-            options.landscape, options.left, options.noef, options.nw]
+            options.landscape, options.left, options.noef,
+            options.pdf, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
@@ -114,8 +120,10 @@ if __name__ == '__main__':
             AUTO_FLAG, \
             HEX_FLAG, CUBIC_FLAG, SPD_FLAG, SP_FLAG,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_ATOM,\
+            OPT_TITLE, \
             FLAG_VBM, OPT_SHIFT, \
-            FLAG_LANDSCAPE, FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
+            FLAG_LANDSCAPE, FLAG_LEFT, FLAG_NOEF,\
+            FLAG_PDF, FLAG_NW = options()
 
     if HEX_FLAG:
         print "Hexagonal MODE"
@@ -148,11 +156,15 @@ if __name__ == '__main__':
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
     NATOM = dos.get_natom()
-    TITLE =  dos.get_title()
     EMAX = dos.get_emax()
     EMIN = dos.get_emin()
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
+
+    if not OPT_TITLE:
+        TITLE =  dos.get_title()
+    else:
+        TITLE = str(OPT_TITLE)
 
     if FLAG_VBM:
         print "EF SHIFT"
@@ -378,14 +390,17 @@ if __name__ == '__main__':
 #   plt.xlim([-10,10])
 #   plt.ylim([0,200])
 
+
     if FLAG_LANDSCAPE:
-        plt.savefig("PDOS"+str(atom+1)+".eps")
         plt.savefig("PDOS"+str(atom+1)+".pdf")
-        plt.savefig("PDOS"+str(atom+1)+".png")
+        if FLAG_PDF:
+            plt.savefig("PDOS"+str(atom+1)+".eps")
+            plt.savefig("PDOS"+str(atom+1)+".png")
     else:
-        plt.savefig("PDOS"+str(atom+1)+".eps",orientation = 'portrait')
         plt.savefig("PDOS"+str(atom+1)+".pdf",orientation = 'portrait')
-        plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait')
+        if FLAG_PDF:
+            plt.savefig("PDOS"+str(atom+1)+".eps",orientation = 'portrait')
+            plt.savefig("PDOS"+str(atom+1)+".png",orientation = 'portrait')
 
     if not FLAG_NW:
         plt.show()

@@ -83,6 +83,8 @@ def options():
     parser.add_option('--emax', dest='EMAX',)
     parser.add_option('--emin', dest='EMIN',)
     parser.add_option('--ymax', dest='YMAX',)
+    # title
+    parser.add_option('--title',)
     # efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
     parser.add_option('--vbm', action='store_true', default=False)
     # efermi を 0 ではなく shift した値を使う
@@ -91,6 +93,8 @@ def options():
     parser.add_option('--left', action='store_true', default=False)
     # EF0 のラインを消す
     parser.add_option('--noef', action='store_true', default=False)
+    # pdf,png,eps出力をonにする( default では pdf のみ)
+    parser.add_option('--pdf',)
     parser.add_option('-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
@@ -111,9 +115,10 @@ def options():
             options.total,
             options.up, options.down, options.spin,
             options.EMAX, options.EMIN, options.YMAX,
+            options.title,
             options.vbm, options.shift,
             options.left, options.noef,
-            options.nw]
+            options.pdf, options.nw]
 
 ##########################################################################
 if __name__ == '__main__':
@@ -127,8 +132,9 @@ if __name__ == '__main__':
             FLAG_TOT,\
             FLAG_UP, FLAG_DN, FLAG_SPIN,\
             OPT_EMAX, OPT_EMIN, OPT_YMAX, \
+            OPT_TITLE,\
             FLAG_VBM, OPT_SHIFT, \
-            FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
+            FLAG_LEFT, FLAG_NOEF, FLAG_PDF, FLAG_NW = options()
 
     #####################################################
     # オプションの確認
@@ -149,11 +155,15 @@ if __name__ == '__main__':
     dos = SAE.ReadVaspDoscar(dname)
 
     natom = dos.natom
-    title = dos.title
     efermi = dos.efermi
     eng = dos.eng
     nspin = dos.ispin
     lmax = dos.lmax
+
+    if not OPT_TITLE:
+        title = dos.title
+    else:
+        title = OPT_TITLE
 
     if FLAG_VBM:
         print "EF SHIFT"
@@ -406,9 +416,10 @@ if __name__ == '__main__':
 #       plt.xlim([-10,10])
 #       plt.ylim([0,200])
 
-        plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".eps")
         plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".pdf")
-        plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".png")
+        if FLAG_PDF:
+            plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".eps")
+            plt.savefig("LDOS" + str(atom + 1) + orbit_out + spin_out + ".png")
 
         if not FLAG_NW:
             plt.show()

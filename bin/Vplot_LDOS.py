@@ -103,6 +103,8 @@ def options():
     parser.add_option('--left', action='store_true', default=False)
     # EF0 のラインを消す
     parser.add_option('--noef', action='store_true', default=False)
+    # pdf,png,eps出力をonにする( default では pdf のみ)
+    parser.add_option('--pdf',)
     parser.add_option('-n', '--nw', action='store_true', default=False,)
     options,  args = parser.parse_args()
 
@@ -124,7 +126,7 @@ def options():
             options.atom, plot_atoms,
             options.total,
             options.vbm, options.shift,
-            options.left, options.noef, options.nw]
+            options.left, options.noef, options.pdf, options.nw]
 
 ################################################################################
 if __name__ == '__main__':
@@ -137,7 +139,7 @@ if __name__ == '__main__':
             plot_atoms,\
             FLAG_TOT, \
             FLAG_VBM, OPT_SHIFT, \
-            FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
+            FLAG_LEFT, FLAG_NOEF, FLAG_PDF, FLAG_NW = options()
 
     if OPT_EMAX: print "Emax=",OPT_EMAX
     if OPT_EMIN: print "Emin=",OPT_EMIN
@@ -174,7 +176,7 @@ if __name__ == '__main__':
     if not OPT_TITLE:
         TITLE =  dos.title
     else:
-        TITLE = OPT_TITLE
+        TITLE = str(OPT_TITLE)
 
     if FLAG_VBM:
         EFERMI0 = dos.efermi
@@ -325,13 +327,14 @@ if __name__ == '__main__':
 #   plt.ylim([0,200])
 
     if plot_atom:
-        plt.savefig("LDOS"+str(plot_atom)+".eps")
-        plt.savefig("LDOS"+str(plot_atom)+".pdf")
-        plt.savefig("LDOS"+str(plot_atom)+".png")
+        tail = str(plot_atom)
     else:
-        plt.savefig("LDOS.eps")
-        plt.savefig("LDOS.pdf")
-        plt.savefig("LDOS.png")
+        tial = ''
+
+    plt.savefig("LDOS"+tial++".pdf")
+    if FLAG_PDF:
+        plt.savefig("LDOS"+tail+".eps")
+        plt.savefig("LDOS"+tail+".png")
 
     if not FLAG_NW:
         plt.show()
