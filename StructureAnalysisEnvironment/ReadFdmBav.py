@@ -49,6 +49,7 @@ class ReadFdmBav(object):
 
         ngroup_reg = re.compile('.*ngroup =.*')
         excited_atom_reg = re.compile('.*Excited atom.*')
+        atom_type_reg = re.compile('.*Atom type.*')
         threshold_reg = re.compile('.*Threshold:.*')
         r2_reg = re.compile('.*Transformation Crystal Bases.*Bases R2.*')
         positions_reg = re.compile('.*Cluster: atom positions in order.*')
@@ -95,14 +96,14 @@ class ReadFdmBav(object):
 
             # 吸収原子の最大のlを探す
             if bool(excited_atom_reg.match(self.datlines[i])):
-                i += 2
+                j = 2
                 l = 0
                 while 1:
-                    l0 = self.datlines[i].split()[1]
-                    if l < l0:
-                        l = l0
-                    i += 1
-                    if not len(self.datlines[i]):
+                    _l = self.datlines[i+j].split()[1]
+                    if l < _l:
+                        l = _l
+                    j += 1
+                    if bool(atom_type_reg.match(self.datlines[i+j+1])):
                         break
                 self.lmax = l
 

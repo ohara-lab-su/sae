@@ -105,6 +105,7 @@ SAEnv.write(cell, code='FDMNES')
 - <b>FDbav2xyz.py</b> : \*\_bav.txt ファイルから xyz 形式のファイルを出力します。計算に用いたクラスター半径に応じて \*\_bav.txt で記述される構造が変わってきますので、それらをxyz形式に直すことにより、どのようなある半径のクラスターで切り取った構造を容易に可視化することが可能です。xyz形式はVESTAを初めほぼあらゆるツールで可視化が可能です。
 - <b>FDcif2fdm.py</b> : \*.cif 形式から FDMNES で用いる \*.inp ファイルを出力します。また構造情報だけではなく、典型的な計算のサンプルインプットファイルも同時に \*.inp に記述されますので、ほとんど修正無く、基本的な XANES スペクトルの計算が可能な \*.inp ファイルを cif ファイルから作成可能です。
 - <b>FDclean.py</b> : FDMNES の計算結果等のファイルを消し、計算前のファイル構成に戻ります。拙作(c/b-shell/perl版) Vclean、LAclean などの、他のコード向けのツールと同等のセンスで作られています。\*.inp ファイルに記述している filout タグからファイル名のプリフィックスを FDMNES用のクラスから取得して初期状態に戻すためにわざわざPythonで記述しています。過去のスクリプトも順次Python版へ移行します。
+- <b>FDmove.py</b> : filout タグにしたがって出力されたファイル名を一気に変更する。Vmove などと同様の機能
 - <b>FDconv\_e2photoe.py</b>: 計算後の \*\_conv.txt ファイルが above Fermi Energy 形式の時、Photon Energy 形式に直して計算し直します。Energpho をタグを入れずに計算したとき、または逆にもとのFermi Level形式に戻したいときに使います。
 - <b>FDfdm2vasp.py</b> : FDMNES の入力形式ファイル \*.inp に書かれた構造情報を VASP の POSCAR 形式に変換するスクリプトです。あまり需要は無いと思いますが、何かの構造からではなく手動で FDMNES 用の \*.inp ファイルの構造情報を作成されたときにご活用ください。ただし、まだ空間群などの入力形式を初め、いくつかのFDMNES特有の自由な構造入力形式にはすべて対応しきっておりません。
 - <b>FDmakeCconvAllsite.py</b> : Absorber を指定せずに、allsite で計算したときなど、複数の Absorber を用いたときは はすべての site で convolution されません。このスクリプトは、計算後にまとめてすべての site で convolution するためのスクリプトです。 convolution 用の \*.inp ファイルの一括作成とそれを連続動作させるための fdmfiles.txt の自動作成スクリプトとなります。このスクリプトを動かしたときは fdmfiles.txt は書き換わりますのでご注意ください。

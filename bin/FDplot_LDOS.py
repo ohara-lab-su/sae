@@ -334,7 +334,7 @@ if __name__ == '__main__':
         print "current mode is PhotoEnergy"
         print "---> convert to EF0 mode"
         print "     - E_edge - E_fermi"
-        eng_off - txt.E_Fermi - txt.E_edge
+        eng_off = txt.E_Fermi - txt.E_edge
 
     if FLAG_FERMI:
         EF0 = 0.0

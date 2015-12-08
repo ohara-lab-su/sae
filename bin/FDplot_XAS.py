@@ -442,7 +442,7 @@ if __name__ == '__main__':
 
         # PhotoEnegy モードで計算した時と同じ結果を返す
         if not inp.get_energygpho() and not FLAG_fermi:
-            print "current mode is Fermi"
+            print "current mode is Fermi (E_edge = 0)"
             print "---> convert to PhotoEnergy"
             print "     + E_edge"
             txt.eng = txt.eng + txt.E_edge

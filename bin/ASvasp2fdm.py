@@ -46,6 +46,7 @@ import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 def options():
+
     name = 'POSCAR'
     outname = 'read_pdb.inp'
 
@@ -67,6 +68,8 @@ def options():
     if not os.path.exists(name):
         if os.path.exists(name+'.vasp'):
             name = name+'.vasp'
+        elif os.path.exists('CONTCAR'):
+            name = 'CONTCAR'
         else:
             sys.exit("STOP: "+name+" file not found")
 

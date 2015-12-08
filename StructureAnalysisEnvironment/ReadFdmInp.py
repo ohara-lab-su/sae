@@ -92,7 +92,8 @@ class ReadFdmInp(SAEnv.Method):
 #       filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
         filout_reg = re.compile('.*Fil.*out.*', re.IGNORECASE)
         atom_reg = re.compile('^\S*Atom', re.IGNORECASE)
-        crystal_reg = re.compile('.*crystal.*', re.IGNORECASE)
+        crystal_reg = re.compile('.*crystal .*', re.IGNORECASE) # include space
+        crystal_p_reg = re.compile('.*crystal_p.*', re.IGNORECASE) # include space
         mole_reg = re.compile('.*molecule.*', re.IGNORECASE)
         char_reg = re.compile('\D', re.IGNORECASE)
         comment_reg = re.compile('^!.*', re.IGNORECASE)
@@ -161,6 +162,7 @@ class ReadFdmInp(SAEnv.Method):
                 else:
                     self.absorber = int(self.datlines[i + 1].strip())
 
+            ############################################### START Crystal #####
             # Crystal 行を検索 (position の スペース行コメント行も対応)
             if bool(crystal_reg.match(self.datlines[i])) \
                     and not bool(comment_reg.match(self.datlines[i])):
@@ -256,6 +258,11 @@ class ReadFdmInp(SAEnv.Method):
                 self.position = []
                 self.atoms_index_j = []
                #self.position = np.array(self.position)
+            ################################################# END Crystal #####
+
+            if bool(crystal_p_reg.match(self.datlines[i])):
+                self.position = []
+                self.atoms_index_j = []
 
         # convolution などで filout 項目がないときは
         # filout に calculation 名を渡す

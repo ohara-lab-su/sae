@@ -160,6 +160,7 @@ if __name__ == '__main__':
     nspin = dos.ispin
     lmax = dos.lmax
 
+    print "lmax = ", lmax
     if not OPT_TITLE:
         title = dos.title
     else:
@@ -198,15 +199,17 @@ if __name__ == '__main__':
         orbit_list = ['s','p','d','f']
         orbit_out = '_spdf'
     else:
-        if lmax <= 1:
+        if lmax >= 1:
             orbit_list = ['s','p']
             orbit_out = '_sp'
-        if lmax <= 2:
+        if lmax >= 2:
             orbit_list = ['s','p','d']
             orbit_out = '_spd'
-        if lmax <= 3:
+        if lmax >= 3:
             orbit_list = ['s','p','d','f']
             orbit_out = '_spdf'
+
+    print "orbit list=", orbit_list
 
 #   orbit_list = ['s','p','d','f']
 

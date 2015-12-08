@@ -331,7 +331,7 @@ if __name__ == '__main__':
     else:
         tial = ''
 
-    plt.savefig("LDOS"+tial++".pdf")
+    plt.savefig("LDOS"+tial+".pdf")
     if FLAG_PDF:
         plt.savefig("LDOS"+tail+".eps")
         plt.savefig("LDOS"+tail+".png")

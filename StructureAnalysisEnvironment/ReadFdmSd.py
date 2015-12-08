@@ -89,12 +89,18 @@ class ReadFdmSd(object):
             bavname = sdname
 
         if inpname is None:
-            inpfile = 'read_pdb.inp'
-            inpdir =  os.path.dirname(sdname)
-            if inpdir:
-                inpname = inpdir + '/' + inpfile
+            if os.path.exists('fdmfile.txt'):
+                fdmfiletxt = SAEnv.ReadFdmFdmfile()
+                inpname = fdmfiletxt.get_filout()
             else:
-                inpname = inpfile
+                inpname = 'read_pdb.inp'
+
+        inpfile = inpname
+        inpdir =  os.path.dirname(sdname)
+        if inpdir:
+            inpname = inpdir + '/' + inpfile
+        else:
+            inpname = inpfile
 
         ############################## self.datlines ##########################
         # 複数の sd ファイルを読んで平均化する
