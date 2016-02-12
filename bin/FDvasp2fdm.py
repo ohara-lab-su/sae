@@ -11,9 +11,12 @@
 #
 ################################################################################
 #
-# 2015.08.18
-#  ASE で読み込む構造を止めて、拙作 SAEnv を用いる様にした
-#    注意) scale ファクターは 1 を要求
+# 2016.01.16
+#  出力形式だけ新バージョンに合わせる
+#
+# 2016.01.16
+#  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
+#  バグを発見。旧バージョンを復帰させる
 #
 # 2015.05.18 startup
 #
@@ -29,35 +32,183 @@ __status__     = "alpha"
 __version__    = "0.1.1"
 ################################################################################
 #
+from ase.io import read,write
+from ase.io.vasp import *
+from ase.io.wien2k import *  ## using cellconst
 #from ase.io.xyz import *
-
-#from ase import Atoms
-#from ase.io import read,write
-#from ase.io.vasp import *
-#from ase.io.wien2k import *  ## using cellconst
+from ase import Atoms
 
 import os
 import sys
 import optparse
-#import numpy as np
+import numpy as np
 
-from ase.io.vasp import *
-import StructureAnalysisEnvironment as SAEnv
+
+################################################################################
+def write_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
+
+    if STD:
+        out = sys.stdout
+    else:
+        try:
+            out = open(name+'.fdmnes','w')
+        except:
+            out.close()
+            sys.exit("STOP:"+name+".fdmnes file can't open")
+
+#   atoms = atoms2.copy()
+
+    cell = atoms.get_cell()
+    metT = np.dot(cell, np.transpose(cell))
+    cell2 = cellconst(metT)  # from ASE module
+
+    a = cell2[0]
+    b = cell2[1]
+    c = cell2[2]
+    alpha = cell2[3]
+    beta = cell2[4]
+    gamma = cell2[5]
+
+    nat = len(atoms.get_positions())
+
+    if MOL:
+        print >> out, " molecule"
+    else:
+        print >> out, " Crystal"
+
+    print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
+    for ii in range(nat):
+        zza = atoms.get_atomic_numbers()[ii]
+       #pos = atoms.get_positions()[ii]
+        pos = atoms.get_scaled_positions()[ii]
+        sym = atoms.get_chemical_symbols()[ii]
+        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym )
+
+    if not STD:
+        out.close()
+
+
+################################################################################
+def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
+
+    try:
+        out = open(name,'w')
+    except:
+        out.close()
+        sys.exit("STOP:"+name+".fdmnes file can't open")
+
+#   atoms = atoms2.copy()
+
+    cell = atoms.get_cell()  # from ASE
+    metT = np.dot(cell, np.transpose(cell))
+    cell2 = cellconst(metT)  # from ASE module
+
+    a = cell2[0]
+    b = cell2[1]
+    c = cell2[2]
+    alpha = cell2[3]
+    beta = cell2[4]
+    gamma = cell2[5]
+
+    nat = len(atoms.get_positions())
+
+    print >> out, "! FDMNES indata file"
+    print >> out, ""
+    print >> out, "!Nonexc"
+    print >> out, ""
+    print >> out, " Absorber"
+    print >> out, "  1"
+    print >> out, "! allsite"
+    print >> out, ""
+    print >> out, " Filout"
+    print >> out, "  Cu"
+    print >> out, ""
+    print >> out, " Range                        ! Energy range of calculation (eV)"
+    print >> out, "  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy"
+    print >> out, "! -15. 0.1 50. 1. 200.        !"
+    print >> out, ""
+    print >> out, "!Energpho"
+    print >> out, ""
+    print >> out, " Edge"
+    print >> out, "  K"
+    print >> out, "! L23"
+    print >> out, ""
+    print >> out, "!Quadrupole"
+    print >> out, ""
+    print >> out, " Relativism"
+    print >> out, ""
+    print >> out, " Convolution"
+    print >> out, ""
+    print >> out, "!No_Fermi"
+    print >> out, "!Efermi"
+    print >> out, "!  -6.0"
+    print >> out, "!Estart"
+    print >> out, "! -10.0"
+    print >> out, ""
+    print >> out, "!SCF"
+    print >> out, "!R_self"
+    print >> out, "! 5.0"
+    print >> out, "!N_self"
+    print >> out, "! 100"
+    print >> out, "!P_self"
+    print >> out, "! 0.05"
+    print >> out, "!Delta_E_conv"
+    print >> out, "! 0.01"
+    print >> out, ""
+    print >> out, "!Magnetism"
+    print >> out, "!SCF_mag_free"
+    print >> out, ""
+    print >> out, "!Hubbard"
+    print >> out, "! 0.0 6.3 0.0"
+    print >> out, ""
+    print >> out, "!TDDFT"
+    print >> out, ""
+    print >> out, "!Green"
+    print >> out, ""
+    print >> out, " Radius                       ! Radius of the cluster where final state calculation is performed"
+    print >> out, "   5.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems"
+    print >> out, ""
+    print >> out, "!Memory_save"
+    print >> out, ""
+
+    if MOL:
+        print >> out, " molecule"
+    else:
+        print >> out, " Crystal"
+
+    print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
+    for ii in range(nat):
+        zza = atoms.get_atomic_numbers()[ii]
+       #pos = atoms.get_positions()[ii]
+        pos = atoms.get_scaled_positions()[ii]
+        sym = atoms.get_chemical_symbols()[ii]
+        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym )
+
+    print >> out, ""
+    print >> out, "!Cif_file"
+    print >> out, "!  POSCAR.cif"
+    print >> out, ""
+    print >> out, " Density"
+    print >> out, "  state_all"
+    print >> out, ""
+    print >> out, "!Adimp"
+    print >> out, "! 0.20"
+    print >> out, ""
+    print >> out, " End"
+    print >> out, ""
+
+    out.close()
 
 ################################################################################
 def options():
-
     name = 'POSCAR'
-    outname = 'read_pdb.inp'
 
     parser = optparse.OptionParser()
     parser.add_option( '-i','--ipput',dest='INPUT')
-    parser.add_option( '-o','--outname')
     parser.add_option( '-m','--mol',action='store_true',default=False)
     options,args = parser.parse_args()
 
     if options.INPUT: name = options.INPUT
-    if options.outname: outname = options.outname
     if len(args) > 0: name = str(args[0])
 
     if options.mol:
@@ -68,32 +219,25 @@ def options():
     if not os.path.exists(name):
         if os.path.exists(name+'.vasp'):
             name = name+'.vasp'
-        elif os.path.exists('CONTCAR'):
-            name = 'CONTCAR'
         else:
             sys.exit("STOP: "+name+" file not found")
 
-    return name,outname,MOL
+    return [name,MOL]
 
 ################################################################################
 if __name__ == '__main__':
 
-    name,outname,MOL = options()
+    name,MOL = options()
+    atoms = read_vasp(name)
+    #atoms.write('POSCAR.pdb',format='pdb')
 
-    cell = SAEnv.Read(filename=name,code='VASP')
-    cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
-    cell.write(code='FDMNES',outname=outname,MOL=MOL)
+    #print atoms.positions
+    #print ""
+    #print atoms.cell
+    #print ""
+    #print atoms.get_scaled_positions()
 
-## ASE version
-#   atoms = read_vasp(name)
-#   SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
-#   SAEnv.print_fdmnes0(outname=outname,atoms=atoms,STD=False,MOL=MOL)
-#   SAEnv.print_fdmnes_inp0(atoms=atoms,MOL=MOL)
-
-### SAEnv version
-#   cell = SAEnv.Read(filename = name, code = 'VASP')
-#   SAEnv.print_fdmnes1(outname=outname,cell=cell,MOL=MOL)
-#   SAEnv.print_fdmnes1(outname=outname,cell=cell,STD=False,MOL=MOL)
-#   SAEnv.print_fdmnes_inp1(cell=cell,MOL=MOL)
-
+    write_fdmnes(atoms=atoms,MOL=MOL)
+    write_fdmnes(name=name,atoms=atoms,STD=False,MOL=MOL)
+    write_fdmnes_inp(atoms=atoms,MOL=MOL)
 

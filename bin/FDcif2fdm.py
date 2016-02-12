@@ -78,7 +78,11 @@ if __name__ == '__main__':
     #print ""
     #print atoms.get_scaled_positions()
 
-    SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
-    SAEnv.print_fdmnes0(name=name,atoms=atoms,STD=False,MOL=MOL)
-    SAEnv.write_fdmnes_inp0(atoms=atoms,MOL=MOL)
+    # bug version につきコメントアウト
+#
+#    SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
+#    SAEnv.print_fdmnes0(name=name,atoms=atoms,STD=False,MOL=MOL)
+#    SAEnv.write_fdmnes_inp0(atoms=atoms,MOL=MOL)
+
+    print "bug version"
 

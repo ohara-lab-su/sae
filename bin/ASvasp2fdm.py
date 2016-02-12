@@ -11,6 +11,14 @@
 #
 ################################################################################
 #
+# 2016.01.16
+#  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
+#  バグを発見。旧バージョンを復帰させる
+#  --> 現在のバージョンを凍結
+#
+#   08.18 でバグが混入したと思われる。
+#    このバージョンのブランチは 11.25 までつづく
+#
 # 2015.08.18
 #  ASE で読み込む構造を止めて、拙作 SAEnv を用いる様にした
 #    注意) scale ファクターは 1 を要求
@@ -80,9 +88,12 @@ if __name__ == '__main__':
 
     name,outname,MOL = options()
 
-    cell = SAEnv.Read(filename=name,code='VASP')
-    cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
-    cell.write(code='FDMNES',outname=outname,MOL=MOL)
+### bug-version につきコメントアウト
+#   cell = SAEnv.Read(filename=name,code='VASP')
+#   cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
+#   cell.write(code='FDMNES',outname=outname,MOL=MOL)
+
+    print "gug version"
 
 ## ASE version
 #   atoms = read_vasp(name)

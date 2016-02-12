@@ -85,20 +85,21 @@ if __name__ == '__main__':
 #   conv = SAEnv.ReadFdmConv('Au_conv_Fermi.txt')
     #######################################################
 
-    E_edge = 0.0
+#   E_edge = 0.0
 
 #   times = 35
-    times = 1.0
+#   times = 1.0
     ###########################################################################
-    conv = SAEnv.ReadFdmConv('Au',suffix='_conv.txt')
-    plt.plot(conv.eng+E_edge, conv.xas*times, color='red', linewidth=1, label='FDM Green R3')
+    conv = SAEnv.ReadFdmConv('Au', suffix='_conv.txt')
+    txt = SAEnv.ReadFdmTxt('Au', suffix='.txt')
+    plt.plot(conv.eng + txt.E_edge, conv.xas, color='red', linewidth=1, label='FDM Green R3')
 
     ###########################################################################
     nor = SAEnv.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
     plt.plot(nor.eng, nor.nor, color='blue', linewidth=1, label='exp.')
 #   plt.plot(nor.eng - nor.e0 ,nor.nor,color='blue',linewidth=1,label='exp.')
 
-    timesP = 1.0
+#   timesP = 1.0
 #   ###########################################################################
 #   pw = SAEnv.ReadPwXanes('xanes.dat')
 #   plt.plot(pw.eng+E_edge,pw.xas*timesP,color='green',linewidth=1,label='PWSCF fch')
@@ -121,9 +122,9 @@ if __name__ == '__main__':
 
     plt.ylim( ymin=0 )
 
-    plt.savefig("XAS.eps")
+#   plt.savefig("XAS.eps")
     plt.savefig("XAS.pdf")
-    plt.savefig("XAS.png")
+#   plt.savefig("XAS.png")
 
     plt.show()
 
