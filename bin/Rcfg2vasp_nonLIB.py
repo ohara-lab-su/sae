@@ -106,12 +106,12 @@ t1_y = float(v[1])
 t1_z = float(v[2])
 
 v = datlines[15].split()
-t2_x = float(v[0]) 
+t2_x = float(v[0])
 t2_y = float(v[1])
 t2_z = float(v[2])
 
 v = datlines[16].split()
-t3_x = float(v[0]) 
+t3_x = float(v[0])
 t3_y = float(v[1])
 t3_z = float(v[2])
 
@@ -166,7 +166,7 @@ x_offset=0.5
 y_offset=0.5
 z_offset=0.5
 for i in range(int(natom)):
-    position[i,0] = position[i,0]/2 + x_offset  
+    position[i,0] = position[i,0]/2 + x_offset
     position[i,1] = position[i,1]/2 + y_offset
     position[i,2] = position[i,2]/2 + z_offset
 
@@ -178,12 +178,13 @@ vasp = open(cname+'.vasp','w')
 
 print >> vasp, comment
 print >> vasp, "1.0"
-print >> vasp, "  %13.9f %13.9f %13.9f" %(t1_x,t1_y,t1_z) 
+print >> vasp, "  %13.9f %13.9f %13.9f" %(t1_x,t1_y,t1_z)
 print >> vasp, "  %13.9f %13.9f %13.9f" %(t2_x,t2_y,t2_z)
 print >> vasp, "  %13.9f %13.9f %13.9f" %(t3_x,t3_y,t3_z)
 
 ####
-print >> vasp, " In Ga Zn O"
+#print >> vasp, " atoms"
+print >> vasp, " atoms"
 ####
 
 for i in range(int(ntype)):
