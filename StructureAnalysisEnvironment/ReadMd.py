@@ -32,6 +32,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.06.30
 #   == None --> is None
 #
@@ -46,6 +49,8 @@
 # 2015.02.13 1st
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -417,28 +422,28 @@ if __name__ == '__main__':
     temp_given_loop = md.get_temp_given_loop()
     ############################################################################
 
-    print "NATOM =",natom
-    print "NION  =",nion
-    print "NLOOP =",nloop
+    print("NATOM = %s" % str(natom))
+    print("NION  = %s" % str(nion))
+    print("NLOOP = %s" % str(nloop))
     for i in range(natom):
-        print " ",atoms_index_j[i]
+        print(" %s" % str(atoms_index_j[i]))
 
-    print ""
-    print "",
+    print("")
+    print("", end="")
     for i in range(nion):
-        print atoms_index[i],
-    print ""
-    print "",
+        print("%s" % str(atoms_index[i]), end="")
+    print("")
+    print("", end="")
     for i in range(nion):
-        print atoms[i],
-    print ""
+        print(atoms[i], end="")
+    print("")
 
-    print ""
+    print("")
 #   for i in range(nloop):
 #       print " ",i," ", energy_loop[i]
 
-    print "selective",selective
-    print ""
+    print("selective %s" % str(selective))
+    print("")
 #   for l in range(nloop):
 #       print "===============loop===============",l
 #       for j in range(natom):

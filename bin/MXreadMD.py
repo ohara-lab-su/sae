@@ -33,6 +33,8 @@
 #   Library: read_md():  xyz 情報の読み込み
 #
 ################################################################################
+from __future__ import print_function
+################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]

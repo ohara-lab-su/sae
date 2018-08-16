@@ -1,15 +1,21 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ###############################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# sets.in (HiLAPW) $BFI$_9~$_MQ$N(Bclass
-#  ASE $B$rMQ$$$k%P!<%8%g%s(B
+# sets.in (HiLAPW) 読み込み用のclass
+#  群論の扱いに ASE を用いるバージョン
 #
 ###############################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
 #
 # 2015.05.14
 #  startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -120,7 +126,8 @@ if __name__ == '__main__':
     name = options()
     sets = ReadHiSets(name)
 
-    print "INPUT:",name
+    print("INPUT: %s" % str(name))
 
-    print ""
-    print sets.get_title()
+    print("")
+    print(sets.get_title())
+

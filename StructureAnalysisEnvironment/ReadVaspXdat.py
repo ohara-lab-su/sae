@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.01.28
 #  title の取得における末尾までの空白削除を追加
 #
@@ -21,6 +24,8 @@
 # 2015.01.21 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -205,7 +210,7 @@ class ReadVaspXdat(object):
 
         tmp = self.datlines[i].split()
         if bool(self.num_reg.match(tmp[0])):
-            print tmp[0]
+            print("%s" % str(tmp[0]))
             sys.exit("STOP: Format Error")
         else:
             if bool(self.selective_reg.match(tmp[0])):
@@ -218,7 +223,7 @@ class ReadVaspXdat(object):
                 self.selective = False
 
             if bool(self.num_reg.match(tmp[0])):
-                print tmp[0]
+                print("%s" % str(tmp[0]))
                 sys.exit("STOP: Format Error")
             if bool(self.direct_reg.match(tmp[0])):
                #print "Direct Mode"
@@ -271,35 +276,35 @@ if __name__ == '__main__':
     direct = xdat.get_direct()
     nloop = xdat.get_nloop()
 
-    print "NION  :",nion
-    print "NATOM :",natom
-    print "VASP  :",vasp
-    print "title :",title
-    print "scale :",scale
+    print("NION  :%s" % str(nion))
+    print("NATOM :%s" % str(natom))
+    print("VASP  :%s" % str(vasp))
+    print("title :%s" % str(title))
+    print("scale :%s" % str(scale))
 
-    print "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]))
+    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]))
+    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]))
 
     if vasp == 5:
-        print "",
+        print("", end="")
         for i in range(nion):
-            print atoms_index[i],
-        print ""
-    print "",
+            print("%s" % str(atoms_index[i]), end="")
+        print("")
+    print("", end="")
 
     for i in range(nion):
-        print atoms[i],
-    print " "
+        print("%s" % str(atoms[i]), end="")
+    print(" ")
 
     for i in range(nloop):
         xyz = xdat.get_xyz(loop=i)
         if direct:
-            print "Direct configuration=  ", i+1
+            print("Direct configuration=  %d" % i+1 )
         else:
-            print "Cartecian configuration=  ", i+1
+            print("Cartecian configuration=  %d" % i+1)
 
         for j in range(natom):
-            print " %12.8f %12.8f %12.8f" % ( xyz[j,0],xyz[j,1],xyz[j,2])
+            print(" %12.8f %12.8f %12.8f" % ( xyz[j,0],xyz[j,1],xyz[j,2]))
 
 

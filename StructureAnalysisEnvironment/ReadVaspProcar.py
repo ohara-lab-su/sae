@@ -30,6 +30,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.01.29
 #   固有値の最大と最小をゲットするmethodを実装
 #   一度 get_pro_all を読んでから処理するアホ(低速)処理仕様
@@ -46,6 +49,8 @@
 # 2015.01.29 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -398,34 +403,34 @@ if __name__ == '__main__':
     else:
         lmmax = 3
 
-    print "NSPIN :", NSPIN
-    print "NKPTS :", NKPTS
-    print "NBANDS:", NBANDS
-    print "NATOM :", NATOM
-    print "LORBIT:", LORBIT
+    print("NSPIN :%s" % str(NSPIN))
+    print("NKPTS :%s" % str(NKPTS))
+    print("NBANDS:%s" % str(NBANDS))
+    print("NATOM :%s" % str(NATOM))
+    print("LORBIT:%s" % str(LORBIT))
 
     pro_all = procar.get_pro_all()
     kp,eig,occ,pro,pro_ratio = pro_all
 
     for spin in range(NSPIN):
         for k in range(NKPTS):
-            print "k-point %d   %12.8f %12.8f %12.8f  w= %12.8f" \
-                    % ( k+1, kp[k,0], kp[k,1], kp[k,2], kp[k,3])
+            print("k-point %d   %12.8f %12.8f %12.8f  w= %12.8f"
+                    % ( k+1, kp[k,0], kp[k,1], kp[k,2], kp[k,3]))
             for i in range(NBANDS):
-                print "band %d  %12.8f" % ( i+1, eig[i,k,spin] )
+                print("band %d  %12.8f" % ( i+1, eig[i,k,spin] ))
                 for atom in range(NATOM):
                     for lm in range(lmmax+1):
-                        print " %5.3f" % ( pro[lm,atom,i,k,spin] ),
+                        print(" %5.3f" % ( pro[lm,atom,i,k,spin] ), end="")
                        #print " %5.3f" % ( pro_ratio[lm,atom,i,k,spin] ),
-                    print ""
+                    print("")
                 if NATOM > 1:
                     for lm in range(lmmax+1):
-                        print " %5.3f" % ( pro[lm,NATOM,i,k,spin] ),
+                        print(" %5.3f" % ( pro[lm,NATOM,i,k,spin] ), end="")
                        #print " %5.3f" % ( pro_ratio[lm,NATOM,i,k,spin] ),
-                    print ""
+                    print("")
 
-    print ""
+    print("")
     eigen_max,eigen_min = procar.get_max_eigenval()
-    print eigen_max,eigen_min
+    print("%s" % str(eigen_max,eigen_min))
 
 

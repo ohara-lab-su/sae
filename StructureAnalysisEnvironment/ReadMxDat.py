@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.08.25
 #  コンストラクタ大改修（統合化互換）終了
 #
@@ -65,6 +68,8 @@
 #     get_fix() は必ず get_position() の後に実行する
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -664,8 +669,8 @@ if __name__ == '__main__':
     position_max = dat.get_position_max()
     position_min = dat.get_position_min()
 
-    print dat.title
-    print " ",dat.scale
+    print("%s" % str(dat.title))
+    print(" %s" % str(dat.scale))
 
 #   print ""
 #   print "max_x", position_max[0]
@@ -677,9 +682,9 @@ if __name__ == '__main__':
 #   print "min_z", position_min[2]
 
     if dat.t_FLAG:
-        print "  %13.9f %13.9f %13.9f" %( dat.t[0,0],dat.t[1,0],dat.t[2,0] )
-        print "  %13.9f %13.9f %13.9f" %( dat.t[0,1],dat.t[1,1],dat.t[2,1] )
-        print "  %13.9f %13.9f %13.9f" %( dat.t[0,2],dat.t[1,2],dat.t[2,2] )
+        print("  %13.9f %13.9f %13.9f" %( dat.t[0,0],dat.t[1,0],dat.t[2,0] ))
+        print("  %13.9f %13.9f %13.9f" %( dat.t[0,1],dat.t[1,1],dat.t[2,1] ))
+        print("  %13.9f %13.9f %13.9f" %( dat.t[0,2],dat.t[1,2],dat.t[2,2] ))
     else:
         dat.t[1,0] = 0.0
         dat.t[2,0] = 0.0
@@ -690,34 +695,34 @@ if __name__ == '__main__':
         dat.t[0,0] = abs(position_max[0]-position_min[0])*1.20
         dat.t[1,1] = abs(position_max[1]-position_min[1])*1.20
         dat.t[2,2] = abs(position_max[2]-position_min[2])*1.20
-        print "  %13.9f %13.9f %13.9f" %( dat.t[0,0],dat.t[1,0],dat.t[2,0] )
-        print "  %13.9f %13.9f %13.9f" %( dat.t[0,1],dat.t[1,1],dat.t[2,1] )
-        print "  %13.9f %13.9f %13.9f" %( dat.t[0,2],dat.t[1,2],dat.t[2,2] )
+        print("  %13.9f %13.9f %13.9f" %( dat.t[0,0],dat.t[1,0],dat.t[2,0] ))
+        print("  %13.9f %13.9f %13.9f" %( dat.t[0,1],dat.t[1,1],dat.t[2,1] ))
+        print("  %13.9f %13.9f %13.9f" %( dat.t[0,2],dat.t[1,2],dat.t[2,2] ))
 
-    print " ",
+    print(" ", end="")
     for i in range(dat.nion):
-        print dat.atoms_index[i],
-    print " "
+        print("%s" % str(dat.atoms_index[i]), end="")
+    print(" ")
 
-    print " ",
+    print(" ", end="")
     for i in range(dat.nion):
-        print dat.atoms[i],
-    print " "
+        print("%s" % str(dat.atoms[i]),end="")
+    print(" ")
 
     if dat.selective:
-        print "Selective Dynamics"
+        print("Selective Dynamics")
     if dat.direct:
-        print "Direct"
+        print("Direct")
     else:
-        print "Cartesian"
+        print("Cartesian")
 
     for i in range(dat.natom):
-        print " %13.9f %13.9f %13.9f" \
-                % ( dat.position[i,0],dat.position[i,1],dat.position[i,2] ),
+        print(" %13.9f %13.9f %13.9f"
+                % ( dat.position[i,0],dat.position[i,1],dat.position[i,2] ), end="")
         if dat.selective:
-            print "",
-            print dat.fix[i,0],dat.fix[i,1],dat.fix[i,2],
-        print ""
+            print("", end="")
+            print("%s %s %s" % (str(dat.fix[i,0]), str(dat.fix[i,1]), str(dat.fix[i,2])), end="")
+        print("")
 
 
 #   for i in range(natom):

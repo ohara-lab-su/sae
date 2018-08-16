@@ -8,8 +8,13 @@
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 ä¸¡å¯¾å¿œ
+#
 # 2015.11.12 startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -43,7 +48,7 @@ class ReadFdmFdmfile(object):
 
         self.datlines, self.num = SAEnv.read_dataline1(name)
 
-        # •¡”“ü—Íƒtƒ@ƒCƒ‹‚Ìê‡‚Í–¢‘Î‰(None‚ğ•Ô‚·)
+        # è¤‡æ•°å…¥åŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã®å ´åˆã¯æœªå¯¾å¿œ(Noneã‚’è¿”ã™)
         #
         for i in range(self.num):
             if len(self.datlines[i].split()):
@@ -63,5 +68,5 @@ class ReadFdmFdmfile(object):
 if __name__ == '__main__':
 
     conv = ReadFdmFdmfile()
-    print conv.filout
+    print("%s" % str(conv.filout))
 

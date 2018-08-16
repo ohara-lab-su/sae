@@ -16,6 +16,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.10.21
 #  インスタンス重視の方針変更にしたがって大幅改変
 #
@@ -55,6 +58,8 @@
 #   get_kpoints_array_num()
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -335,46 +340,46 @@ if __name__ == '__main__':
 #   car_FLAG  = False  # FLAGS[3]
 #   rec_FLAG  = False  # FLAGS[4]
 
-    print "K-Points"
+    print("K-Points")
     # K-points 情報の入手(現時点では auto-modeのみ動作)
     FLAGS = kpoints.get_kpoints_mode()
     if FLAGS[0]:
         kp = kpoints.get_kpoints()
-        print "0"
-        print kp[0],kp[1],kp[2]
+        print("0")
+        print("%s %s %s" % (str(kp[0]), str(kp[1]), str(kp[2])))
 
     ### SCF の KPOINTS 情報はここで終了
 
-    print ""
-    print ""
+    print("")
+    print("")
 
     # K-points 情報の入手(auto-mode では kx,ky,kz を返す)
     kpoints_array = kpoints.get_kpoints_array()
     for i in range(len(kpoints_array)):
-        print " %10.7f %10.7f %10.7f " \
-                % ( kpoints_array[i,0],kpoints_array[i,1],kpoints_array[i,2] )
+        print(" %10.7f %10.7f %10.7f "
+                % ( kpoints_array[i,0],kpoints_array[i,1],kpoints_array[i,2] ))
         if not i % 2 == 0:
-            print ""
+            print("")
 
     # kpoints_array で求めた KPOINTS の line情報から
     # 各逆格子のゾーンにおける距離を求める method の実装
     v = kpoints.get_kpoints_vector(outcarname)
     for i in range(int(len(kpoints_array)/2)):
-        print " line %d : %10.7f " % ( i, v[i] )
+        print(" line %d : %10.7f " % ( i, v[i] ))
 
-    print ""
-    print "number of lines: ",kpoints.get_num_kpoints_line()
+    print("")
+    print("number of lines: %s" % str(kpoints.get_num_kpoints_line()))
 
 
     # KPOINTS 各ゾーンの比率(全部足し合わせて 1.0 となる)
     zone_ratio = kpoints.get_kpoints_vector_ratio(outcarname)
     for i in range(len(v)):
-        print zone_ratio[i]
+        print("%s" % str(zone_ratio[i]))
 
 
     num_line = kpoints.get_div_kpoints_line()
-    print ""
-    print "num_line:",num_line
+    print("")
+    print("num_line:%s" % str(num_line))
 
 ################################################################################
 

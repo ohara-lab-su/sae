@@ -5,18 +5,23 @@
 #
 #   convert VASP POSCAR to *.xyz (*.md)
 #
-#   $B@[:n(B Vdirect2car $B$GJQ49$9$k$H(BVASP$B$N(BCartesian$B%b!<%I$K$J$k$N$G(B
-#   $B4pK\JB?J$GFbIt:BI8$,%9%1!<%k$5$l$J$$(B
+#   拙作 Vdirect2car で変換するとVASPのCartesianモードになるので
+#   基本並進で内部座標がスケールされない
 #
-#   *.xyz $B7A<0$H$$$&$h$j$O(B $BFbIt:BI8$,%9%1!<%k$5$l$?(B cartesian $BI=5-$,(B
-#   VASP $B$N(B POSCAR $B$+$i$N=PNO$GM_$7$+$C$?$?$a$N%W%m%0%i%`(B
-#   --> $B$=$N7A<0$O%:%P%j(B *.xyz $B7A<0(B
+#   *.xyz 形式というよりは 内部座標がスケールされた cartesian 表記が
+#   VASP の POSCAR からの出力で欲しかったためのプログラム
+#   --> その形式はズバリ *.xyz 形式
 #
 ################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
 #
 # 2015.03.12
 #   startup
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -71,7 +76,7 @@ def options():
         xyzname=re.sub('\.xyz$','',options.OUTPUT)
         xyzname=xyzname+suffix
 
-    # $B%*%W%7%g%sL5$70z?t$N;~$O3HD%;R<+F0:o=|$rIU$1$:$K$=$N$^$^%U%!%$%kL>$H$9$k(B
+    # オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
     if len(args) >0:
         poscarname=args[0]
 
@@ -85,7 +90,7 @@ if __name__ == '__main__':
 
     poscarname,xyzname,suffix,OPT_STD = options()
 
-    ## POSCAR $BFI$_9~$_(B
+    ## POSCAR 読み込み
     poscar = SAE.ReadVaspPoscar(poscarname)
 
     vasp = poscar.get_vasp_version()

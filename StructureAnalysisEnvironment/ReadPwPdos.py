@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.07.23
 #  停止していた開発を再スタート
 #
@@ -16,6 +19,8 @@
 # 2015.05.08 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -157,7 +162,7 @@ class ReadPwPdos(object):
                 pname = prefix+'.pdos.pdos_atm#'+str(atom+1)+\
                          '('+atoms_index_j[atom]+')_wfc#'+str(ll+1)+\
                          '('+l_index+')'
-                print pname
+                print(pname)
 
                 if not os.path.exists(pname):
                     sys.exit("STOP: "+pname+" not found")
@@ -322,12 +327,12 @@ if __name__ == '__main__':
 
 #   lm_list = [1,3,5,7]
 
-    print "PREFIX       : ", prefix
-    print "NEDOS        : ", dos.nedos
-    print "ispin        : ", dos.ispin
-    print "natom        : ", dos.natom
-    print "atoms_index_j: ", dos.atoms_index_j
-    print "l_index_j    : ", dos.l_index_j
+    print("PREFIX       : %s" % str(prefix))
+    print("NEDOS        : %s" % str(dos.nedos))
+    print("ispin        : %s" % str(dos.ispin))
+    print("natom        : %s" % str(dos.natom))
+    print("atoms_index_j: %s" % str(dos.atoms_index_j))
+    print("l_index_j    : %s" % str(dos.l_index_j))
 
     ENG = dos.eng
 #   LDOSup = dos.get_ldos(l=0,atom=0,spin=0)
@@ -341,5 +346,5 @@ if __name__ == '__main__':
 
     for i in range(dos.nedos):
 #       print ENG[i], PDOSup[i], PDOSdn[i]
-        print ENG[i], PDOSup[i]
+        print("%s %s" % (str(ENG[i]), str(PDOSup[i])))
 

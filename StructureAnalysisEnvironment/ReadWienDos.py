@@ -27,6 +27,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 #
 # 2015.04.22
 #  chk_raw_dos() method の条件比較で配列と比較対象のデーターを
@@ -89,6 +92,8 @@
 #   startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -398,16 +403,16 @@ if __name__ == '__main__':
 
     if options.INPUT: case = options.INPUT
 
-    print "case               :",case
+    print("case               : %s" % str(case))
 
     lists = SAE.find_suffix2(case+'.dos','ev')
-    print "lists              :",lists
+    print("lists              : %s" % str(lists))
 
     output0 = SAE.ReadWienOutput0(case+'.output0')
     atoms_index = output0.atoms_index
     atoms = output0.atoms
-    print "atoms_index(output):",atoms_index
-    print "atoms      (output):",atoms
+    print("atoms_index(output): %s" % str(atoms_index))
+    print("atoms      (output): %s" % str(atoms))
 
     dos = SAE.ReadWienDos(lists)
 
@@ -427,10 +432,10 @@ if __name__ == '__main__':
     plot_ions = dos.get_plot_ions()
     plot_ions_index = dos.get_plot_ions_index(case)
 
-    print "nion       (dos)   :",nion
-    print "emax       (dos)   :",emax
-    print "emin       (dos)   :",emax
-    print "efermi     (dos)   :",efermi
+    print("nion       (dos)   : %s" % str(nion))
+    print("emax       (dos)   : %s" % str(emax))
+    print("emin       (dos)   : %s" % str(emax))
+    print("efermi     (dos)   : %s" % str(efermi))
 
     dos.get_ldos_ion(case=case,atom=1,orbit=orbit)
 

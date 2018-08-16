@@ -13,12 +13,18 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
+#
 # 2015.01.21
 #  for GZIP
 #
 # 2014.10.30 1st
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -112,7 +118,7 @@ if __name__ == '__main__':
     POSCAR = 'POSCAR'
     nion,natom,VASP = read_poscar_param(POSCAR)
 
-    print "nion  =",nion
-    print "natom =",natom
-    print "VASP  =",VASP
+    print("nion  = %s" % str(nion))
+    print("natom = %s" % str(natom))
+    print("VASP  = %s" % str(VASP))
 

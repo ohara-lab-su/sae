@@ -5,11 +5,16 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.04.06
 #  1) Wplot_XAS.py から分離
 #  2) xspec & txspec クラスの引数変更に対応
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -21,11 +26,11 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 
 ################################################################################
-def plot_xas(case='case',\
-        dos_suffix='.dos1ev',\
-        txspec_suffix='.txspec',\
-        xspec_suffix='.xspec',\
-        outname='XAS',OPT_EMAX='None',OPT_EMIN='None',OPT_YMAX='None',FLAG_SHOW=True):
+def plot_xas(case='case',
+             dos_suffix='.dos1ev',
+             txspec_suffix='.txspec',
+             xspec_suffix='.xspec',
+             outname='XAS',OPT_EMAX='None',OPT_EMIN='None',OPT_YMAX='None',FLAG_SHOW=True):
 
     import matplotlib.pyplot as plt
     #import matplotlib.cm as cm
@@ -40,11 +45,11 @@ def plot_xas(case='case',\
 
 
     if OPT_EMAX:
-                print "Emax=",OPT_EMAX
+                print("Emax= %s" % str(OPT_EMAX))
     if OPT_EMIN:
-                print "Emin=",OPT_EMIN
+                print("Emin= %s" % str(OPT_EMIN))
     if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
+                print("Ymax= %s" % str(OPT_YMAX))
 
     ############################################
     # txspec instance ( unbroad XAS )
@@ -67,7 +72,7 @@ def plot_xas(case='case',\
     unit = 'ev'
     name = [ case+dos_suffix ]
 
-    print 'DOS = ',name[0]
+    print('DOS = %s' % str(name[0]))
     dos = SAE.ReadWienDos(name)
     efermi = dos.get_efermi()
     eng = dos.get_eng()
@@ -79,7 +84,7 @@ def plot_xas(case='case',\
         mode = 'K'  # or L1
     elif norbital == 3:
         mode = 'L'
-    print "MODE =",mode
+    print("MODE = %s" % str(mode))
 
     dos_total = dos.get_raw_dos(atom=0,orbit='total-DOS')
     if mode == 'K': # or L1

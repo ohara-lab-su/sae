@@ -16,8 +16,13 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.07.033 startup
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -64,33 +69,33 @@ if __name__ == '__main__':
     poscar = SAEnv.ReadVaspPoscar()
     potcar = SAEnv.ReadVaspPotcar()
 
-    print "ISTART = ",incar.istart
-    print "ICHARG = ",incar.icharg
+    print("ISTART = %s" % str(incar.istart))
+    print("ICHARG = %s" % str(incar.icharg))
 
     if incar.ispin > 1:
-        print ""
-        print "ISPIN  = ",incar.ispin
+        print("")
+        print("ISPIN  = %s" % str(incar.ispin))
 
     if incar.gga:
-        print "GGA    = ",incar.gga
-    print ""
-    print "ISMEAR = ",incar.ismear
-    print "SIGMA  = ",incar.sigma
+        print("GGA    = %s" % str(incar.gga))
+    print("")
+    print("ISMEAR = %s" % str(incar.ismear))
+    print("SIGMA  = %s" % str(incar.sigma))
     if incar.nbands is not None:
-        print "NBANDS = ",incar.nbands
+        print("NBANDS = %s" % str(incar.nbands))
 
-    print ""
-    print "NELM   = ",incar.nelm
-    print "NSW    = ",incar.nsw
+    print("")
+    print("NELM   = %s" % str(incar.nelm))
+    print("NSW    = %s" % str(incar.nsw))
 
 
     if incar.nsw > 0:
-        print ""
-        print "IBRION = ",incar.ibrion
-        print ""
+        print("")
+        print("IBRION = %s" % str(incar.ibrion))
+        print("")
 
-    print "EDIFF  = ",incar.ediff
-    print "EDIFFG = ",incar.ediffg
+    print("EDIFF  = %s" % str(incar.ediff))
+    print("EDIFFG = %s" % str(incar.ediffg))
 
 
     kpoints = SAEnv.ReadVaspKpoints()
@@ -98,65 +103,65 @@ if __name__ == '__main__':
     if kpoints.FLAGS[5]:
         gamma_FLAG = True
         monk_FLAG = False
-        print ""
-        print "Gamma"
+        print("")
+        print("Gamma")
     else:
         gamma_FLAG = False
         monk_FLAG = True
-        print ""
-        print "Monk"
+        print("")
+        print("Monk")
 
-    print ""
-    print "Kx     = ",kx
-    print "Ky     = ",ky
-    print "Kz     = ",kz
+    print("")
+    print("Kx     = %s" % str(kx))
+    print("Ky     = %s" % str(ky))
+    print("Kz     = %s" % str(kz))
 
     if incar.nsw > 0:
         poscar.get_selective()
-        print ""
+        print("")
         if poscar.selective:
-            print "Selective Dynamics"
+            print("Selective Dynamics")
         else:
-            print "non Selective Dynamics"
+            print("non Selective Dynamics")
 
     if incar.isym != 1:
-        print ""
-        print "ISYM   = ",incar.isym
+        print("")
+        print("ISYM   = %s" % str(incar.isym))
 
     if incar.laechg:
-        print ""
-        print "LAECHG = ",incar.laechg
-        print "NGXF   = ",incar.ngxf
-        print "NGYF   = ",incar.ngyf
-        print "NGZF   = ",incar.ngzf
+        print("")
+        print("LAECHG = %s" % str(incar.laechg))
+        print("NGXF   = %s" % str(incar.ngxf))
+        print("NGYF   = %s" % str(incar.ngyf))
+        print("NGZF   = %s" % str(incar.ngzf))
 
-    print ""
-    print "LREAL  = ",incar.lreal
+    print("")
+    print("LREAL  = %s" % str(incar.lreal))
 
-    print ""
-    print "NPAR   = ",incar.npar
+    print("")
+    print("NPAR   = %s" % str(incar.npar))
 
-    print ""
-    print "---- POSCAR ----"
-    print "",
+    print("")
+    print("---- POSCAR ----")
+    print("", end="")
     for i in range(len(poscar.atoms_index)):
-        print poscar.atoms_index[i]+" ",
-    print ""
-    print "",
+        print("%s " % str(poscar.atoms_index[i]), end="")
+    print("")
+    print("", end="")
     for i in range(len(poscar.atoms)):
-        print str(poscar.atoms[i])+" ",
-    print ""
+        print("%s " % str(poscar.atoms[i]), end="")
+    print("")
 
-    print ""
-    print "---- POTCAR ----"
-    print "",
+    print("")
+    print("---- POTCAR ----")
+    print("", end="")
     for i in range(len(poscar.atoms_index)):
-        print potcar.atoms_index[i]+" ",
-    print ""
-    print " (zval)"
-    print "",
+        print("%s " % str(potcar.atoms_index[i]), end="")
+    print("")
+    print(" (zval)")
+    print("", end="")
     for i in range(len(potcar.atoms_zval)):
-        print str(potcar.atoms_zval[i])+" ",
-    print ""
+        print("%s " % str(potcar.atoms_zval[i]), end="")
+    print("")
 
 

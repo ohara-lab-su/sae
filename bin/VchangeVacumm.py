@@ -12,8 +12,13 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.06.16 startup
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -94,9 +99,9 @@ if __name__ == '__main__':
     outsuffix = "_v"+str(int(vacuum))
     outname = outname+outsuffix
 
-    print "INPUT file name    :",inpname
-    print "OUTPUT file name   :",outname+".vasp"
-    print "Vacuum SIZE        :",str(int(vacuum))
+    print("INPUT file name    : %s" % str(inpname))
+    print("OUTPUT file name   : %s" % str(outname+".vasp"))
+    print("Vacuum SIZE        : %s" % str(str(int(vacuum))))
 
     # Read POSCAR file
     poscar = SAE.ReadVaspPoscar(inpname)

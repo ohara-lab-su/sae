@@ -29,6 +29,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.01.07
 #  ION ループごとの出力ルーチンを別関数へ分離
 #     read_vasprn0.py  (INCAR,KPOINTS,POSCAR,CONTCAR)
@@ -49,7 +52,9 @@
 #   Vxmlread.py
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
+from __future__ import print_function
+###############################################################################
+__author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"                                                           
 __credits__    = ["Kengo NAKADA"]                                                         
 __email__      = "kengo.nakada@gmail.com"                                                 
@@ -331,9 +336,10 @@ if __name__ == '__main__':
     INCAR_TAG,INCAR_TEXT = INCAR
     try:
         out = open('INCAR.rebuild','w')
-        print "Makes INCAR.rebuild"
+        print("Makes INCAR.rebuild")
         for i in range(len(INCAR_TAG)):
-            print >> out, INCAR_TAG[i],"=",INCAR_TEXT[i]
+           #print >> out, INCAR_TAG[i],"=",INCAR_TEXT[i]
+            print("%s=%s" %(str(INCAR_TAG[i]), str(INCAR_TEXT[i])), file=out)
     except:
         out.close()
         sys.exit("STOP: INCAR.rebuild can't open")
@@ -344,9 +350,9 @@ if __name__ == '__main__':
     # KPOINTS の出力
     try:
         out = open('KPOINTS.rebuild','w')
-        print "Makes KPOINTS.rebuild"
+        print("Makes KPOINTS.rebuild")
         for i in range(len(KPOINTS)):
-            print >> out, KPOINTS[i]
+            print("%s" % str(KPOINTS[i]))
     except:
         out.close()
         sys.exit("STOP: KPOINTS.rebuild can't open")
@@ -355,7 +361,7 @@ if __name__ == '__main__':
 
     ###################################################
     # POSCAR の出力 (Initial をアウトプット)
-    print "Makes POSCAR.rebuild"
+    print("Makes POSCAR.rebuild")
     STD=False
     cname='POSCAR.rebuild'
     SAE.print_poscar(cname,STD,title,scale,natom,nion,selective,direct,VASP,\
@@ -364,7 +370,7 @@ if __name__ == '__main__':
 
     ###################################################
     # CONTCAR の出力 (Final をアウトプット)
-    print "Makes CONTCAR.rebuild"
+    print("Makes CONTCAR.rebuild")
     STD=False
     cname='CONTCAR.rebuild'
     SAE.print_poscar(cname,STD,title,scale,natom,nion,selective,direct,VASP,\

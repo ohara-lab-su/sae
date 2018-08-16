@@ -11,6 +11,9 @@
 #
 ##########################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.10.28
 #  VBM を取得するためのルーチン追加
 #
@@ -84,6 +87,8 @@
 #    テスト用テストプログラム(所信表明+ひな形作り始め)
 #
 ##########################################################################
+from __future__ import print_function
+###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -623,14 +628,14 @@ if __name__ == '__main__':
     NEDOS = dos.get_nedos()
     EFERMI = dos.get_efermi()
 
-    print "ISPIN  = ", dos.nspin, NSPIN
-    print "LORBIT = ", dos.lorbit, LORBIT
-    print "NATOM  = ", dos.natom, NATOM
-    print "TITLE  = ", dos.title, TITLE
-    print "EMAX   = ", dos.emax, EMAX
-    print "EMIN   = ", dos.emin, EMIN
-    print "NEDOS  = ", dos.nedos, NEDOS
-    print "EFERMI = ", dos.efermi, EFERMI
+    print("ISPIN  = %s %s" % (str(dos.nspin), str(NSPIN)))
+    print("LORBIT = %s %s" % (str(dos.lorbit), str(LORBIT)))
+    print("NATOM  = %s %s" % (str(dos.natom), str(NATOM)))
+    print("TITLE  = %s %s" % (str(dos.title), str(TITLE)))
+    print("EMAX   = %s %s" % (str(dos.emax), str(EMAX)))
+    print("EMIN   = %s %s" % (str(dos.emin), str(EMIN)))
+    print("NEDOS  = %s %s" % (str(dos.nedos), str(NEDOS)))
+    print("EFERMI = %s %s" % (str(dos.efermi), str(EFERMI)))
 
     dos.get_vbm()
 

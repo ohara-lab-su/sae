@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.07.22
 #  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
 #  どちらでも動作するように変更。
@@ -31,6 +34,8 @@
 #  startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -140,7 +145,7 @@ class ReadWienXspec(object):
 
         nxas = len(self.xas)
         for i in range(nxas):
-            print >> out, "%9.5f %14.8f" % (self.eng[i], self.xas[i])
+            print("%9.5f %14.8f" % (self.eng[i], self.xas[i]), file=out)
 
         if not outputname is None:
             out.close()
@@ -166,6 +171,6 @@ if __name__ == '__main__':
     xspec = ReadWienXspec(case=case,suffix=suffix)
     head = xspec.get_head()
     for i in head:
-        print i
+        print("%d" % i)
     xspec.write()
 

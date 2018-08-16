@@ -7,10 +7,16 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
+#
 # 2015.08.20
 #  startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -52,7 +58,7 @@ def get_calinfo(code='VASP'):
 
             module_name = 'StructureAnalysisEnvironment'
             if os.path.exists('INCAR'):
-                print "Read VASP INCAR  = INCAR"
+                print("Read VASP INCAR  = INCAR")
                 file_name = 'INCAR'
                 class_name = 'ReadIncar'
            #elif os.path.exists('OUTCAR'):

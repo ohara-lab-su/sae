@@ -14,6 +14,11 @@
 #  vasprun.xml 読み込みプログラムの基礎
 #
 #
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.01.07                                                                    
 #   完全分離版
 #    [ライブラリ] read_vasprun.py (<-- Vxmlread_LIB0.py ベース)        
@@ -30,7 +35,9 @@
 #   Vxmlread.py
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
+from __future__ import print_function
+################################################################################
+__author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"                                                           
 __credits__    = ["Kengo NAKADA"]                                                         
 __email__      = "kengo.nakada@gmail.com"                                                 

@@ -8,9 +8,14 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.07.22 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -95,5 +100,5 @@ if __name__ == '__main__':
     dat = ReadPwXanes()
 
     for i in range(dat.num):
-        print dat.eng[i],dat.xas[i]
+        print("%s %s" % (str(dat.eng[i]), str(dat.xas[i])))
 

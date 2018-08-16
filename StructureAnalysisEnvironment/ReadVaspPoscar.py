@@ -61,6 +61,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.08.25
 #  統合化＆Method化でいろいろと分離整理
 #
@@ -107,6 +110,8 @@
 # 2014.10.30 1st
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -182,6 +187,7 @@ class ReadVaspPoscar(SAEnv.Method):
             self.vasp_version = 5
         del atoms
 
+        print("vasp version = %s" % self.vasp_version)
         ###############################################
         ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
         ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
@@ -205,6 +211,7 @@ class ReadVaspPoscar(SAEnv.Method):
         ##   atoms_index の原子番号版
         self.atoms_number = np.zeros(self.nion,dtype=int)
         for i in range(self.nion):
+            print("chek atoms_index[%d] = %s" % (i, self.atoms_index[i]))
             self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
         ###############################################
@@ -283,7 +290,7 @@ class ReadVaspPoscar(SAEnv.Method):
         selective_reg = re.compile('^S.*',re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
-            print self.datlines[i].split()[0]
+            print("%s" % str(self.datlines[i].split()[0]))
             sys.exit("Format Error")
         else:
             if bool(selective_reg.match(self.datlines[i].split()[0])):
@@ -304,7 +311,7 @@ class ReadVaspPoscar(SAEnv.Method):
         car_reg = re.compile('^C.*',re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
-            print self.datlines[i].split()[0]
+            print("%s" % str(self.datlines[i].split()[0]))
             sys.exit("Format Error")
         if bool(direct_reg.match(self.datlines[i].split()[0])):
             self.direct = True
@@ -551,37 +558,38 @@ if __name__ == '__main__':
 
     ############################################################################
     out = sys.stdout
-    print >> out, title
-    print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+
+    print("%s" % str(title), file=out)
+    print(" %s" % str(scale), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
 
     if vasp >= 5:
-        print >> out, " ",
+        print(" ", file=out, end="")
         for i in range(nion):
-            print >> out,atoms_index[i],
-        print >> out, " "
+            print("%s" % str(atoms_index[i]), file=out, end="")
+        print(" ", file=out)
 
-    print >> out, " ",
+    print(" ", file=out, end="")
     for i in range(nion):
-        print >> out, atoms[i],
-    print >> out, " "
+        print("%s" % str(atoms[i]), file=out, end="")
+    print(" ", file=out)
 
     if selective:
-        print >> out, "Selective Dynamics"
+        print("Selective Dynamics", file=out)
     if direct:
-        print >> out, "Direct"
+        print("Direct", file=out)
     else:
-        print >> out, "Cartesian"
+        print("Cartesian", file=out)
 
     for j in range(natom):
-        print >> out, " %13.9f %13.9f %13.9f" \
-                %(position[j,0], position[j,1], position[j,2]),
+        print(" %13.9f %13.9f %13.9f"
+                %(position[j,0], position[j,1], position[j,2]), file=out, end="")
         if selective:
-            print >> out, "",
-            print >> out, fix[j,0],fix[i,1],fix[i,2],
-        print >> out, ""
+            print("", file=out, end="")
+            print("%s %s %s" % (str(fix[j,0]), str(fix[i,1]), str(fix[i,2])), file=out, end="")
+        print("", file=out)
     ############################################################################
 
 #   print ion

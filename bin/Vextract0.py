@@ -14,8 +14,13 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2014.11.13 1st
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -82,9 +87,9 @@ def options():
         else:
             sys.exit(POSCAR+" file not found")
 
-    print "INPUT file name    :",POSCAR
-    print "OUTPUT file name   :",cname+".vasp"
-    print ""
+    print("INPUT file name    : %s" % str(POSCAR))
+    print("OUTPUT file name   : %s" % str(cname+".vasp"))
+    print("")
 
     return [POSCAR,cname]
 

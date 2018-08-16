@@ -8,9 +8,14 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.01.08 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -94,5 +99,5 @@ if __name__ == '__main__':
     # MD(x,y,z) のそれぞれの x,y,z の最大値を取得
     position_max,position_min = get_max_md(nloop,natom,position_loop)
 
-    print position_min, position_max
+    print("%s %s" % (str(position_min), str(position_max)))
 

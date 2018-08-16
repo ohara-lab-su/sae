@@ -12,9 +12,14 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.05.08 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -104,8 +109,8 @@ if __name__ == '__main__':
     nedos = dos.get_nedos()
     tdos = dos.get_tdos(spin=0)
     eng = dos.get_eng()
-    print "ISPIN ",dos.get_ispin()
+    print("ISPIN %s" % str(dos.get_ispin()))
 
     for i in range(nedos):
-        print  " %11.8f %11.8f " %( eng[i],tdos[i] )
+        print( " %11.8f %11.8f " %( eng[i],tdos[i] ))
 

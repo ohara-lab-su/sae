@@ -7,9 +7,14 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.07.07 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -84,6 +89,7 @@ if __name__ == '__main__':
     name = options()
     potcar = ReadVaspPotcar(name)
 
-    print potcar.nion
-    print potcar.atoms_index
-    print potcar.atoms_zval
+    print("%s" % str(potcar.nion))
+    print("%s" % str(potcar.atoms_index))
+    print("%s" % str(potcar.atoms_zval))
+

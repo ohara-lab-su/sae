@@ -8,10 +8,15 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.03.24
 #   startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -132,9 +137,9 @@ if __name__ == '__main__':
     atoms_index = dos.get_atoms_index()
     atoms = dos.get_atoms()
 
-    print "nspin",nspin
-    print "natom",natom
-    print "nion",nion
-    print "atoms_index",atoms_index
-    print "atoms",atoms
+    print("nspin       %s" % str(nspin))
+    print("natom       %s" % str(natom))
+    print("nion        %s" % str(nion))
+    print("atoms_index %s" % str(atoms_index))
+    print("atoms       %s" % str(atoms))
 

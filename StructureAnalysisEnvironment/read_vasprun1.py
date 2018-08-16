@@ -23,6 +23,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.01.07
 #  ION ループごとの出力ルーチンを別関数へ分離
 #     read_vasprn0.py  (INCAR,KPOINTS,POSCAR,CONTCAR)
@@ -43,7 +46,9 @@
 #   Vxmlread.py
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
+from __future__ import print_function
+###############################################################################
+__author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"                                                           
 __credits__    = ["Kengo NAKADA"]                                                         
 __email__      = "kengo.nakada@gmail.com"                                                 
@@ -224,12 +229,13 @@ if __name__ == '__main__':
     title,scale,natom,nion,selective,direct,VASP,\
        t_loop,atoms,atoms_index,position_loop,fix_final = CONTCAR_ALL
 
-    print "Numver of ION-LOOP:", n_ion_loop
+    print("Numver of ION-LOOP:%s" % str(n_ion_loop))
 
     ###################################################
     # loop 毎のCONTCAR の出力
     for ion_loop in range(n_ion_loop):
-        print "Makes CONTCAR."+str(ion_loop+1)+".rebuild"
+       #print "Makes CONTCAR."+str(ion_loop+1)+".rebuild"
+        print("Makes CONTCAR.%s.rebuild" % str(ion_loop+1))
 
         t =  t_loop[:,:,ion_loop]
         position = position_loop[:,:,ion_loop]

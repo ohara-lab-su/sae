@@ -8,6 +8,8 @@
 # カレントに atomic_radius.list ファイルが必要
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -18,6 +20,9 @@ __license__    = "MIT"
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
+#
+# 2018.08.16
+#  Python2/3 両対応(主にファイル読み子関係なので注意)
 #
 # 2015.05.19
 #  原子番号から元素記号を返すルーチンを追加
@@ -60,7 +65,7 @@ def get_atomic_radius0(num):
 
     return radius
 
-### 元素記号から原子半径を返す
+### 元素記号(str)から原子半径(float)を返す
 def get_atomic_radius1(atom):
 
     name='atomic_radius.list'
@@ -83,12 +88,17 @@ def get_atomic_radius1(atom):
     nlist = SAE.read_list3(name,radius_list)
 
     for i in range(nlist):
-        if atom == radius_list[i,1]:
-            radius=float(radius_list[i,2])
+        try:
+            atom_name = radius_list[i,1].decode() # for Python3
+        except:
+            atom_name = radius_list[i,1]
+
+        if atom == atom_name:
+            radius = float(radius_list[i,2])
 
     return radius
 
-### 元素記号から原子番号を返す
+### 元素記号(str)から原子番号(float)を返す
 def get_atomic_number1(atom):
 
     name='atomic_radius.list'
@@ -105,14 +115,20 @@ def get_atomic_number1(atom):
                 else:
                     sys.exit("STOP: "+name+" file not found")
 
+    # ファイルの全行数を確保
     nlist = SAE.read_list_param(name) # pre read
 
     radius_list = np.zeros((nlist,3),dtype='S4')
-    nlist = SAE.read_list3(name,radius_list)
+    nlist = SAE.read_list3(name, radius_list)
 
     for i in range(nlist):
-        if atom == radius_list[i,1]:
-            num=float(radius_list[i,0])
+        try:
+            atom_name = radius_list[i,1].decode() # for Python3
+        except:
+            atom_name = radius_list[i,1]
+
+        if atom == atom_name:
+            num = float(radius_list[i,0])
 
     return num
 

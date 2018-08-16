@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.11.12
 #  L2,3に対応
 #
@@ -24,6 +27,8 @@
 #
 # 2015.06.23 startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -68,7 +73,8 @@ class ReadFdmTxt(object):
         if weight is None:
             weight = 1.0
         else:
-            print 'ReadFdmTxt(weight='+str(weight)+')'
+           #print 'ReadFdmTxt(weight='+str(weight)+')'
+            print("ReadFdmTxt(weight=%s)" % str(weight))
 
         # 一行目のイコールで結ばれたところまでの変数の数のカウント
         count = 0
@@ -177,7 +183,7 @@ class ReadFdmTxt(object):
         if weight is None:
             n_site = float(len(absorber))
         else:
-            print "weight : ", weight
+            print("weight : %s" % str(weight))
             n_site = float(weight)
 
         s_xas = np.zeros((self.num - 2, self.nspin))
@@ -185,7 +191,7 @@ class ReadFdmTxt(object):
 
             txtname = name + "_" + str(site) + self.suffix
             datlines, num = SAEnv.read_dataline(txtname)
-            print "sum : ", txtname
+            print("sum : %s" % str(txtname))
 
             for i in range(2, self.num):
                 s_xas[i - 2, spin] = float(datlines[i].split()[1+spin-1]) \
@@ -257,18 +263,18 @@ def options():
     return name, suffix
 
 
-###############################################################################
-if __name__ == '__main__':
+# ###############################################################################
+# if __name__ == '__main__':
+#
+#     name, suffix = options()
+#     conv = ReadFdm(name, suffix)
+#
+#     eng = conv.get_eng()
+#     xas = conv.get_xas()
+#
+#     print("E-Edge  = %s" % str(conv.get_eedge()))
+#     print("E-Fermi = %s" % str(conv.get_efermi()))
+#
+# #   plot_fdm_xas(eng,xas)
 
-    name, suffix = options()
-    conv = ReadFdm(name, suffix)
-
-    eng = conv.get_eng()
-    xas = conv.get_xas()
-
-    print "E-Edge  = ", conv.get_eedge()
-    print "E-Fermi = ", conv.get_efermi()
-
-#   plot_fdm_xas(eng,xas)
-
-#   print "NAME",name
+# #   print "NAME",name

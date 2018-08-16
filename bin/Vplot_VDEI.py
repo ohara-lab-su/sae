@@ -6,11 +6,18 @@
 # Vplot_VDEI.py
 #  CONTCAR から ION ループごとの energy distance を求める
 #
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
 #
 # 2015.01.06 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
+from __future__ import print_function
+################################################################################
+__author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"                                                           
 __credits__    = ["Kengo NAKADA"]                                                         
 __email__      = "kengo.nakada@gmail.com"                                                 

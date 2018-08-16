@@ -8,7 +8,9 @@
 #    注意) LOOP 構造を持つ x,y,z 形式のみ対応
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                 
+from __future__ import print_function
+################################################################################
+__author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"                                                 
 __credits__    = ["Kengo NAKADA"]                                               
 __email__      = "kengo.nakada@gmail.com"                                       

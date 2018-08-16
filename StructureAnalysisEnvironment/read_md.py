@@ -47,6 +47,9 @@
 #   read_md():  xyz 情報の読み込み
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
+
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -277,44 +280,46 @@ if __name__ == '__main__':
     position_loop = np.zeros((nloop,natom,3))
     force_loop = np.zeros((nloop,natom,3))
 
-    print "READFILE:",MD
-    print "NLOOP   :",nloop
-    print "NATOM   :",natom
+    print("READFILE:%s" % str(MD))
+    print("NLOOP   :%s" % str(nloop))
+    print("NATOM   :%s" % str(natom))
 
     natom,nlist,elist,nion,atoms,atoms_index,energy_loop = \
             read_md3(MD,nloop,atoms_index_j,position_loop,force_loop)
 
-    print "NION    :",nion
+    print("NION    :%s" % str(nion))
     for i in range(nion):
-        print atoms_index[i], atoms[i]
+        print("%s %s" %(str(atoms_index[i]), str(atoms[i])))
 
     if nlist >= 7:
         for l in range(nloop):
-            print natom
+            print("%s" % str(natom))
             if elist >= 5:
-                print "   setp=",l,"   ","Energy=",energy_loop[l]
+               #print("   setp=",l,"   ","Energy=",energy_loop[l])
+                print("   setp=%s   Energy=%s" % (str(l), str(energy_loop[l])))
             else:
-                print "   setp=",l
+               #print "   setp=",l
+                print("   setp=%s" % str(l))
 
             for j in range(natom):
-                print " %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f" \
-                      % ( atoms_index_j[j],\
-                          position_loop[l,j,0],\
-                          position_loop[l,j,1],\
-                          position_loop[l,j,2],\
-                          force_loop[l,j,0],\
-                          force_loop[l,j,1],\
-                          force_loop[l,j,2] )
+                print(" %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f"
+                      % ( atoms_index_j[j],
+                          position_loop[l,j,0],
+                          position_loop[l,j,1],
+                          position_loop[l,j,2],
+                          force_loop[l,j,0],
+                          force_loop[l,j,1],
+                          force_loop[l,j,2] ))
     else:
         for l in range(nloop):
-            print natom
-            print "   setp=",l
+            print("%s" % str(natom))
+            print("   setp=%s" % str(l))
             for j in range(natom):
-                print " %3s %12.8f %12.8f %12.8f " \
-                      % ( atoms_index_j[j],\
-                          position_loop[l,j,0],\
-                          position_loop[l,j,1],\
-                          position_loop[l,j,2] )
+                print(" %3s %12.8f %12.8f %12.8f "
+                      % ( atoms_index_j[j],
+                          position_loop[l,j,0],
+                          position_loop[l,j,1],
+                          position_loop[l,j,2] ))
 
 
 ## for read_md2

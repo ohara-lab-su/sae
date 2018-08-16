@@ -8,6 +8,10 @@
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
+#
 # 2015.09.11
 #  scf ループ関係の情報吸い出しを追加
 #
@@ -16,6 +20,8 @@
 #
 # 2015.06.23 startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -229,15 +235,14 @@ if __name__ == '__main__':
     position = bav.get_position()
     atoms_index_j = bav.get_atoms_index_j()
 
-    print "n_ion_loop", bav.n_scf_loop
+    print("n_ion_loop %s" % str(bav.n_scf_loop))
     for i in range(bav.n_scf_loop):
-        print bav.scf_toten[i]
+        print("%s" % str(bav.scf_toten[i]))
 
-    print "natom =", natom
-    print "lmax = ", lmax
-    print "edge = ", edge
-    print "t    = "
-    print t
+    print("natom = %s" % str(natom))
+    print("lmax  = %s" % str(lmax))
+    print("edge  = %s" % str(edge))
+    print("t     = %s" % str(t))
 
 #   for i in range(natom):
 #       print "%s %10.6f %10.6f %10.6f" \

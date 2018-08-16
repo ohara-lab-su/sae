@@ -22,6 +22,9 @@
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.11.20
 #  convolution 用の結晶構造情報が無いファイルに対する対応
 #
@@ -47,6 +50,8 @@
 #   cellpar(a,b,c,alpha,beta,gamma) --> cell(基本並進) への変換が意外に鬼門
 #   ---> とりあえずこのルーチンの開発は一旦サスペンド
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -172,7 +177,7 @@ class ReadFdmInp(SAEnv.Method):
 
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i + 1].split()) >= 6:
-                    print self.datlines[i + 1].split()
+                    print(self.datlines[i + 1].split())
                     sys.exit("STOP(ReadFdmInp): \
                             a,b,c,alpha,beta,gamma INPUT LINE error")
 
@@ -219,7 +224,7 @@ class ReadFdmInp(SAEnv.Method):
 
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i + 1].split()) >= 6:
-                    print self.datlines[i + 1].split()
+                    print(self.datlines[i + 1].split())
                     sys.exit("STOP: a,b,c,alpha,beta,gamma INPUT LINE error")
 
                 i += 1
@@ -476,25 +481,25 @@ if __name__ == '__main__':
     beta = out.cellparam[4]
     gamma = out.cellparam[5]
 
-    print 'allsite    :', allsite
-    print 'absorber   :', absorber
-    print 'energygpho :', energygpho
-    print 'ispin      :', ispin
-    print 'filout     :', filout
-    print 'natom      :', natom
-    print ''
-    print 'a          :', out.cellparam[0]
-    print 'b          :', out.cellparam[1]
-    print 'c          :', out.cellparam[2]
-    print 'alpha      :', out.cellparam[3]
-    print 'beta       :', out.cellparam[4]
-    print 'gamma      :', out.cellparam[5]
-    print ''
-    print 't          :'
-    print out.t
-    print ''
-    print out.atoms_number
-    print out.atoms_index
+    print('allsite    : %s' % str(allsite))
+    print('absorber   : %s' % str(absorber))
+    print('energygpho : %s' % str(energygpho))
+    print('ispin      : %s' % str(ispin))
+    print('filout     : %s' % str(filout))
+    print('natom      : %s' % str(natom))
+    print('')
+    print('a          : %s' % str(out.cellparam[0]))
+    print('b          : %s' % str(out.cellparam[1]))
+    print('c          : %s' % str(out.cellparam[2]))
+    print('alpha      : %s' % str(out.cellparam[3]))
+    print('beta       : %s' % str(out.cellparam[4]))
+    print('gamma      : %s' % str(out.cellparam[5]))
+    print('')
+    print('t          :')
+    print(out.t)
+    print('')
+    print(out.atoms_number)
+    print(out.atoms_index)
 
 #   cal = np.cos(alpha * np.pi / 180.0)
 #   cbe = np.cos(beta * np.pi / 180.0)
@@ -509,9 +514,9 @@ if __name__ == '__main__':
 #                ]).transpose()
 
     for i in range(natom):
-        print " %s %d  %14.10f %14.10f %14.10f" \
+        print(" %s %d  %14.10f %14.10f %14.10f"
             % (atoms_index_j[i], atoms_number_j[i],
-                position[i, 0], position[i, 1], position[i, 2])
+                position[i, 0], position[i, 1], position[i, 2]))
 
 #   out.sort_atoms_index_j()
 
@@ -519,20 +524,20 @@ if __name__ == '__main__':
     out.sort_position()
 #   out.sort_fix()
 
-    print out.atoms_number
-    print out.atoms_index
+    print(out.atoms_number)
+    print(out.atoms_index)
 
-    for i in range(natom):
-        print " %s %d  %14.10f %14.10f %14.10f" \
+    print(" %s %d  %14.10f %14.10f %14.10f"
             % (out.atoms_index_j[i],
                out.atoms_number_j[i],
                out.position[i, 0],
                out.position[i, 1],
-               out.position[i, 2])
+               out.position[i, 2]))
 
     if convolution:
-        print ""
-        print "convolution:", convolution
-        print 'calculation:', calculation
-        print 'conv_out   :', conv_out
+        print("")
+        print("convolution: %s" % str(convolution))
+        print('calculation: %s' % str(calculation))
+        print('conv_out   : %s' % str(conv_out))
 #       print "NAME",name
+

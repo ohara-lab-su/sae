@@ -23,6 +23,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.03.27
 #  spin + ev のときに suffix3 が正しく動いていないバグを修正
 #
@@ -33,6 +36,8 @@
 #   startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -101,13 +106,13 @@ if __name__ == '__main__':
 
     try:
         files = find_suffix1(name)
-        print "name",files
+        print("name %s" % str(files))
         files = find_suffix2(name,tail)
-        print "name,tail",files
+        print("name,tail %s" % str(files))
         files = find_suffix3(name,'None')
-        print "name,None",files
+        print("name,None %s" % str(files))
         files = find_suffix3(name,'None','ev')
-        print "name,None",files
+        print("name,None %s" % str(files))
     except:
         pass
 

@@ -7,8 +7,13 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.07.07 startup
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -63,15 +68,15 @@ if __name__ == '__main__':
     acfdat.get_max_bader()
     acfdat.get_min_bader()
 
-    print "#  atom  zval  charge  diff"
+    print("#  atom  zval  charge  diff")
     for i in range(acfdat.natom):
-        print "%3d %s %5.2f %7.3f %7.3f" \
+        print("%3d %s %5.2f %7.3f %7.3f"
                 %(i+1,acfdat.atoms_index_j[i],acfdat.atoms_zval_j[i],\
-                acfdat.charge[i],acfdat.bader[i])
+                acfdat.charge[i],acfdat.bader[i]))
 
-    print "----------"
-    print "MAX charge",acfdat.max_bader
-    print "MIN charge",acfdat.min_bader
+    print("----------")
+    print("MAX charge %s" % str(acfdat.max_bader))
+    print("MIN charge %s" % str(acfdat.min_bader))
 #   print poscar.natom
 
 

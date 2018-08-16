@@ -26,6 +26,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.08.20
 #  関数化&統合クラス統合化前のバージョンコメント
 #
@@ -117,6 +120,8 @@
 #   based on Vdirect2car.pl (and ReadPOSCAR.py)
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -170,9 +175,9 @@ def print_mx_dat(datname,STD,\
 
     DATAPATH=os.environ.get('OPENMXDATAPATH', "")
     if not DATAPATH:
-        print "can't found OPENMXDATAPATH environment on yuur system"
-        print "please export OPENMXDATAPATH=~/DFT_DATA13"
-        print "STOP"
+        print("can't found OPENMXDATAPATH environment on yuur system")
+        print("please export OPENMXDATAPATH=~/DFT_DATA13")
+        print("STOP")
         sys.exit()
 
     ############################################################################
@@ -188,7 +193,7 @@ def print_mx_dat(datname,STD,\
     # ../DFT_DATA が存在しない時は 環境変数 DATAPATH を選択
     if not os.path.exists(data):
         data = DATAPATH
-    print "DATA PATH ",data
+    print("DATA PATH %s" % str(data))
 
 
     # VPS 及び PAO のパス設定
@@ -281,27 +286,27 @@ def print_mx_dat(datname,STD,\
     ## output OpenMX *.dat file
     ##
 
-    print "###########################################"
-    print "# File Name"
-    print "###########################################"
-    print ""
-    print "System.CurrentDirectory            ./   # default=./"
-    print "System.Name                       ",title
-    print "level.of.stdout                    1    # default=1 (1-3)"
-    print "level.of.fileout                   1    # default=1 (0-2)"
-    print "DATA.PATH                        "+data
+    print("###########################################")
+    print("# File Name")
+    print("###########################################")
+    print("")
+    print("System.CurrentDirectory            ./   # default=./")
+    print("System.Name                       %s" % str(title))
+    print("level.of.stdout                    1    # default=1 (1-3)")
+    print("level.of.fileout                   1    # default=1 (0-2)")
+    print("DATA.PATH                        %s" % str(data))
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# Definition of Atomic Species"
-    print "#    name PAO VPS"
-    print "#    Cu   Cu6.0S-s3p3d3 Cu_PBE13S"
-    print "###########################################"
-    print ""
-    print "Species.Number", nion
-    print "<Definition.of.Atomic.Species"
+    print("")
+    print("###########################################")
+    print("# Definition of Atomic Species")
+    print("#    name PAO VPS")
+    print("#    Cu   Cu6.0S-s3p3d3 Cu_PBE13S")
+    print("###########################################")
+    print("")
+    print("Species.Number %s" % str(nion))
+    print("<Definition.of.Atomic.Species")
 
     for i in range(nion):
 
@@ -323,81 +328,81 @@ def print_mx_dat(datname,STD,\
 
         vps0 = symbol+cutoff+'-'+vps_orbit
         pao0 = symbol+'_'+pot+ver+opt
-        print "  %2s  %13s  %13s " %( symbol, vps0, pao0 )
+        print("  %2s  %13s  %13s " %( symbol, vps0, pao0 ))
 
-    print "Definition.of.Atomic.Species>"
-
-
-    ################################################
-    print ""
-    print "#<Hubbard.U.values                 #  eV"
-    print "# Ni  1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 4.0 2d 0.0"
-    print "# O   1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 0.0"
-    print "#Hubbard.U.values>"
+    print("Definition.of.Atomic.Species>")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# Atom"
-    print "#    num, name, x,y,z,  up-spin, down-spin"
-    print "###########################################"
-    print ""
+    print("")
+    print("#<Hubbard.U.values                 #  eV")
+    print("# Ni  1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 4.0 2d 0.0")
+    print("# O   1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 0.0")
+    print("#Hubbard.U.values>")
 
-    print "Atoms.Number",natom
+
+    ################################################
+    print("")
+    print("###########################################")
+    print("# Atom")
+    print("#    num, name, x,y,z,  up-spin, down-spin")
+    print("###########################################")
+    print("")
+
+    print("Atoms.Number %s" % str(natom))
     if FRAC:
-        print "Atoms.SpeciesAndCoordinates.Unit  FRAC  # Ang|AU|FRAC"
-        print "<Atoms.SpeciesAndCoordinates            # Unit=FRAC"
+        print("Atoms.SpeciesAndCoordinates.Unit  FRAC  # Ang|AU|FRAC")
+        print("<Atoms.SpeciesAndCoordinates            # Unit=FRAC")
     else:
-        print "Atoms.SpeciesAndCoordinates.Unit  Ang   # Ang|AU|FRAC"
-        print "<Atoms.SpeciesAndCoordinates            # Unit=Ang."
+        print("Atoms.SpeciesAndCoordinates.Unit  Ang   # Ang|AU|FRAC")
+        print("<Atoms.SpeciesAndCoordinates            # Unit=Ang.")
 
     for i in range(natom):
         atom = re.sub('_.*','',atoms_index_j[i])
         atoms_index_j[i]=atom
 
         if not version_FLAG:
-            print "%4d  %2s %12.8f %12.8f %12.8f  %12.8f  %12.8f " \
-                   %(i+1, atoms_index_j[i], \
-                   position[i][0],position[i][1],position[i][2],\
-                   electron[i], electron[i])
+            print("%4d  %2s %12.8f %12.8f %12.8f  %12.8f  %12.8f "
+                   %(i+1, atoms_index_j[i],
+                   position[i][0],position[i][1],position[i][2],
+                   electron[i], electron[i]))
         else:
             myStr = "{:>4}  {:^2} {:12f}  {:12f}  {:12f}   {:12f}  {:12f}"
-            print myStr.format(i+1, atoms_index_j[i], \
-                    position[i][0],position[i][1],position[i][2],\
-                    electron[i], electron[i])
+            print(myStr.format(i+1, atoms_index_j[i],
+                    position[i][0],position[i][1],position[i][2],
+                    electron[i], electron[i]))
 
-    print "Atoms.SpeciesAndCoordinates>"
+    print("Atoms.SpeciesAndCoordinates>")
 
-    print "Atoms.UnitVectors.Unit            Ang   # Ang|AU"
-    print "<Atoms.UnitVectors                      # Unit=Ang."
-    print "   %12.8f %12.8f %12.8f" %(t[0][0], t[1][0], t[2][0])
-    print "   %12.8f %12.8f %12.8f" %(t[0][1], t[1][1], t[2][1])
-    print "   %12.8f %12.8f %12.8f" %(t[0][2], t[1][2], t[2][2])
+    print("Atoms.UnitVectors.Unit            Ang   # Ang|AU")
+    print("<Atoms.UnitVectors                      # Unit=Ang.")
+    print("   %12.8f %12.8f %12.8f" %(t[0][0], t[1][0], t[2][0]))
+    print("   %12.8f %12.8f %12.8f" %(t[0][1], t[1][1], t[2][1]))
+    print("   %12.8f %12.8f %12.8f" %(t[0][2], t[1][2], t[2][2]))
 
-    print "Atoms.UnitVectors>"
+    print("Atoms.UnitVectors>")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# SCF or Electronic System"
-    print "###########################################"
-    print ""
+    print("")
+    print("###########################################")
+    print("# SCF or Electronic System")
+    print("###########################################")
+    print("")
 
-    print "#scf.restart                On"
-    print ""
+    print("#scf.restart                On")
+    print("")
 
-    print "scf.XcType                 GGA-PBE     # LDA|LSDA-CA|LSDA-PW|GGA-PBE"
-    print "scf.SpinPolarization       Off         # On|Off|NC"
-    print "#scf.SpinOrbit.Coupling     Off         # On|Off"
-    print "scf.ElectronicTemperature  300.0       # default=300 (K)"
-    print ""
-    print "scf.energycutoff           150.0       # default=150 (Ry)"
-    print "#scf.Ngrid                  18 18 18    # Ngrid or scf.energycutoff"
-    print "#scf.fixed.grid             12 12 12"
-    print ""
-    print "scf.EigenvalueSolver       band        # DC|Krylov|ON2|Cluster|Band"
+    print("scf.XcType                 GGA-PBE     # LDA|LSDA-CA|LSDA-PW|GGA-PBE")
+    print("scf.SpinPolarization       Off         # On|Off|NC")
+    print("#scf.SpinOrbit.Coupling     Off         # On|Off")
+    print("scf.ElectronicTemperature  300.0       # default=300 (K)")
+    print("")
+    print("scf.energycutoff           150.0       # default=150 (Ry)")
+    print("#scf.Ngrid                  18 18 18    # Ngrid or scf.energycutoff")
+    print("#scf.fixed.grid             12 12 12")
+    print("")
+    print("scf.EigenvalueSolver       band        # DC|Krylov|ON2|Cluster|Band")
 
     ################################################
     if not KP:
@@ -405,149 +410,155 @@ def print_mx_dat(datname,STD,\
         KP[0,0] = 12
         KP[0,1] = 12
         KP[0,2] = 12
-    print "scf.Kgrid                 "\
-            +str(int(KP[0,0]))+" "+str(int(KP[0,1]))+" "+str(int(KP[0,2]))+\
-            "     # means 4x4x4"
+   #print "scf.Kgrid                 "\
+   #        +str(int(KP[0,0]))+" "+str(int(KP[0,1]))+" "+str(int(KP[0,2]))+\
+   #        "     # means 4x4x4"
+    print("scf.Kgrid                 %s %s %s     # means 4x4x4"
+          % ( str(int(KP[0,0])), str(int(KP[0,1])), str(int(KP[0,2]))))
     ################################################
 
-    print "scf.Generation.Kpoint     regular      # regular|MP"
-    print ""
+    print("scf.Generation.Kpoint     regular      # regular|MP")
+    print("")
 
     ################################################
     EDIFF = EDIFF if 'EDIFF' in locals() else 1.0e-6
-    print "scf.criterion             "+str(EDIFF)+"       # default=1.0e-6 (Hartree) "
+   #print "scf.criterion             "+str(EDIFF)+"       # default=1.0e-6 (Hartree) "
+    print("scf.criterion             %s       # default=1.0e-6 (Hartree) " % str(EDIFF) )
     ################################################
 
-    print "scf.lapack.dste            dstevx      # dstegr|dstedc|dstevx, default=dstevx"
-    print ""
-    print "scf.Mixing.Type           rmm-diisk    # Simple|Rmm-Diis|Gr-Pulay|Kerker|Rmm-Diisk"
-    print "scf.Init.Mixing.Weight     0.30        # default=0.30 "
-    print "scf.Mixing.History          5          # default=5"
-    print ""
-    print "# on-the-fly ( using ./case_SCF_keywords files"
-    print ""
+    print("scf.lapack.dste            dstevx      # dstegr|dstedc|dstevx, default=dstevx")
+    print("")
+    print("scf.Mixing.Type           rmm-diisk    # Simple|Rmm-Diis|Gr-Pulay|Kerker|Rmm-Diisk")
+    print("scf.Init.Mixing.Weight     0.30        # default=0.30 ")
+    print("scf.Mixing.History          5          # default=5")
+    print("")
+    print("# on-the-fly ( using ./case_SCF_keywords files")
+    print("")
 
     ################################################
     NELM = NELM if 'NELM' in locals() else 40
-    print "scf.maxIter                 "+str(NELM)+"         # default=40"
+   #print "scf.maxIter                 "+str(NELM)+"         # default=40"
+    print("scf.maxIter                 %s         # default=40" % str(NELM))
     ################################################
 
-    print "scf.Min.Mixing.Weight      0.001       # default=0.001 "
-    print "scf.Max.Mixing.Weight      0.400       # default=0.40 "
-    print "#scf.Kerker.factor"
-    print "scf.Mixing.StartPulay       6          # default=6"
-
-
-    ################################################
-    print ""
-    print "###########################################"
-    print "# 1D FFT"
-    print "###########################################"
-    print ""
-
-    print "#1DFFT.NumGridK             900         # default=900"
-    print "#1DFFT.NumGridR             900         # default=900"
-    print "#1DFFT.EnergyCutoff        3600.0       # default=3600 (Ry)"
+    print("scf.Min.Mixing.Weight      0.001       # default=0.001 ")
+    print("scf.Max.Mixing.Weight      0.400       # default=0.40 ")
+    print("#scf.Kerker.factor")
+    print("scf.Mixing.StartPulay       6          # default=6")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# Orbital Optimization"
-    print "###########################################"
-    print ""
+    print("")
+    print("###########################################")
+    print("# 1D FFT")
+    print("###########################################")
+    print("")
 
-    print "#orbitalOpt.Method           Off        # Off|Unrestricted|Restricted|species"
-    print "#orbitalOpt.Opt.Method       EF         # DIIS|EF"
-    print "#orbitalOpt.SD.step        0.001        # default=0.001"
-    print "#orbitalOpt.HistoryPulay     30         # default=15"
-    print "#orbitalOpt.StartPulay       10         # default=1"
-    print "#orbitalOpt.InitCoes     Symmetrical    # Symmetrical|Free"
-    print "#orbitalOpt.initPrefactor   0.1         # default=0.1"
-    print "#orbitalOpt.scf.maxIter      12         # default=12"
-    print "#orbitalOpt.MD.maxIter        2         # default=5"
-    print "#orbitalOpt.per.MDIter        2         # default=1000000"
-    print ""
-    print "#orbitalOpt.criterion      1.0e-4       # default=1.0e-4 (Hartree/borh)"
-    print ""
-    print "#CntOrb.fileout               off       # on|off, default=off"
-    print "#Num.CntOrb.Atoms              1        # default=1"
-    print "#<Atoms.Cont.Orbitals"
-    print "# 1"
-    print "#Atoms.Cont.Orbitals>"
+    print("#1DFFT.NumGridK             900         # default=900")
+    print("#1DFFT.NumGridR             900         # default=900")
+    print("#1DFFT.EnergyCutoff        3600.0       # default=3600 (Ry)")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# SCF Order-N"
-    print "###########################################"
-    print ""
+    print("")
+    print("###########################################")
+    print("# Orbital Optimization")
+    print("###########################################")
+    print("")
 
-    print "#orderN.HoppingRanges        7.0        # default=5.0 (Ang) "
-    print "#orderN.NumHoppings           2         # default=2"
+    print("#orbitalOpt.Method           Off        # Off|Unrestricted|Restricted|species")
+    print("#orbitalOpt.Opt.Method       EF         # DIIS|EF")
+    print("#orbitalOpt.SD.step        0.001        # default=0.001")
+    print("#orbitalOpt.HistoryPulay     30         # default=15")
+    print("#orbitalOpt.StartPulay       10         # default=1")
+    print("#orbitalOpt.InitCoes     Symmetrical    # Symmetrical|Free")
+    print("#orbitalOpt.initPrefactor   0.1         # default=0.1")
+    print("#orbitalOpt.scf.maxIter      12         # default=12")
+    print("#orbitalOpt.MD.maxIter        2         # default=5")
+    print("#orbitalOpt.per.MDIter        2         # default=1000000")
+    print("")
+    print("#orbitalOpt.criterion      1.0e-4       # default=1.0e-4 (Hartree/borh)")
+    print("")
+    print("#CntOrb.fileout               off       # on|off, default=off")
+    print("#Num.CntOrb.Atoms              1        # default=1")
+    print("#<Atoms.Cont.Orbitals")
+    print("# 1")
+    print("#Atoms.Cont.Orbitals>")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# MD or Geometry Optimization"
-    print "###########################################"
-    print ""
+    print("")
+    print("###########################################")
+    print("# SCF Order-N")
+    print("###########################################")
+    print("")
+
+    print("#orderN.HoppingRanges        7.0        # default=5.0 (Ang) ")
+    print("#orderN.NumHoppings           2         # default=2")
+
+
+    ################################################
+    print("")
+    print("###########################################")
+    print("# MD or Geometry Optimization")
+    print("###########################################")
+    print("")
 
     ################################################
     #print "MD.Type                   nomd         # Nomd|Opt|NVE|NVT_VS|NVT_NH or EvsLC"
-    print "# Nomd|Opt|DIIS|BFGS|RF|EF, MD( NVE|NVT_VS|NVT_NH ) or EvsLC"
+    print("# Nomd|Opt|DIIS|BFGS|RF|EF, MD( NVE|NVT_VS|NVT_NH ) or EvsLC")
     NSW = NSW if 'NSW' in locals() else 0
     if NSW == 0:
-        print "MD.Type                   nomd"
+        print("MD.Type                   nomd")
     else:
         IBRION = IBRION if 'IBRION' in locals() else 2
         if IBRION != 0:
-            print "MD.Type                   Opt"
+            print("MD.Type                   Opt")
     ################################################
 
-    print ""
-    print "#MD.EvsLC.Step             0.4         # default=0.4%"
-    print "#MD.EvsLC.flag            1 1 1        # a,b,c, default=1 1 1"
-    print ""
-    print "MD.Opt.DIIS.History         3          # default=3"
-    print "MD.Opt.StartDIIS           20          # default=3"
-    print "MD.Opt.EveryDIIS           200         # default=200"
-    print ""
+    print("")
+    print("#MD.EvsLC.Step             0.4         # default=0.4%")
+    print("#MD.EvsLC.flag            1 1 1        # a,b,c, default=1 1 1")
+    print("")
+    print("MD.Opt.DIIS.History         3          # default=3")
+    print("MD.Opt.StartDIIS           20          # default=3")
+    print("MD.Opt.EveryDIIS           200         # default=200")
+    print("")
 
     ################################################
     if NSW > 0:
-        print "MD.maxIter                 "+str(NSW)+"        # default=1 (only MD=1)"
+       #print "MD.maxIter                 "+str(NSW)+"        # default=1 (only MD=1)"
+        print("MD.maxIter                 %s        # default=1 (only MD=1)" % str(NSW))
     else:
-        print "MD.maxIter                 1       # default=1 (only MD=1)"
+        print("MD.maxIter                 1       # default=1 (only MD=1)")
     ################################################
 
-    print "MD.TimeStep                1.0         # default=0.5 (fs)"
+    print("MD.TimeStep                1.0         # default=0.5 (fs)")
 
     ################################################
     EDIFFG = EDIFFG if 'EDIFFG' in locals() else EDIFF*10.
-    print "MD.Opt.criterion          "+str(EDIFFG)+"       # default=1.0e-4 (Hartree/bohr)"
+   #print "MD.Opt.criterion          "+str(EDIFFG)+"       # default=1.0e-4 (Hartree/bohr)"
+    print("MD.Opt.criterion          %s       # default=1.0e-4 (Hartree/bohr)" % str(EDIFFG))
     ################################################
 
-    print "MD.Opt.DIIS_Mixing         0.5         # default=0.5"
-    print ""
-    print "scf.ExtCharge.History       2          # default=2"
+    print("MD.Opt.DIIS_Mixing         0.5         # default=0.5")
+    print("")
+    print("scf.ExtCharge.History       2          # default=2")
 
-    print "#<MD>TempControl"
-    print "#2"
-    print "#100   2   5500.0 0.0"
-    print "#600  50    300.0 0.4"
-    print "#MD.TempControl>"
+    print("#<MD>TempControl")
+    print("#2")
+    print("#100   2   5500.0 0.0")
+    print("#600  50    300.0 0.4")
+    print("#MD.TempControl>")
 
     if selective:
-        print ""
-        print "###########################################"
-        print "# MD.Fixed.XYZ"
-        print "###########################################"
-        print ""
+        print("")
+        print("###########################################")
+        print("# MD.Fixed.XYZ")
+        print("###########################################")
+        print("")
 
-        print "<MD.Fixed.XYZ"
+        print("<MD.Fixed.XYZ")
         for i in range(natom):
             if fix[i][0] == 'F':
                 fix_x = 1 # fix
@@ -564,159 +575,159 @@ def print_mx_dat(datname,STD,\
             else:
                 fix_z = 0 # non fix
 
-            print "  %d  %d %d %d" %(i+1,fix_x,fix_y,fix_z)
-        print "MD.Fixed.XYZ>"
+            print("  %d  %d %d %d" %(i+1,fix_x,fix_y,fix_z))
+        print("MD.Fixed.XYZ>")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# Band dispersion"
-    print "###########################################"
-    print ""
+    print("")
+    print("###########################################")
+    print("# Band dispersion")
+    print("###########################################")
+    print("")
 
-    print "#Band.dispersion              on        # on|off, default=off"
-    print "#<Band.KPath.UnitCell"
-    print "#3.56  0.00  0.00"
-    print "#0.00  3.56  0.00"
-    print "#0.00  0.00  3.56"
-    print "#Band.KPath.UnitCell>"
-    print "## if <Band.KPath.UnitCell does not exist,"
-    print "##     the reciprical lattice vector is employed. "
-    print "#Band.Nkpath                5"
-    print "#<Band.kpath"
-    print "#   25  0.0 0.0 0.0   1.0 0.0 0.0   g X"
-    print "#   25  1.0 0.0 0.0   1.0 0.5 0.0   X W"
-    print "#   25  1.0 0.5 0.0   0.5 0.5 0.5   W L"
-    print "#   25  0.5 0.5 0.5   0.0 0.0 0.0   L g"
-    print "#   25  0.0 0.0 0.0   1.0 0.0 0.0   g X"
-    print "#Band.kpath>"
-
-    ################################################
-    print ""
-    print "###########################################"
-    print "# MO output"
-    print "###########################################"
-    print ""
-
-    print "#MO.fileout                       off   # on|off"
-    print "#num.HOMOs                         1    # default=2"
-    print "#num.LUMOs                         1    # default=2"
-    print "#MO.Nkpoint                        2    # default=1 "
-    print "#<MO.kpoint"
-    print "#  0.0  0.0  0.0"
-    print "#  0.0  0.0  0.2"
-    print "#MO.kpoint>"
+    print("#Band.dispersion              on        # on|off, default=off")
+    print("#<Band.KPath.UnitCell")
+    print("#3.56  0.00  0.00")
+    print("#0.00  3.56  0.00")
+    print("#0.00  0.00  3.56")
+    print("#Band.KPath.UnitCell>")
+    print("## if <Band.KPath.UnitCell does not exist,")
+    print("##     the reciprical lattice vector is employed. ")
+    print("#Band.Nkpath                5")
+    print("#<Band.kpath")
+    print("#   25  0.0 0.0 0.0   1.0 0.0 0.0   g X")
+    print("#   25  1.0 0.0 0.0   1.0 0.5 0.0   X W")
+    print("#   25  1.0 0.5 0.0   0.5 0.5 0.5   W L")
+    print("#   25  0.5 0.5 0.5   0.0 0.0 0.0   L g")
+    print("#   25  0.0 0.0 0.0   1.0 0.0 0.0   g X")
+    print("#Band.kpath>")
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# DOS and PDOS"
-    print "###########################################"
-    print ""
+    print("")
+    print("###########################################")
+    print("# MO output")
+    print("###########################################")
+    print("")
 
-    print "Dos.fileout                  on        # on|off, default=off"
-    print "Dos.Erange              -20.0  10.0    # default = -20 20 "
-    print "#Dos.Kgrid                12 12 12     # default = Kgrid1 Kgrid2 Kgrid3"
-    print ""
-    print "#DosGauss.fileout             on        # default=off, on|off"
-    print "#DosGauss.Num.Mesh           200        # default=200"
-    print "#DosGauss.Width              0.2        # default=0.2 (eV)"
-
+    print("#MO.fileout                       off   # on|off")
+    print("#num.HOMOs                         1    # default=2")
+    print("#num.LUMOs                         1    # default=2")
+    print("#MO.Nkpoint                        2    # default=1 ")
+    print("#<MO.kpoint")
+    print("#  0.0  0.0  0.0")
+    print("#  0.0  0.0  0.2")
+    print("#MO.kpoint>")
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# output Hamiltonian and overlap (for Developer)"
-    print "###########################################"
-    print ""
-    print "#HS.fileout               off    # on|off, default=off"
+    print("")
+    print("###########################################")
+    print("# DOS and PDOS")
+    print("###########################################")
+    print("")
+
+    print("Dos.fileout                  on        # on|off, default=off")
+    print("Dos.Erange              -20.0  10.0    # default = -20 20 ")
+    print("#Dos.Kgrid                12 12 12     # default = Kgrid1 Kgrid2 Kgrid3")
+    print("")
+    print("#DosGauss.fileout             on        # default=off, on|off")
+    print("#DosGauss.Num.Mesh           200        # default=200")
+    print("#DosGauss.Width              0.2        # default=0.2 (eV)")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# Electric Field"
-    print "###########################################"
-    print ""
-    print "#scf.Electric.Field"
+    print("")
+    print("###########################################")
+    print("# output Hamiltonian and overlap (for Developer)")
+    print("###########################################")
+    print("")
+    print("#HS.fileout               off    # on|off, default=off")
 
 
     ################################################
-    print ""
-    print "###########################################"
-    print "# Charge Dorping"
-    print "###########################################"
-    print ""
-    print "#scf.system.charge         1.0   # default=0.0"
+    print("")
+    print("###########################################")
+    print("# Electric Field")
+    print("###########################################")
+    print("")
+    print("#scf.Electric.Field")
 
 
     ################################################
-    print "###########################################"
-    print "# ESM (Effective Screening Medium)"
-    print "###########################################"
-    print "#ESM.switch                   on3      # off, on1=v|v|v, on2=m|v|m, on3=v|v|m, on4=on2+EF"
-    print "#ESM.potential.difference     0.0      # default=0.0 (eV)"
-    print ""
-    print "#ESM.wall.switch              off"
-    print "#ESM.wall.position            6.0      # default=10.0 (ang)"
-    print "#ESM.wall.height            100.0      # default=100.0 (eV)"
-    print ""
-    print "#ESM.buffer.range             4.5      # default=10.0 (ang)"
-    print ""
+    print("")
+    print("###########################################")
+    print("# Charge Dorping")
+    print("###########################################")
+    print("")
+    print("#scf.system.charge         1.0   # default=0.0")
 
 
     ################################################
-    print "###########################################"
-    print "# Wannier Function"
-    print "###########################################"
-    print ""
+    print("###########################################")
+    print("# ESM (Effective Screening Medium)")
+    print("###########################################")
+    print("#ESM.switch                   on3      # off, on1=v|v|v, on2=m|v|m, on3=v|v|m, on4=on2+EF")
+    print("#ESM.potential.difference     0.0      # default=0.0 (eV)")
+    print("")
+    print("#ESM.wall.switch              off")
+    print("#ESM.wall.position            6.0      # default=10.0 (ang)")
+    print("#ESM.wall.height            100.0      # default=100.0 (eV)")
+    print("")
+    print("#ESM.buffer.range             4.5      # default=10.0 (ang)")
+    print("")
 
-    print "#Wannier.Func.Calc        on"
-    print "#Wannier.Func.Num          4"
-    print "#Wannier.Outer.Window.Bottom -14.0"
-    print "#Wannier.Outer.Window.Top     0.0"
-    print "#Wannier.Inner.Window.Bottom   0.0"
-    print "#Wannier.Inner.Window.Top       0.0"
-    print "#Wannier.Initial.Guess         on"
-    print "#Wannier.Initial.Projectors.Unit FRAC     # AU, ANG or FRAC "
 
-    print "##proj-sp3 0.25 0.25 0.25 0.0 0.0 -1.0  -1.0 0.0 0.0"
-    print "#"
-    print "#<Wannier.Initial.Projectors"
-    print "#proj-s 0.125 0.125 0.125 0.0 0.0 1.0  1.0 0.0 0.0"
-    print "#proj-s -0.375 0.125 0.125 0.0 0.0 1.0 1.0 0.0 0.0"
-    print "#proj-s 0.125 -0.375 0.125 0.0 0.0 1.0 1.0 0.0 0.0"
-    print "#proj-s 0.125 0.125 -0.375 0.0 0.0 1.0 1.0 0.0 0.0"
-    print "#Wannier.Initial.Projectors>"
-    print "#"
-    print "## Si1-s  1.275 1.275 1.275  0.0 0.0 1.0    1.0 0.0 0.0 "
-    print "## Si1-s  -1.275 -1.275 1.275 0.0 0.0 1.0    1.0 0.0 0.0 "
-    print "## Si1-s  -1.275 1.275 -1.275 0.0 0.0 1.0    1.0 0.0 0.0 "
-    print "## Si1-s  1.275 -1.275 -1.275 0.0 0.0 1.0    1.0 0.0 0.0 "
-    print "#Wannier.Kgrid   8 8 8"
-    print "#Wannier.MaxShells   12"
-    print "#"
-    print "#Wannier.Interpolated.Bands              on   # on|off, default=off "
-    print "#"
-    print "#Wannier.Function.Plot                   on   # on|off, default=off"
-    print "#Wannier.Function.Plot.SuperCells     1 1 1   # default=0 0 0"
-    print "#"
-    print "#Wannier.Dis.Mixing.Para     0.5"
-    print "#Wannier.Dis.Conv.Criterion    1e-12"
-    print "#Wannier.Dis.SCF.Max.Steps    200"
-    print "#"
-    print "#Wannier.Minimizing.Max.Steps    100"
-    print "#Wannier.Minimizing.Scheme     2"
-    print "#Wannier.Minimizing.StepLength  2.0"
-    print "#Wannier.Minimizing.Secant.Steps         5"
-    print "#Wannier.Minimizing.Secant.StepLength    2.0"
-    print "#Wannier.Minimizing.Conv.Criterion        1e-10"
-    print "#"
-    print "#"
-    print "#Wannier.Readin.Overlap.Matrix            off"
-    print ""
-    print ""
+    ################################################
+    print("###########################################")
+    print("# Wannier Function")
+    print("###########################################")
+    print("")
+
+    print("#Wannier.Func.Calc        on")
+    print("#Wannier.Func.Num          4")
+    print("#Wannier.Outer.Window.Bottom -14.0")
+    print("#Wannier.Outer.Window.Top     0.0")
+    print("#Wannier.Inner.Window.Bottom   0.0")
+    print("#Wannier.Inner.Window.Top       0.0")
+    print("#Wannier.Initial.Guess         on")
+    print("#Wannier.Initial.Projectors.Unit FRAC     # AU, ANG or FRAC ")
+
+    print("##proj-sp3 0.25 0.25 0.25 0.0 0.0 -1.0  -1.0 0.0 0.0")
+    print("#")
+    print("#<Wannier.Initial.Projectors")
+    print("#proj-s 0.125 0.125 0.125 0.0 0.0 1.0  1.0 0.0 0.0")
+    print("#proj-s -0.375 0.125 0.125 0.0 0.0 1.0 1.0 0.0 0.0")
+    print("#proj-s 0.125 -0.375 0.125 0.0 0.0 1.0 1.0 0.0 0.0")
+    print("#proj-s 0.125 0.125 -0.375 0.0 0.0 1.0 1.0 0.0 0.0")
+    print("#Wannier.Initial.Projectors>")
+    print("#")
+    print("## Si1-s  1.275 1.275 1.275  0.0 0.0 1.0    1.0 0.0 0.0 ")
+    print("## Si1-s  -1.275 -1.275 1.275 0.0 0.0 1.0    1.0 0.0 0.0 ")
+    print("## Si1-s  -1.275 1.275 -1.275 0.0 0.0 1.0    1.0 0.0 0.0 ")
+    print("## Si1-s  1.275 -1.275 -1.275 0.0 0.0 1.0    1.0 0.0 0.0 ")
+    print("#Wannier.Kgrid   8 8 8")
+    print("#Wannier.MaxShells   12")
+    print("#")
+    print("#Wannier.Interpolated.Bands              on   # on|off, default=off ")
+    print("#")
+    print("#Wannier.Function.Plot                   on   # on|off, default=off")
+    print("#Wannier.Function.Plot.SuperCells     1 1 1   # default=0 0 0")
+    print("#")
+    print("#Wannier.Dis.Mixing.Para     0.5")
+    print("#Wannier.Dis.Conv.Criterion    1e-12")
+    print("#Wannier.Dis.SCF.Max.Steps    200")
+    print("#")
+    print("#Wannier.Minimizing.Max.Steps    100")
+    print("#Wannier.Minimizing.Scheme     2")
+    print("#Wannier.Minimizing.StepLength  2.0")
+    print("#Wannier.Minimizing.Secant.Steps         5")
+    print("#Wannier.Minimizing.Secant.StepLength    2.0")
+    print("#Wannier.Minimizing.Conv.Criterion        1e-10")
+    print("#")
+    print("#")
+    print("#Wannier.Readin.Overlap.Matrix            off")
+    print("")
+    print("")
 
     if not STD:
         datfile.close()
@@ -787,11 +798,11 @@ if __name__ == '__main__':
         FRAC=FRAC)
 
     if direct and not FRAC:
-        print "CARTESIAN MODE"
+        print("CARTESIAN MODE")
     else:
-        print "FRAC(Direct) MODE"
-    print "INPUT  "+poscarname
-    print "OUTPUT "+datname+".dat"
-    print "NORMAL END"
+        print("FRAC(Direct) MODE")
+    print("INPUT  %s" % str(poscarname))
+    print("OUTPUT %s.dat" % str(datname))
+    print("NORMAL END")
 
 

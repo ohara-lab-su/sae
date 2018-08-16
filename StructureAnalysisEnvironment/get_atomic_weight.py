@@ -8,6 +8,8 @@
 # atomic_weight.list ファイルが必要
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -18,6 +20,10 @@ __license__    = "MIT"
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#  なにげにpython2依存が酷かった(重複呼び出しを削除)
 #
 # 2015.02.21 (sun)
 #   startup
@@ -37,7 +43,8 @@ import StructureAnalysisEnvironment as SAE
 def get_atomic_weight0(num):
 
     name='atomic_weight.list'
-    libpath = re.sub('__init__.pyc','',SAE.__file__)
+   #libpath = re.sub('__init__.pyc','',SAE.__file__) # for Python2
+    libpath = re.sub('__init__.py','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
         if not os.path.exists(name):
@@ -65,7 +72,8 @@ def get_atomic_weight0(num):
 def get_atomic_weight1(atom):
 
     name='atomic_weight.list'
-    libpath = re.sub('__init__.pyc','',SAE.__file__)
+   #libpath = re.sub('__init__.pyc','',SAE.__file__)
+    libpath = re.sub('__init__.py','',SAE.__file__)
     if os.path.exists(libpath):
         name=libpath+name
         if not os.path.exists(name):
@@ -88,38 +96,42 @@ def get_atomic_weight1(atom):
 
     return weight
 
-
+#############################
+#
+# get_atomic_radious 中のルーチンとオーバーラップするので削除する方が良い
+#
 #### 元素記号から原子番号を返す
-def get_atomic_number1(atom):
-
-    name='atomic_radius.list'
-    libpath = re.sub('__init__.pyc','',SAE.__file__)
-    if os.path.exists(libpath):
-        name=libpath+name
-        if not os.path.exists(name):
-            name0='atomic_radius.list.py'
-            name=libpath+name0
-    else:
-        for libpath in os.getenv('PYTHONPATH').split(':'):
-            name=libpath+'/'+name
-            if os.path.exists(name):
-                break
-
-    nlist = SAE.read_list_param(name)
-
-    radius_list = np.zeros((nlist,3),dtype='S4')
-    nlist = SAE.read_list3(name,radius_list)
-
-    for i in range(nlist):
-        if atom == radius_list[i,1]:
-            num=float(radius_list[i,0])
-
-    return num
+## def get_atomic_number1(atom):
+##
+##     name='atomic_radius.list'
+##    #libpath = re.sub('__init__.pyc','',SAE.__file__)
+##     libpath = re.sub('__init__.py','',SAE.__file__)
+##     if os.path.exists(libpath):
+##         name=libpath+name
+##         if not os.path.exists(name):
+##             name0='atomic_radius.list.py'
+##             name=libpath+name0
+##     else:
+##         for libpath in os.getenv('PYTHONPATH').split(':'):
+##             name=libpath+'/'+name
+##             if os.path.exists(name):
+##                 break
+##
+##     nlist = SAE.read_list_param(name)
+##
+##     radius_list = np.zeros((nlist,3),dtype='S4')
+##     nlist = SAE.read_list3(name,radius_list)
+##
+##    for i in range(nlist):
+##        if atom == radius_list[i,1]:
+##            num=float(radius_list[i,0])
+##
+##    return num
 
 
 ################################################################################
 
 if __name__ == '__main__':
 
-    print get_atomic_weight1('Cu')
+    print("%s" % str(get_atomic_weight1('Cu')))
 

@@ -9,6 +9,9 @@
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.06.30
 #   == Noneo --> is None
 #
@@ -18,6 +21,8 @@
 # 2015.03.30
 #  startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -154,8 +159,9 @@ if __name__ == '__main__':
     name = options()
 
     spec = ReadAthenaNor(name)
-    print spec.get_e0()
+    print("%s" % str(spec.get_e0()))
 #   plot_athena_nor(spec.eng,spec.nor)
 
 #   for i in range(ndata):
 #       print eng[i],nor[i]
+

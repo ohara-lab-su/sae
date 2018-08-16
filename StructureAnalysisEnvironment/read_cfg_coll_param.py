@@ -1,27 +1,28 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# *_coll.cfg (RMC_POT) $BFI$_9~$_(B, ION-LOOP $BKh$N86;R0LCV(B(&$BNO(B)$BFI$_9~$_@lMQ$N;vA0=`Hw(B
+# *_coll.cfg (RMC_POT) 読み込み, ION-LOOP 毎の原子位置(&力)読み込み専用の事前準備
 #
-#  LOOP $B2s?t$r;;=P(B
+#  LOOP 回数を算出
 #
-# [in]     canme  : OUTCAR$B$NL>A0(B
+# [in]     canme  : OUTCARの名前
 #
-# [return] nloop  : LOOP$B?t(B
-# [return] natom  : $BAm86;R?t(B
-# [return] nion   : $B86;R$N<oN`(B
+# [return] nloop  : LOOP数
+# [return] natom  : 総原子数
+# [return] nion   : 原子の種類
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
-__maintainer__ = "Kengo NAKADA"                                                           
-__credits__    = ["Kengo NAKADA"]                                                         
-__email__      = "kengo.nakada@gmail.com"                                                 
-__copyright__  = "Copyright 2014, Kengo NAKADA"                                           
-__license__    = "MIT"                                                                    
-#                                                                                         
-__status__     = "alpha"                                                                  
-__version__    = "0.0.1"                                                                  
+__author__     = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__    = ["Kengo NAKADA"]
+__email__      = "kengo.nakada@gmail.com"
+__copyright__  = "Copyright 2014, Kengo NAKADA"
+__license__    = "MIT"
+#
+__status__     = "alpha"
+__version__    = "0.0.1"
 ################################################################################
 
 import sys
@@ -45,40 +46,40 @@ def read_cfg_coll_param(cname):
 
     num = len(datlines) -1
 
-    # $BFI$_9~$_%9%?!<%H9T(B
+    # 読み込みスタート行
     lines=0
 
-    # $BA486;R?t(B
+    # 全原子数
     t = datlines[lines+7].split()
     natom = int(t[0])
 
-    # $B86;R$N<oN`$N?t(B
+    # 原子の種類の数
     t = datlines[lines+8].split()
     nion = int(t[0])
 
-    # $B%X%C%@!<ItJ,(B($B8GDj9T(B)$B$N$^$H$a$F%9%-%C%W(B
+    # ヘッダー部分(固定行)のまとめてスキップ
     lines = lines+18
 
-    # $B86;R<o$4$H$NFI$_9~$_9T(B
+    # 原子種ごとの読み込み行
     lines = lines + (nion*4)
 
-    # $BFbIt:BI8(B($B%k!<%W$4$H$N86;R?t(B)
+    # 内部座標(ループごとの原子数)
     lines = lines + (natom)
 
-    # $B%U%!%$%k$N:G8e$N6uGr9T(B     
+    # ファイルの最後の空白行
     lines = lines + 1
 
-    max_lines = lines            # $B0l$D$N%k!<%WKh$N(B*.cfg$B9T?t(B
-    nloop      =  num/max_lines  # $B%k!<%W?t(B
+    max_lines = lines            # 一つのループ毎の*.cfg行数
+    nloop      =  num/max_lines  # ループ数
 
 #   print "MAX_LINES      : ", num
 #   print "MAX_LINES/LOOP : ", max_lines
 #   print "NUM. OF LOOP   : ", nloop
 
-#   $B<!$N%k!<%W$N@hF,(B
+#   次のループの先頭
 #   print datlines[lines]
 
     return nloop,natom,nion,
 
 ################################################################################
-     
+

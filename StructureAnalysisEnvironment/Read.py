@@ -9,9 +9,14 @@
 ###############################################################################
 # History
 #
+# 2018.08.15
+#  python2/3 共通化テスト
+#
 # 2015.08.18
 #  startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -44,6 +49,12 @@ class Read(object):
                  code='VASP', sort=False, atoms_index=None):
 
         module_name = 'StructureAnalysisEnvironment'
+
+        # for Default
+        class_name = 'ReadVaspPoscar'
+        suffix = '.vasp'
+        if filename is None:
+            filename = 'POSCAR'
 
         if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
@@ -86,10 +97,20 @@ class Read(object):
             if filename is None:
                 filename = 'sets.in'
 
-        module = __import__(module_name, globals(), locals(), [class_name], -1)
-        klass = getattr(module, class_name)
+        # for debug
+        print("class name = %s" % str(class_name))
 
+        # class の動的ロード
+        try:
+            # このリフレクションは python2 方式なので注意
+            module = __import__(module_name, globals(), locals(), [class_name], -1)
+        except:
+            # for Python3
+            module = __import__(module_name, fromlist=[class_name])
+        klass = getattr(module, class_name)
         self.cell = klass(filename, suffix=suffix, atoms_index=atoms_index)
+
+       #self.cell = SAEnv.ReadVaspPoscar(suffix=suffix, atoms_index=atoms_index)
 
         # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title
@@ -244,38 +265,46 @@ if __name__ == '__main__':
 
 #   ###########################################################################
     out = sys.stdout
-    print >> out, title
-    print >> out, " ", scale
-    print >> out, "  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0])
-    print >> out, "  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1])
-    print >> out, "  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2])
+
+    print(title)
+    print(" %s" % scale)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0]))
+    print("  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1]))
+    print("  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2]))
 
     if vasp >= 5:
-        print >> out, " ",
-        for i in range(nion):
-            print >> out, atoms_index[i],
-        print >> out, " "
+        try:
+            print(" ", file=out, end="")
+            for i in range(nion):
+                print("%s" % str(atoms_index[i]), file=out, end="")
+        except:
+            print(" ", file=out, end="")
+            for i in range(nion):
+                print("%s" % str(atoms_index[i]), file=out, end="")
+            print(" ", file=out)
+        print(" ") # for VASP5
 
-    print >> out, " ",
+    print(" ", file=out, end="")
     for i in range(nion):
-        print >> out, atoms[i],
-    print >> out, " "
+        print("%s" % str(atoms[i]), file=out, end="")
+    print(" ", file=out)
 
     if selective:
-        print >> out, "Selective Dynamics"
+        print("Selective Dynamics", file=out)
     if direct:
-        print >> out, "Direct"
+        print("Direct", file=out)
     else:
-        print >> out, "Cartesian"
+        print("Cartesian", file=out)
 
     for j in range(natom):
-        print >> out, " %13.9f %13.9f %13.9f" \
-            % (position[j, 0], position[j, 1], position[j, 2]),
+        print(" %13.9f %13.9f %13.9f"
+            % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
         if selective:
-            print >> out, "",
-            print >> out, fix[j, 0], fix[i, 1], fix[i, 2],
-        print >> out, ""
+            print("", file=out, end="")
+            print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
+        print("", file=out)
     ###########################################################################
 
 #   print ion
 #   print ion_local
+

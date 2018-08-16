@@ -5,6 +5,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.04.06
 #  Wplot_XAS.py から分離(nonmag) 版を元に up と dn を足した出力を plot する
 #  バージョン。 #  設計上、汎用性が乏しいので、一発使い捨て版
@@ -15,6 +18,8 @@
 #
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -43,11 +48,11 @@ def plot_sum_xas(case='case',dos_suffix='.dos1ev',outname='XAS',\
 #   case,OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
     if OPT_EMAX:
-                print "Emax=",OPT_EMAX
+                print("Emax= %s" % str(OPT_EMAX))
     if OPT_EMIN:
-                print "Emin=",OPT_EMIN
+                print("Emin= %s" % str(OPT_EMIN))
     if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
+                print("Ymax= %s" % str(OPT_YMAX))
 
     ############################################
     # txspec instance ( unbroad XAS )
@@ -78,8 +83,8 @@ def plot_sum_xas(case='case',dos_suffix='.dos1ev',outname='XAS',\
     name_up = [ case+dos_suffix+'up' ]
     name_dn = [ case+dos_suffix+'dn' ]
 
-    print 'DOS(up) = ',name_up[0]
-    print 'DOS(dn) = ',name_dn[0]
+    print('DOS(up) = %s' % str(name_up[0]))
+    print('DOS(dn) = %s' % str(name_dn[0]))
 
     dos_up = SAE.ReadWienDos(name_up)
     dos_dn = SAE.ReadWienDos(name_dn)
@@ -95,7 +100,7 @@ def plot_sum_xas(case='case',dos_suffix='.dos1ev',outname='XAS',\
         mode = 'K'
     elif norbital == 3:
         mode = 'L'
-    print "MODE =",mode
+    print("MODE = %s" % str(mode))
 
     dos_total_up = np.array(dos_up.get_raw_dos(atom=0,orbit='total-DOS'))
     dos_total_dn = np.array(dos_dn.get_raw_dos(atom=0,orbit='total-DOS'))
@@ -122,9 +127,9 @@ def plot_sum_xas(case='case',dos_suffix='.dos1ev',outname='XAS',\
         sys.exit("STOP: "+case+".xspecsum file can'ntopen ")
 
     for xh in xas_head:
-        print >> out_xspecsum, xh
+        print("%s" % str(xh), file=out_xspecsum)
     for i in range(len(xas)):
-        print >> out_xspecsum, " %9.5f %13.5e" % (eng_xas[i], xas[i])
+        print(" %9.5f %13.5e" % (eng_xas[i], xas[i]), file=out_xspecsum)
     out_xspecsum.close()
 
     ############################################################################
@@ -136,15 +141,15 @@ def plot_sum_xas(case='case',dos_suffix='.dos1ev',outname='XAS',\
         sys.exit("STOP: "+case+".dos1evsum file can'ntopen ")
 
     for dos_h in dos_head[0]:
-        print >> out_dos1ev, dos_h
+        print("%s" % str(dos_h), file=out_dos1ev)
     if mode == 'K':
         for i in range(len(dos_total)):
-            print >> out_dos1ev, " %9.5f %14.8f %14.8f" \
-                    % (eng[i],dos_p[i],dos_total[i])
+            print(" %9.5f %14.8f %14.8f"
+                    % (eng[i], dos_p[i], dos_total[i]), file=out_dos1ev)
     else:
         for i in range(len(dos_total)):
-            print >> out_dos1ev, " %9.5f %14.8f %14.8f %14.8f" \
-                    % (eng[i], dos_s[i], dos_d[i], dos_total[i])
+            print(" %9.5f %14.8f %14.8f %14.8f"
+                    % (eng[i], dos_s[i], dos_d[i], dos_total[i]), file=out_dos1ev)
     out_dos1ev.close()
 
 

@@ -9,9 +9,14 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.06.05 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -90,10 +95,10 @@ if __name__ == '__main__':
 #   print out.orbit_index
 #   print ""
     for i in range(out.nion):
-        print out.atoms_index[i]+":",
+        print("%s:" % str(out.atoms_index[i]), end="")
         for j in range(out.orbit[i]):
-            print out.orbit_index[i][j],
-        print ""
+            print("%s" % str(out.orbit_index[i][j]), end="")
+        print("")
 
 
 ################################################################################

@@ -4,22 +4,27 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #
 # FDMNES
-# *_conv.txt $B%U%!%$%k(B( pw.x $BF~NO%U%!%$%k(B $BFI$_9~$_(B)
+# *_conv.txt ファイル( pw.x 入力ファイル 読み込み)
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.07.22
-#  $BF~NO%U%!%$%kL>$K(Bsuffix$B$rIU$1$F$b!"$D$1$J$/$F$b(B($BJL%*%W%7%g%s$G(Bsuffix$B;XDj(B)
-#  $B$I$A$i$G$bF0:n$9$k$h$&$KJQ99!#(B
+#  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
+#  どちらでも動作するように変更。
 #
 # 2015.07.01
-#  $BJ?6Q2=%k!<%A%s$G=E$_(B($BJ?6Q$9$k:]$K3d$k?t(B)$B$r0z?t$KDI2C(B
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
 #
 # 2015.06.30
 #   == Noneo --> is None
 #
 # 2015.05.21 startup
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -73,13 +78,13 @@ class ReadFdmConv(object):
         return self.xas
 
     ###########################################################################
-    # allsite $B$N$H$-$NJ#?t$N(B *_conv.txt $B$NJ?6Q$r<h$k(B
-    # filout = Pd $B$N$H$-(B allsite $B$J$i$P$H$7$F7k2L$r=PNO$7$?$H$9$k(B
+    # allsite のときの複数の *_conv.txt の平均を取る
+    # filout = Pd のとき allsite ならばとして結果を出力したとする
     # Pd_1_conv.txt
     # Pd_2_conv.txt
     # Pd_3_conv.txt
-    # $B$3$N$H$-!"(Baverage_conv(1,2,3) $B$H$9$k$H(B Pd_1,Pd_2,Pd_3 $B$N(B self.xas $B$N(B
-    # $BJ?6Q$r(B self.xas $B$KJV$9(B
+    # このとき、average_conv(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
+    # 平均を self.xas に返す
     #
     # non-spin
 #   def average_conv(self,name,*allsite):
@@ -87,14 +92,14 @@ class ReadFdmConv(object):
         if weight is None:
             n_site = float(len(absorber))
         else:
-            print "weight : ", weight
+            print("weight : %s" % str(weight))
             n_site = float(weight)
         s_xas = np.zeros(self.num - 1)
        # print absorber
         for site in absorber:
             convname = name + "_" + str(site) + self.suffix
             datlines, num = SAEnv.read_dataline(convname)
-            print "sum : ", convname
+            print("sum : %s" % str(convname))
             for i in range(1, self.num):
                 s_xas[i - 1] = float(datlines[i].split()[1]) + s_xas[i - 1]
         self.xas = s_xas / n_site
@@ -107,9 +112,9 @@ def plot_fdm_xas(eng, xas):
     import matplotlib.pyplot as plt
 
     plt.rcParams['font.family'] = 'Times New Roman'
-    plt.rcParams['font.size'] = 16  # $B%i%Y%kEy$N%U%)%s%H%5%$%:(B
-    plt.rcParams['legend.fontsize'] = 14  # $B%l%8%'%s%I$N%U%)%s%H%5%$%:(B
-    # $B<4$NB@$5$r@_Dj!#L\@9$j$OJQ$o$i$J$$(B
+    plt.rcParams['font.size'] = 16  # ラベル等のフォントサイズ
+    plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams['axes.linewidth'] = 1.5
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait

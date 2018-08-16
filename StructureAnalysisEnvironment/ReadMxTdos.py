@@ -31,6 +31,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.02.27
 #   !!!!!!! OpenMX の down-spin の TDOS 値は負の符号が付いている !!!!!!
 #   気が付かなくてかなりハマった
@@ -56,6 +59,8 @@
 #    主に ReadMxDat, ReadMxDatMethod の整備
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -188,7 +193,7 @@ if __name__ == '__main__':
     if options.INPUT: name=options.INPUT
     if len(args) > 0: name=args[0]
 
-    print name
+    print("%s" % str(name))
     dos = ReadMxTdos(name,suffix_tdos)
 
     NSPIN = dos.get_ispin()
@@ -198,7 +203,7 @@ if __name__ == '__main__':
     NEDOS = dos.get_nedos()
     EMAX = dos.get_emax()
     EMIN = dos.get_emin()
-    print EMIN,EMAX
+    print("%s %s" % (str(EMIN), str(EMAX)))
 
     for spin in range(NSPIN):
         TDOS = dos.get_tdos(spin)

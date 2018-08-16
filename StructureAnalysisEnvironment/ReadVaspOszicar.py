@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.02.24
 #  get_iter_num() --> get_n_ion_loop() 変更
 #
@@ -21,6 +24,8 @@
 #   IBRION ゲット method 追加
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -138,7 +143,7 @@ if __name__ == '__main__':
 
     n_ion_loop = oszicar.get_n_ion_loop()
     md_mode = oszicar.get_md_mode()
-    print "MD_mode", md_mode
+    print("MD_mode %s" % str(md_mode))
 
     if md_mode:
         temperature = oszicar.get_temperature()
@@ -146,5 +151,5 @@ if __name__ == '__main__':
         etotal = oszicar.get_etotal()
 
         for i in range(n_ion_loop):
-            print i+1, temperature[i], etotal[i]
+            print("%d %s %s" % (i+1, str(temperature[i]), str(etotal[i])))
 

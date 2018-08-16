@@ -9,9 +9,14 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.02.27
 #   conv_direct2car --> conv_direct2car0
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -87,7 +92,7 @@ if __name__ == '__main__':
     # ZB は超えない
     bondnum  = SAE.get_bond_info_param(atom1,atom2,distance,nion,atoms,position)
     if bondnum != 0:
-        print bondnum
+        print(bondnum)
 
     bondr = np.zeros((bondnum))
     bond1 = np.zeros((bondnum),dtype=int)
@@ -113,9 +118,14 @@ if __name__ == '__main__':
 
         r1 = bondr[num]
 
-        print num, bond1[num],"("+str(atoms_index[ion[bond1[num]]])+") -",\
-                   bond2[num],"("+str(atoms_index[ion[bond2[num]]])+")"  ,\
-                   " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
-                   % ( r1, x1,y1,z1, x2,y2,z2)
+       #print num, bond1[num],"("+str(atoms_index[ion[bond1[num]]])+") -",\
+       #           bond2[num],"("+str(atoms_index[ion[bond2[num]]])+")"  ,\
+       #           " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
+       #           % ( r1, x1,y1,z1, x2,y2,z2)
+
+        print("%d %d (%s) - %s (%s)   %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f"
+              % ( num, bond1[num], str(atoms_index[ion[bond1[num]]]),
+                       bond2[num], str(atoms_index[ion[bond2[num]]]),
+                       r1,  x1,y1,z1, x2,y2,z2))
 
 

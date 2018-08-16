@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.06.15
 #  追加実装
 #  get_atoms()
@@ -24,6 +27,8 @@
 #  まったりと作業
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -463,20 +468,20 @@ if __name__ == '__main__':
     atoms_index = vasprun.get_atoms_index()
     atoms_index_j = vasprun.get_atoms_index_j()
 
-    print 'NATOM   =',natom
-    print 'NION    =',nion
-    print 'LOOP    =',vasprun.get_n_ion_loop()
+    print('NATOM   =%s' % str(natom))
+    print('NION    =%s' % str(nion))
+    print('LOOP    =%s' % str(vasprun.get_n_ion_loop()))
 
-    print ""
-    print "atoms_index"
-    print "   ",
+    print("")
+    print("atoms_index")
+    print("   ", end="")
     for ion in range(nion):
-        print atoms_index[ion],
-    print ""
-    print "atoms"
-    print "   ",
+        print("%s" % str(atoms_index[ion]), end="")
+    print("")
+    print("atoms")
+    print("   ", end="")
     for ion in range(nion):
-        print atoms[ion],
+        print("%s" % str(atoms[ion]), end="")
 
 #   print ""
 #   print "atom_j"

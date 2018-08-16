@@ -9,6 +9,8 @@
 #              matplotlib の(numpyの) loadtxt() を用いて極限まで簡素化したバージョン
 #
 ################################################################################
+from __future__ import print_function
+################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]

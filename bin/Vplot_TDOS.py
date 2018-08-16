@@ -20,6 +20,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.10.28
 #   f軌道対応 & キャプション移動オプション
 #
@@ -43,6 +46,8 @@
 #      全原子のs成分,p成分,d成分をsumしたものを TDOS と一緒にプロット
 #      非スピン版
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -132,16 +137,16 @@ if __name__ == '__main__':
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
-        print "Emax=",OPT_EMAX
+        print("Emax= %s" % str(OPT_EMAX))
     if OPT_EMIN:
         OPT_EMIN=float(OPT_EMIN)
-        print "Emin=",OPT_EMIN
+        print("Emin= %s" % str(OPT_EMIN))
     if OPT_YMAX:
         OPT_YMAX=float(OPT_YMAX)
-        print "Ymax=",OPT_YMAX
+        print("Ymax= %s" % str(OPT_YMAX))
 
     if FLAG_INTTDOS:
-        print "INTTDOS mode"
+        print("INTTDOS mode")
 
     # makes instance ( Read DOSCAR )
     dos = SAEnv.ReadVaspDoscar(dname)
@@ -166,10 +171,10 @@ if __name__ == '__main__':
     ENG = dos.eng
 
     if FLAG_VBM:
-        print "EF SHIFT"
+        print("EF SHIFT")
         EFERMI0 = dos.efermi
         EFERMI = dos.get_vbm()
-        print EFERMI0, EFERMI
+        print(EFERMI0, EFERMI)
 
     if OPT_SHIFT:
         EFERMI = float(OPT_SHIFT)

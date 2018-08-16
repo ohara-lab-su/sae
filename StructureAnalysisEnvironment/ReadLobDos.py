@@ -28,6 +28,8 @@
 #   TDOS パートのみ対応
 #
 ##########################################################################
+from __future__ import print_function
+###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]

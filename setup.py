@@ -5,18 +5,21 @@
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
+#__email__      = "kengo.nakada@gmail.com"
+__email__      = "kengo.nakada@spring8.or.jp"
+__copyright__  = "Copyright 2014-2018 Kengo NAKADA"
+#__license__    = "MIT"
+__license__    = "Apache2"
 #
 __status__     = "alpha"
-__version__    = "0.0.1"
+#__version__    = "0.0.1"
 
 
 from setuptools import setup, find_packages
 import glob
 
-version = __version__
+#version = __version__
+from StructureAnalysisEnvironment.version import __version__
 
 script =  glob.glob("bin/*.py")
 
@@ -38,7 +41,8 @@ setup(
         long_description = long_description,
         author = 'K.NAKADA',
 #       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
-        author_email = 'kengo.nakada@gmail.com',
+#       author_email = 'kengo.nakada@gmail.com',
+        author_email = 'kengo.nakada@spring8.or.jp',
         license = 'MIT',
         install_requires = ['numpy','matplotlib'],
 #       platforms = ['linux','OSX','Window'],

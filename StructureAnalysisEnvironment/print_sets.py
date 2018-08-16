@@ -6,6 +6,8 @@
 # sets.in (HiLPAW) 書き出しルーチンの基本
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -16,6 +18,9 @@ __license__    = "MIT"
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
 #
 # 2015.02.16
 #  無駄な import をコメントアウト
@@ -30,7 +35,7 @@ import os
 #from numpy import *
 
 
-def print_sets(cname,STD,\
+def print_sets(cname,STD,
                title,nspin,spg_name,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kinfo,kpoints):
 
     if STD:
@@ -45,27 +50,27 @@ def print_sets(cname,STD,\
                 out.close()
                 sys.exit("STOP(print_sets.py): "+cname+" does'nt open")
 
-    print >> out, title
-    print >> out, "-----nspin"
-    print >> out, nspin
-    print >> out, "-----space group"
-    print >> out, spg_name
-    print >> out, "  %8.4f %8.4f %8.4f" %(lattices[0],lattices[1],lattices[2])
-    print >> out, "  %8.4f %8.4f %8.4f" %(lattices[3],lattices[4],lattices[5])
-    print >> out, "-----atoms"
-    print >> out, " ",nion
+    print(title, file=out)
+    print("-----nspin", file=out)
+    print("%s" % str(nspin), file=out)
+    print("-----space group", file=out)
+    print("%s" % str(spg_name), file=out)
+    print("  %8.4f %8.4f %8.4f" %(lattices[0],lattices[1],lattices[2]), file=out)
+    print("  %8.4f %8.4f %8.4f" %(lattices[3],lattices[4],lattices[5]), file=out)
+    print("-----atoms", file=out)
+    print(" %s" % str(nion), file=out)
 
     index = 0
     for i in range(nion):
-        print >> out, sg_atoms_index[i], sg_atoms[i]
+        print("%s %s" % (str(sg_atoms_index[i]), str(sg_atoms[i])), file=out)
         for j in range(sg_atoms[i]):
-            print >> out, " %13.9f %13.9f %13.9f" \
-                           %(sg_position[index,0], sg_position[index,1], sg_position[index,2])
+            print(" %13.9f %13.9f %13.9f"
+                           %(sg_position[index,0], sg_position[index,1], sg_position[index,2]), file=out)
             index += 1
 
-    print "-----k points"
-    print kinfo
-    print kpoints[0],kpoints[1],kpoints[2]
+    print("-----k points")
+    print("%s" % str(kinfo))
+    print("%s %s %s" % (str(kpoints[0]), str(kpoints[1]), str(kpoints[2])))
 
     out.close()
 

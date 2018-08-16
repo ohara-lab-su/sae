@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.06.18
 #  タグが存在しないときは VASP デフォルトを返す
 #  注意) NBANDS は INCAR だけからではデフォルト値は出せないので None を返す
@@ -14,6 +17,8 @@
 # 2015.06.18 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -103,7 +108,7 @@ class ReadVaspIncar(object):
             # ICHARG
             if bool(icharg_reg.match(self.datlines[i])):
                 self.icharg = int(re.sub('.*=','',self.datlines[i]).split()[0])
-                print 'self.icharg',self.icharg
+                print("self.icharg %s" % str(self.icharg))
 
             # SYSTEM
             if bool(title_reg.match(self.datlines[i])):
@@ -305,20 +310,20 @@ if __name__ == '__main__':
     ICHARG = incar.get_icharg()
 
 #   print "TITLE  :", TITLE
-    print "SYSTEM :", SYSTEM
-    print "NSW    :", NSW
-    print "IBRION :", IBRION
-    print "SIGMA  :", SIGMA
-    print "ISMEAR :", ISMEAR
-    print "EDIFF  :", EDIFF
-    print "EDIFFG :", EDIFFG
-    print "NBANDS :", NBANDS
-    print "ISPIN  :", ISPIN
-    print "NELM   :", NELM
-    print "NGXF   :", NGXF
-    print "NGYF   :", NGYF
-    print "NGZF   :", NGZF
+    print("SYSTEM :%s" % str(SYSTEM))
+    print("NSW    :%s" % str(NSW))
+    print("IBRION :%s" % str(IBRION))
+    print("SIGMA  :%s" % str(SIGMA))
+    print("ISMEAR :%s" % str(ISMEAR))
+    print("EDIFF  :%s" % str(EDIFF))
+    print("EDIFFG :%s" % str(EDIFFG))
+    print("NBANDS :%s" % str(NBANDS))
+    print("ISPIN  :%s" % str(ISPIN))
+    print("NELM   :%s" % str(NELM))
+    print("NGXF   :%s" % str(NGXF))
+    print("NGYF   :%s" % str(NGYF))
+    print("NGZF   :%s" % str(NGZF))
 
-    print ""
-    print "ISTART :", ISTART
-    print "ICHARG :", ICHARG
+    print("")
+    print("ISTART :%s" % str(ISTART))
+    print("ICHARG :%s" % str(ICHARG))

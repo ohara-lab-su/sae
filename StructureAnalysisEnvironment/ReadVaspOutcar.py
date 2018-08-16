@@ -26,6 +26,9 @@
 #
 ##########################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.09.03
 #  インスタンス変数を少し整理
 #
@@ -150,6 +153,8 @@
 #   startup, 圧縮ファイル対応版
 #
 ##########################################################################
+from __future__ import print_function
+###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -716,43 +721,43 @@ if __name__ == '__main__':
     n_ion_loop = outcar.n_ion_loop
     efermi = outcar.efermi
 
-    print "TITLE     = ", TITLE
-    print "LORBIT    = ", LORBIT
-    print "NSW       = ", NSW
-    print "NSPIN     = ", NSPIN
-    print "NION      = ", NION
-    print "NATOM     = ", NATOM
-    print "NKPTS     = ", NKPTS
-    print "NBANDS    = ", NBANDS
-    print "ISYM      = ", ISYM
-    print "Point SYM = ", point_sym
-    print "IBRION    = ", IBRION
-    print "Num.of IT = ", n_ion_loop
-    print "E-fermi   = ", efermi
-    print "NWRITE    = ", NWRITE
+    print("TITLE     = %s" % str(TITLE))
+    print("LORBIT    = %s" % str(LORBIT))
+    print("NSW       = %s" % str(NSW))
+    print("NSPIN     = %s" % str(NSPIN))
+    print("NION      = %s" % str(NION))
+    print("NATOM     = %s" % str(NATOM))
+    print("NKPTS     = %s" % str(NKPTS))
+    print("NBANDS    = %s" % str(NBANDS))
+    print("ISYM      = %s" % str(ISYM))
+    print("Point SYM = %s" % str(point_sym))
+    print("IBRION    = %s" % str(IBRION))
+    print("Num.of IT = %s" % str(n_ion_loop))
+    print("E-fermi   = %s" % str(efermi))
+    print("NWRITE    = %s" % str(NWRITE))
 
 
-    print ""
-    print "atoms_index"
-    print "   ",
+    print("")
+    print("atoms_index")
+    print("   ", end="")
     for ion in range(NION):
-        print outcar.atoms_index[ion],
-    print ""
-    print "atoms"
-    print "   ",
+        print("%s" % str(outcar.atoms_index[ion]), end="")
+    print("")
+    print("atoms")
+    print("   ", end="")
     for ion in range(NION):
-        print outcar.atoms[ion],
-    print ""
+        print("%s" % str(outcar.atoms[ion]), end="")
+    print("")
 
-    print "",
-    print "i,atoms_j"
+    print("", end="")
+    print("i,atoms_j")
     for i in range(NATOM):
-        print " ", i, outcar.atoms_j[i]
+        print(" %d %s" % (i, str(outcar.atoms_j[i])))
 
-    print "",
-    print "i,atoms_index_j"
+    print("", end="")
+    print("i,atoms_index_j")
     for i in range(NATOM):
-        print " ", i, outcar.atoms_index_j[i]
+        print(" %d %s" % (i, str(outcar.atoms_index_j[i])))
 
 #   temperature = outcar.get_temperature()
 #   for j in range(n_ion_loop):
@@ -773,9 +778,10 @@ if __name__ == '__main__':
 #   print kpoints_type
 #   print " reciprocal lattice vectors "
 
-    print ""
+    print("")
     rec_t = outcar.get_reciprocal_t_init()
-    print " %12.9f %12.9f %12.9f" % (rec_t[0, 0], rec_t[1, 0], rec_t[2, 0])
-    print " %12.9f %12.9f %12.9f" % (rec_t[0, 1], rec_t[1, 1], rec_t[2, 1])
-    print " %12.9f %12.9f %12.9f" % (rec_t[0, 2], rec_t[1, 2], rec_t[2, 2])
+    print(" %12.9f %12.9f %12.9f" % (rec_t[0, 0], rec_t[1, 0], rec_t[2, 0]))
+    print(" %12.9f %12.9f %12.9f" % (rec_t[0, 1], rec_t[1, 1], rec_t[2, 1]))
+    print(" %12.9f %12.9f %12.9f" % (rec_t[0, 2], rec_t[1, 2], rec_t[2, 2]))
+
 

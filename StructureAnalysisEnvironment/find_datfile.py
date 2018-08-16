@@ -13,6 +13,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.05.21
 #  find_datfile() の超シンプル版 find_datfile1() を追加
 #
@@ -42,6 +45,8 @@
 #    ファイル名(この場合 openmx ) を取得して返す関数
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -113,7 +118,7 @@ if __name__ == '__main__':
 
     try:
         datname = find_datfile(suffix)
-        print datname
+        print("%s" % str(datname))
     except:
         pass
 

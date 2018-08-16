@@ -21,6 +21,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.01.20
 #  gzip 対応
 #
@@ -45,7 +48,9 @@
 #   Vxmlread.py
 #
 ################################################################################
-__author__     = "Kengo NAKADA"                                                           
+from __future__ import print_function
+###############################################################################
+__author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"                                                           
 __credits__    = ["Kengo NAKADA"]                                                         
 __email__      = "kengo.nakada@gmail.com"                                                 
@@ -388,5 +393,5 @@ if __name__ == '__main__':
     # vasprun.xml parse
     energy_ALL = read_vasprun2(XMLFILE)
 
-    print energy_ALL[0]
+    print("%s" % str(energy_ALL[0]))
 

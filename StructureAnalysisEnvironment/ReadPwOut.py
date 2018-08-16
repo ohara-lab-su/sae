@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.05.13
 #  position_loop の配列構造を修正(ReadMd.py, ReadVapsrun.py 互換)
 #  force_loop の配列構造を修正
@@ -20,6 +23,8 @@
 # 2015.05.08 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -345,40 +350,40 @@ if __name__ == '__main__':
     name = options()
     out = ReadPwOut(name)
 
-    print "NAME",name
+    print("NAME %s" % str(name))
 
-    print "TITLE",out.get_title()
+    print("TITLE %s" % str(out.get_title()))
 
-    print "LATTICE PARAMETER %6.4f" % (out.get_scale())
+    print("LATTICE PARAMETER %6.4f" % (out.get_scale()))
 
-    print "NATOM",out.get_natom()
-    print "NION",out.get_nion()
-    print "NBANDS",out.get_nbands()
-    print "EFERMI",out.get_efermi()
-    print "NSW",out.get_nsw()
-    print "ION-LOOP",out.get_n_ion_loop()
+    print("NATOM    %s" % str(out.get_natom()))
+    print("NION     %s" % str(out.get_nion()))
+    print("NBANDS   %s" % str(out.get_nbands()))
+    print("EFERMI   %s" % str(out.get_efermi()))
+    print("NSW      %s" % str(out.get_nsw()))
+    print("ION-LOOP %s" % str(out.get_n_ion_loop()))
 
-    print ""
-    print out.get_atoms_index()
-    print out.get_atoms()
-    print ""
+    print("")
+    print(out.get_atoms_index())
+    print(out.get_atoms())
+    print("")
 
-    print ""
-    print out.get_atoms_j()
-    print out.get_atoms_index_j()
+    print("")
+    print(out.get_atoms_j())
+    print(out.get_atoms_index_j())
 
-    print ""
-    print "TRANSLATION VECTOR"
-    print out.get_t()
+    print("")
+    print("TRANSLATION VECTOR")
+    print(out.get_t())
 
-    print ""
-    print out.get_position()
+    print("")
+    print(out.get_position())
 
-    print ""
+    print("")
     position_loop = out.get_position_loop()
     for j in range(out.get_n_ion_loop()):
-        print ""
-        print position_loop[j,:,:]
+        print("")
+        print(position_loop[j,:,:])
 
 #   print "FORCE"
 #   force_loop = out.get_force_loop()

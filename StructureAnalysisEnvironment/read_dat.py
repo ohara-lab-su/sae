@@ -11,8 +11,13 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2014.11.19 1st
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -136,13 +141,13 @@ if __name__ == '__main__':
     fitdat = zeros((nlist,5))
     ndat = read_dat5(cname,fitdat,cut)
 
-    for i in range(cut,nlist):
-        print " %12.6e  %+18.12e  %+18.12e  %+18.12e  %+18.12e" \
+    for i in range(cut, nlist):
+        print(" %12.6e  %+18.12e  %+18.12e  %+18.12e  %+18.12e"
                 % ( fitdat[i,0],    # Q
                     fitdat[i,1],    # S(Q) RMC++
                     fitdat[i,2],    # renormalized experimental S(Q)
                     fitdat[i,3],    # original exp. S(Q)
-                    fitdat[i,4] )   # additive backgroupd
+                    fitdat[i,4] ))   # additive backgroupd
 
 
 

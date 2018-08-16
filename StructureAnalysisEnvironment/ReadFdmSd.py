@@ -8,6 +8,9 @@
 #
 ###############################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.09.11
 #   lmax 判定の新バージョン(2015.08.18)が
 #   spin に対して動作が不完全だったので修正
@@ -50,6 +53,8 @@
 # 2015.05.21
 #   startup (スピン未対応)
 #
+###############################################################################
+from __future__ import print_function
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -108,20 +113,20 @@ class ReadFdmSd(object):
         if absorber is None:
             #### absoer が None --> 読み込んだファイルが一つだけの時
 
-            print "---- ReadFdmSd ----"
-            print "sdname + suffix = ", sdname + suffix
-#           print "bavname_bav.txt = ",bavname+'_bav.txt'
-            print "inpname         = ", inpname
-            print "-------------------"
+            print("---- ReadFdmSd ----")
+            print("sdname + suffix = %s" % sdname + suffix)
+#           print("bavname_bav.txt = %s" % bavname+'_bav.txt')
+            print("inpname         = %s" % inpname)
+            print("-------------------")
             self.datlines, self.num = SAEnv.read_dataline(sdname + suffix)
             self.header =  self.datlines[0]
 
             # weight で各要素を割る
             if weight is not None:
 
-                print "--- ReadFdmSd ------"
-                print "--- weight mode ----"
-                print " weight =", weight
+                print("--- ReadFdmSd ------")
+                print("--- weight mode ----")
+                print(" weight = %s" % str(weight))
 
                 sdname0 = sdname + suffix
                 row, num = SAEnv.read_row(sdname0, column=1)
@@ -154,15 +159,15 @@ class ReadFdmSd(object):
         else:
             #### absoer not None --> 読み込んだファイルが複数の時
 
-            print "--- ReadFdmSd ------"
-            print "--- average mode ---"
+            print("--- ReadFdmSd ------")
+            print("--- average mode ---")
             sdname0 = bavname + '_' + str(absorber[0]) + suffix
             row, num = SAEnv.read_row(sdname0, column=1)
 
             if weight is None:
                 n_site = float(len(absorber))
             else:
-                print "    weight = " + str(weight)
+                print("    weight = %s" % str(weight))
                 n_site = float(weight)
 
             # アホな合計->平均->元の要素が結合したリスト形式への変換
@@ -173,7 +178,7 @@ class ReadFdmSd(object):
             for i in range(len(absorber)):
 
                 sdname = bavname + '_' + str(absorber[i]) + suffix
-                print "sum : ", sdname
+                print("sum : %s" % str(sdname))
                 datatmp, num0 = SAEnv.read_dataline(sdname)
 
                 if i == 0:
@@ -248,12 +253,13 @@ class ReadFdmSd(object):
         # _sd0.txt の一行目のチェック
         if absorber is None:
             if len(self.datlines[0].split()) != total_row:
-                print "lmax", self.lmax
-                print "ispin", self.ispin
-                print "mmax", self.mmax
-                print "total_row", total_row
-                print "-----------"
-                print len(self.datlines[0].split()), "= ", self.datlines[0]
+                print("lmax %s" % str(self.lmax))
+                print("ispin %s" % str(self.ispin))
+                print("mmax %s" % str(self.mmax))
+                print("total_row %s" % str(total_row))
+                print("-----------")
+               #print len(self.datlines[0].split()), "= ", self.datlines[0]
+                print("%s = %s" % (str(len(self.datlines[0].split())), str(self.datlines[0])))
                 sys.exit("STOP: unknown type " + sdname + suffix)
 
         # すべての row 成分の情報を配列に叩きこむ

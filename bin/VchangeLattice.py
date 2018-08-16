@@ -4,19 +4,24 @@
 # K.NAKADA, kengo.nakada@gmail.com
 #  using ASE
 #
-# POSCAR $B$rFI$_9~$s$G!"(Bconventional $B$J(B cell $B%Q%i%a!<%?!<$NG\?t$G(B
-# $B3J;R$rJQ7A(B($B?-$S=L$_(B)$B$5$;$k(B
-#  --> $B$=$N$H$-$N4pK\JB?J%Y%/%H%k$N8+@Q$b$j$K(B ASE $B$N%k!<%A%s$r$H$j$"$($:<ZMQ$9$k(B
-#      ($B;CDj(B:$BFM4S9);v(B, 2016.01.18)
+# POSCAR を読み込んで、conventional な cell パラメーターの倍数で
+# 格子を変形(伸び縮み)させる
+#  --> そのときの基本並進ベクトルの見積もりに ASE のルーチンをとりあえず借用する
+#      (暫定:突貫工事, 2016.01.18)
 #
-# $B4pK\JB?J%Y%/%H%k0J30$N(BVASP $B$N>pJs$O<+A0$N(B SAE $B%k!<%A%s$rMQ$$$k(B
-#  POSCAR $B$NFI$_9~$_$GFsEY<j4V$G$O$"$k!#$D$.$O$.%P!<%8%g%s(B
+# 基本並進ベクトル以外のVASP の情報は自前の SAE ルーチンを用いる
+#  POSCAR の読み込みで二度手間ではある。つぎはぎバージョン
 #
 ################################################################################
 #
-# 2016.01.18
-#   ASE and SAE $B$N$d$C$D$1$D$.$O$.%P!<%8%g%s(B
+# 2018.08.15
+#  Python2/3 両対応
 #
+# 2016.01.18
+#   ASE and SAE のやっつけつぎはぎバージョン
+#
+################################################################################
+from __future__ import print_function
 ################################################################################
 
 import sys
@@ -98,13 +103,13 @@ if __name__ == '__main__':
 
     POSCAR, OUTPUT, times  = options()
 
-    print "INPUT POSCAR file  = ", POSCAR
-    print "OUTPUT(base) POSCAR file = ", OUTPUT
+    print("INPUT POSCAR file  = %s" % str(POSCAR))
+    print("OUTPUT(base) POSCAR file = %s" % str(OUTPUT))
 
     # read POSCAR ( using ASE )
     atoms = read(POSCAR, format='vasp')
 
-    # cell parameter $B$rCj=P$9$k(B
+    # cell parameter を抽出する
     cell = atoms.cell
     metT = np.dot(cell, np.transpose(cell))
     cell2 = cellconst(metT)  # from ASE module
@@ -116,19 +121,19 @@ if __name__ == '__main__':
     beta = cell2[4]
     gamma = cell2[5]
 
-#   $B86;R?t(B
+#   原子数
 #   nat = len(atoms.get_positions())
 
-    print "-------- original ----------"
-    print cell
-    print ""
-    print a,b,c,alpha,beta
-    print "----------------------------"
+    print("-------- original ----------")
+    print(cell)
+    print("")
+    print(a,b,c,alpha,beta)
+    print("----------------------------")
 
-    # $B3J;RDj?t$NG\N((B
+    # 格子定数の倍率
 #   times = 1.0
 
-    # $BEyJ}E*$J$H$-$O$9$Y$F(B times
+    # 等方的なときはすべて times
     a_times = times
     b_times = times
     c_times = times
@@ -139,12 +144,12 @@ if __name__ == '__main__':
     ## NEW cell parameter
     cell2 = coorsys(latconst2)
 
-    print ""
-    print "------------- new ----------"
-    print cell2
-    print ""
-    print latconst2
-    print "----------------------------"
+    print("")
+    print("------------- new ----------")
+    print(cell2)
+    print("")
+    print(latconst2)
+    print("----------------------------")
 
 
     ############ read VASP-POSCAR using SAE

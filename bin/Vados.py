@@ -13,12 +13,17 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.01.14
 #   ReadDoscar , ReadOutcar に合わせて修正
 #
 # 2015.01.13 (sun) startup
 #
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -94,26 +99,26 @@ if __name__ == '__main__':
     ADOS_ALL = dos.get_ldos_ion_all()
 
     for spin in range(NSPIN):
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
-        print >> out, "##"
-        print >> out, "## INFILE= ",name
-        print >> out, "## ISPIN = ",NSPIN
-        print >> out, "##  SPIN = ",spin+1
-        print >> out, "## NATOM = ",NATOM
-        print >> out, "## EMAX  = ",EMAX
-        print >> out, "## EMIN  = ",EMIN
-        print >> out, "## NLINE = ",NEDOS
-        print >> out, "## FERMI = ",EFERMI
-        print >> out, "##"
-        print >> out, "##"
-        print >> out, "##        total"
-        print >> out, "##        eng tdos tidos"
-        print >> out, "##"
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
+        print("##", file=out)
+        print("## INFILE= %s" % str(name), file=out)
+        print("## ISPIN = %s" % str(NSPIN), file=out)
+        print("##  SPIN = %s" % str(spin+1), file=out)
+        print("## NATOM = %s" % str(NATOM), file=out)
+        print("## EMAX  = %s" % str(EMAX), file=out)
+        print("## EMIN  = %s" % str(EMIN), file=out)
+        print("## NLINE = %s" % str(NEDOS), file=out)
+        print("## FERMI = %s" % str(EFERMI), file=out)
+        print("##")
+        print("##")
+        print("##        total")
+        print("##        eng tdos tidos")
+        print("##")
+        print("")
+        print("")
+        print("")
 
         TDOS = dos.get_tdos(spin)
         INTTDOS = dos.get_inttdos(spin)
@@ -126,41 +131,41 @@ if __name__ == '__main__':
 #               ADOS_ALL[l,ion,spin] = dos.get_ldos_ion(l,ion,spin)
 
         for i in range(NEDOS):
-            print "%13.8f %13.8f %13.8f " %( ENG[i]-EFERMI,TDOS[i],INTTDOS[i] )
+            print("%13.8f %13.8f %13.8f " %( ENG[i]-EFERMI,TDOS[i],INTTDOS[i] ))
 
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
 
         for ion in range(NION):
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
-            print >> out, "##"
-            print >> out, "## INFILE= ",name
-            print >> out, "## ISPIN = ",NSPIN
-            print >> out, "##  SPIN = ",spin+1
-            print >> out, "##  NION = ",NION
-            print >> out, "## EMAX  = ",EMAX
-            print >> out, "## EMIN  = ",EMIN
-            print >> out, "## NLINE = ",NEDOS
-            print >> out, "## FERMI = ",EFERMI
-            print >> out, "##"
-            print >> out, "##"
-            print >> out, "##      ION=",ion+1
-            print >> out, "##      eng s p d"
-            print >> out, "##"
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("##", file=out)
+            print("## INFILE= %s" % str(name), file=out)
+            print("## ISPIN = %s" % str(NSPIN), file=out)
+            print("##  SPIN = %s" % str(spin+1), file=out)
+            print("##  NION = %s" % str(NION), file=out)
+            print("## EMAX  = %s" % str(EMAX), file=out)
+            print("## EMIN  = %s" % str(EMIN), file=out)
+            print("## NLINE = %s" % str(NEDOS), file=out)
+            print("## FERMI = %s" % str(EFERMI), file=out)
+            print("##", file=out)
+            print("##", file=out)
+            print("##      ION= %s" % (ion+1), file=out)
+            print("##      eng s p d", file=out)
+            print("##", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
 
             for i in range(NEDOS):
-                print >> out, "%13.8f " %( ENG[i]-EFERMI ),
+                print("%13.8f " %( ENG[i]-EFERMI ), file=out, end="" )
                 for l in range(0,3):
-                    print >> out, "%13.8f " \
-                            % ( ADOS_ALL[i,l,ion,spin] ),
+                    print("%13.8f "
+                            % ( ADOS_ALL[i,l,ion,spin] ), file=out, end="")
 #                           % ( ADOS_ALL[l,ion,spin,i] ),
-                print ""
+                print("", file=out)
 
 
 #   print "LORBIT = ",LORBIT

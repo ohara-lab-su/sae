@@ -14,6 +14,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.06.30
 #   == None --> is None
 #
@@ -21,6 +24,8 @@
 #  startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -127,30 +132,34 @@ class ReadWienScf(object):
     ############################################################################
     # print EPL
     def write_epl(self,ion=None):
-        print "         Q-s-low  E-s-low  Q-p-low  E-p-low  Q-d-low  E-d-low  Q-f-low  E-f-low"
+        print("         Q-s-low  E-s-low  Q-p-low  E-p-low  Q-d-low  E-d-low  Q-f-low  E-f-low")
         if ion is None:
             for it in range(self.nscf):
-                print "======== ITER",it
+                print("======== ITER %s" % str(it))
                 for ion in range(self.nion):
-                    print "ion=",ion,"",self.epl_iter[it][ion]
+                   #print "ion=",ion,"",self.epl_iter[it][ion]
+                    print("ion= %s %s" % (str(ion), str(self.epl_iter[it][ion])))
         else:
             ion = int(ion)
             for it in range(self.nscf):
-                print "it=",it,"",self.epl_iter[it][ion]
+               #print "it=",it,"",self.epl_iter[it][ion]
+                print("it= %s %s" % (str(it), str(self.epl_iter[it][ion])))
 
     ############################################################################
     # print EPH
     def write_eph(self,ion=None):
-        print "         Q-s-hi   E-s-hi   Q-p-hi   E-p-hi   Q-d-hi   E-d-hi   Q-f-hi   E-f-hi"
+        print("         Q-s-hi   E-s-hi   Q-p-hi   E-p-hi   Q-d-hi   E-d-hi   Q-f-hi   E-f-hi")
         if ion is None:
             for it in range(self.nscf):
-                print "======== ITER",it
+                print("======== ITER %s" % str(it))
                 for ion in range(self.nion):
-                    print "ion=",ion,"",self.eph_iter[it][ion]
+                   #print "ion=",ion,"",self.eph_iter[it][ion]
+                    print("ion= %s %s" % (str(ion), str(self.eph_iter[it][ion])))
         else:
             ion = int(ion)
             for it in range(self.nscf):
-                print "it=",it,"",self.eph_iter[it][ion]
+               #print "it=",it,"",self.eph_iter[it][ion]
+                print("it= %s %s" % (str(it), str(self.eph_iter[it][ion])))
 
     ############################################################################
     # print E_parameter
@@ -158,32 +167,38 @@ class ReadWienScf(object):
 
         if ion is None and par is None and l is None:
             for it in range(self.nscf):
-                print "======== ITER",it
+                print("======== ITER %s" % str(it))
                 for ion in range(self.nion):
                     for par in range(len(self.epar_iter[it][ion])):
-                        print self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                       #print self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                        print(self.site_iter[it][ion],self.epar_iter[it][ion][par])
 
         elif ion is not None and par is None and l is None:
             ion = int(ion)
             for it in range(self.nscf):
-                print "======== ITER",it
+                print("======== ITER %s" % str(it))
                 for par in range(len(self.epar_iter[it][ion])):
-                    print "ion=",ion,"",\
-                            self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                   #print "ion=",ion,"",\
+                   #        self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                    print("ion= %s %s %s"
+                          % (str(ion), str(self.site_iter[it][ion]), str(self.epar_iter[it][ion][par])))
 
         elif ion is None and par is not None and l is None:
             par = int(par)
             for it in range(self.nscf):
-                print "======== ITER",it
+                print("======== ITER %s" % str(it))
                 for ion in range(self.nion):
-                    print "ion=",ion,"orbit=",par,"",\
-                            self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                   #print "ion=",ion,"orbit=",par,"",\
+                   #        self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                    print("ion= %s orbit=%s %s %s"
+                          % (str(ion), str(par), str(self.site_iter[it][ion]), str(self.epar_iter[it][ion][par])))
 
         elif ion is not None and par is not None and l is not None:
             par = int(par)
             ion = int(ion)
             for it in range(self.nscf):
-                print "iter=",it,"",self.site_iter[it][ion],self.epar_iter[it][ion][par]
+               #print "iter=",it,"",self.site_iter[it][ion],self.epar_iter[it][ion][par]
+                print("iter= %s %s %s" % (str(it), str(self.site_iter[it][ion]), str(self.epar_iter[it][ion][par])))
 
         elif ion is not None and par is None and l is not None:
             ion = int(ion)
@@ -194,7 +209,8 @@ class ReadWienScf(object):
             for it in range(self.nscf):
                 for par in range(len(self.epar_iter[it][ion])):
                     if bool(l_orbit_reg.match(self.epar_iter[it][ion][par])):
-                        print "ion=",ion,"",self.epar_iter[it][ion][par]
+                       #print "ion=",ion,"",self.epar_iter[it][ion][par]
+                        print("ion= %s %s" % (str(ion), str(self.epar_iter[it][ion][par])))
 
         elif ion is None and par is None and l is not None:
             l = int(l)
@@ -205,7 +221,7 @@ class ReadWienScf(object):
                 for ion in range(self.nion):
                     for par in range(len(self.epar_iter[it][ion])):
                         if bool(l_orbit_reg.match(self.epar_iter[it][ion][par])):
-                            print self.epar_iter[it][ion][par]
+                            print("%s" % str(self.epar_iter[it][ion][par]))
 
 
 ################################################################################

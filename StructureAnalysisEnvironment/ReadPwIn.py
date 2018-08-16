@@ -27,6 +27,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.08.24
 #  統合化のためのすりあわせ (4)と(5) の注意事項に注意
 #
@@ -36,6 +39,8 @@
 # 2015.05.12 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -248,26 +253,26 @@ if __name__ == '__main__':
     name = options()
     out = ReadPwIn(name)
 
-    print "NAME",name
+    print("NAME %s" % str(name))
 
-    print "TITLE      :",out.get_title()
+    print("TITLE      : %s" % str(out.get_title()))
 
-    print "IBRAV      :",out.get_ibrav()
-    print "SCALE(ang) :",out.get_scale()
-    print "NATOM      :",out.get_natom()
-    print "NION       :",out.get_nion()
+    print("IBRAV      : %s" % str(out.get_ibrav()))
+    print("SCALE(ang) : %s" % str(out.get_scale()))
+    print("NATOM      : %s" % str(out.get_natom()))
+    print("NION       : %s" % str(out.get_nion()))
 
-    print "T"
-    print out.get_t()
+    print("T")
+    print(out.get_t())
 
-    print ""
-    print out.get_atoms_index()
-    print out.get_atoms()
+    print("")
+    print(out.get_atoms_index())
+    print(out.get_atoms())
 
-    print ""
-    print out.get_atoms_j()
-    print out.get_atoms_index_j()
+    print("")
+    print(out.get_atoms_j())
+    print(out.get_atoms_index_j())
 
-    print ""
-    print out.get_position()
+    print("")
+    print(out.get_position())
 

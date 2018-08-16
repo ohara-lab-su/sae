@@ -12,6 +12,8 @@
 # 2015.06.19 startup
 #
 ################################################################################
+from __future__ import print_function
+################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -44,7 +46,7 @@ def options():
     parser.add_option(  '-i','--input', dest='INPUT',)
     options,args = parser.parse_args()
 
-    ###### default inpname �擾
+    ###### default inpname �擾
     if options.INPUT:
         inpname = options.INPUT
     else:

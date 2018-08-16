@@ -39,6 +39,10 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
+#
 # 2015.01.20
 #  gzip 対応版
 #
@@ -187,7 +191,7 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     i += 1
     tmp = datlines[i].split()
     if bool(num_reg.match(tmp[0])):
-        print tmp[0]
+        print("%s" % str(tmp[0]))
         sys.exit("Format Error")
     else:
         if bool(selective_reg.match(tmp[0])):
@@ -200,7 +204,7 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
             selective = False
 
         if bool(num_reg.match(tmp[0])):
-            print tmp[0]
+            print("%s" % str(tmp[0]))
             sys.exit("Format Error")
         if bool(direct_reg.match(tmp[0])):
            #print "Direct Mode"

@@ -15,6 +15,8 @@
 #    1st version
 #
 ################################################################################
+from __future__ import print_function
+################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -58,8 +60,8 @@ def options():
         POSCAR=args[0]
 
     if not os.path.exists(POSCAR): sys.exit(POSCAR+" file not found")
-    if POSCAR: print "INPUT file name :",POSCAR
-    if cname: print "OUTPUT file name:",cname+".cfg"
+    if POSCAR: print("INPUT file name : %s" % str(POSCAR))
+    if cname: print("OUTPUT file name: %s" % str(cname+".cfg"))
 
     return [POSCAR,cname]
 

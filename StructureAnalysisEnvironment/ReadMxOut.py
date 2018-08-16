@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.02.26
 #  sample コードにおいて name と suffix を分離(今後の基本方針)
 #
@@ -57,6 +60,8 @@
 #    整理して抽出するだけのクラス/メッソドをとりあえず準備
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -214,10 +219,10 @@ if __name__ == '__main__':
     atoms_j = out.get_atoms_j()
 
     for md in range(n_ion_loop):
-        print "***************** md = ",md+1,'**********************'
+        print("***************** md = %s  **********************" % md+1 )
         for scf in range(uele_index[md]):
-            print "    scf=%d, Uele = %14.11f" %(scf+1,uele[md,scf])
-        print " Utot = %14.11f" %(utot[md])
+            print("    scf=%d, Uele = %14.11f" %(scf+1,uele[md,scf]))
+        print(" Utot = %14.11f" %(utot[md]))
 
 #   for i in range(n_ion_loop):
 

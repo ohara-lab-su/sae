@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.06.30
 #   == None --> is None
 #
@@ -37,6 +40,8 @@
 #   データーが途中で止まっていても MD ループ等の情報を正しく読めるように修正
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -204,22 +209,23 @@ if __name__ == '__main__':
     utot = dftscf.get_utot()
     uele,uele_index = dftscf.get_uele()
 
-    print "N_ION_LOOP",n_ion_loop
-    print "MAX_N_SCF", max_n_scf
+    print("N_ION_LOOP %s" % str(n_ion_loop))
+    print("MAX_N_SCF %s" % str(max_n_scf))
 
     if not n_ion_loop == 0 :
         for md in range(n_ion_loop):
-            print "***************** md = ",md+1,'**********************'
+           #print "***************** md = ",md+1,'**********************'
+            print("***************** md = %s **********************" % md+1)
             for scf in range(uele_index[md]):
-                print "    scf=%d, Uele = %15.12f" %(scf+1,uele[md,scf])
+                print("    scf=%d, Uele = %15.12f" %(scf+1,uele[md,scf]))
            #print " Utot = %15.12f" %(utot[md])
         # 計算途中の最後のSCFループを表示
         md = n_ion_loop
-        print "***************** md = ",md+1,'**********************'
+        print("***************** md = %s **********************" % md+1)
         for scf in range(uele_index[md]):
-            print "    scf=%d, Uele = %15.12f" %(scf+1,uele[md,scf])
+            print("    scf=%d, Uele = %15.12f" %(scf+1,uele[md,scf]))
     else:
-        print "***************** md = ",1,'**********************'
+        print("***************** md = %s **********************" % 1)
         for scf in range(uele_index[0]):
-            print "    scf=%d, Uele = %15.12f" %(scf+1,uele[0,scf])
+            print("    scf=%d, Uele = %15.12f" %(scf+1,uele[0,scf]))
 

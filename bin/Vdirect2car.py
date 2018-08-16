@@ -8,12 +8,17 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.02.27
 #  conv_direct2car の名前変更
 #
 # 2014.10.30/31
 #   関数化 & ライブラリ化 テスト用テストプログラム
 #
+################################################################################
+from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -82,8 +87,8 @@ def options():
         else:
             sys.exit(POSCAR+" file not found")
 
-    print "INPUT file name    :",POSCAR
-    print "OUTPUT file name   :",cname+".vasp"
+    print("INPUT file name    : %s" % str(POSCAR))
+    print("OUTPUT file name   : %s" % str(cname+".vasp"))
 
     return [POSCAR,cname]
 
@@ -118,20 +123,20 @@ if __name__ == '__main__':
         src_mode="Direct"
     else:
         src_mode="Cartesian"
-        print "CURRENT MODE       :",src_mode
+        print("CURRENT MODE       : %s" % str(src_mode))
         sys.exit("don't need to convert")
 
-    print "CURRENT MODE       :",src_mode
+    print("CURRENT MODE       : %s" % str(src_mode))
 
     # POSCAR の標準出力
-    print ""
+    print("")
     STD=True
-    SAE.print_poscar(cname,STD,title,scale,natom,nion,\
+    SAE.print_poscar(cname,STD,title,scale,natom,nion,
                      selective,direct,VASP,t,atoms,atoms_index,position,fix)
 
     # POSCAR のファイル出力
     STD=False
-    SAE.print_poscar(cname,STD,title,scale,natom,nion,\
+    SAE.print_poscar(cname,STD,title,scale,natom,nion,
                      selective,direct,VASP,t,atoms,atoms_index,position,fix)
 
 ################################################################################

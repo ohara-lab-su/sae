@@ -10,12 +10,17 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
 # 2015.01.28
 #  title の取得における末尾までの空白削除を追加
 #
 # 2015.01.27 startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -202,23 +207,23 @@ if __name__ == '__main__':
 
     for ispin in range(NSPIN):
         for j in range(NBANDS):
-            print ""
-            print ""
-            print ""
-            print "## ISPIN = ",NSPIN
-            print "## SPIN  = ",ispin
-            print "## NBAND = ",NBANDS
-            print "## BAND  = ",j
-            print "## EF    = "
-            print ""
-            print ""
-            print ""
+            print("")
+            print("")
+            print("")
+            print("## ISPIN = %s" % str(NSPIN))
+            print("## SPIN  = %s" % str(ispin))
+            print("## NBAND = %s" % str(NBANDS))
+            print("## BAND  = %s" % str(j))
+            print("## EF    = ")
+            print("")
+            print("")
+            print("")
             for k in range(NKPTS):
-                print "%5d %14.8f" %( k+1, eigenval[j,k,ispin] )
+                print("%5d %14.8f" %( k+1, eigenval[j,k,ispin] ))
 
-    print ""
+    print("")
     eigen_max,eigen_min = band.get_max_eigenval()
-    print eigen_max,eigen_min
+    print("%s %s" %(eigen_max, eigen_min))
 
 ################################################################################
 

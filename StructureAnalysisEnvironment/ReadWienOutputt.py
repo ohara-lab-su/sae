@@ -8,10 +8,15 @@
 #
 ################################################################################
 #
+# 2018.08.15
+#  Python2/3 両対応
+#
 # 2015.03.24
 #  startup
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -69,6 +74,6 @@ if __name__ == '__main__':
     name = 'Cu.outputt'
     tetra = ReadWienOutputt(name)
 
-    print tetra.nion
-    print tetra.isplits[0]
+    print(tetra.nion)
+    print(tetra.isplits[0])
 

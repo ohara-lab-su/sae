@@ -1,17 +1,23 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-# read_list.py $B$N(B class $B2=(B ($B$*$h$S(B openmx $B$N(B vps $B%G!<%?$KFC2=(B)
-#  *) $B0z?t$GG[Ns$rJV$9;EMM(B
+# read_list.py の class 化 (および openmx の vps データに特化)
+#  *) 引数で配列を返す仕様
 #
-# 4$BNs$N%j%9%H$r$R$?$9$i(B split $B$7$FG[Ns$KFI$_9~$`$@$1$N%"%[;EMM(B
+# 4列のリストをひたすら split して配列に読み込むだけのアホ仕様
 #
 ################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
 #
 # 2015.02.10 1st
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -52,8 +58,8 @@ class ReadMxVpsList(object):
 
 
     ################################################
-    # $B%j%9%H$rFI$_9~$`(B
-    # read_list.py $B$H$[$\F1Ey5!G=(B
+    # リストを読み込む
+    # read_list.py とほぼ同等機能
     def get_list(self):
 
         comment_reg = re.compile('^#.*',re.IGNORECASE)
@@ -74,8 +80,8 @@ class ReadMxVpsList(object):
 
 
     ################################################
-    # $B85AG5-9f$KBP1~$9$k>pJs$rH4$-=P$9(B
-    # $BCm0U(B) $BF1L>$N85AG5-9f$,$"$k$H$-$O@hF,9T$N$_5[$$=P$7(B
+    # 元素記号に対応する情報を抜き出す
+    # 注意) 同名の元素記号があるときは先頭行のみ吸い出し
     def get_vps_name(self,atom):
         nlist,list_data = self.get_list()
 
@@ -99,11 +105,11 @@ if __name__ == '__main__':
     pot = 'PBE'
     ver = '13'
 
-    # VPS $B5Z$S(B PAO $B$N%Q%9@_Dj(B
+    # VPS 及び PAO のパス設定
     vpspath = data+'/VPS/'
     paopath = data+'/PAO/'
 
-    # VPSLIST $B$N%U%!%$%k>l=j3NG'(B
+    # VPSLIST のファイル場所確認
     HOMEPATH=os.environ.get('HOME',"")
     if os.path.exists(VPSLIST):
         vpslistpath = VPSLIST
@@ -116,11 +122,11 @@ if __name__ == '__main__':
         if not os.path.exists(VPSLIST):
             sys.exit("STOP: "+VPSLIST+" file not found")
 
-    # vps and pao $B>pJs%j%9%HFI$_9~$_(B(OpenMX$BHs8x<0%U%!%$%k(B)
+    # vps and pao 情報リスト読み込み(OpenMX非公式ファイル)
     vpsdata = ReadMxVpsList(vpslistpath)
 
     num,symbol,cutoff,vps_orbit = vpsdata.get_vps_name('C')
-    opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff $BL>$+$i1Q?tJ8;z$N$_<h$j=P$9(B
+    opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
 
     vps_name = symbol+cutoff+'-'+vps_orbit
     vps_file = vpspath+symbol+'_'+pot+ver+opt+'.vps'
@@ -131,11 +137,11 @@ if __name__ == '__main__':
     if not os.path.exists(vps_file):
         sys.exit("STOP: "+vps_file+" not found")
 
-    print "pao file:",pao_file
-    print ""
-    print symbol
-    print symbol+cutoff+'-'+vps_orbit
-    print symbol+'_'+pot+ver+opt
+    print("pao file: %s" % str(pao_file))
+    print("")
+    print("%s" % str(symbol))
+    print("%s" % symbol+cutoff+'-'+vps_orbit)
+    print("%s" % symbol+'_'+pot+ver+opt)
 
 
 #   nlist,list_data = vpsdata.get_list()
