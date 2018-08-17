@@ -52,7 +52,7 @@ import StructureAnalysisEnvironment as SAE
 
 import wx
 
-from crystal_make_unit import *
+from StructureAnalysisEnvironment.gui.crystal_make_unit import *
 
 ################################################################################
 if __name__ == '__main__':
@@ -152,7 +152,7 @@ if __name__ == '__main__':
         factor = 5
         num = atoms_j[ion]+1 + atoms_j[ion]+1 + atoms_j[ion]+1
         num = factor*num
-        print ion,num
+        print(ion,num)
 
         atom.red   = 0.05*num
         atom.green = 0.01*num*num

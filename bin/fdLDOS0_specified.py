@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.05.21 startup
 #
 ################################################################################
@@ -65,13 +68,13 @@ if __name__ == '__main__':
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
-        print "Emax     =",OPT_EMAX
+        print("Emax     =",OPT_EMAX)
     if OPT_EMIN:
         OPT_EMIN=float(OPT_EMIN)
-        print "Emin     =",OPT_EMIN
+        print("Emin     =",OPT_EMIN)
     if OPT_DMAX:
         OPT_DMAX=float(OPT_DMAX)
-        print "Ymax(DOS)=",OPT_DMAX
+        print("Ymax(DOS)=",OPT_DMAX)
 
     suffix='_sd0.txt'
 

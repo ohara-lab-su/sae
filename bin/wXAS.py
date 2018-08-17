@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.30
 #  startup
 #
@@ -60,13 +63,13 @@ if __name__ == '__main__':
     case,OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
     if OPT_EMAX:
-                print "Emax=",OPT_EMAX
+                print("Emax=",OPT_EMAX)
                 OPT_EMAX=float(OPT_EMAX)
     if OPT_EMIN:
-                print "Emin=",OPT_EMIN
+                print("Emin=",OPT_EMIN)
                 OPT_EMIN=float(OPT_EMIN)
     if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
+                print("Ymax=",OPT_YMAX)
                 OPT_YMAX=float(OPT_YMAX)
 
     ############################################################################
@@ -137,7 +140,7 @@ if __name__ == '__main__':
         plt.ylim( ymax=float(OPT_YMAX) )
     else:
         ymax = xspec1.get_ymax_xas()
-        print "YMAX = ",ymax
+        print("YMAX = ",ymax)
         plt.ylim( ymax=ymax )
 
 

@@ -14,6 +14,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.26
 #  output0 が見つからない時の対応
 #  軌道成分のチェック(s,p,d,fプロット項目の追加等)
@@ -98,11 +101,11 @@ if __name__ == '__main__':
     if not lists:
         sys.exit("STOP: "+case+".dos* file not found")
 
-    print "READ FILE    :",
+    print("READ FILE    :", end="")
     for i in lists:
-        print i,
-    print ""
-    print "OUT FILE     :",output
+        print(i, end="")
+    print("")
+    print("OUT FILE     :",output)
 
     #####################################################
     ## check SPIN
@@ -163,9 +166,9 @@ if __name__ == '__main__':
         plot_ions = dos.get_plot_ions()
 
         if spin == 1:
-            print "FERMI ENERGY :",efermi
+            print("FERMI ENERGY :",efermi)
             if FERMI:
-                print "FERMI --> 0  :"
+                print("FERMI --> 0  :")
 
         # s,p,d oribt がそれぞれの ion で計算されていることが必須
         for ion in plot_ions:
@@ -191,31 +194,31 @@ if __name__ == '__main__':
                 f = dos.get_raw_dos(atom=ion,orbit='f')
                 FF=True
 
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
-            print >> out, "#"
-            print >> out, "#"
-            print >> out, "#     nspin = "+str(nspin)
-            print >> out, "#      spin = "+str(spin+1)
-            print >> out, "#       ion = "+str(ion)
-            print >> out, "#    efermi =",efermi
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("#", file=out)
+            print("#", file=out)
+            print("#     nspin = "+str(nspin), file=out)
+            print("#      spin = "+str(spin+1), file=out)
+            print("#       ion = "+str(ion), file=out)
+            print("#    efermi =",efermi, file=out)
             if FERMI:
-                print >> out, "#    efermi -> 0"
-            print >> out, "#"
-            print >> out, "#    eng, ",
+                print("#    efermi -> 0", file=out)
+            print("#", file=out)
+            print("#    eng, ", file=out, end="")
             if FT:
-                print >> out, "tot, ",
+                print("tot, ", file=out, end="")
             if FS:
-                print >> out,"s, ",
+                print("s, ", file=out, end="")
             if FP:
-                print >> out,"p, ",
+                print("p, ", file=out, end="")
             if FD:
-                print >> out,"d, ",
+                print("d, ", file=out, end="")
             if FF:
-                print >> out,"f, ",
-            print >> out, ""
-            print >> out, "#"
+                print("f, ", file=out, end="")
+            print("", file=out)
+            print("#", file=out)
 
            #for orbit in ['s','p','d']:
            #    if not dos.chk_raw_dos(atom=ion,orbit=orbit):
@@ -228,18 +231,19 @@ if __name__ == '__main__':
                     energy = eng[i]
                #print >>out, "%11.5f %14.8f %14.8f %14.8f %14.8f" \
                #              % ( energy,tot[i],s[i],p[i],d[i] )
-                print >> out, "%11.5f " % ( energy ),
+                print("%11.5f " % ( energy ), file=out, end="")
                 if FT:
-                    print >> out, "%14.8f " % ( tot[i] ),
+                    print("%14.8f " % ( tot[i] ), file=out, end="")
                 if FS:
-                    print >> out, "%14.8f " % ( s[i] ),
+                    print("%14.8f " % ( s[i] ), file=out, end="")
                 if FP:
-                    print >> out, "%14.8f " % ( p[i] ),
+                    print("%14.8f " % ( p[i] ), file=out, end="")
                 if FD:
-                    print >> out, "%14.8f " % ( d[i] ),
+                    print("%14.8f " % ( d[i] ), file=out, end="")
                 if FF:
-                    print >> out, "%14.8f " % ( f[i] ),
-                print >> out, ""
+                    print("%14.8f " % ( f[i] ), file=out, end="")
+                print("")
 
     if not STD:
         out.close()
+

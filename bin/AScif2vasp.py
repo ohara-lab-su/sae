@@ -8,6 +8,11 @@
 #  write: format='vasp'
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 
@@ -78,8 +83,8 @@ if __name__ == '__main__':
     cifname = cifname                # inputname
     poscarname = cifname+out_suffix  # outputname
 
-    print "INPUT CIF file  = ",cifname
-    print "OUTPUT POSCAR file = ",poscarname
+    print("INPUT CIF file  = ",cifname)
+    print("OUTPUT POSCAR file = ",poscarname)
 
     atoms = read(cifname,format='cif')
     atoms.center()

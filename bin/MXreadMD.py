@@ -17,6 +17,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.06.30
 #  == None --> is None
 #
@@ -89,34 +92,34 @@ if __name__ == '__main__':
     position_loop = np.zeros((nloop,natom,3))
     force_loop = np.zeros((nloop,natom,3))
 
-    print "NLOOP :",nloop
-    print "NATOM :",natom
+    print("NLOOP :",nloop)
+    print("NATOM :",natom)
 
     # MD(xyz) ファイル読み込み + Force 対応
     natom,nlist = \
             SAE.read_md2(MD,nloop,atoms_index_j,position_loop,force_loop)
 
-    print nlist
+    print(nlist)
 
     if nlist >= 7:
         for l in range(nloop):
-            print "------- LOOP "+str(l)+" ------"
+            print("------- LOOP "+str(l)+" ------")
             for j in range(natom):
-                print " %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f" \
-                      % ( atoms_index_j[j],\
-                          position_loop[l,j,0],\
-                          position_loop[l,j,1],\
-                          position_loop[l,j,2],\
-                          force_loop[l,j,0],\
-                          force_loop[l,j,1],\
-                          force_loop[l,j,2] )
+                print(" %3s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f"
+                      % ( atoms_index_j[j],
+                          position_loop[l,j,0],
+                          position_loop[l,j,1],
+                          position_loop[l,j,2],
+                          force_loop[l,j,0],
+                          force_loop[l,j,1],
+                          force_loop[l,j,2] ))
     else:
         for l in range(nloop):
-            print "------- LOOP "+str(l)+" ------"
+            print("------- LOOP "+str(l)+" ------")
             for j in range(natom):
-                print " %3s %12.8f %12.8f %12.8f " \
-                      % ( atoms_index_j[j],\
-                          position_loop[l,j,0],\
-                          position_loop[l,j,1],\
-                          position_loop[l,j,2] )
+                print(" %3s %12.8f %12.8f %12.8f "
+                      % ( atoms_index_j[j],
+                          position_loop[l,j,0],
+                          position_loop[l,j,1],
+                          position_loop[l,j,2] ))
 

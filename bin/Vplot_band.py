@@ -6,8 +6,11 @@
 # Vplot_band.py
 #
 #  vplot_band.pl モドキ(習作)
+#
 #  オプション指定により vplot_band.pl, vplot_band_index.pl, vplot_band_both.pl
 #  の機能を'ほぼ'全て兼ねる
+#
+#   リフレクションを使っているので python2/3 に注意
 #
 ################################################################################
 #
@@ -208,18 +211,26 @@ if __name__ == '__main__':
     #
     if not DOS_FLAG:
         if os.path.exists(doscarname) or os.path.exists(doscarname+".gz"):
-            class_name ='ReadDoscar'
+            class_name ='ReadVaspDoscar'
             optname = doscarname
             print('EFERMI(DOS):', end="")
         else:
-            class_name ='ReadOutcar'
+            class_name ='ReadVaspOutcar'
             optname = outcarname
             print('EFERMI(OUT):', end="")
 
         module_name = 'StructureAnalysisEnvironment'
 
-        module = __import__(module_name, globals(), locals(), [class_name], -1)
-        klass = getattr(module,class_name)
+        # module の動的ロード
+        try:
+            # このリフレクションは python2 方式なので注意
+            module = __import__(module_name, globals(), locals(), [class_name], -1)
+        except:
+            # for Python3
+            module = __import__(module_name, fromlist=[class_name])
+
+        # class の動的ロード
+        klass = getattr(module, class_name)
 
         efermifile = klass(optname)
         efermi = efermifile.get_efermi()
@@ -258,7 +269,7 @@ if __name__ == '__main__':
         if not i % 2 == 0:
             print("")
 
-    for i in range(num_kpoints_line):
+    for i in range(int(num_kpoints_line)):
         print(" line %d : %10.7f " % ( i, zone_ratio[i] ))
 
 
@@ -316,7 +327,7 @@ if __name__ == '__main__':
         title = title+"  band= "+str(OPT_BAND)
 
 
-    for i in range(num_kpoints_line):
+    for i in range(int(num_kpoints_line)):
 
         # multi plot の原点と軸の修正
         sizex = zone_ratio[i]*sizex0

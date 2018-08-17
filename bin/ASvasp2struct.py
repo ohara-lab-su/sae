@@ -5,6 +5,11 @@
 #  using ASE
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 import sys
@@ -44,8 +49,8 @@ if not os.path.exists(poscarname):
     if not os.path.exists(poscarname):
         sys.exit("STOP: "+poscarname+" and "+poscarname0+" file not found")
 
-print "INPUT POSCAR file  = ",poscarname
-print "OUTPUT struct file = ",poscarname+wien_suffix
+print("INPUT POSCAR file  = ",poscarname)
+print("OUTPUT struct file = ",poscarname+wien_suffix)
 
 atoms = read_vasp(poscarname)
 atoms.write(poscarname+wien_suffix,format='struct')

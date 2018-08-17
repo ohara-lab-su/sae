@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2016.01.16
 #  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
 #  バグを発見。旧バージョンを復帰させる
@@ -95,7 +98,7 @@ if __name__ == '__main__':
 #   cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
 #   cell.write(code='FDMNES',outname=outname,MOL=MOL)
 
-    print "gug version"
+    print("gug version")
 
 ## ASE version
 #   atoms = read_vasp(name)

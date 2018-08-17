@@ -8,6 +8,9 @@
 ################################################################################
 # History
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.08.20
 #  startup
 #  既知の問題: 分子系の変換時のunit-cellのスケールがおかしい
@@ -43,8 +46,8 @@ if __name__ == '__main__':
     if options.INPUT: name = options.INPUT
     if len(args)>0: name = args[0]
 
-    print "INPUT :",name
-    print "OUTPUT:",name+".vasp"
+    print("INPUT :",name)
+    print("OUTPUT:",name+".vasp")
 
     cell = SAEnv.Read(filename=name,code='FDMNES')
     cell.write(code='VASP',outname=name,STD=True)

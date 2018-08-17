@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.09.07
 #  startup
 #
@@ -122,23 +125,23 @@ if __name__ == '__main__':
     ################################################ convert Energy
     # PhotoEnegy モードで計算した時と同じ結果を返す
     if not inp.get_energygpho() and not FLAG_fermi:
-        print "current mode is Fermi"
-        print "---> convert to PhotoEnergy"
-        print "     + E_edge"
+        print("current mode is Fermi")
+        print("---> convert to PhotoEnergy")
+        print("     + E_edge")
         eng_off =  txt.E_edge
 
     # E_fermi を引く(A) : A=B
     if not inp.get_energygpho() and FLAG_fermi:
-        print "current mode is Fermi"
-        print "---> subtract E_fermi"
-        print "     - E_fermi"
+        print("current mode is Fermi")
+        print("---> subtract E_fermi")
+        print("     - E_fermi")
         eng_off = - txt.E_fermi
 
     # E_fermi を引く(B) : A=B
     if inp.get_energygpho() and FLAG_fermi:
-        print "current mode is PhotoEnergy"
-        print "---> convert to EF0 mode"
-        print "     - E_edge - E_fermi"
+        print("current mode is PhotoEnergy")
+        print("---> convert to EF0 mode")
+        print("     - E_edge - E_fermi")
         eng_off - txt.E_Fermi - txt.E_edge
 
     EF0 = txt.E_edge + txt.E_Fermi

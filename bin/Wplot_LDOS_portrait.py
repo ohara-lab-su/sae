@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.04.21
 #  startup
 #
@@ -85,9 +88,9 @@ if __name__ == '__main__':
 
     TDOS_FLAG=True
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
     ############################################
     # case.dos ファイルを抽出
@@ -95,10 +98,10 @@ if __name__ == '__main__':
     if not lists:
         sys.exit("STOP: "+case+".dos* file not found")
 
-    print "READ FILE    :",
+    print("READ FILE    :", end="")
     for i in lists:
-        print i,
-    print ""
+        print(i, end="")
+    print("")
 
 
     ############################################
@@ -202,9 +205,9 @@ if __name__ == '__main__':
             atom_index = atoms_index[ion-1]
 
             if nspin == 1:
-                print "ion = ",atom_index
+                print("ion = ",atom_index)
             else:
-                print "ion(spin) = "+atom_index+"("+str(spin+1)+")"
+                print("ion(spin) = "+atom_index+"("+str(spin+1)+")")
 
            #atom = str(atoms_index[ion])
             atom = str(atom_index)

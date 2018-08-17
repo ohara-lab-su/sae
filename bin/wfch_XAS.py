@@ -5,6 +5,11 @@
 #
 # fch_XAS.py
 #
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.04.21 : wplot_XAS.py ベース、特化版( non-spin ), K-edge
 #              matplotlib の(numpyの) loadtxt() を用いて極限まで簡素化したバージョン
 #
@@ -63,11 +68,11 @@ if __name__ == '__main__':
     outname='fch_XAS'
 
     if OPT_EMAX:
-                print "Emax=",OPT_EMAX
+                print("Emax=",OPT_EMAX)
     if OPT_EMIN:
-                print "Emin=",OPT_EMIN
+                print("Emin=",OPT_EMIN)
     if OPT_YMAX:
-                print "Ymax=",OPT_YMAX
+                print("Ymax=",OPT_YMAX)
 
     ############################################
     # dos instance
@@ -75,7 +80,7 @@ if __name__ == '__main__':
     name1 = [ case1+dos_suffix ]
     name2 = [ case2+dos_suffix ]
 
-    print 'DOS(1) = ',name1[0]
+    print('DOS(1) = ',name1[0])
 
     dos1 = SAE.ReadWienDos(name1)
     efermi1 = dos1.get_efermi()
@@ -86,7 +91,7 @@ if __name__ == '__main__':
     dos1_total = np.array(dos1.get_raw_dos(atom=0,orbit='total-DOS'))
     dos1_p = np.array(dos1.get_raw_dos(atom=1,orbit='p'))
 
-    print 'DOS(2) = ',name2[0]
+    print('DOS(2) = ',name2[0])
     dos2 = SAE.ReadWienDos(name2)
     efermi2 = dos2.get_efermi()
     eng2 = dos2.get_eng()

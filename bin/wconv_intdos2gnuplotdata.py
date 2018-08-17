@@ -11,6 +11,9 @@
 #
 ##########################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2014.06.11
 #    based on wcon_dos2gnuplotdata.py (2014.06.11)
 #
@@ -57,8 +60,8 @@ if len(args) > 0:
     cname=args[0]
 
 if options.debug:
-    print ""
-    print "BASE NAME     =",cname
+    print("")
+    print("BASE NAME     =",cname)
 
 ### default unit (eV)
 unit=''
@@ -72,13 +75,13 @@ else:
 
 
 if not os.path.exists(cname+".int"):
-    print cname+".int file not found"
-    print "EXIT"
+    print(cname+".int file not found")
+    print("EXIT")
     sys.exit()
 
 if options.debug:
-    print "UNIT          =",unit_tmp
-    print "EF0 MODE      =",options.FLAG_EF
+    print("UNIT          =",unit_tmp)
+    print("EF0 MODE      =",options.FLAG_EF)
 
 
 TOTALDOS_FLAG = False
@@ -113,8 +116,8 @@ for line in range(1,1+n_total_orbit):
         max_orbit_number=tmp
 
 if options.debug:
-    print ""
-    print "MAXORBIT NUM  =", max_orbit_number
+    print("")
+    print("MAXORBIT NUM  =", max_orbit_number)
 
 
 
@@ -138,7 +141,7 @@ for num in range(1,1+n_total_orbit):
         TOTALDOS_FLAG=True
 
     if atom_tmp < atom:
-        print "STOP: READ",cname+".int Files, atom_tmp < atom " ,atom_tmp,atom
+        print("STOP: READ",cname+".int Files, atom_tmp < atom " ,atom_tmp,atom)
         sys.exit()
 
     if atom_tmp > atom:
@@ -147,10 +150,10 @@ for num in range(1,1+n_total_orbit):
 natom=atom
 
 if options.debug:
-    print "NATOM         =",natom
-    print "TOTAL ORBITAL =",n_total_orbit
+    print("NATOM         =",natom)
+    print("TOTAL ORBITAL =",n_total_orbit)
     if TOTALDOS_FLAG:
-        print "TOTLDOS       =",TOTALDOS_FLAG
+        print("TOTLDOS       =",TOTALDOS_FLAG)
 
 ###############################################################
 #
@@ -180,11 +183,11 @@ for num in range(1,1+n_total_orbit):
 
 
 if options.test:
-    print ""
-    print "num, indexatom[num], indexorbit[num], indexname[num]"
+    print("")
+    print("num, indexatom[num], indexorbit[num], indexname[num]")
     for num in range(1,n_total_orbit+1):
-        print num, int(indexatom[num]), int(indexorbit[num]),indexname[num]
-    print ""
+        print(num, int(indexatom[num]), int(indexorbit[num]),indexname[num])
+    print("")
 
 
 ###############################################################
@@ -213,7 +216,7 @@ for num in range(3,3+n_total_orbit):
     i += 1
 
     if options.test:
-        print "num,atom, norbit[atom], orbital", num-2,atom,int(norbit[atom]),int(orbital[1])
+        print("num,atom, norbit[atom], orbital", num-2,atom,int(norbit[atom]),int(orbital[1]))
 
 if TOTALDOS_FLAG:
     norbit[0]=1
@@ -222,13 +225,13 @@ else:
     start=1
 
 if options.debug:
-    print ""
+    print("")
     for atom in range(start,natom+1):
         if atom == 0:
-            print "ATOM=",atom,"NUM ORBIT",int(norbit[atom]),"(TOTAL-DOS)"
+            print("ATOM=",atom,"NUM ORBIT",int(norbit[atom]),"(TOTAL-DOS)")
         else:    
-            print "ATOM=",atom,"NUM ORBIT",int(norbit[atom])
-    print ""
+            print("ATOM=",atom,"NUM ORBIT",int(norbit[atom]))
+    print("")
 
 
 ###############################################################
@@ -250,14 +253,14 @@ for atom in range(0,natom+1):
         num +=1
 
 if options.test:
-    print ""
-    print "num, atom, norbit[atom], num_local_orbit,",
-    print "indexorbit[num], index_local_orbit[atom,num_local_orbit, indexname[num]"
+    print("")
+    print("num, atom, norbit[atom], num_local_orbit,", end="")
+    print("indexorbit[num], index_local_orbit[atom,num_local_orbit, indexname[num]")
     num=1
     for atom in range(0,natom+1):
         for num_local_orbit in range(1,int(norbit[atom])+1):
-            print num, atom, int(norbit[atom]), num_local_orbit, int(indexorbit[num]), \
-                             int(index_local_orbit[atom,num_local_orbit]),indexname[num]
+            print(num, atom, int(norbit[atom]), num_local_orbit, int(indexorbit[num]),
+                             int(index_local_orbit[atom,num_local_orbit]),indexname[num])
             num +=1
 
 
@@ -275,11 +278,11 @@ for num in range(1,1+n_total_orbit):
 
 
 if options.test:
-    print ""
-    print "num, indexnum[indexatom[num],indexorbit[num]], indexatom[num], indexorbit[num] = "
+    print("")
+    print("num, indexnum[indexatom[num],indexorbit[num]], indexatom[num], indexorbit[num] = ")
     for num in range(1,1+n_total_orbit):
-        print num,int(indexnum[int(indexatom[num]),int(indexorbit[num])]),
-        print            int(indexatom[num]),int(indexorbit[num])
+        print(num,int(indexnum[int(indexatom[num]),int(indexorbit[num])]), end="")
+        print(           int(indexatom[num]),int(indexorbit[num]))
 
 
 #print ""
@@ -315,24 +318,24 @@ if nfiles == 0:
         src = ls_up[n]
         dst = src.replace('up','dn')
         if not os.path.exists(dst):
-            print src+"file exist"
-            print dst+"file not found"
-            print "ERROR: not found spin files"
-            print "EXIT"
+            print(src+"file exist")
+            print(dst+"file not found")
+            print("ERROR: not found spin files")
+            print("EXIT")
             sys.exit()
     ls_dn=glob.glob(cname+'.dos*[0-9]'+unit+'dn')
     nfiles_dn=len(ls_dn)
     if not nfiles_dn == nfiles_up:
-        print "ERROR: unconformity spin files"
-        print "EXIT"
+        print("ERROR: unconformity spin files")
+        print("EXIT")
         sys.exit()
     nfiles=nfiles_up
     SPIN_FLAG=True
 else:
     for n in range(0,nfiles):
         if not os.path.exists(ls[n]):
-            print ls[n]," file not found"
-            print "EXIT"
+            print(ls[n]," file not found")
+            print("EXIT")
             sys.exit()
 
 ##############################   
@@ -372,15 +375,15 @@ for spin in spin_list:
 
     if options.debug:
         if spin == 'up':
-            print "NENRG (up)    =",NENRG_up
+            print("NENRG (up)    =",NENRG_up)
         elif spin == 'dn':
-            print "NENRG (dn)    =",NENRG_dn
+            print("NENRG (dn)    =",NENRG_dn)
         else:
-            print "NENRG         =",NENRG
+            print("NENRG         =",NENRG)
 
 if options.debug:
-    print "EF            =",EF
-    print ""
+    print("EF            =",EF)
+    print("")
 
 
 ######################################## SPIN roop ###########################################
@@ -395,8 +398,8 @@ for spin in spin_list:
 
     if options.debug:
         if SPIN_FLAG:
-            print "===== SPIN "+spin+" ===="
-        print "ORIGINAL FILE:"
+            print("===== SPIN "+spin+" ====")
+        print("ORIGINAL FILE:")
 
     ################################################
     #
@@ -425,7 +428,7 @@ for spin in spin_list:
     for dosname in ls:  # ページ(ファイルごとに分解)
        
         if options.debug: 
-            print "  ",dosname
+            print("  ",dosname)
 
         page += 1
     
@@ -439,16 +442,16 @@ for spin in spin_list:
     
         max_ene=len(dosdata)-1-3
         if NENRG != max_ene:
-            print "STOP ERROR:  NENRG=",NENRG," max_ene=",max_ene
+            print("STOP ERROR:  NENRG=",NENRG," max_ene=",max_ene)
             sys.exit()
     
         if options.test:
-            print ""
-            print "page, n_orbit_page, max_nen =", page, int(n_orbit_page[page]), max_ene
-            print ""
+            print("")
+            print("page, n_orbit_page, max_nen =", page, int(n_orbit_page[page]), max_ene)
+            print("")
    
         if options.debug:
-            print "" 
+            print("")
         for colum in range(0,int(n_orbit_page[page])+1):  # カラム分割(インデックス作成用)
      
             if colum == 0: # ページの先頭
@@ -466,14 +469,14 @@ for spin in spin_list:
             index_atom_page_colum[page,colum] = atom
      
             if options.test:
-                print "num, page, colum, atom_page_colum[page,colum], orbit_page_colum[page,colum]   ",\
-                           num,page,colum,\
-                           int(index_atom_page_colum[page,colum]), \
-                           int(index_orbit_page_colum[page,colum])   # local_num
+                print("num, page, colum, atom_page_colum[page,colum], orbit_page_colum[page,colum]   ",
+                           num,page,colum,
+                           int(index_atom_page_colum[page,colum]),
+                           int(index_orbit_page_colum[page,colum]))  # local_num
     
             if options.debug:
-                print page,colum,int(index_atom_page_colum[page,colum]), int(index_orbit_page_colum[page,colum]),
-                print int(index_orbit_page_colum[page,colum]),indexname[int(index_orbit_page_colum[page,colum])+1]
+                print(page,colum,int(index_atom_page_colum[page,colum]), int(index_orbit_page_colum[page,colum]), end="")
+                print(int(index_orbit_page_colum[page,colum]),indexname[int(index_orbit_page_colum[page,colum])+1])
                #print int(index_orbit_page_colum[page,colum]),indexname[int(index_orbit_page_colum[page,colum])]
      
             num += 1
@@ -491,11 +494,11 @@ for spin in spin_list:
                 i_num=int(index_orbit_page_colum[page,colum])   # local_num
     
                 if options.debug and colum == 0 and ene == 1:
-                    print "page, colum, i_atom, data = ", page,colum, i_atom,float(doslines[colum])
+                    print("page, colum, i_atom, data = ", page,colum, i_atom,float(doslines[colum]))
     
                 ###############################################
                 data[i_atom,i_num, ene] = float(doslines[colum])
-                ###############################################
+
     #           print "%12.8f  " %( data[i_atom, i_num, ene] ),
     
     #       print ""
@@ -512,16 +515,16 @@ for spin in spin_list:
             f.close
         
             dosdata = dosfile.split('\n')
-            print ""
-            print "i_atom, num, data[i_atom,num,ene]"
+            print("")
+            print("i_atom, num, data[i_atom,num,ene]")
             for i in range(3,len(dosdata)-1):  # エネルギー分割
                 ene=i-2
                 for colum in range(0,int(n_orbit_page[page])+1):  # カラム分割( total-DOS も含む)
                     i_atom=int(index_atom_page_colum[page,colum])
                     num=int(index_orbit_page_colum[page,colum])
                    #print "%d %d %12.8f   " %( i_atom, num, data[i_atom, num, ene] ),
-                    print "%12.8f   " %(data[i_atom, num, ene] ),
-                print ""
+                    print("%12.8f   " %(data[i_atom, num, ene] ), end="")
+                print("")
     
     
     
@@ -533,13 +536,13 @@ for spin in spin_list:
     # data [nfiles+1,n_total_orbit+1,NENRG+1]
     
     if options.test:
-        print ""
-        print "WRITEDATA"
-        print ""
+        print("")
+        print("WRITEDATA")
+        print("")
     
     if options.debug:
-        print ""
-        print "GNUPLOT FORMAT FILE:"
+        print("")
+        print("GNUPLOT FORMAT FILE:")
     
     if TOTALDOS_FLAG:
         start=0
@@ -551,30 +554,30 @@ for spin in spin_list:
     
         ###################### print HEADER
         if options.debug:
-            print "  ",cname+'.gnuplot_dos'+str(atom)+unit+str(spin)
+            print("  ",cname+'.gnuplot_dos'+str(atom)+unit+str(spin))
     
-        print >> gnuplot, "#  BAND"
-        print >> gnuplot, "#EF= ",EF,"  NATOM= ",natom,"  ATOM= ",atom,"   NORBIT=",int(norbit[atom])
-        print >> gnuplot, "# ENERGY  ",
+        print("#  BAND", file=gnuplot)
+        print("#EF= ",EF,"  NATOM= ",natom,"  ATOM= ",atom,"   NORBIT=",int(norbit[atom]), file=gnuplot)
+        print("# ENERGY  ", file=gnuplot, end="")
     
         for orbit in range(1,int(norbit[atom])+1):  # atom=0 (total-DOS) の時は norbit[atom]=1
             orbit_num = int(index_local_orbit[atom,orbit])
             index_num = int(indexnum[atom,int(orbit_num)])
     
             if options.test:
-                print "norbit[atom], orbit,orbit_num, indexnum[atom,orbit] = ",
-                print int(norbit[atom]), atom, orbit, int(orbit_num),
-                print int(index_num) ,indexname[int(index_num)]
+                print("norbit[atom], orbit,orbit_num, indexnum[atom,orbit] = ", end="")
+                print(int(norbit[atom]), atom, orbit, int(orbit_num), end="")
+                print(int(index_num) ,indexname[int(index_num)])
     
-           #print >> gnuplot,"%d:%s  " %(atom,indexnum[atom,orbit_num]),
-            print >> gnuplot,"%d:%s  " %(atom,indexname[int(index_num)]),
+           #print("%d:%s  " %(atom,indexnum[atom,orbit_num]), file=gnuplot, end="")
+            print("%d:%s  " %(atom,indexname[int(index_num)]), file=gnuplot, end="")
     
-        print >> gnuplot, ""
-        print >> gnuplot, ""
+        print("", file=gnuplot)
+        print("", file=gnuplot)
     
         #######################################
         if options.test:
-            print ""
+            print("")
     
         for nen in range(1,NENRG+1):
             if options.FLAG_EF:
@@ -585,7 +588,7 @@ for spin in spin_list:
             if TOTALDOS_FLAG:
                 data[1,0,nen] = data[0,0,nen]
     
-            print >> gnuplot, "%10.6f" %(E),
+            print("%10.6f" %(E), file=gnuplot)
     
     #       if options.test:
     #           print "atom,"
@@ -593,20 +596,20 @@ for spin in spin_list:
             for orbit in range(1,int(norbit[atom])+1):  # 原子種ごとの軌道番号
     
                 if options.deep:
-                    print "atom,norbit[atom],orbit = ",atom,int(norbit[atom]),orbit
+                    print("atom,norbit[atom],orbit = ",atom,int(norbit[atom]),orbit)
     
                 num=orbit  # 原子種ごとの軌道番号
                #print "atom,orbit,indexnum[atom,orbit] = ",atom,orbit,int(indexnum[atom,orbit])
     
-                print >> gnuplot, "%12.8f" %(data[atom,num,nen]),
-            print >> gnuplot, ""
-        print >> gnuplot, ""
+                print("%12.8f" %(data[atom,num,nen]), file=gnuplot, end="")
+            print(gnuplot, "", file=gnuplot)
+        print("", file=gnuplot)
         gnuplot.close()
     
         if options.test:
-            print ""
+            print("")
     
     if options.debug:
-        print ""
+        print("")
     
 ###################################### END SPIN roop ##########################################

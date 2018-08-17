@@ -101,9 +101,9 @@ if __name__ == '__main__':
     INCAR_TAG,INCAR_TEXT = INCAR
     try:
         out = open('INCAR.rebuild','w')
-        print "Makes INCAR.rebuild"
+        print("Makes INCAR.rebuild")
         for i in range(len(INCAR_TAG)):
-            print >> out, INCAR_TAG[i],"=",INCAR_TEXT[i]
+            print(INCAR_TAG[i],"=",INCAR_TEXT[i], file=out)
     except:
         out.close()
         sys.exit("STOP: INCAR.rebuild can't open")
@@ -114,9 +114,9 @@ if __name__ == '__main__':
     # KPOINTS の出力
     try:
         out = open('KPOINTS.rebuild','w')
-        print "Makes KPOINTS.rebuild"
+        print("Makes KPOINTS.rebuild")
         for i in range(len(KPOINTS)):
-            print >> out, KPOINTS[i]
+            print(KPOINTS[i], file=out)
     except:
         out.close()
         sys.exit("STOP: KPOINTS.rebuild can't open")
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     ###################################################
     # POSCAR の出力 (Initial をアウトプット)
-    print "Makes POSCAR.rebuild"
+    print("Makes POSCAR.rebuild")
     STD=False
     cname='POSCAR.rebuild'
     SAE.print_poscar(cname,STD,title,scale,natom,nion,selective,direct,VASP,\
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     ###################################################
     # CONTCAR の出力 (Final をアウトプット)
-    print "Makes CONTCAR.rebuild"
+    print("Makes CONTCAR.rebuild")
     STD=False
     cname='CONTCAR.rebuild'
     SAE.print_poscar(cname,STD,title,scale,natom,nion,selective,direct,VASP,\

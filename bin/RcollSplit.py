@@ -6,6 +6,10 @@
 # RcollSplit.py
 #   *_coll.cfg ファイルを分割する方式で出力
 #
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
 #
 # 2014.11.18
 #     ライブラリ化
@@ -72,7 +76,7 @@ if __name__ == '__main__':
     # ループごとの出力
     for loop in range(nloop):
         name = cname+'_'+str(loop)
-        print "split --> "+name
+        print("split --> "+name)
 
         position = np.zeros((natom,3))
         for ion in range(natom):

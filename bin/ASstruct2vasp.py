@@ -5,6 +5,11 @@
 #  using ASE
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 
@@ -68,8 +73,8 @@ if __name__ == '__main__':
     structname,structbase,wiensuffix,out_suffix = options()
     poscarname = structname+out_suffix
 
-    print "INPUT STRUCT file  = ",structname
-    print "OUTPUT POSCAR file = ",poscarname
+    print("INPUT STRUCT file  = ",structname)
+    print("OUTPUT POSCAR file = ",poscarname)
 
     atoms = read(structname,format='struct')  # using ASE
     atoms.write(poscarname,format='vasp',direct=True,vasp5=True)

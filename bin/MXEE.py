@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.06.30
 #  == None --> is None
 #
@@ -106,7 +109,17 @@ if __name__ == '__main__':
         class_name = 'ReadMxOut'
 
     # makes instance
-    module = __import__(module_name,globals(),locals(),[class_name],-1)
+ #  module = __import__(module_name,globals(),locals(),[class_name],-1)
+
+    # module の動的ロード
+    try:
+        # このリフレクションは python2 方式なので注意
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+    except:
+        # for Python3
+        module = __import__(module_name, fromlist=[class_name])
+
+    # class の動的ロード
     klass = getattr(module,class_name)
     out = klass(mxname)
 
@@ -123,7 +136,7 @@ if __name__ == '__main__':
 #           print "    scf=%d, Uele = %14.11f" %(scf+1,uele[md,scf])
 #           print "    %14.11f" %(uele[md,scf])
 #       print " Utot = %14.11f" %(utot[md])
-        print " %14.11f" %(utot[md])
+        print(" %14.11f" %(utot[md]))
 
 #   for i in range(n_ion_loop):
 

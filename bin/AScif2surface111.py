@@ -10,6 +10,11 @@
 # surface(lattice, indices, layers, vacuum=0.0, )
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 
@@ -47,9 +52,9 @@ if __name__ == '__main__':
     outname1 = cifname+'.POSCAR.vasp'
     outname2 = cifname+'.POSCAR.surface.vasp'
 
-    print "INPUT CIF file             = ",cifname
-    print "OUTPUT POSCAR crystal file = ",outname1
-    print "OUTPUT POSCAR surface file = ",outname2
+    print("INPUT CIF file             = ",cifname)
+    print("OUTPUT POSCAR crystal file = ",outname1)
+    print("OUTPUT POSCAR surface file = ",outname2)
 
     cel = read(cifname,format='cif')
 #

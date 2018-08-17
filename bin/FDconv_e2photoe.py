@@ -10,6 +10,8 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
 #
 ################################################################################
 from __future__ import print_function
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     inpname,txtname,convname,FLAG_FERMI = options()
     if not os.path.exists(inpname):
         sys.exit("STOP(inpname): "+inpname+' not found')
-    print "--inp  , inpname .inp       : read current mode     =",inpname
+    print("--inp  , inpname .inp       : read current mode     =",inpname)
 
     # inp ファイルの分解
     inp = SAE.ReadFdmInp(inpname)
@@ -85,7 +87,7 @@ if __name__ == '__main__':
         filout = inp.get_filout()
     if not os.path.exists(filout+'.txt'):
         sys.exit("STOP(filout,txtname): "+filout+'.txt not found')
-    print "--text , filout  .txt       : read E_edge parameter =",filout+".txt"
+    print("--text , filout  .txt       : read E_edge parameter =",filout+".txt")
 
 
     # エネルギー単位変換前の convolution データ(実際に変換するデータ)
@@ -95,42 +97,41 @@ if __name__ == '__main__':
         convout = filout
     if not os.path.exists(convout+'_conv.txt'):
         sys.exit("STOP(convout): "+convout+'_conv.txt not found')
-    print "--conv , convdata _conv.txt : read XAS data         =",convout+"_conv.txt"
+    print("--conv , convdata _conv.txt : read XAS data         =",convout+"_conv.txt")
 
 
     # エネルギー単位変換後の出力ファイル
     outfile = convout+'_conv_photoe.txt'
-    print "outfile                                             =",outfile
+    print("outfile                                             =",outfile)
 
 
     # データーの分解
     txt = SAE.ReadFdmTxt(filout,'.txt')
     conv = SAE.ReadFdmConv(convout,'_conv.txt')
-    print "E_edge                                              =",txt.E_edge
-    print "E_fermi                                             =",txt.E_Fermi
+    print("E_edge                                              =",txt.E_edge)
+    print("E_fermi                                             =",txt.E_Fermi)
 
 
     ########################### converter ######################################
     if not inp.get_energygpho():
-        print "current mode                                        = Fermi"
+        print("current mode                                        = Fermi")
         txt.eng = txt.eng + txt.E_edge     #-txt.E_fermi
         conv.eng = conv.eng  + txt.E_edge  #-txt.E_fermi
 
     if FLAG_FERMI:
-        print "Energy - E_fermi                                    = ",txt.E_fermi
+        print("Energy - E_fermi                                    = ",txt.E_fermi)
         txt.eng = txt.eng   - txt.E_fermi
         conv.eng = conv.eng - txt.E_fermi
 
-    print "---> convert to PhotoEnergy (EF0 + E_edge)"
+    print("---> convert to PhotoEnergy (EF0 + E_edge)")
     try:
         convout = open(outfile,'w')
     except:
         convout.close()
 
-    print >> convout, ""
+    print("", file=convout)
     for i in range(len(txt.eng)):
-        print >> convout, " %13.5f  %14.10f"\
-                %(txt.eng[i], conv.xas[i])
+        print(" %13.5f  %14.10f" %(txt.eng[i], conv.xas[i]), file=convout)
 
     convout.close()
 

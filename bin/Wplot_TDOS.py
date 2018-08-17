@@ -14,6 +14,8 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
 #
 # 2015.03.27
 #  unit の表示
@@ -99,9 +101,9 @@ if __name__ == '__main__':
             NO_WINDOW_FLAG,PORTRAIT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
     ############################################
     # case.dos ファイルを抽出
@@ -109,10 +111,10 @@ if __name__ == '__main__':
     if not lists:
         sys.exit("STOP: "+case+".dos* file not found")
 
-    print "READ FILE    :",
+    print("READ FILE    :", end="")
     for i in lists:
-        print i,
-    print ""
+        print(i, end="")
+    print("")
 
     ############################################
     # check SPIN

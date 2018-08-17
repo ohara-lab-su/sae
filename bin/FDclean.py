@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.06.19 startup
 #
 ################################################################################
@@ -71,7 +74,7 @@ if __name__ == '__main__':
     out = SAE.ReadFdmInp(name)
 
     filout = out.get_filout()
-    print 'fileout :',filout
+    print('fileout :',filout)
 
 #   filelist = glob.glob(filout+'*.txt')
     filelist = ['fdmnes_error.txt',
@@ -84,14 +87,14 @@ if __name__ == '__main__':
 #   print ""
     for i in filelist:
         if os.path.exists(i):
-            print "DELETE : "+i
+            print("DELETE : "+i)
             os.remove(i)
 
     if os.path.exists('fdm.out'):
-        print "DELETE : fdm.out"
+        print("DELETE : fdm.out")
         os.remove('fdm.out')
 
     if os.path.exists('PBS_log'):
-        print "DELETE : PBS_log"
+        print("DELETE : PBS_log")
         os.remove('PBS_log')
 

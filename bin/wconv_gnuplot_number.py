@@ -12,6 +12,11 @@
 #  これらを入力すると、gnuplot 用のオービタルの通算の通し番号が出力される
 #  X軸(エネルギー)が加わるのでオービタルの通算番号+1 が出力される
 #
+##########################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
 #  2014.06.03 10:42
 #     暫定的に完成(同日の wconv_gnuplot_number.py ベース
 #
@@ -79,8 +84,8 @@ if len(args) > 0:
     cname=args[0]
 
 if options.debug:
-    print ""
-    print "BASE NAME     =",cname
+    print("")
+    print("BASE NAME     =",cname)
 
 #### default unit (eV)
 unit=''
@@ -100,13 +105,13 @@ else:
 
 
 if not os.path.exists(cname+".int"):
-    print cname+".int file not found"
-    print "EXIT"
+    print(cname+".int file not found")
+    print("EXIT")
     sys.exit()
 
 if options.debug:
-    print "UNIT          =",unit_tmp
-    print "EF0 MODE      =",options.FLAG_EF
+    print("UNIT          =",unit_tmp)
+    print("EF0 MODE      =",options.FLAG_EF)
 
 
 TOTALDOS_FLAG = False
@@ -141,8 +146,8 @@ for line in range(1,1+n_total_orbit):
         max_orbit_number=tmp
 
 if options.debug:
-    print ""
-    print "MAXORBIT NUM  =", max_orbit_number
+    print("")
+    print("MAXORBIT NUM  =", max_orbit_number)
 
 
 
@@ -166,7 +171,7 @@ for num in range(1,1+n_total_orbit):
         TOTALDOS_FLAG=True
 
     if atom_tmp < atom:
-        print "STOP: READ",cname+".int Files, atom_tmp < atom " ,atom_tmp,atom
+        print("STOP: READ",cname+".int Files, atom_tmp < atom " ,atom_tmp,atom)
         sys.exit()
 
     if atom_tmp > atom:
@@ -175,10 +180,10 @@ for num in range(1,1+n_total_orbit):
 natom=atom
 
 if options.debug:
-    print "NATOM         =",natom
-    print "TOTAL ORBITAL =",n_total_orbit
+    print("NATOM         =",natom)
+    print("TOTAL ORBITAL =",n_total_orbit)
     if TOTALDOS_FLAG:
-        print "TOTLDOS       =",TOTALDOS_FLAG
+        print("TOTLDOS       =",TOTALDOS_FLAG)
 
 ###############################################################
 #
@@ -208,11 +213,11 @@ for num in range(1,1+n_total_orbit):
 
 
 if options.test:
-    print ""
-    print "num, indexatom[num], indexorbit[num], indexname[num]"
+    print("")
+    print("num, indexatom[num], indexorbit[num], indexname[num]")
     for num in range(1,n_total_orbit+1):
-        print num, int(indexatom[num]), int(indexorbit[num]),indexname[num]
-    print ""
+        print(num, int(indexatom[num]), int(indexorbit[num]),indexname[num])
+    print("")
 
 
 ###############################################################
@@ -241,7 +246,7 @@ for num in range(3,3+n_total_orbit):
     i += 1
 
     if options.test:
-        print "num,atom, norbit[atom], orbital", num-2,atom,int(norbit[atom]),int(orbital[1])
+        print("num,atom, norbit[atom], orbital", num-2,atom,int(norbit[atom]),int(orbital[1]))
 
 if TOTALDOS_FLAG:
     norbit[0]=1
@@ -250,13 +255,13 @@ else:
     start=1
 
 if options.debug:
-    print ""
+    print("")
     for atom in range(start,natom+1):
         if atom == 0:
-            print "ATOM=",atom,"NUM ORBIT",int(norbit[atom]),"(TOTAL-DOS)"
+            print("ATOM=",atom,"NUM ORBIT",int(norbit[atom]),"(TOTAL-DOS)")
         else:    
-            print "ATOM=",atom,"NUM ORBIT",int(norbit[atom])
-    print ""
+            print("ATOM=",atom,"NUM ORBIT",int(norbit[atom]))
+    print("")
 
 
 ###############################################################
@@ -278,14 +283,14 @@ for atom in range(0,natom+1):
         num +=1
 
 if options.test:
-    print ""
-    print "num, atom, norbit[atom], num_local_orbit,",
-    print "indexorbit[num], index_local_orbit[atom,num_local_orbit, indexname[num]"
+    print("")
+    print("num, atom, norbit[atom], num_local_orbit,", end="")
+    print("indexorbit[num], index_local_orbit[atom,num_local_orbit, indexname[num]")
     num=1
     for atom in range(0,natom+1):
         for num_local_orbit in range(1,int(norbit[atom])+1):
-            print num, atom, int(norbit[atom]), num_local_orbit, int(indexorbit[num]), \
-                             int(index_local_orbit[atom,num_local_orbit]),indexname[num]
+            print(num, atom, int(norbit[atom]), num_local_orbit, int(indexorbit[num]),
+                             int(index_local_orbit[atom,num_local_orbit]),indexname[num])
             num +=1
 
 
@@ -303,11 +308,11 @@ for num in range(1,1+n_total_orbit):
 
 
 if options.test:
-    print ""
-    print "num, indexnum[indexatom[num],indexorbit[num]], indexatom[num], indexorbit[num] = "
+    print("")
+    print("num, indexnum[indexatom[num],indexorbit[num]], indexatom[num], indexorbit[num] = ")
     for num in range(1,1+n_total_orbit):
-        print num,int(indexnum[int(indexatom[num]),int(indexorbit[num])]),
-        print            int(indexatom[num]),int(indexorbit[num])
+        print(num,int(indexnum[int(indexatom[num]),int(indexorbit[num])]), end="")
+        print(           int(indexatom[num]),int(indexorbit[num]))
 
 
 #print ""
@@ -323,7 +328,7 @@ if options.test:
 ######################################################
 ###################### 追加分 (wget_orbital_number.py)
 if options.test:
-    print ""
+    print("")
 i=1
 atom0=0
 for num in range(1,1+n_total_orbit):
@@ -343,15 +348,15 @@ for num in range(1,1+n_total_orbit):
             dst =options.orbital+'-'+site
             if orbital_name == dst:
                 if options.debug:
-                    print dst,i
+                    print(dst,i)
                 else:
-                    print i+1
+                    print(i+1)
         else:
             orbital_name=orbital[2].lower()
             if options.debug:
-                print orbial_name,atom
+                print(orbial_name,atom)
             else:
-                print atom+2
+                print(atom+2)
     i += 1
 
 

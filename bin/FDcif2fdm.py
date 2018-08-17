@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.05.18 startup
 #
 ################################################################################
@@ -86,5 +89,5 @@ if __name__ == '__main__':
 #    SAEnv.print_fdmnes0(name=name,atoms=atoms,STD=False,MOL=MOL)
 #    SAEnv.write_fdmnes_inp0(atoms=atoms,MOL=MOL)
 
-    print "bug version"
+    print("bug version")
 

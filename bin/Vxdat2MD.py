@@ -83,14 +83,14 @@ if __name__ == '__main__':
     nloop = xdat.get_nloop()
 
     for i in range(nloop):
-        print natom
-        print "%s %10d" %( "   step=", i+1 )
+        print(natom)
+        print("%s %10d" %( "   step=", i+1 ))
         xyz = xdat.get_xyz(loop=i)
         j=0
         for k in range(nion):
             for l in range(int(atoms[k])):
-                print "  %2s %12.8f %12.8f %12.8f" \
-                        % ( atoms_index[k],xyz[j,0],xyz[j,1],xyz[j,2])
+                print("  %2s %12.8f %12.8f %12.8f"
+                        % ( atoms_index[k],xyz[j,0],xyz[j,1],xyz[j,2]))
                 j += 1
 
 

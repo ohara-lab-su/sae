@@ -17,6 +17,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.04.22
 #  暫定版(実用版)を一応リリース
 #
@@ -114,12 +117,12 @@ if __name__ == '__main__':
 
     ############################################
     # オプションの確認
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
-    if OPT_UP: print "SPIN-UP"
-    if OPT_DN: print "SPIN-DOWN"
+    if OPT_UP: print("SPIN-UP")
+    if OPT_DN: print("SPIN-DOWN")
 
     ############################################
     # case.dos ファイルを抽出
@@ -127,10 +130,10 @@ if __name__ == '__main__':
     if not lists:
         sys.exit("STOP: "+case+".dos* file not found")
 
-    print "READ FILE    :",
+    print("READ FILE    :", end="")
     for i in lists:
-        print i,
-    print ""
+        print(i, end="")
+    print("")
 
     ############################################
     # unit の書き直し
@@ -140,7 +143,7 @@ if __name__ == '__main__':
     else:
         unit = 'Ry'
 
-    print "UNIT:",unit
+    print("UNIT:",unit)
     ############################################
     # check SPIN
     if os.path.exists(case+'.output0'):
@@ -207,7 +210,7 @@ if __name__ == '__main__':
             e.append(eng[i])
 
     ################################################
-    print "IONS: ",ions_index
+    print("IONS: ",ions_index)
     if ALL_FLAG:
         a1 = 1
         a2 = len(ions_index) + 1
@@ -234,11 +237,11 @@ if __name__ == '__main__':
         ############################################
         # multi-plot
         atom_name = ions_index[int(atom)-1]
-        print "ATOM: ",atom_name
+        print("ATOM: ",atom_name)
         j=0
         for orbit in orbit_list:
 
-            print "ORBIT: ",orbit
+            print("ORBIT: ",orbit)
             if dos.chk_raw_dos(atom=atom,orbit=orbit):
 
                 plt.axes([ orgx,orgy, xsize, ysize ])

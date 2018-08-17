@@ -96,11 +96,11 @@ if __name__ == '__main__':
         OPT_LEFT, \
         OPT_PAIR = options()
 
-    if OPT_DMAX: print "Dmax=", OPT_DMAX
-    if OPT_EMAX: print "Emax=", OPT_EMAX
-    if OPT_EMIN: print "Emin=", OPT_EMIN
-    if OPT_YMAX: print "Ymax=", OPT_YMAX
-    if OPT_YMIN: print "Ymax=", OPT_YMIN
+    if OPT_DMAX: print("Dmax=", OPT_DMAX)
+    if OPT_EMAX: print("Emax=", OPT_EMAX)
+    if OPT_EMIN: print("Emin=", OPT_EMIN)
+    if OPT_YMAX: print("Ymax=", OPT_YMAX)
+    if OPT_YMIN: print("Ymax=", OPT_YMIN)
 
     ##########################################################################
     # matplotlib
@@ -142,15 +142,15 @@ if __name__ == '__main__':
         spin_list = [0,1]
 
     # TOTAL DOS & PDOS
-    print '--- READ DOSCAR.lobster'
+    print('--- READ DOSCAR.lobster')
     dos = SAE.ReadLobDos()
-    print '    END'
+    print('    END')
     dos_x = dos.eng
 
     # COHP Average
-    print '--- READ COHPCAR.lobster'
+    print('--- READ COHPCAR.lobster')
     cohp = SAE.ReadLobCohp()
-    print '    END'
+    print('    END')
     cohp_x = cohp.eng
 
     # ペアプロットするかどうかの判断
@@ -174,16 +174,16 @@ if __name__ == '__main__':
         else:
             npar = 1
             OPT_LDOS = True
-            print "Plot Pairs = ",
-            print cohp.bond_index[int(OPT_PAIR[0])]
+            print("Plot Pairs = ", end="")
+            print(cohp.bond_index[int(OPT_PAIR[0])])
 
             # 分割サイズの変更
             norbit = len(orbit_list)
             sizey = sizey_dos0/(float(norbit)*2+2)
             sizey_cohp = sizey_cohp0/(float(norbit)*2+2)
 
-    print 'ORBIT_LIST= ',orbit_list
-    print 'SPIN_LIST = ',spin_list
+    print('ORBIT_LIST= ',orbit_list)
+    print('SPIN_LIST = ',spin_list)
 
     ######################################################## COHP Average
     plt.axes([orgx, orgy, sizex, sizey_cohp])

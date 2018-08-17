@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.03
 #  startup
 #
@@ -65,7 +68,7 @@ if __name__ == '__main__':
         else:
             sys.exit("STOP: "+mdname+" not found.")
 
-    print "INPUT:",mdname
+    print("INPUT:",mdname)
 
     md = SAE.ReadMd(mdname)
 

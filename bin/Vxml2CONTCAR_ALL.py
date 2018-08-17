@@ -99,12 +99,12 @@ if __name__ == '__main__':
     title,scale,natom,nion,selective,direct,VASP,\
        t_loop,atoms,atoms_index,position_loop,fix_final = CONTCAR_ALL
 
-    print "Numver of ION-LOOP:", n_ion_loop
+    print("Numver of ION-LOOP:", n_ion_loop)
 
     ###################################################
     # loop 毎のCONTCAR の出力
     for ion_loop in range(n_ion_loop):
-        print "Makes CONTCAR."+str(ion_loop+1)+".rebuild"
+        print("Makes CONTCAR."+str(ion_loop+1)+".rebuild")
 
         t =  t_loop[:,:,ion_loop]
         position = position_loop[:,:,ion_loop]

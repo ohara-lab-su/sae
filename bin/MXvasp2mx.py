@@ -22,6 +22,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.08.20
 #   関数化&分離化&統合化バージョン
 #
@@ -94,8 +97,8 @@ if __name__ == '__main__':
     ## options
     poscarname,datname,OPT_STD,OPT_FRAC = options()
 
-    print "INPUT :",poscarname
-    print "OUTPUT:",datname+".dat"
+    print("INPUT :",poscarname)
+    print("OUTPUT:",datname+".dat")
 
     cell = SAEnv.Read(filename=poscarname,code='VASP')
     cell.write(outname=datname,code='OpenMX',calinfo='VASP',STD=OPT_STD,FRAC=OPT_FRAC)

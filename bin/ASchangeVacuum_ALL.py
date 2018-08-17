@@ -8,6 +8,11 @@
 #  using ASE
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 
@@ -63,9 +68,9 @@ if __name__ == '__main__':
 
     inpname,outname,vacuum = options()
 
-    print "INPUT POSCAR file  = ",inpname
-    print "OUTPUT POSCAR file = ",outname
-    print "Vacuum SIZE        = ",str(vacuum)
+    print("INPUT POSCAR file  = ",inpname)
+    print("OUTPUT POSCAR file = ",outname)
+    print("Vacuum SIZE        = ",str(vacuum))
 
     cell = read(inpname,format='vasp')
 

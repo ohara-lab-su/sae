@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.02
 #  Gaussian スメアリングの時のモードを追加
 #
@@ -99,7 +102,7 @@ def options():
     options,  args = parser.parse_args()
 
     if options.gaussian:
-        print "GAUSSIAN MODE"
+        print("GAUSSIAN MODE")
         suffix =suffix_g
 
     if options.INPUT:
@@ -131,9 +134,9 @@ if __name__ == '__main__':
     name,suffix,NO_WINDOW_FLAG,PORTRAIT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
     # makes instance ( Read DOS.Tetrahedron )
     dos = SAE.ReadMxTdos(name,suffix)

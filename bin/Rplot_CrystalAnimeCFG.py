@@ -50,7 +50,7 @@ import StructureAnalysisEnvironment as SAE
 import numpy as np
 import visual as vp
 
-from crystal_make_unit import *
+from StructureAnalysisEnvironment.crystal_make_unit import *
 
 #import re
 #import optparse
@@ -113,7 +113,7 @@ if __name__ == '__main__':
 
     if os.path.exists(dummy):
         dummy_FLAG=True
-        print "READ dummy list: "+dummy
+        print("READ dummy list: "+dummy)
         try:
             tmp = open(dummy)
         except:

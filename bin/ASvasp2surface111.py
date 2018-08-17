@@ -10,6 +10,11 @@
 # surface(lattice, indices, layers, vacuum=0.0, )
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 
@@ -40,8 +45,8 @@ if __name__ == '__main__':
     poscarname = 'POSCAR'
     outname = 'POSCAR.surface.vasp'
 
-    print "INPUT POSCAR file  = ",poscarname
-    print "OUTPUT POSCAR file = ",outname
+    print("INPUT POSCAR file  = ",poscarname)
+    print("OUTPUT POSCAR file = ",outname)
 
     atoms = read(poscarname,format='vasp')
 

@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.08.18 startup
 #
 ################################################################################
@@ -58,10 +61,10 @@ if __name__ == '__main__':
     OPT_EMAX,OPT_EMIN = options()
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
-        print "Emax     =",OPT_EMAX
+        print("Emax     =",OPT_EMAX)
     if OPT_EMIN:
         OPT_EMIN=float(OPT_EMIN)
-        print "Emin     =",OPT_EMIN
+        print("Emin     =",OPT_EMIN)
     ###########################################################################
     plt.rcParams['font.family']     = 'Times New Roman'
     plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ

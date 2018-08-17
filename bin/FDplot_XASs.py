@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.07.01 fdXAS startup
 #
 ################################################################################
@@ -92,13 +95,13 @@ if __name__ == '__main__':
 
     if OPT_EMAX:
         OPT_EMAX=float(OPT_EMAX)
-        print "Emax     =",OPT_EMAX
+        print("Emax     =",OPT_EMAX)
     if OPT_EMIN:
         OPT_EMIN=float(OPT_EMIN)
-        print "Emin     =",OPT_EMIN
+        print("Emin     =",OPT_EMIN)
     if OPT_YMAX:
         OPT_YMAX=float(OPT_YMAX)
-        print "Ymax     =",OPT_YMAX
+        print("Ymax     =",OPT_YMAX)
 
 
     plt.rcParams['font.family']     = 'Times New Roman'
@@ -126,8 +129,8 @@ if __name__ == '__main__':
     else:
         filout = inp.get_filout()
 
-    print "INP FILE  = ",inpname
-    print "DATA FILE = ",filout
+    print("INP FILE  = ",inpname)
+    print("DATA FILE = ",filout)
 
     ## 計算結果の読み込み
     if AV:
@@ -135,8 +138,8 @@ if __name__ == '__main__':
     else:
         txt = SAE.ReadFdmTxt(filout,'.txt')
 
-    print "E_edge   =",txt.E_edge
-    print "E_fermi  =",txt.E_Fermi
+    print("E_edge   =",txt.E_edge)
+    print("E_fermi  =",txt.E_Fermi)
 
 
     filbav = inp.get_filout()
@@ -144,11 +147,11 @@ if __name__ == '__main__':
         sys.exit("STOP: fileout TAG not found in "+inpname)
 
 
-    print "-----"
+    print("-----")
     for ab in range(len(AV)):
         filout = filbav+'_'+str(ab+1)
         convname = filout+'_conv.txt'
-        print convname
+        print(convname)
         if not os.path.exists(convname):
             sys.exit("STOP: "+convname+" not found")
 

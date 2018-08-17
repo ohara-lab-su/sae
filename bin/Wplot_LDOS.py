@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.04.21
 #  ケアレスミス（オービタルを呼び出す名前を間違っていた),ただしかなり重要なミス
 #
@@ -111,16 +114,16 @@ if __name__ == '__main__':
             NO_WINDOW_FLAG,AT_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX,plot_ions = options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
     # ION の種類(サイトの種類)で番号を入力
     if len(plot_ions) > 1:
-        print "Plot Ions:"
+        print("Plot Ions:")
         for i in plot_ions:
-            print i,
-        print ""
+            print(i, end="")
+        print("")
 
     ############################################
     # case.dos ファイルを抽出
@@ -128,10 +131,10 @@ if __name__ == '__main__':
     if not lists:
         sys.exit("STOP: "+case+".dos* file not found")
 
-    print "READ FILE    :",
+    print("READ FILE    :", end="")
     for i in lists:
-        print i,
-    print ""
+        print(i, end="")
+    print("")
 
     ############################################
     # unit の書き直し
@@ -235,9 +238,9 @@ if __name__ == '__main__':
             ion_label =str(ions_index[ion-1])
 
             if nspin == 1:
-                print "ion =",ion,ion_label
+                print("ion =",ion,ion_label)
             else:
-                print "ion(spin) =",ion,"("+str(spin+1)+")",ion_label
+                print("ion(spin) =",ion,"("+str(spin+1)+")",ion_label)
 
             ############################################
             # X軸

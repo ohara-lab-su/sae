@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.02
 #  GAUSSIAN スメアリングのときのオプション追加
 #
@@ -113,7 +116,7 @@ def options():
     options,  args = parser.parse_args()
 
     if options.gaussian:
-        print "GAUSSIAN MODE"
+        print("GAUSSIAN MODE")
         suffix_tdos = suffix_tdos_g
         suffix_pdos = suffix_pdos_g
 
@@ -148,23 +151,23 @@ if __name__ == '__main__':
             OPT_EMAX,OPT_EMIN,OPT_YMAX,OPT_ATOM = options()
 
     if HEX_FLAG:
-        print "Hexagonal MODE"
+        print("Hexagonal MODE")
     elif CUBIC_FLAG:
-        print "Cubic MODE"
+        print("Cubic MODE")
     elif SPD_FLAG:
-        print "SPD(lm=0,1,2,,,,9) MODE"
+        print("SPD(lm=0,1,2,,,,9) MODE")
     elif SP_FLAG:
-        print "Selective s-orbital and p-orbital MODE (disable d-orbital plot)"
+        print("Selective s-orbital and p-orbital MODE (disable d-orbital plot)")
     elif AUTO_FLAG:
-        print "Automatic Symmetry MODE"
+        print("Automatic Symmetry MODE")
     else:
-        print "Default (lm=0,1,2,,,,9) MODE"
+        print("Default (lm=0,1,2,,,,9) MODE")
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
     if OPT_ATOM:
-        print "ATOM=",OPT_ATOM
+        print("ATOM=",OPT_ATOM)
         atom=int(OPT_ATOM)-1
     else:
         atom=0
@@ -205,7 +208,16 @@ if __name__ == '__main__':
         FLAG_DATFILE=True
 
     if FLAG_DATFILE:
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
+#       module = __import__(module_name,globals(),locals(),[class_name],-1)
+        # module の動的ロード
+        try:
+            # このリフレクションは python2 方式なので注意
+            module = __import__(module_name, globals(), locals(), [class_name], -1)
+        except:
+            # for Python3
+            module = __import__(module_name, fromlist=[class_name])
+
+        # class の動的ロード
         klass = getattr(module,class_name)
 
         dat = klass(datname)
@@ -299,7 +311,7 @@ if __name__ == '__main__':
     ########################################################################
     # 画面分割のブロック
     nblock = len(block_list)
-    print "Number of nblock = ",nblock
+    print("Number of nblock = ",nblock)
 
     orgx = 0.130
     orgy = 0.080
@@ -314,11 +326,11 @@ if __name__ == '__main__':
                 if FLAG_DATFILE:
                     atom_label =str(atoms[atoms_j[atom]])+str(atom+1)
                     if spin == 1:
-                        print "Atom =",atom+1,atom_label
+                        print("Atom =",atom+1,atom_label)
                 else:
                     atom_label =str(atom)
                     if spin == 1:
-                        print "Atom =",atom+1
+                        print("Atom =",atom+1)
 
             # 描画軸の作成
             plt.axes([ orgx,orgy, 0.80, size ])

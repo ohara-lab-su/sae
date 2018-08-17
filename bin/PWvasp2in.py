@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.08.24
 #  統合化
 #
@@ -70,8 +73,8 @@ def options():
     if len(args) >0: poscarname=args[0]
     if poscarname == outinp: sys.exit("STOP: INPUT_NAME = OUTPUT_NAME :"+poscarname)
 
-    print "INPUT :",poscarname
-    print "OUTPUT:",outbase+inpsuffix
+    print("INPUT :",poscarname)
+    print("OUTPUT:",outbase+inpsuffix)
 
     return [poscarname,outbase,inpsuffix,options.stdout]
 

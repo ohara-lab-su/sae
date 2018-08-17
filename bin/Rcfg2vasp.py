@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.07.16
 #    関数版を駆逐(class版を使う)
 #
@@ -55,8 +58,8 @@ def options():
     if len(args) > 0: cname=args[0]
 
     if cname:
-        print "INPUT file name :",cname+".cfg"
-        print "OUTPUT file name:",cname+".vasp"
+        print("INPUT file name :",cname+".cfg")
+        print("OUTPUT file name:",cname+".vasp")
 
     if not os.path.exists(cname+".cfg"):
         sys.exit(cname+".cfg file not found")

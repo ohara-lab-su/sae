@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.02
 #  Gaussian スメアリングの時のモードを追加
 #
@@ -96,7 +99,7 @@ def options():
     options,  args = parser.parse_args()
 
     if options.gaussian:
-        print "GAUSSIAN MODE"
+        print("GAUSSIAN MODE")
         suffix_tdos = suffix_tdos_g
         suffix_pdos = suffix_pdos_g
 
@@ -127,9 +130,9 @@ if __name__ == '__main__':
             NO_WINDOW_FLAG,\
             OPT_EMAX,OPT_EMIN,OPT_YMAX= options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
     # set output device
     out = sys.stdout
@@ -146,10 +149,19 @@ if __name__ == '__main__':
     else:
         sys.exit("STOP: "+datname+'.dat or .dat.gz file not found')
 
-    module = __import__(module_name,globals(),locals(),[class_name],-1)
-    klass = getattr(module,class_name)
+#   module = __import__(module_name,globals(),locals(),[class_name],-1)
+    # module の動的ロード
+    try:
+        # このリフレクションは python2 方式なので注意
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+    except:
+        # for Python3
+        module = __import__(module_name, fromlist=[class_name])
 
+    # class の動的ロード
+    klass = getattr(module,class_name)
     dat = klass(datname)
+
     NION = dat.get_nion()
     NSPIN = dat.get_ispin()
     NATOM = dat.get_natom()
@@ -200,9 +212,9 @@ if __name__ == '__main__':
         for ion in range(NION):
 
             if NSPIN ==1:
-                print "ion = ",ion+1,atoms[ion]
+                print("ion = ",ion+1,atoms[ion])
             else:
-                print "ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion]
+                print("ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion])
             atom = str(atoms[ion])
 
             # autumn, bone, cool, copper, flag, gray, hot, hsv,

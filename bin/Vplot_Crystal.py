@@ -70,7 +70,7 @@ import time
 def options():
 
     POSCAR = "POSCAR" # INPUT (BASE) filename
-    print "INPUT file name    :",POSCAR
+    print("INPUT file name    :",POSCAR)
 
     return [POSCAR,cname]
 
@@ -179,9 +179,9 @@ class BondPanel(wx.Panel):
         self.atom1    = self.bondAtom1Text.GetValue()
         self.atom2    = self.bondAtom2Text.GetValue()
         self.distance = self.bondDistanceText.GetValue()
-        print "ATOM1:    ",self.atom1
-        print "ATOM2:    ",self.atom2
-        print "DISTANCE: ",self.distance
+        print("ATOM1:    ",self.atom1)
+        print("ATOM2:    ",self.atom2)
+        print("DISTANCE: ",self.distance)
 
 
 ################################################################################
@@ -216,7 +216,7 @@ class MyCrystalFrame():
         crystalframe = vp.frame()
 
         POSCAR = "POSCAR"
-        print "INPUT file name    :",POSCAR
+        print("INPUT file name    :",POSCAR)
 
         ############################################
         # ボンドを描くか否か？
@@ -246,11 +246,11 @@ class MyCrystalFrame():
         title,scale,selective,direct = \
            SAE.read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix)
 
-        print "nion =",nion
-        print "atom1=",atom1
-        print "atom2=",atom2
+        print("nion =",nion)
+        print("atom1=",atom1)
+        print("atom2=",atom2)
         if atom1 >  nion or atom2 > nion:
-            print "set bond_FLAG=False : aotm1 >  nion or atom2 >  nion"
+            print("set bond_FLAG=False : aotm1 >  nion or atom2 >  nion")
             bond_FLAG = False
 
         # VASP の場合はVASP5以上の書式が必要(原子番号情報が必要)
@@ -272,7 +272,7 @@ class MyCrystalFrame():
         if bond_FLAG:
             bondnum = \
                     SAE.get_bond_info_param(atom1,atom2,distance,nion,atoms,position)
-            print "NUMBER OF BOND     :",bondnum
+            print("NUMBER OF BOND     :",bondnum)
 
             bondr = np.zeros((bondnum))
             bond1 = np.zeros((bondnum),dtype=int)
@@ -357,10 +357,10 @@ class MyCrystalFrame():
 
                 bond = vp.cylinder (frame=crystalframe, pos=(x0,y0,z0), axis=(x12,y12,z12), radius =BR )
 
-                print num, bond1[num],"("+str(atoms_index[int(ion[bond1[num]])])+") -",\
+                print(num, bond1[num],"("+str(atoms_index[int(ion[bond1[num]])])+") -",\
                            bond2[num],"("+str(atoms_index[int(ion[bond2[num]])])+")"  ,\
                            " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
-                           % ( r1, x1,y1,z1, x2,y2,z2)
+                           % ( r1, x1,y1,z1, x2,y2,z2))
 
         ########################################################################
         # 画像保存

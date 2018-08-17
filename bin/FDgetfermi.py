@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.11.16 startup
 #
 ################################################################################
@@ -75,8 +78,8 @@ if __name__ == '__main__':
     eedge = txt.E_edge
     edge = bav.edge
 
-    print "E_Fermi"
-    print efermi
-    print "E_Edge ("+edge+")"
-    print eedge
+    print("E_Fermi")
+    print(efermi)
+    print("E_Edge ("+edge+")")
+    print(eedge)
 

@@ -37,6 +37,9 @@
 #
 ##########################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.11.23
 #  L2,L3 の計算に対応
 #
@@ -215,27 +218,27 @@ if __name__ == '__main__':
         FLAG_PDF, FLAG_NW = options()
 
     if FLAG_L2 or FLAG_L3:
-        print "2-edge mode (L23-mode)"
+        print("2-edge mode (L23-mode)")
         if FLAG_L2:
-            print "L2-edge mode"
+            print("L2-edge mode")
             edge = 'L2'
         elif FLAG_L3:
-            print "L3-edge mode"
+            print("L3-edge mode")
             edge = 'L3'
     else:
         edge = 'K'
 
     if (FLAG_L2 and FLAG_L3) or FLAG_L23:
-            print "L2,L3-edge mode"
+            print("L2,L3-edge mode")
 
     ##########################################################################
     # inpname
     #    ベースとなる情報のinputfile名
-    print "inpname"
-    print "-------------------------> ",inpname
+    print("inpname")
+    print("-------------------------> ",inpname)
     inp = SAE.ReadFdmInp(inpname)
-    print "filout name"
-    print "-------------------------> ",inp.filout
+    print("filout name")
+    print("-------------------------> ",inp.filout)
 
     if not filoutname:
         calculation = inp.get_calculation()
@@ -247,16 +250,16 @@ if __name__ == '__main__':
         filout = filoutname
 
     if AV:
-        print "--- average mode ---"
-        print "Absorber =",AV
+        print("--- average mode ---")
+        print("Absorber =",AV)
 
     if WE:
-        print "XANES Weight =",WE
+        print("XANES Weight =",WE)
     if WEDOS:
-        print "DOS Weight   =",WEDOS
+        print("DOS Weight   =",WEDOS)
 
     if AV:
-        print ""
+        print("")
 
     if allname:
         convolname = allname
@@ -269,24 +272,24 @@ if __name__ == '__main__':
     #     計算結果の読み込み (平均化で最初に指定したabsorberから)
     #     convol の値は 平均化モードで Method により上書きされる
     if AV:
-        print ""
-        print "--- average mode ---"
-        print "text base name (.txt)"
-        print "------======-------------> ",filout+'_'+str(AV[0])
+        print("")
+        print("--- average mode ---")
+        print("text base name (.txt)")
+        print("------======-------------> ",filout+'_'+str(AV[0]))
         txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]), suffix='.txt', edge=edge)
 
-        print "convolution base name (_conv.txt)"
-        print "-----------======--------> ",filout+'_'+str(AV[0])
+        print("convolution base name (_conv.txt)")
+        print("-----------======--------> ",filout+'_'+str(AV[0]))
         conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]), suffix='_conv.txt')
     else:
         if textname is None: textname = filout
         if convolname is None: convolname = filout
-        print "text base name  (.txt)"
-        print "-------------------------> ",textname
+        print("text base name  (.txt)")
+        print("-------------------------> ",textname)
         txt = SAE.ReadFdmTxt(textname, suffix='.txt', edge=edge)  # Read Edge and Efermi
 
-        print "convolution base name (_conv.txt)"
-        print "-------------------------> ",convolname
+        print("convolution base name (_conv.txt)")
+        print("-------------------------> ",convolname)
         conv = SAE.ReadFdmConv(convolname, '_conv.txt')
 
     ##########################################################################
@@ -302,7 +305,7 @@ if __name__ == '__main__':
             conv.xas = conv.average_conv(filout, AV)
             txt.xas = txt.average(filout, AV)
 
-        print ""
+        print("")
 
     ##########################################################################
     # sd
@@ -314,14 +317,14 @@ if __name__ == '__main__':
            filbav = bavname
         else:
            filbav = filout
-        print "Bav base name (_bav.txt)"
-        print "-------------------------> ",filbav
+        print("Bav base name (_bav.txt)")
+        print("-------------------------> ",filbav)
 
         if AV:
             sdname = filout
-            print "Sdname base (_sd0.txt)"
-            print "-------------------------> ",sdname
-            print ""
+            print("Sdname base (_sd0.txt)")
+            print("-------------------------> ",sdname)
+            print("")
             if WEDOS:
                 sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
                                    bavname=filbav,
@@ -344,77 +347,78 @@ if __name__ == '__main__':
                 sdname = sdname
             else:
                 sdname = filout
-            print "Sdname base name (_sd0.txt)"
-            print "-------------------------> ",sdname
-            print ""
+            print("Sdname base name (_sd0.txt)")
+            print("-------------------------> ",sdname)
+            print("")
             sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
                                bavname=filbav,
                                inpname=inpname)
 
-        print ""
+        print("")
 
     ##########################################################################
     # *_0_conv.txt ファイルへ結果出力
     if AV:
 
         outav = open(filout + '_0_conv.txt', 'w')
-        print >> outav, ""
+
+        print("", file=outav)
         for i in range(len(conv.eng)):
-            print >> outav, "  %14.8f %14.8f" % (conv.eng[i], conv.xas[i])
+            print("  %14.8f %14.8f" % (conv.eng[i], conv.xas[i]), file=outav)
         outav.close()
 
-        print "WRITE: ",filout+'_0_conv.txt'
+        print("WRITE: ",filout+'_0_conv.txt', file=outav)
 
     ##########################################################################
     # *_0.txt ファイルへ結果出力
     if AV:
 
         outtxt = open(filout + '_0.txt', 'w')
-        print >> outtxt, "%s" %( txt.header )
-        print >> outtxt, "    Energy    <xanes>  "
+        print("%s" %( txt.header ), file=outtxt)
+        print("    Energy    <xanes>  ", file=outtxt)
         for i in range(len(txt.eng)):
-            print >> outtxt, "  %14.3f %14.8f" % (txt.eng[i], txt.xas[i])
+            print("  %14.3f %14.8f" % (txt.eng[i], txt.xas[i]), file=outtxt)
         outtxt.close()
 
-        print "WRITE: ",filout+'_0.txt'
+        print("WRITE: ",filout+'_0.txt', file=outtxt)
 
     ##########################################################################
     # *_0_sd0.txt へ平均化の結果出力
     if FLAG_DOS and AV:
 
         outsd = open(filout + '_0_sd0.txt', 'w')
-        print >> outsd, "%s" %(sd.header)
+        print("%s" %(sd.header), file=outsd)
         for i in range(1,sd.num):
-            print >> outsd, "%s" % (sd.sd[i])
+            print("%s" % (sd.sd[i]), file=outsd)
         outsd.close()
 
-        print "WRITE: ",filout+'_0_sd0.txt'
+        print("WRITE: ",filout+'_0_sd0.txt', file=outsd)
 
     if AV:
-        print ""
+        print("")
 
     ##########################################################################
     if OPT_EMAX:
         OPT_EMAX = float(OPT_EMAX)
-        print "Emax             =", OPT_EMAX
+        print("Emax             =", OPT_EMAX)
     if OPT_EMIN:
         OPT_EMIN = float(OPT_EMIN)
-        print "Emin             =", OPT_EMIN
+        print("Emin             =", OPT_EMIN)
     if OPT_YMAX:
         OPT_YMAX = float(OPT_YMAX)
-        print "Ymax             =", OPT_YMAX
+        print("Ymax             =", OPT_YMAX)
     if OPT_DMAX:
         OPT_DMAX = float(OPT_DMAX)
-        print "Ymax(DOS)        =", OPT_DMAX
+        print("Ymax(DOS)        =", OPT_DMAX)
     if FLAG_SPIN:
-        print "Enforce spin=2 mode"
+        print("Enforce spin=2 mode")
 
     if WE:
         WE = float(WE)
-        print "Weight           =", WE
+        print("Weight           =", WE)
     if WEDOS:
         WEDOW = float(WEDOS)
-        print "Weight for LDOS  =", WEDOS
+        print("Weight for LDOS  =", WEDOS)
 
     ##########################################################################
 #   plt.rcParams['font.family'] = 'Times New Roman'
@@ -435,34 +439,34 @@ if __name__ == '__main__':
     ##########################################################################
     # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
     #
-    print "-------------------"
-    print "E_edge   =", txt.E_edge
-    print "E_fermi  =", txt.E_Fermi
-    print "-------------------"
+    print("-------------------")
+    print("E_edge   =", txt.E_edge)
+    print("E_fermi  =", txt.E_Fermi)
+    print("-------------------")
     #
     if not FLAG_subt:
 
         # PhotoEnegy モードで計算した時と同じ結果を返す
         if not inp.get_energygpho() and not FLAG_fermi:
-            print "current mode is Fermi (E_edge = 0)"
-            print "---> convert to PhotoEnergy"
-            print "     + E_edge"
+            print("current mode is Fermi (E_edge = 0)")
+            print("---> convert to PhotoEnergy")
+            print("     + E_edge")
             txt.eng = txt.eng + txt.E_edge
             conv.eng = conv.eng + txt.E_edge
 
         # E_fermi を引く(A) : A=B
         if not inp.get_energygpho() and FLAG_fermi:
-            print "current mode is Fermi"
-            print "---> subtract E_fermi"
-            print "     - E_fermi"
+            print("current mode is Fermi")
+            print("---> subtract E_fermi")
+            print("     - E_fermi")
             txt.eng = txt.eng - txt.E_Fermi
             conv.eng = conv.eng - txt.E_Fermi
 
         # E_fermi を引く(B) : A=B
         if inp.get_energygpho() and FLAG_fermi:
-            print "current mode is PhotoEnergy"
-            print "---> convert to EF0 mode"
-            print "     - E_edge - E_fermi"
+            print("current mode is PhotoEnergy")
+            print("---> convert to EF0 mode")
+            print("     - E_edge - E_fermi")
             txt.eng = txt.eng - txt.E_Fermi - txt.E_edge
             conv.eng = conv.eng - txt.E_Fermi - txt.E_edge
 
@@ -579,7 +583,7 @@ if __name__ == '__main__':
 
     if outputname:
         _head = outputname+'_'
-        print "output header = ", outputname
+        print("output header = ", outputname)
     else:
         _head = 'XAS'
 

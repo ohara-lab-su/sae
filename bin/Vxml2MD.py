@@ -134,14 +134,14 @@ if __name__ == '__main__':
 #       SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
         j=0
-        print natom
-        print "   setp=     ",ion_loop+1,"     ","  Energy=",e_wo_entrp
+        print(natom)
+        print("   setp=     ",ion_loop+1,"     ","  Energy=",e_wo_entrp)
         for ion in range(nion):
             for atom in range(atoms[ion]):
-                print "   %2s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f" \
-                        % ( atoms_index[ion],\
-                        position[j,0],position[j,1],position[j,2],\
-                        force[j,0], force[j,1], force[j,2] )
+                print("   %2s %12.8f %12.8f %12.8f  %12.8f %12.8f %12.8f"
+                        % ( atoms_index[ion],
+                        position[j,0],position[j,1],position[j,2],
+                        force[j,0], force[j,1], force[j,2] ))
                 j+=1
 
 

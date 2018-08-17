@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.02.27
 #   conv_direct2car --> conv_direct2car0
 #
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     cname = 'igzo'
     ###########################################
 
-    print "INPUT file name   :",cname
+    print("INPUT file name   :",cname)
 
     ############################################
     # ボンドを描くか否か？
@@ -117,7 +120,7 @@ if __name__ == '__main__':
 
     if os.path.exists(dummy):
         dummy_FLAG=True
-        print "READ dummy list: "+dummy
+        print("READ dummy list: "+dummy)
         try:
             tmp = open(dummy)
         except:
@@ -165,7 +168,7 @@ if __name__ == '__main__':
     #
     if bond_FLAG:
         bondnum = SAE.get_bond_info_param(atom1,atom2,distance,nion,atoms,position)
-        print "NUMBER OF BOND     :",bondnum
+        print("NUMBER OF BOND     :",bondnum)
 
         bondr = np.zeros((bondnum))
         bond1 = np.zeros((bondnum),dtype=int)
@@ -254,10 +257,10 @@ if __name__ == '__main__':
 
             bond = vp.cylinder (frame=f, pos=(x0,y0,z0), axis=(x12,y12,z12), radius =BR )
 
-            print num, bond1[num],"("+str(ion_site[num])+") -",\
-                       bond2[num],"("+str(ion_site[num])+")"  ,\
-                       " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
-                       % ( r1, x1,y1,z1, x2,y2,z2)
+            print(num, bond1[num],"("+str(ion_site[num])+") -",
+                       bond2[num],"("+str(ion_site[num])+")"  ,
+                       " %10.7f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f"
+                       % ( r1, x1,y1,z1, x2,y2,z2))
 
 
 ################################################################################

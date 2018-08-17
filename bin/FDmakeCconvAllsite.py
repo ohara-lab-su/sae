@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.06.30 startup
 #
 ################################################################################
@@ -76,8 +79,8 @@ if __name__ == '__main__':
     if filout is None:
         sys.exit("STOP: fileout TAG not found in "+inpname)
 
-    print "redfile =",inpname
-    print "filout  = ",filout
+    print("redfile =",inpname)
+    print("filout  = ",filout)
 
     calname = []
     for i in sorted(glob.glob(filout+'_*.txt')):
@@ -89,11 +92,11 @@ if __name__ == '__main__':
         fdmlist = open('fdmfile.txt','w')
     except:
         fdmlist.close()
-    print >> fdmlist, ""
-    print >> fdmlist, " "+str(ncal)
+    print("", file=fdmlist)
+    print(" "+str(ncal), file=fdmlist)
 
     for i in range(ncal):
-        print calname[i]
+        print(calname[i])
         convname = 'conv_'+str(i+1)+'.inp'
         try:
             convinp = open(convname,'w')
@@ -101,19 +104,19 @@ if __name__ == '__main__':
             convinp.close()
         print >> fdmlist, convname
 
-        print >> convinp, ""
-        print >> convinp, " Filout"
-        print >> convinp, "   "+filout
-        print >> convinp, ""
-        print >> convinp, " Calculation"
-        print >> convinp, "   "+calname[i]
-        print >> convinp, ""
-        print >> convinp, " Conv_out"
-        print >> convinp, "   "+calname[i].replace('.txt','')+'_conv.txt'
-        print >> convinp, ""
-        print >> convinp, " Convolution"
-        print >> convinp, ""
-        print >> convinp, "END"
+        print("", file=convinp)
+        print(" Filout", file=convinp)
+        print("   "+filout, file=convinp)
+        print("", file=convinp)
+        print(" Calculation", file=convinp)
+        print("   "+calname[i], file=convinp)
+        print("", file=convinp)
+        print(" Conv_out", file=convinp)
+        print("   "+calname[i].replace('.txt','')+'_conv.txt', file=convinp)
+        print("", file=convinp)
+        print(" Convolution", file=convinp)
+        print("", file=convinp)
+        print("END", file=convinp)
 
         convinp.close()
 

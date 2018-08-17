@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.02.27
 #  conv_direct2car --> conv_direct2car0
 #
@@ -84,10 +87,10 @@ def options():
         sys.exit(POSCAR+" file not found")
 
     if POSCAR:
-        print "INPUT file name :",POSCAR
+        print("INPUT file name :",POSCAR)
 
     if cname:
-        print "OUTPUT file name:",cname+".cfg"
+        print("OUTPUT file name:",cname+".cfg")
 
     return [POSCAR,cname]
 
@@ -130,7 +133,7 @@ if __name__ == '__main__':
         scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
 
     for i in range(nlist):
-        print i, int(list_atoms[i,0]), list_atoms[i,1],list_atoms[i,2],list_atoms[i,3]
+        print(i, int(list_atoms[i,0]), list_atoms[i,1],list_atoms[i,2],list_atoms[i,3])
 
     # スケールファクターを 1.0 へ変換
     scale = SAE.conv_scale21a(scale,t)

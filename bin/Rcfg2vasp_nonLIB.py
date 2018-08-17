@@ -3,9 +3,14 @@
 #
 # convert from RMC_POT cfg file to VASP POSCAR file
 #
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2014.10.08
-#    Rvasp2cfg.py $B$K;EMM$r9g$o$;$k(B
-#    --> $B%*%W%7%g%s4X78$rDI2C(B
+#    Rvasp2cfg.py に仕様を合わせる
+#    --> オプション関係を追加
 #
 # 2014.10.01
 #    1st version
@@ -46,8 +51,8 @@ if len(args) > 0:
     cname=args[0]
 
 if cname:
-    print "INPUT file name :",cname+".cfg"
-    print "OUTPUT file name:",cname+".vasp"
+    print("INPUT file name :",cname+".cfg")
+    print("OUTPUT file name:",cname+".vasp")
 
 if not os.path.exists(cname+".cfg"):
     sys.exit(cname+".cfg file not found")
@@ -179,24 +184,24 @@ for i in range(int(natom)):
 ## OUTPUT for VASP
 vasp = open(cname+'.vasp','w')
 
-print >> vasp, comment
-print >> vasp, "1.0"
-print >> vasp, "  %13.9f %13.9f %13.9f" %(t1_x,t1_y,t1_z)
-print >> vasp, "  %13.9f %13.9f %13.9f" %(t2_x,t2_y,t2_z)
-print >> vasp, "  %13.9f %13.9f %13.9f" %(t3_x,t3_y,t3_z)
+print(comment, file=vasp)
+print("1.0", file=vasp)
+print("  %13.9f %13.9f %13.9f" % (t1_x,t1_y,t1_z), file=vasp)
+print("  %13.9f %13.9f %13.9f" % (t2_x,t2_y,t2_z), file=vasp)
+print("  %13.9f %13.9f %13.9f" % (t3_x,t3_y,t3_z), file=vasp)
 
 ####
 #print >> vasp, " atoms"
-print >> vasp, " atoms"
+print(" atoms", file=vasp)
 ####
 
 for i in range(int(ntype)):
-    print >> vasp, int(type[i]),
-print >> vasp, ""
-print >> vasp, "Direct"
+    print(int(type[i]), file=vasp, end="")
+print("", file=vasp)
+print("Direct", file=vasp)
 
 for i in range(int(natom)):
-    print >> vasp, " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2])
+    print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), file=vasp)
 
 vasp.close()
 

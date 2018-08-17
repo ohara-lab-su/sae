@@ -23,6 +23,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2014.12.09
 #   UserID などの各項目を GUI 上から修正できるように改変
 #
@@ -281,7 +284,7 @@ class MyFrame(wx.Frame):
 
     def storageOnSubmit(self, event):
         self.storage = self.inpStorageText.GetValue()
-        print self.storage
+        print(self.storage)
 
     def failOnSubmit(self, event):
         self.fail = self.inpFailText.GetValue()

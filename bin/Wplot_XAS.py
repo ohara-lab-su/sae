@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.04.06
 #  plot 部分を分離 plot_sum_xas() と plot_xas() に分離
 #
@@ -101,7 +104,7 @@ if __name__ == '__main__':
                 OPT_EMAX=EMAX,OPT_EMIN=EMIN,OPT_YMAX=YMAX,FLAG_SHOW=FLAG_SHOW)
     else:
         for i in [ 'up', 'dn' ]:
-            print "=== "+str(i)
+            print("=== "+str(i))
             FLAG_SHOW=False
             SAE.plot_xas(case=case,\
                     dos_suffix=dos_suffix+str(i),\
@@ -110,7 +113,7 @@ if __name__ == '__main__':
                     outname=outname+str(i),\
                     OPT_EMAX=EMAX,OPT_EMIN=EMIN,OPT_YMAX=YMAX,FLAG_SHOW=FLAG_SHOW)
 
-        print "=== up+dn"
+        print("=== up+dn")
         FLAG_SHOW=True
         outname='XAS'
         SAE.plot_sum_xas(case=case,dos_suffix=dos_suffix,outname=outname,\

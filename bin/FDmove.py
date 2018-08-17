@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.06.19 startup
 #
 ################################################################################
@@ -82,13 +85,13 @@ if __name__ == '__main__':
     inpname, filsrc, fildst = options()
 
     if filsrc is None:
-        print 'inp :', inpname
+        print('inp :', inpname)
         out = SAE.ReadFdmInp(inpname)
         filsrc = out.get_filout()
 
-    print 'src :', filsrc
-    print 'dst :', fildst
-    print ""
+    print('src :', filsrc)
+    print('dst :', fildst)
+    print("")
 
     filelist = [".txt",
                 "_bav.txt",
@@ -100,6 +103,6 @@ if __name__ == '__main__':
 
     for i in filelist:
         if os.path.exists(filsrc+i):
-            print "MOVE : " + filsrc + i + " --> " + fildst + i
+            print("MOVE : " + filsrc + i + " --> " + fildst + i)
             os.rename( filsrc+i, fildst+i )
 

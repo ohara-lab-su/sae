@@ -44,7 +44,7 @@ import visual as vp
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
-from crystal_make_unit import *
+#from crystal_make_unit import *
 
 #import sys
 #import os
@@ -88,7 +88,7 @@ if __name__ == '__main__':
    #cname = 'C60_position.xyz'
     ###########################################
 
-    print "INPUT file name   :",cname
+    print("INPUT file name   :",cname)
 
     # MD(xyz) ファイルの事前読み込み
     nloop,natom = SAE.read_md_param(cname)
@@ -96,8 +96,8 @@ if __name__ == '__main__':
     # MD(xyz) ファイルの事前準備
     position_loop = np.zeros((nloop,natom,3))
 
-    print "NLOOP :",nloop
-    print "NATOM :",natom
+    print("NLOOP :",nloop)
+    print("NATOM :",natom)
 
     atoms_index_j  = np.zeros((natom),dtype='S2')  # 通し番号(max=atom)で元素名(記号)を保存する
     position_loop  = np.zeros((nloop,natom,3))     # 原子のx,y,z 座標

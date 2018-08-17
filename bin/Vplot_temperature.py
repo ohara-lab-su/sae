@@ -63,10 +63,19 @@ if __name__ == '__main__':
         class_name = 'ReadOutcar'
         name = name_out
 
-    module = __import__(module_name, globals(), locals(), [class_name], -1)
-    klass = getattr(module,class_name)
+#   module = __import__(module_name, globals(), locals(), [class_name], -1)
+    # module の動的ロード
+    try:
+        # このリフレクションは python2 方式なので注意
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+    except:
+        # for Python3
+        module = __import__(module_name, fromlist=[class_name])
 
+    # class の動的ロード
+    klass = getattr(module,class_name)
     outfile = klass(name)
+
     MD_FLAG = outfile.get_md_mode()
 
     if not MD_FLAG:

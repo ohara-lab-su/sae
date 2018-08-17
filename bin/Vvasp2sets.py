@@ -85,10 +85,10 @@ if not os.path.exists(POSCAR):
         sys.exit(POSCAR+" file not found")
 
 if POSCAR:
-    print "INPUT file name :",POSCAR
+    print("INPUT file name :",POSCAR)
 
 if cname:
-    print "OUTPUT file name:",cname+".in"
+    print("OUTPUT file name:",cname+".in")
 
 
 ################################################################################
@@ -221,7 +221,7 @@ for j in range(nion):
         local += 1
         ion[tmp] = int(j)
         ion_site[tmp] = int(local)
-        print tmp, int(ion[tmp]), int(ion_site[tmp])
+        print(tmp, int(ion[tmp]), int(ion_site[tmp]))
 
 
 ###############################################
@@ -239,7 +239,7 @@ car_reg = re.compile('^C.*')
 i += 1
 tmp = datlines[i].split()
 if bool(num_reg.match(tmp[0])):
-    print tmp[0]
+    print(tmp[0])
     sys.exit("Format Error")
 else:
     if bool(selective_reg.match(tmp[0])):
@@ -252,7 +252,7 @@ else:
         selective = 0
 
     if bool(num_reg.match(tmp[0])):
-        print tmp[0]
+        print(tmp[0])
         sys.exit("Format Error")
     if bool(direct_reg.match(tmp[0])):
        #print "Direct Mode"
@@ -286,26 +286,27 @@ for j in range(natom):
 ## open cfg files
 ##
 sets = open(cname+'.in','w')
-print >> sets, title
-print >> sets, "-----nspin"
-print >> sets, "1"
-print >> sets, "-----space group"
-print >> sets, "P1"
-print >> sets, " ",t1_x*scale," ",t2_y*scale," ",t3_z*scale
-print >> sets, " 90.0 90.0 90.0"
-print >> sets, "-----atoms"
-print >> sets, "   ", nion
+print(title, file=sets)
+print("-----nspin", file=sets)
+print("1", file=sets)
+print("-----space group", file=sets)
+print("P1", file=sets)
+print(" ",t1_x*scale," ",t2_y*scale," ",t3_z*scale, file=sets)
+print(" 90.0 90.0 90.0", file=sets)
+print("-----atoms", file=sets)
+print("   ", nion, file=sets)
 
 l=0
 for j in range(nion):
-    print >> sets, " ", atoms_index[j], " ", int(atoms[j])
+    print(" ", atoms_index[j], " ", int(atoms[j]), file=sets)
     for k in range(int(atoms[j])):
-        print >> sets, "    %14.11f %14.11f %14.11f" %(position[l,0],position[l,1],position[l,2])
+        print("    %14.11f %14.11f %14.11f"
+              %(position[l,0],position[l,1],position[l,2]), file=sets)
         l += 1
 
-print >> sets, "-----k points"
-print >> sets, " 0"
-print >> sets, " 8 8 8"
+print("-----k points", file=sets)
+print(" 0", file=sets)
+print(" 8 8 8", file=sets)
 
 sets.close()
 

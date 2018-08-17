@@ -13,6 +13,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2014.11.13 1st
 #
 #  RchangeDnsity.py (2014.11.07 版)
@@ -52,8 +55,8 @@ def options():
     if not os.path.exists(POSCAR):
         sys.exit("STOP: "+POSCAR+" file not found")
 
-    print "INPUT file name :",POSCAR
-    print "OUTPUT file name:",cname+".cfg"
+    print("INPUT file name :",POSCAR)
+    print("OUTPUT file name:",cname+".cfg")
 
     return [POSCAR,cname]
 
@@ -89,13 +92,13 @@ if __name__ == '__main__':
     cell        = t[0,0]/2  # for RMC_POT
     density     = natom/(lattice**3)
 
-    print ""
-    print "  NATOM           = ", natom
-    print "  LATTICE         = ", lattice
-    print "  CELL (RMC.cfg)  = ", cell
-    print ""
-    print "  DENSITY         = ", density
-    print ""
+    print("")
+    print("  NATOM           = ", natom)
+    print("  LATTICE         = ", lattice)
+    print("  CELL (RMC.cfg)  = ", cell)
+    print("")
+    print("  DENSITY         = ", density)
+    print("")
 
     # Cartesian to Direct
     if not direct:
@@ -111,14 +114,14 @@ if __name__ == '__main__':
     outname = cname
 
     # RMC_POT(cfg) 形式への出力(標準出力)
-    print "  OUTPUT CFG-FILE = ", outname+'.cfg'
+    print("  OUTPUT CFG-FILE = ", outname+'.cfg')
     STD=False
    #STD=True
     SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
 
     ############## VASP 形式の*.vasp への出力(構造確認用)
     ##
-    print "  OUTPUT POSCAR   = ", outname+'.vasp'
+    print("  OUTPUT POSCAR   = ", outname+'.vasp')
     # RMC_POT (*.cfg) 形式から VASP 形式へ変換
     direct = True   # conv_cfg2vasp は direce を想定(in/out)
     scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
@@ -134,7 +137,7 @@ if __name__ == '__main__':
     SAE.print_poscar4(outname,STD,title,scale,natom,nion,\
                       direct,PV5FLAG,t,atoms,dummy,position)
 
-    print ""
+    print("")
 
     ##########################################################################
 

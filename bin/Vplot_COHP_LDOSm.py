@@ -104,18 +104,18 @@ if __name__ == '__main__':
 
     #####################################################
     # オプションの確認
-    if OPT_EMAX: print "Emax =",OPT_EMAX
-    if OPT_EMIN: print "Emin =",OPT_EMIN
-    if OPT_YMAX: print "COHP Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax =",OPT_EMAX)
+    if OPT_EMIN: print("Emin =",OPT_EMIN)
+    if OPT_YMAX: print("COHP Ymax=",OPT_YMAX)
 
     if OPT_UP:
-        print "SPIN-UP"
+        print("SPIN-UP")
         spin=0
     elif OPT_DN:
-        print "SPIN-DOWN"
+        print("SPIN-DOWN")
         spin=1
     else:
-        print "NONMAGNETIC"
+        print("NONMAGNETIC")
         spin=0
 
     atom -= 1
@@ -166,9 +166,9 @@ if __name__ == '__main__':
     # makes label
     atom_label =str(atoms_index_j[atom])+str(atom+1)
     if nspin == 1:
-        print "atom =",atom+1,atom_label
+        print("atom =",atom+1,atom_label)
     else:
-        print "atom(spin) =",atom+1,"("+str(spin+1)+")",atom_label
+        print("atom(spin) =",atom+1,"("+str(spin+1)+")",atom_label)
 
     #####################################################
     if ALL_FLAG:

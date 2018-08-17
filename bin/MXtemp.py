@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.03
 #   startup
 #
@@ -65,7 +68,7 @@ if __name__ == '__main__':
         else:
             sys.exit("STOP: "+mdname+" not found.")
 
-    print "INPUT:",mdname
+    print("INPUT:",mdname)
 
     md = SAE.ReadMd(mdname)
     
@@ -77,6 +80,6 @@ if __name__ == '__main__':
     given = md.get_temp_given_loop()
 
     for i in range(nloop):
-        print "%5d  %8.3f  %8.3f  %15.8f" % (i+1, temp[i], given[i], energy[i])
+        print("%5d  %8.3f  %8.3f  %15.8f" % (i+1, temp[i], given[i], energy[i]))
 
 ################################################################################

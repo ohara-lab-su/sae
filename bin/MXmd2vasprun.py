@@ -14,6 +14,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.06.30
 #  == None --> is None
 #
@@ -116,8 +119,8 @@ if __name__ == '__main__':
         else:
             sys.exit("STOP: "+MD+" not found.")
 
-    print "INPUT :",MD
-    print "OUTPUT:",OUTPUT
+    print("INPUT :",MD)
+    print("OUTPUT:",OUTPUT)
 
     title = MD
 
@@ -147,10 +150,19 @@ if __name__ == '__main__':
         sys.exit("STOP: "+name+".out or "+name+".dat file not fond")
 
     module_name = 'StructureAnalysisEnvironment'
-    module = __import__(module_name,globals(),locals(),[class_name],-1)
-    klass = getattr(module,class_name)
+#   module = __import__(module_name,globals(),locals(),[class_name],-1)
+    # module の動的ロード
+    try:
+        # このリフレクションは python2 方式なので注意
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+    except:
+        # for Python3
+        module = __import__(module_name, fromlist=[class_name])
 
+    # class の動的ロード
+    klass = getattr(module,class_name)
     out = klass(file_name)
+
     t = out.get_t()
     scale = out.get_scale()
     direct = out.get_direct()
@@ -161,24 +173,24 @@ if __name__ == '__main__':
 
 
     ################ output ######################
-    print ""
-    print "TITLE = ",title
-    print "NLOOP = ",nloop
-    print "NATOM = ",natom
-    print "NION  = ",nion
-    print "SCALE = ",scale
-    print "ATOM"
-    print "  ",
+    print("")
+    print("TITLE = ",title)
+    print("NLOOP = ",nloop)
+    print("NATOM = ",natom)
+    print("NION  = ",nion)
+    print("SCALE = ",scale)
+    print("ATOM")
+    print("  ", end="")
     for atom in range(nion):
-        print atoms_index[atom],
-    print ""
-    print "  ",
+        print(atoms_index[atom], end="")
+    print("")
+    print("  ", end="")
     for atom in range(nion):
-        print atoms[atom],
-    print ""
+        print(atoms[atom], end="")
+    print("")
 
-    print ""
-    print t
+    print("")
+    print(t)
 
 #   for l in range(nloop):
 #       print natom

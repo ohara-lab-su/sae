@@ -35,6 +35,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2014.11.07
 #
 ################################################################################
@@ -78,8 +81,8 @@ def options():
     if not os.path.exists(lname):
         sys.exit("STOP: "+lname+" file not found")
 
-    print "INPUT file name :",POSCAR
-    print "OUTPUT file name:",cname+".cfg"
+    print("INPUT file name :",POSCAR)
+    print("OUTPUT file name:",cname+".cfg")
 
     return [POSCAR,cname,lname]
 
@@ -122,21 +125,21 @@ if __name__ == '__main__':
     density     = np.zeros(nlist,dtype=float)
     cell        = np.zeros(nlist,dtype=float)
 
-    print ""
-    print "NATOM             = ", natom
-    print "ORIGINA LATTICE a = ", lattice_org
-    print ""
+    print("")
+    print("NATOM             = ", natom)
+    print("ORIGINA LATTICE a = ", lattice_org)
+    print("")
 
     for i in range(nlist):
-        print "===================="
+        print("====================")
 
         density[i] = natom/((lattice_org*list_lattice[i])**3)
         cell[i]    = (lattice_org*list_lattice[i])/2
 
-        print "  LATTICE RATE    = ", list_lattice[i]
-        print "  LATTICE         = ", lattice_org*list_lattice[i]
-        print "  CELL            = ", cell[i]
-        print "  DENSITY         = ", density[i]
+        print("  LATTICE RATE    = ", list_lattice[i])
+        print("  LATTICE         = ", lattice_org*list_lattice[i])
+        print("  CELL            = ", cell[i])
+        print("  DENSITY         = ", density[i])
 
         # Cartesian to Direct
         if not direct:
@@ -152,19 +155,19 @@ if __name__ == '__main__':
         outname = cname+"_"+str(list_lattice[i])
 
         # *.dat (RMC_POT) の density を置換して出力
-        print "  OUTPUT DAT      = ", outname+'.dat'
+        print("  OUTPUT DAT      = ", outname+'.dat')
         STD=False
         SAE.change_density(STD,cname,outname,density[i])
 
         # RMC_POT(cfg) 形式への出力(標準出力)
-        print "  OUTPUT CFG-FILE = ", outname+'.cfg'
+        print("  OUTPUT CFG-FILE = ", outname+'.cfg')
         STD=False
        #STD=True
         SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
 
         ############## VASP 形式の*.vasp への出力(構造確認用)
         ##
-        print "  OUTPUT POSCAR   = ", outname+'.vasp'
+        print("  OUTPUT POSCAR   = ", outname+'.vasp')
         # RMC_POT (*.cfg) 形式から VASP 形式へ変換
         direct = True   # conv_cfg2vasp は direce を想定(in/out)
         scale   = 1.0   # conv_cfg2vasp は scale 1.0 を想定
@@ -180,7 +183,7 @@ if __name__ == '__main__':
         SAE.print_poscar4(outname,STD,title,scale,natom,nion,\
                       direct,PV5FLAG,t,atoms,dummy,position)
 
-        print ""
+        print("")
 
      ##########################################################################
 

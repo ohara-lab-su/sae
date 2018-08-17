@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.31
 #  startup
 #
@@ -64,9 +67,9 @@ if __name__ == '__main__':
 
     scf = SAE.ReadWienScf(case=case,suffix=suffix)
 
-    print "CASE   = ",case
-    print "SUFFIX = ",suffix
-    print "ION    = ",ion
+    print("CASE   = ",case)
+    print("SUFFIX = ",suffix)
+    print("ION    = ",ion)
 
     scf.write_eph(ion=ion)
 

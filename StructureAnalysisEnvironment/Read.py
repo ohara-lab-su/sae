@@ -100,13 +100,15 @@ class Read(object):
         # for debug
         print("class name = %s" % str(class_name))
 
-        # class の動的ロード
+        # module の動的ロード
         try:
             # このリフレクションは python2 方式なので注意
             module = __import__(module_name, globals(), locals(), [class_name], -1)
         except:
             # for Python3
             module = __import__(module_name, fromlist=[class_name])
+
+        # class の動的ロード
         klass = getattr(module, class_name)
         self.cell = klass(filename, suffix=suffix, atoms_index=atoms_index)
 

@@ -9,6 +9,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.05.13 startup
 #
 ################################################################################
@@ -36,10 +39,10 @@ import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
-def write_poscar(\
-        cname,\
-        title,\
-        scale,t,natom,nion,atoms,atoms_index,\
+def write_poscar(
+        cname,
+        title,
+        scale,t,natom,nion,atoms,atoms_index,
         position):
 
     try:
@@ -48,27 +51,28 @@ def write_poscar(\
         out.close()
         sys.exit("STOP:"+cname+".vasp can't open")
 
-    print >> out, title
-    print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+    print(title, file=out)
+    print(" ",scale, file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
 
-    print >> out, " ",
+    print(" ", file=out, end="")
     for i in range(nion):
-        print >> out, atoms_index[i],
-    print >> out, " "
-    print >> out, " ",
+        print(atoms_index[i], file=out, end="")
+    print(" ", file=out)
+    print(" ", file=out, end="")
 
     for i in range(nion):
-        print >> out, atoms[i],
-    print >> out, " "
+        print(atoms[i], file=out, end="")
+    print(" ", file=out)
 
-    print >> out, "Direct"
+    print("Direct", file=out)
 
     for i in range(int(natom)):
-        print >> out, " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]),
-        print >> out, ""
+        print(" %13.9f %13.9f %13.9f"
+              %(position[i,0],position[i,1],position[i,2]), file=out, end="")
+        print("", file=out)
 
     out.close()
 
@@ -113,14 +117,14 @@ if __name__ == '__main__':
     position_loop = pwout.get_position_loop()
     energy_loop = pwout.get_energy_loop()
 
-    write_poscar(\
-        cname,\
-        title,\
+    write_poscar(
+        cname,
+        title,
         scale,t,natom,nion,atoms,atoms_index,\
         position)
 
-    print "INPUT  :",output_name
-    print "OUTPUT :",output_name+'.CONTCAR'+'.vasp'
+    print("INPUT  :",output_name)
+    print("OUTPUT :",output_name+'.CONTCAR'+'.vasp')
 
     # 重要) vasprun 用に基本並進ベクトルをすけーるする
     t = t*scale

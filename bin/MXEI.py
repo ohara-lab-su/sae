@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  python2/3 両対応
+#
 # 2015.06.15
 #   計算途中のデータ DFTSCF を読み込むためのルーチンが常時選択状態だったので
 #   判別するフラグを導入 ( MXPlot_MXEI.py に準ずる )
@@ -152,7 +155,17 @@ if __name__ == '__main__':
         FLAG_DFTSCF=False
 
     # makes instance
-    module = __import__(module_name,globals(),locals(),[class_name],-1)
+#   module = __import__(module_name,globals(),locals(),[class_name],-1)
+
+    # module の動的ロード
+    try:
+        # このリフレクションは python2 方式なので注意
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+    except:
+        # for Python3
+        module = __import__(module_name, fromlist=[class_name])
+
+    # class の動的ロード
     klass = getattr(module,class_name)
     out = klass(mxname)
 
@@ -163,19 +176,19 @@ if __name__ == '__main__':
 
     if not n_ion_loop == 0:
         for md in range(n_ion_loop):
-            print "# md =",md+1
+            print("# md =",md+1)
             for scf in range(uele_index[md]):
 #               print "    scf=%d, Uele = %14.11f" %(scf+1,uele[md,scf])
-                print "    %15.12f" %(uele[md,scf])
+                print("    %15.12f" %(uele[md,scf]))
         # 計算途中の最後のSCFループを表示
         if FLAG_DFTSCF:
             md = n_ion_loop
-            print "# md =",md+1
+            print("# md =",md+1)
             for scf in range(uele_index[md]):
-                    print "    %15.12f" %(uele[md,scf])
+                    print("    %15.12f" %(uele[md,scf]))
     else:
-        print "# md =",1
+        print("# md =",1)
         for scf in range(uele_index[0]):
-            print "    %15.12f" %(uele[0,scf])
+            print("    %15.12f" %(uele[0,scf]))
 
 

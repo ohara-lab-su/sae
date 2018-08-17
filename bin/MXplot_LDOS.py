@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.02
 #  Gaussian スメアリングの時のオプション追加
 #
@@ -110,7 +113,7 @@ def options():
         plot_atoms = [1]
 
     if options.gaussian:
-        print "GAUSSIAN MODE"
+        print("GAUSSIAN MODE")
         suffix_tdos = suffix_tdos_g
         suffix_pdos = suffix_pdos_g
 
@@ -141,16 +144,16 @@ if __name__ == '__main__':
             OPT_EMAX,OPT_EMIN,OPT_YMAX,\
             plot_atoms = options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax=",OPT_EMAX)
+    if OPT_EMIN: print("Emin=",OPT_EMIN)
+    if OPT_YMAX: print("Ymax=",OPT_YMAX)
 
     # ION の種類ではなくて原子種の通し番号で入力
     if len(plot_atoms) > 1:
-        print "Plot Atoms:"
+        print("Plot Atoms:")
         for i in plot_atoms:
-            print i,
-        print ""
+            print(i, end="")
+        print("")
 
     # set output device
     out = sys.stdout
@@ -184,10 +187,19 @@ if __name__ == '__main__':
         FLAG_DATFILE=True
 
     if FLAG_DATFILE:
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+#       module = __import__(module_name,globals(),locals(),[class_name],-1)
+        # module の動的ロード
+        try:
+            # このリフレクションは python2 方式なので注意
+            module = __import__(module_name, globals(), locals(), [class_name], -1)
+        except:
+            # for Python3
+            module = __import__(module_name, fromlist=[class_name])
 
+        # class の動的ロード
+        klass = getattr(module,class_name)
         dat = klass(datname)
+
         NION = dat.get_nion()
         atoms = dat.get_atoms_index()
         atoms_j = dat.get_atoms_j()
@@ -231,15 +243,15 @@ if __name__ == '__main__':
             if FLAG_DATFILE:
                 atom_label =str(atoms[atoms_j[atom]])+str(atom+1)
                 if NSPIN == 1:
-                    print "atom =",atom+1,atom_label
+                    print("atom =",atom+1,atom_label)
                 else:
-                    print "atom(spin) =",atom+1,"("+str(spin+1)+")",atom_label
+                    print("atom(spin) =",atom+1,"("+str(spin+1)+")",atom_label)
             else:
                 atom_label =str(atom)
                 if NSPIN == 1:
-                    print "atom =",atom+1
+                    print("atom =",atom+1)
                 else:
-                    print "atom(spin) =",atom+1,"("+str(spin+1)+")"
+                    print("atom(spin) =",atom+1,"("+str(spin+1)+")")
 
             INTTDOS = tdos.get_inttdos(spin)
             TDOS = tdos.get_tdos(spin)

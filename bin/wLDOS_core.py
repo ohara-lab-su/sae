@@ -5,7 +5,12 @@
 #
 # LDOS_core.py
 #
-#   2015.04.21 : Wplot_LDOS.py ベース
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.21 : Wplot_LDOS.py ベース
 #
 ################################################################################
 from __future__ import print_function
@@ -76,12 +81,12 @@ if __name__ == '__main__':
     NO_WINDOW_FLAG,OPT_EMAX,OPT_EMIN= options()
 
     if OPT_EMAX:
-        print "Emax=",OPT_EMAX
+        print("Emax=",OPT_EMAX)
     else:
         OPT_EMAX = OPT_EMAX0
 
     if OPT_EMIN:
-        print "Emin=",OPT_EMIN
+        print("Emin=",OPT_EMIN)
     else:
         OPT_EMIN = OPT_EMIN0
 
@@ -102,19 +107,19 @@ if __name__ == '__main__':
 
     ############################################
     lists1 = SAE.find_suffix3(case1+'.dos',unit)
-    print "READ FILE(1)  :",
+    print("READ FILE(1)  :", end="")
     for i in lists1:
-        print i,
-    print ""
+        print(i, end="")
+    print("")
     dos1 = SAE.ReadWienDos(lists1)
     eng1 = dos1.get_eng()
 
     ############################################
     lists2 = SAE.find_suffix3(case2+'.dos',unit)
-    print "READ FILE(2)  :",
+    print("READ FILE(2)  :", end="")
     for i in lists2:
-        print i,
-    print ""
+        print(i, end="")
+    print("")
     dos2 = SAE.ReadWienDos(lists2)
     eng2 = dos2.get_eng()
 

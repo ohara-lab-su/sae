@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.07.17 startup
 #
 ################################################################################
@@ -51,20 +54,20 @@ if __name__ == '__main__':
     name = options()
     out = SAE.ReadPwOut(name)
 
-    print "NAME",name
+    print("NAME",name)
 
-    print "TITLE",out.get_title()
+    print("TITLE",out.get_title())
 
-    print "LATTICE PARAMETER %6.4f" % (out.get_scale())
+    print("LATTICE PARAMETER %6.4f" % (out.get_scale()))
 
-    print "NATOM",out.get_natom()
-    print "NION",out.get_nion()
-    print "NBANDS",out.get_nbands()
-    print "NSW",out.get_nsw()
-    print "ION-LOOP",out.get_n_ion_loop()
-    print ""
-    print "EFERMI(eV)",out.get_efermi()
-    print "EFERMI(Ry)",out.get_efermi()/13.6
+    print("NATOM",out.get_natom())
+    print("NION",out.get_nion())
+    print("NBANDS",out.get_nbands())
+    print("NSW",out.get_nsw())
+    print("ION-LOOP",out.get_n_ion_loop())
+    print("")
+    print("EFERMI(eV)",out.get_efermi())
+    print("EFERMI(Ry)",out.get_efermi()/13.6)
 
 #   print ""
 #   print out.get_atoms_index()

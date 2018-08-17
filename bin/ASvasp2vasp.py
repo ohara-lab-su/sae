@@ -11,6 +11,11 @@
 # !!!!!!!!!!!!!!!!
 #
 ################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 
@@ -72,8 +77,8 @@ if __name__ == '__main__':
     poscarname = pdbname+out_suffix
     structname = pdbname+'.struct'
 
-    print "INPUT PDB file  = ",pdbname
-    print "OUTPUT POSCAR file = ",poscarname
+    print("INPUT PDB file  = ",pdbname)
+    print("OUTPUT POSCAR file = ",poscarname)
 
     atoms = read(pdbname,format='pdb')
     atoms.center()

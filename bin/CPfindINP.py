@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.16
 #  ライブラリの find_datfile.py を超つ使うのを変更して、CP2K 専用型に変更
 #
@@ -54,7 +57,7 @@ if __name__ == '__main__':
 
     try:
         datname = SAE.find_datfile(suffix)
-        print datname
+        print(datname)
     except:
         pass
 

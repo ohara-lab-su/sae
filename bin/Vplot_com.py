@@ -144,19 +144,19 @@ if __name__ == '__main__':
             SPD_FLAG,COM_FLAG,\
             OPT_EMIN,OPT_EMAX,OPT_BAND,OPT_ATOM = options()
 
-    print "PROCAR   :",procarname
-    print "OUTCAR   :",outcarname
-    print "KPOINTS  :",kpointsname
-    print "DOSCAR   :",doscarname
+    print("PROCAR   :",procarname)
+    print("OUTCAR   :",outcarname)
+    print("KPOINTS  :",kpointsname)
+    print("DOSCAR   :",doscarname)
 
-    if OPT_EMIN: print "EMIN       :",OPT_EMIN
-    if OPT_EMAX: print "EMAX       :",OPT_EMAX
-    if UP_FLAG: print "UP_SPIN    :",UP_FLAG
-    if DOWN_FLAG: print "DOWN_FLAG  :",DOWN_FLAG
-    if OPT_BAND: print "BAND       :",OPT_BAND
-    if OPT_ATOM: print "ATOM       :",OPT_ATOM
-    if DOS_FLAG: print "WRITE DOS  :",DOS_FLAG
-    if SPD_FLAG: print "SPD MODE   :",SPD_FLAG
+    if OPT_EMIN: print("EMIN       :",OPT_EMIN)
+    if OPT_EMAX: print("EMAX       :",OPT_EMAX)
+    if UP_FLAG: print("UP_SPIN    :",UP_FLAG)
+    if DOWN_FLAG: print("DOWN_FLAG  :",DOWN_FLAG)
+    if OPT_BAND: print("BAND       :",OPT_BAND)
+    if OPT_ATOM: print("ATOM       :",OPT_ATOM)
+    if DOS_FLAG: print("WRITE DOS  :",DOS_FLAG)
+    if SPD_FLAG: print("SPD MODE   :",SPD_FLAG)
 
     # 基本インスタンス生成
     procar = SAE.ReadVaspProcar(procarname)
@@ -192,7 +192,7 @@ if __name__ == '__main__':
         sys.exit("STOP: KPOINTS file format error")
 
     if num_kpoints_line != NKPTS/div_kpoints_line:
-        print "STOP: KPONTS lines =",num_kpoints_line
+        print("STOP: KPONTS lines =",num_kpoints_line)
         sys.exit("STOP: NKPTS inconsistence")
 
     ############################################################################
@@ -204,27 +204,36 @@ if __name__ == '__main__':
         if os.path.exists(doscarname) or os.path.exists(doscarname+".gz"):
             class_name ='ReadDoscar'
             optname = doscarname
-            print 'EFERMI(DOS):',
+            print('EFERMI(DOS):', end="")
         else:
             class_name ='ReadOutcar'
             optname = outcarname
-            print 'EFERMI(OUT):',
+            print('EFERMI(OUT):', end="")
 
         module_name = 'StructureAnalysisEnvironment'
 
-        module = __import__(module_name, globals(), locals(), [class_name], -1)
-        klass = getattr(module,class_name)
+#       module = __import__(module_name, globals(), locals(), [class_name], -1)
+        # module の動的ロード
+        try:
+            # このリフレクションは python2 方式なので注意
+            module = __import__(module_name, globals(), locals(), [class_name], -1)
+        except:
+            # for Python3
+            module = __import__(module_name, fromlist=[class_name])
 
+        # class の動的ロード
+        klass = getattr(module,class_name)
         kinstance = klass(optname)
+
         efermi = kinstance.get_efermi()
         TITLE = kinstance.get_title()
-        print efermi
+        print(efermi)
     else:
         dos = SAE.ReadVaspDoscar(doscarname)
         TITLE = dos.get_title()
         efermi = dos.get_efermi()
-        print 'EFERMI(DOS):',
-        print efermi
+        print('EFERMI(DOS):', end="")
+        print(efermi)
 
     if not TITLE:
         TITLE='dummy'
@@ -239,32 +248,32 @@ if __name__ == '__main__':
     # sym.dat ファイルをゲットする(K点の自動処理をする前の暫定措置)
     SYMDAT_FLAG=False
     if os.path.exists(symdatname) or os.path.exists(symdatname+".gz"):
-        print "SYM.DAT    :", symdatname
+        print("SYM.DAT    :", symdatname)
 
         sym = SAE.ReadVaspSymdat(symdatname)
         num_symlines = sym.get_num_symlines()
         symlines = sym.get_symlines()
 
         for i in range(num_symlines):
-            print "  ",symlines[i]
+            print("  ",symlines[i])
 
         if num_kpoints_line != num_symlines -1:
-            print "STOP: KPONTS lines =",num_kpoints_line
+            print("STOP: KPONTS lines =",num_kpoints_line)
             sys.exit("STOP: sym.dat inconsistence")
 
         SYMDAT_FLAG=True
 
     ############################################################################
     # KPOINTS print
-    print "KPOINTS"
+    print("KPOINTS")
     for i in range(len(kpoints_array)):
-        print " %10.7f %10.7f %10.7f " \
-                % ( kpoints_array[i,0],kpoints_array[i,1],kpoints_array[i,2] )
+        print(" %10.7f %10.7f %10.7f "
+                % ( kpoints_array[i,0],kpoints_array[i,1],kpoints_array[i,2] ))
         if not i % 2 == 0:
-            print ""
+            print("")
 
     for i in range(num_kpoints_line):
-        print " line %d : %10.7f " % ( i, zone_ratio[i] )
+        print(" line %d : %10.7f " % ( i, zone_ratio[i] ))
 
 
     ############################################################################

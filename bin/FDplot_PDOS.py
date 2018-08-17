@@ -13,6 +13,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.09.11
 #  spin 対応版
 #
@@ -181,32 +184,32 @@ if __name__ == '__main__':
     ###########################################################################
 
     if FLAG_BROAD: FLAG_XAS = True
-    if OPT_EMAX: print "Emax=", OPT_EMAX
-    if OPT_EMIN: print "Emin=", OPT_EMIN
-    if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
-    if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
+    if OPT_EMAX: print("Emax=", OPT_EMAX)
+    if OPT_EMIN: print("Emin=", OPT_EMIN)
+    if FLAG_XAS and OPT_YMAX: print("Ymax(XAS)=", OPT_YMAX)
+    if OPT_DMAX: print("Ymax(DOS)=", OPT_DMAX)
 
-    if atom: print "ATOM=", atom
+    if atom: print("ATOM=", atom)
 
     if WEDOS:
-        print "Weight for DOS =", WEDOS
+        print("Weight for DOS =", WEDOS)
         WEDOS = float(WEDOS)
     else:
         WEDOS = None
 
     if WE:
-        print "Weight for XAS", WE
+        print("Weight for XAS", WE)
         WEXAS = float(WE)
         WETXT = float(WE)
 
     if WETXT:
-        print "Weight for XAS without convolution =", WETXT
+        print("Weight for XAS without convolution =", WETXT)
         WETXT = float(WETXT)
     else:
         WETXT = None
 
     if WEXAS:
-        print "Weight for XAS with convolution =", WEXAS
+        print("Weight for XAS with convolution =", WEXAS)
         WEXAS = float(WEXAS)
     else:
         WEXAS = None
@@ -234,13 +237,13 @@ if __name__ == '__main__':
     if bavname is None: bavname = filout
     if sdname is None: sdname = filout
 
-    print ""
-    print "inpname    (.inp)                  =", inpname
-    print "filoutname                         =", filout
-    print "txtname    (original XAS and Eferm)=", txtname
-    print "convname   (convolution file)      =", convname
-    print "bavname    (log file)              =", bavname
-    print ""
+    print("")
+    print("inpname    (.inp)                  =", inpname)
+    print("filoutname                         =", filout)
+    print("txtname    (original XAS and Eferm)=", txtname)
+    print("convname   (convolution file)      =", convname)
+    print("bavname    (log file)              =", bavname)
+    print("")
 
 #   bav = SAE.ReadFdmBav(bavname)
     txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
@@ -250,9 +253,9 @@ if __name__ == '__main__':
 
     ispin = inp.ispin
     if ispin >=2:
-        print ""
-        print "Current calculation is Magnetic: SPIN MODE"
-        print ""
+        print("")
+        print("Current calculation is Magnetic: SPIN MODE")
+        print("")
 
     ###########################################################################
 
@@ -260,16 +263,16 @@ if __name__ == '__main__':
     lmax = sd.lmax
 
     if FLAG_SPD and lmax >= 2:
-        print "ORBITAL MODE: Default Orbitals"
+        print("ORBITAL MODE: Default Orbitals")
         block_list = list1
     elif FLAG_SP and lmax >= 1:
-        print "ORBITAL MODE: s-orbital and p-orbital"
+        print("ORBITAL MODE: s-orbital and p-orbital")
         block_list = list4
     elif lmax == 1:
-        print "ORBITAL MODE: s-orbital and p-orbital"
+        print("ORBITAL MODE: s-orbital and p-orbital")
         block_list = list4
     elif lmax >= 2:
-        print "ORBITAL MODE: Default Orbitals"
+        print("ORBITAL MODE: Default Orbitals")
         block_list = list1
 
     nblock = len(block_list)
@@ -306,23 +309,23 @@ if __name__ == '__main__':
     ############################################ convert Energy (set eng_off)
     # PhotoEnegy モードで計算した時と同じ結果を返す
     if not inp.get_energygpho() and not FLAG_FERMI:
-        print "current mode is Fermi"
-        print "---> convert to PhotoEnergy"
-        print "     + E_edge"
+        print("current mode is Fermi")
+        print("---> convert to PhotoEnergy")
+        print("     + E_edge")
         eng_off =  txt.E_edge
 
     # E_fermi を引く(A) : A=B
     if not inp.get_energygpho() and FLAG_FERMI:
-        print "current mode is Fermi"
-        print "---> subtract E_fermi"
-        print "     - E_fermi"
+        print("current mode is Fermi")
+        print("---> subtract E_fermi")
+        print("     - E_fermi")
         eng_off = - txt.E_fermi
 
     # E_fermi を引く(B) : A=B
     if inp.get_energygpho() and FLAG_FERMI:
-        print "current mode is PhotoEnergy"
-        print "---> convert to EF0 mode"
-        print "     - E_edge - E_fermi"
+        print("current mode is PhotoEnergy")
+        print("---> convert to EF0 mode")
+        print("     - E_edge - E_fermi")
         eng_off - txt.E_Fermi - txt.E_edge
 
     if FLAG_FERMI:
@@ -334,11 +337,11 @@ if __name__ == '__main__':
 
     if OPT_EMAX is None:
         emax = sd.emax + EF0
-        print "EMAX = ",emax
+        print("EMAX = ",emax)
 
     if OPT_EMIN is None:
         emin = sd.emin + EF0
-        print "EMIN = ",emin
+        print("EMIN = ",emin)
 
     ######################################### plot XAS
     num = 0
@@ -484,7 +487,7 @@ if __name__ == '__main__':
 
     if outputname:
         _head = outputname+"_"
-        print "output header =", outputname
+        print("output header =", outputname)
     else:
         _head = "PDOS"
 

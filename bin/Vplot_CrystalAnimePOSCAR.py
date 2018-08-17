@@ -49,7 +49,7 @@ import visual as vp
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
-from crystal_make_unit import *
+#from crystal_make_unit import *
 
 #from visual import *
 #from numpy import *

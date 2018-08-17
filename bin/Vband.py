@@ -90,19 +90,19 @@ if __name__ == '__main__':
             sys.exit("STOP:"+outfile+" can't open")
 
         for j in range(NBANDS):
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
-            print >> out, "## ISPIN = ",NSPIN
-            print >> out, "## SPIN  = ",ispin
-            print >> out, "## NBAND = ",NBANDS
-            print >> out, "## BAND  = ",j
-            print >> out, "## EF    = "
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("## ISPIN = ",NSPIN, file=out)
+            print("## SPIN  = ",ispin, file=out)
+            print("## NBAND = ",NBANDS, file=out)
+            print("## BAND  = ",j, file=out)
+            print("## EF    = ", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
             for k in range(NKPTS):
-                print >> out, "%5d %14.8f" %( k+1, eigenval[j,k,ispin] )
+                print("%5d %14.8f" %( k+1, eigenval[j,k,ispin] ), file=out)
 
         out.close()
 

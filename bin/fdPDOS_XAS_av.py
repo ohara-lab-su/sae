@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.09.09
 #
 ################################################################################
@@ -74,16 +77,16 @@ if __name__ == '__main__':
        FLAG_SP, FLAG_SPD, WEDOS, FLAG_NW = options()
 
     if FLAG_BROAD: FLAG_XAS = True
-    if OPT_EMAX: print "Emax=", OPT_EMAX
-    if OPT_EMIN: print "Emin=", OPT_EMIN
-    if FLAG_XAS and OPT_YMAX: print "Ymax(XAS)=", OPT_YMAX
-    if OPT_DMAX: print "Ymax(DOS)=", OPT_DMAX
-    if atom: print "ATOM=", atom
+    if OPT_EMAX: print("Emax=", OPT_EMAX)
+    if OPT_EMIN: print("Emin=", OPT_EMIN)
+    if FLAG_XAS and OPT_YMAX: print("Ymax(XAS)=", OPT_YMAX)
+    if OPT_DMAX: print("Ymax(DOS)=", OPT_DMAX)
+    if atom: print("ATOM=", atom)
 
     if not atom: atom = 0
 
     if WEDOS:
-        print "DOS Weight =",WEDOS
+        print("DOS Weight =",WEDOS)
     else:
 #       WEDOS = 1.0
         WEDOS = None
@@ -118,13 +121,13 @@ if __name__ == '__main__':
     list4 = [list4_1, list4_2, list4_3]
 
     if FLAG_SPD:
-        print "ORBITAL MODE: Default Orbitals"
+        print("ORBITAL MODE: Default Orbitals")
         block_list = list1
     elif FLAG_SP:
-        print "ORBITAL MODE: s-orbital and p-orbital"
+        print("ORBITAL MODE: s-orbital and p-orbital")
         block_list = list4
     else:
-        print "ORBITAL MODE: Default Orbitals"
+        print("ORBITAL MODE: Default Orbitals")
         block_list = list1
 
     nblock = len(block_list)
@@ -171,23 +174,23 @@ if __name__ == '__main__':
     ############################################ convert Energy (set eng_off)
     # PhotoEnegy モードで計算した時と同じ結果を返す
     if not inp.get_energygpho() and not FLAG_FERMI:
-        print "current mode is Fermi"
-        print "---> convert to PhotoEnergy"
-        print "     + E_edge"
+        print("current mode is Fermi")
+        print("---> convert to PhotoEnergy")
+        print("     + E_edge")
         eng_off =  txt.E_edge
 
     # E_fermi を引く(A) : A=B
     if not inp.get_energygpho() and FLAG_FERMI:
-        print "current mode is Fermi"
-        print "---> subtract E_fermi"
-        print "     - E_fermi"
+        print("current mode is Fermi")
+        print("---> subtract E_fermi")
+        print("     - E_fermi")
         eng_off = - txt.E_fermi
 
     # E_fermi を引く(B) : A=B
     if inp.get_energygpho() and FLAG_FERMI:
-        print "current mode is PhotoEnergy"
-        print "---> convert to EF0 mode"
-        print "     - E_edge - E_fermi"
+        print("current mode is PhotoEnergy")
+        print("---> convert to EF0 mode")
+        print("     - E_edge - E_fermi")
         eng_off - txt.E_Fermi - txt.E_edge
 
     EF0 = txt.E_edge + txt.E_Fermi
@@ -280,7 +283,7 @@ if __name__ == '__main__':
             if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
             if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
             xmin0, xmax0, ymin0, ymax0 = plt.axis()
-            print orbit,": ymax =",dmax0,ymax0
+            print(orbit,": ymax =",dmax0,ymax0)
 
             if XTICKS_FLAG and not FLAG_XAS:
 #               plt.xlabel("Energy above Fermi [eV]")

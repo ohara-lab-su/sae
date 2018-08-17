@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.03.23
 #  startup
 #
@@ -73,7 +76,7 @@ if __name__ == '__main__':
         if bool(start_reg.match(datlines[i])):
             i += 1
             while not bool(end_reg.match(datlines[i])):
-                print datlines[i]
+                print(datlines[i])
                 i += 1
             break
         i += 1
