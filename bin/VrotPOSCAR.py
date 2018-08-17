@@ -97,11 +97,11 @@ if __name__ == '__main__':
         gamma=float(args[2])
 
     if not STD or DEBUG:
-        print "INPUT      :",poscarname
-        print "OUTPUT     :",outputname
-        print "ALPHA(DEG) :",alpha
-        print "BETA(DEG)  :",beta
-        print "GAMMA(DEG) :",gamma
+        print("INPUT      :",poscarname)
+        print("OUTPUT     :",outputname)
+        print("ALPHA(DEG) :",alpha)
+        print("BETA(DEG)  :",beta)
+        print("GAMMA(DEG) :",gamma)
 
     # makes instance
     poscar = SAE.ReadVaspPoscar(poscarname)

@@ -94,10 +94,11 @@ if not os.path.exists(POSCAR):
         sys.exit(POSCAR+" file not found")
 
 if POSCAR:
-    print "INPUT file name :",POSCAR
+    print("INPUT file name : %s" % str(POSCAR))
 
 if cname:
-    print "OUTPUT file name:",cname+"_nn_"+str(find)+".out"
+   #print "OUTPUT file name:",cname+"_nn_"+str(find)+".out"
+    print("OUTPUT file name: %s_nn_%s.out"  % (cname, str(find)))
 
 
 ##################################################################################
@@ -248,7 +249,7 @@ car_reg = re.compile('^C.*',re.IGNORECASE)
 i += 1
 tmp = datlines[i].split()
 if bool(num_reg.match(tmp[0])):
-    print tmp[0]
+    print(tmp[0])
     sys.exit("Format Error")
 else:
     if bool(selective_reg.match(tmp[0])):
@@ -261,7 +262,7 @@ else:
         selective = 0
 
     if bool(num_reg.match(tmp[0])):
-        print tmp[0]
+        print(tmp[0])
         sys.exit("Format Error")
     if bool(direct_reg.match(tmp[0])):
        #print "Direct Mode"
@@ -369,10 +370,10 @@ for j in range(n):
 ################################################
 ## pre data print
 ##
-print "scale              : ",scale
-print "translation vector : %11.9f %11.9f %11.9f" %(t1_x, t1_y, t1_z)
-print "                     %11.9f %11.9f %11.9f" %(t2_x, t2_y, t2_z)
-print "                     %11.9f %11.9f %11.9f" %(t3_x, t3_y, t3_z)
+print("scale              : %s" % str(scale))
+print("translation vector : %11.9f %11.9f %11.9f" %(t1_x, t1_y, t1_z))
+print("                     %11.9f %11.9f %11.9f" %(t2_x, t2_y, t2_z))
+print("                     %11.9f %11.9f %11.9f" %(t3_x, t3_y, t3_z))
 
 
 ################################################
@@ -382,16 +383,22 @@ print "                     %11.9f %11.9f %11.9f" %(t3_x, t3_y, t3_z)
 ##
 nn = open(cname+'_nn_'+str(find)+'.out','w')
 
-print >> nn, atoms_index[int(ion[int(find0)])],int(ion_site[find0])+1,"(",int(ion_site[find0])+1,")"
-print >> nn, "   ", "   t-index site site-index      r"
-print >> nn, "   ", "  -------------------------------------"
+#print >> nn, atoms_index[int(ion[int(find0)])],int(ion_site[find0])+1,"(",int(ion_site[find0])+1,")"
+#print >> nn, "   ", "   t-index site site-index      r"
+#print >> nn, "   ", "  -------------------------------------"
+
+print("%s %d (%d)"
+      % (atoms_index[int(ion[int(find0)])], int(ion_site[find0])+1, int(ion_site[find0])+1),
+      file=nn)
+print("      t-index site site-index      r", file=nn)
+print("     -------------------------------------", file=nn)
 
 for j in range(natom):
-    print >> nn, "   ","     %5d  %2s %5d    %14.11f" \
-                        %( int(r_index[j]) +1 ,\
-                           atoms_index[int(ion[int(r_index[j])])], \
-                           int(ion_site[int(r_index[j])]) +1,\
-                           r[j] )
+    print("   ","     %5d  %2s %5d    %14.11f"
+                        %( int(r_index[j]) +1 ,
+                           atoms_index[int(ion[int(r_index[j])])],
+                           int(ion_site[int(r_index[j])]) +1,
+                           r[j] ), file=nn)
 nn.close
 
 

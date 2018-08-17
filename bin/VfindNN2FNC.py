@@ -170,9 +170,9 @@ if not os.path.exists(POSCAR):
 if not os.path.exists(FNClist):
     sys.path.exit(FNClist+"file not found")
 
-print "INPUT file name    :",POSCAR
-print "OUTPUT file name   :",cname+"_nn_"+str(find)+".out"
-print "SEARCH DISTANCE    :",distance
+print("INPUT file name    : %s" % str(POSCAR))
+print("OUTPUT file name   : %s" % str(cname+"_nn_"+str(find)+".out"))
+print("SEARCH DISTANCE    : %s" % str(distance))
 
 
 ################################################################################
@@ -263,7 +263,7 @@ t3_x = float(v[0])
 t3_y = float(v[1])
 t3_z = float(v[2])
 
-a = zeros((3,3))
+a = np.zeros((3,3))
 a[0,0] = t1_x
 a[1,0] = t1_y
 a[2,0] = t1_z
@@ -347,7 +347,7 @@ car_reg = re.compile('^C.*',re.IGNORECASE)
 i += 1
 tmp = datlines[i].split()
 if bool(num_reg.match(tmp[0])):
-    print tmp[0]
+    print(tmp[0])
     sys.exit("Format Error")
 else:
     if bool(selective_reg.match(tmp[0])):
@@ -360,7 +360,7 @@ else:
         selective = False
 
     if bool(num_reg.match(tmp[0])):
-        print tmp[0]
+        print(tmp[0])
         sys.exit("Format Error")
     if bool(direct_reg.match(tmp[0])):
        #print "Direct Mode"
@@ -751,7 +751,7 @@ for fnc in range(nfnc):
 ## それぞれのfncにおける最大のボンド長と最小のボンド長を出力する
 ##
 
-print ""
+print("")
 #print "=== fnc, nsmax[fnc]"
 fnc_max = np.zeros(nfnc)
 fnc_min = np.zeros(nfnc)
@@ -759,7 +759,7 @@ for fnc in range(nfnc):
     fnc_max[fnc] = rs[int(int(nsmax[fnc]))-1,fnc] 
     fnc_min[fnc] = rs[1,fnc]
    #print "fnc:",fnc," max:",int(nsmax[fnc]),fnc_max[fnc]," min:",fnc_min[fnc]
-print ""
+print("")
 
 ## ボンド長の種類数を指定
 nbond = 2
@@ -785,22 +785,22 @@ for fnc in range(nfnc):
 
     find0 = int(atom_fnc[fnc]) - 1
 
-    print ""
-    print  atoms_index[int(ion[int(find0)])],int(ion_local[find0])+1,"(",int(ion_local[find0])+1,")"
-    print  "   ", "  -------------------------------------"
-    print  "   ", "  [original cell numter]"
-    print  "   ", "   t-index site site-index      r"
-    print  "   ", "  -------------------------------------"
+    print("")
+    print( atoms_index[int(ion[int(find0)])],int(ion_local[find0])+1,"(",int(ion_local[find0])+1,")")
+    print( "   ", "  -------------------------------------")
+    print( "   ", "  [original cell numter]")
+    print( "   ", "   t-index site site-index      r")
+    print( "   ", "  -------------------------------------")
  
     # sp_j     : 元セル <--> スーパーセル 通し番号対応 
     # rs_index : ソート後の通し番号index
     # ion_local : サイト内ローカルの通し番号
     for num in range(nmax):
-        print  "   ","     %5d  %2s %5d    %14.11f" \
-                      %( sp_j[int(rs_index[num,fnc])] +1 ,\
-                         atoms_index[int(ion[sp_j[rs_index[num,fnc]]])], \
-                         ion_local[sp_j[rs_index[num,fnc]]] +1,\
-                         rs[num,fnc] )
+        print( "   ","     %5d  %2s %5d    %14.11f"
+                      %( sp_j[int(rs_index[num,fnc])] +1 ,
+                         atoms_index[int(ion[sp_j[rs_index[num,fnc]]])],
+                         ion_local[sp_j[rs_index[num,fnc]]] +1,
+                         rs[num,fnc] ))
     ## #nn.close
 
 
@@ -847,44 +847,44 @@ for j in range(natom):
 ##
 outfnc = open(cname+'.fnc','w')
 
-print >> outfnc, "     ",title
-print >> outfnc, ""
-print >> outfnc, "     ","No. of possible rmin-rmax pairs:"
-print >> outfnc, "     ",nbond
+print("     ",title, file=outfnc)
+print("")
+print("     ","No. of possible rmin-rmax pairs:", file=outfnc)
+print("     ",nbond, file=outfnc)
 
 #### max
-print >> outfnc, "     ",
+print("     ", file=outfnc, end="")
 for ib in range(nbond):
-    print >> outfnc, "%2.3f " %( fnc_bond_min[ib] ),
-print >> outfnc, ""
+    print("%2.3f " %( fnc_bond_min[ib] ), file=outfnc, end="")
+print("", file=outfnc)
 
 #### min
-print >> outfnc, "     ",
+print("     ", file=outfnc, end="")
 for ib in range(nbond):
-    print >> outfnc, "%2.3f " %( fnc_bond_max[ib] ),
-print >> outfnc, ""
+    print("%2.3f " %( fnc_bond_max[ib] ), file=outfnc, end="")
+print("", file=outfnc)
 
-print >> outfnc, ""
-print >> outfnc, "     %3d" %(natom)
-print >> outfnc, ""
+print("", file=outfnc)
+print("     %3d" %(natom), file=outfnc)
+print("", file=outfnc)
 
 for j in range(natom):
     if index_bond[j] == 1:
        #print j,"bond"
         find0 = j
         fnc0 = fnc_atom[find0]
-        print >> outfnc, "     %3d %3d" %(find0+1,nmax-1)
+        print("     %3d %3d" %(find0+1,nmax-1), file=outfnc)
         for num in range(1,nmax):
-            print >> outfnc, "    ", int(sp_j[int(rs_index[num,int(fnc0)])] +1 ),
-        print >> outfnc, ""
+            print("    ", int(sp_j[int(rs_index[num,int(fnc0)])] +1 ), file=outfnc, end="")
+        print("", file=outfnc)
         
-        print >> outfnc, "      ",
+        print("      ", file=outfnc, end="")
         for num in range(1,nmax):
-            print >> outfnc, "1",
-        print >> outfnc,""
+            print("1", file=outfnc, end="")
+        print("", file=outfnc)
 
     else:
-        print >> outfnc, "     %3d %3d" %(j+1,0)
+        print("     %3d %3d" %(j+1,0), file=outfnc)
 
 outfnc.close()
 

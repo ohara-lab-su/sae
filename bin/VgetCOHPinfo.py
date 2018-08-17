@@ -58,30 +58,30 @@ if __name__ == '__main__':
     # 軌道情報をサイトごとに表示
     out = SAEnv.ReadLobOut()
     for i in range(out.nion):
-        print out.atoms_index[i], ":[" + str(len(out.orbit_index[i])) + "]",
+        print(out.atoms_index[i], ":[" + str(len(out.orbit_index[i])) + "]", end="")
         for j in range(out.orbit[i]):
-            print out.orbit_index[i][j],
-        print ""
+            print(out.orbit_index[i][j], end="")
+        print("")
 
     if V_FLAG:
         # COHP 解析をした原子のペアを表示( 0番は Average)
         if not COHP_FLAG:
             cohp = SAEnv.ReadLobCohp()
             COHP_FLAG = True
-        print ""
+        print("")
         for i in range(len(cohp.bond_index)):
-            print i, cohp.bond_index[i]
+            print(i, cohp.bond_index[i])
 
     if DOS_FLAG:
         # 原子ごとの軌道リスト
         dos = SAEnv.ReadLobDos()
-        print ""
+        print("")
         for i in range(len(dos.orbit_index_j)):
             norbit = len(dos.orbit_index_j[i])
-            print dos.atoms_index_j[i],"["+str(norbit)+"]",
+            print(dos.atoms_index_j[i],"["+str(norbit)+"]", end="")
             for orb in range(norbit):
-                print dos.orbit_index_j[i][orb],
-            print ""
+                print(dos.orbit_index_j[i][orb], end="")
+            print("")
 
 
 #   # 結合してる距離が一番長いペアを表示

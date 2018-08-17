@@ -125,9 +125,9 @@ if not os.path.exists(POSCAR):
     else:
         sys.exit(POSCAR+" file not found")
 
-print "INPUT file name    :",POSCAR
-print "OUTPUT file name   :",cname+"_nn_"+str(find)+".out"
-print "SEARCH DISTANCE    :",distance
+print("INPUT file name    : %s" % str(POSCAR))
+print("OUTPUT file name   : %s" % str(cname+"_nn_"+str(find)+".out"))
+print("SEARCH DISTANCE    : %s" % str(distance))
 
 ################################################################################
 ## VASP 形式
@@ -277,7 +277,7 @@ car_reg = re.compile('^C.*',re.IGNORECASE)
 i += 1
 tmp = datlines[i].split()
 if bool(num_reg.match(tmp[0])):
-    print tmp[0]
+    print(tmp[0])
     sys.exit("Format Error")
 else:
     if bool(selective_reg.match(tmp[0])):
@@ -290,7 +290,7 @@ else:
         selective = False
 
     if bool(num_reg.match(tmp[0])):
-        print tmp[0]
+        print(tmp[0])
         sys.exit("Format Error")
     if bool(direct_reg.match(tmp[0])):
        #print "Direct Mode"
@@ -660,19 +660,19 @@ for j in range(n):
 ##
 #nn = open(cname+'_nn_'+str(find)+'.out','w')
 
-print ""
-print  atoms_index[int(ion[int(find0)])],int(ion_local[find0])+1,"(",int(ion_local[find0])+1,")"
-print  "   ", "  -------------------------------------"
-print  "   ", "  [original cell numter]"
-print  "   ", "   t-index site site-index      r"
-print  "   ", "  -------------------------------------"
+print("")
+print( atoms_index[int(ion[int(find0)])],int(ion_local[find0])+1,"(",int(ion_local[find0])+1,")")
+print( "   ", "  -------------------------------------")
+print( "   ", "  [original cell numter]")
+print( "   ", "   t-index site site-index      r")
+print( "   ", "  -------------------------------------")
 
 for num in range(nmax):
-    print  "   ","     %5d  %2s %5d    %14.11f" \
-                  %( sp_j[int(r_index[num])] +1 ,\
-                     atoms_index[int(ion[sp_j[r_index[num]]])], \
-                     ion_local[sp_j[r_index[num]]] +1,\
-                     r[num] )
+    print( "   ","     %5d  %2s %5d    %14.11f"
+                  %( sp_j[int(r_index[num])] +1 ,
+                     atoms_index[int(ion[sp_j[r_index[num]]])],
+                     ion_local[sp_j[r_index[num]]] +1,
+                     r[num] ))
 ## #nn.close
 
 

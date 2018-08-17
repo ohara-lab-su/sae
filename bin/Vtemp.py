@@ -82,6 +82,6 @@ if __name__ == '__main__':
 
     n_ion_loop = outfile.get_n_ion_loop()
     for i in range(n_ion_loop):
-        print "%5d %6.2f  %15.8f" % (i+1, temperature[i], etotal[i])
+        print("%5d %6.2f  %15.8f" % (i+1, temperature[i], etotal[i]))
 
 ################################################################################

@@ -123,17 +123,17 @@ if __name__ == '__main__':
             FLAG_TOT, FLAG_VBM, OPT_SHIFT, \
             FLAG_LEFT, FLAG_NOEF, FLAG_NW = options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax= %s" % str(OPT_EMAX))
+    if OPT_EMIN: print("Emin= %s" % str(OPT_EMIN))
+    if OPT_YMAX: print("Ymax= %s" % str(OPT_YMAX))
 
     # set output device
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    print "READ "+dname
+    print("READ %s" % str(dname))
     dos = SAE.ReadVaspDoscar(dname)
-    print "END READ"
+    print("END READ")
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
@@ -152,21 +152,21 @@ if __name__ == '__main__':
 
     if FLAG_VBM:
         EFERMI0 = dos.efermi
-        print "SEARCH VBM MODE"
-        print "  ORIGINAL EF =",
-        print EFERMI0
+        print("SEARCH VBM MODE")
+        print("  ORIGINAL EF =", end="")
+        print(EFERMI0)
         EFERMI = dos.get_vbm()
-        print "          VBM =", EFERMI
+        print("          VBM = %s" % str(EFERMI))
 
     if OPT_SHIFT:
-        print "EF_SHIFT MODE"
-        print "     NEW EF ="
+        print("EF_SHIFT MODE")
+        print("     NEW EF =")
         EFERMI = float(OPT_SHIFT)
 
     # makes instance ( Read OUTCAR )
-    print "READ "+oname
+    print("READ %s" % str(oname))
     outcar = SAE.ReadVaspOutcar(oname)
-    print "END READ"
+    print("END READ")
 
     NION = outcar.get_nion()
     atoms = outcar.get_atoms_index()
@@ -190,7 +190,7 @@ if __name__ == '__main__':
 
     ############################################################################
     if NSPIN >=2:
-        print "SPIN MODE"
+        print("SPIN MODE")
         spin_index=['up','dn']
         if FLAG_UP:
             spin_list=[0]
@@ -208,7 +208,7 @@ if __name__ == '__main__':
             ysize = ysize0/2.
             FLAG_BOTH_SPIN = True
     else:
-        print "NONMAGNETIC MODE"
+        print("NONMAGNETIC MODE")
         spin_list=[0]
         out_suffix=''
         ysize = ysize0
@@ -232,9 +232,10 @@ if __name__ == '__main__':
 
             atom = str(atoms[ion])
             if NSPIN ==1:
-                print "ion = ",ion+1,atom
+                print("ion = %d %s" % (ion+1, str(atom)))
             else:
-                print "ion (spin) : ",ion+1,"("+spin_index[spin]+")",atom
+               #print "ion (spin) : ",ion+1,"("+spin_index[spin]+")",atom
+                print("ion (spin) : %d (%s) %s" % (ion+1, str(spin_index[spin]), str(atom)))
 
             # autumn, bone, cool, copper, flag, gray, hot, hsv,
             # jet, pink, prism, spring, summer, winter, spectral

@@ -121,7 +121,7 @@ def options():
         if os.path.exists(inpname+".vasp"):
             POSCAR="POSCAR.vasp"
         else:
-            sys.exit(POSCAR+" file not found")
+            sys.exit(inpname+" file not found")
 
     if len(args) < 3:
         sys.exit("Error: args < 3")
@@ -129,13 +129,13 @@ def options():
         super_x = args[0]
         super_y = args[1]
         super_z = args[2]
-        print "Super Cell         : [",super_x,",",super_y,",",super_z,"]"
+        print("Super Cell         : [",super_x,",",super_y,",",super_z,"]")
 
     outname = inpname+'_super_'+str(super_x)+'x'+str(super_y)+'x'+str(super_z)
     if options.OUTPUT : outname = options.OUTPUT
 
-    print "INPUT file name    :",inpname
-    print "OUTPUT file name   :",outname+".vasp"
+    print("INPUT file name    :",inpname)
+    print("OUTPUT file name   :",outname+".vasp")
 
     return inpname,outname,super_x,super_y,super_z
 

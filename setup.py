@@ -5,15 +5,15 @@
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
-#__email__      = "kengo.nakada@gmail.com"
 __email__      = "kengo.nakada@spring8.or.jp"
 __copyright__  = "Copyright 2014-2018 Kengo NAKADA"
-#__license__    = "MIT"
 __license__    = "Apache2"
 #
 __status__     = "alpha"
 #__version__    = "0.0.1"
 
+#__email__      = "kengo.nakada@gmail.com"
+#__license__    = "MIT"
 
 from setuptools import setup, find_packages
 import glob
@@ -36,7 +36,7 @@ setup(
 #       include_package_data=True,
 #       package_data = { '': ['LICENSE.txt', 'README.md']},
         scripts = script,
-        version = version,
+        version = __version__,
         description = 'Structure Analysis Environment',
         long_description = long_description,
         author = 'K.NAKADA',
@@ -46,10 +46,10 @@ setup(
         license = 'MIT',
         install_requires = ['numpy','matplotlib'],
 #       platforms = ['linux','OSX','Window'],
-        classifiers = [
-            'Programming Language :: Python :: 2.7',
-            'Intended Audience :: Science/Research',
-            'License :: OSI Approved :: MIT License'
-            ]
+#       classifiers = [
+#           'Programming Language :: Python :: 2.7',
+#           'Intended Audience :: Science/Research',
+#           'License :: OSI Approved :: MIT License'
+#           ]
 )
 

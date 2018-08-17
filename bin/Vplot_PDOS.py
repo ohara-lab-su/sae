@@ -131,23 +131,23 @@ if __name__ == '__main__':
             FLAG_PDF, FLAG_NW = options()
 
     if HEX_FLAG:
-        print "Hexagonal MODE"
+        print("Hexagonal MODE")
     elif CUBIC_FLAG:
-        print "Cubic MODE"
+        print("Cubic MODE")
     elif SPD_FLAG:
-        print "SPD(lm=0,1,2,,,,9) MODE"
+        print("SPD(lm=0,1,2,,,,9) MODE")
     elif SP_FLAG:
-        print "Selective s-orbital and p-orbital MODE (disable d-orbital plot)"
+        print("Selective s-orbital and p-orbital MODE (disable d-orbital plot)")
     elif AUTO_FLAG:
-        print "Automatic Symmetry MODE"
+        print("Automatic Symmetry MODE")
     else:
-        print "Default (lm=0,1,2,,,,9) MODE"
+        print("Default (lm=0,1,2,,,,9) MODE")
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax= %s" % str(OPT_EMAX))
+    if OPT_EMIN: print("Emin= %s" % str(OPT_EMIN))
+    if OPT_YMAX: print("Ymax= %s" % str(OPT_YMAX))
     if OPT_ATOM:
-        print "ATOM=",OPT_ATOM
+        print("ATOM= %s" % str(OPT_ATOM))
         atom=int(OPT_ATOM)-1
     else:
         atom=0
@@ -172,10 +172,10 @@ if __name__ == '__main__':
         TITLE = str(OPT_TITLE)
 
     if FLAG_VBM:
-        print "EF SHIFT"
+        print("EF SHIFT")
         EFERMI0 = dos.efermi
         EFERMI = dos.get_vbm()
-        print EFERMI0, EFERMI
+        print(EFERMI0, EFERMI)
 
     if OPT_SHIFT:
         EFERMI = float(OPT_SHIFT)
@@ -268,19 +268,19 @@ if __name__ == '__main__':
         block_list = list1
     elif AUTO_FLAG and FLAG_OUTCAR:
         point_sym = outcar.get_point_symmetry()
-        print "Point Symmetry =",point_sym
+        print("Point Symmetry = %s" % str(point_sym))
         if point_sym[0:1] == 'O':  # O_h
             CUBIC_FLAG=True
             block_list = list2
-            print "Cubic MODE"
+            print("Cubic MODE")
         elif point_sym[0:1] == 'D': # D_3h
             HEX_FLAG=True
             block_list = list3
-            print "Hexagonal MODE"
+            print("Hexagonal MODE")
         elif point_sym == 'D_6h':
             HEX_FLAG=True
             block_list = list3
-            print "Hexgonal MODE"
+            print("Hexgonal MODE")
         else:
             block_list = list1
     else:
@@ -289,7 +289,7 @@ if __name__ == '__main__':
     ########################################################################
     # 画面分割のブロック
     nblock = len(block_list)
-    print "Number of nblock = ",nblock
+    print("Number of nblock = %s" % (str(nblock)))
 
     orgx = 0.130
     orgy = 0.080
@@ -304,11 +304,11 @@ if __name__ == '__main__':
                 if FLAG_OUTCAR:
                     atom_label =str(atoms[atoms_j[atom]])+str(atom+1)
                     if spin == 1:
-                        print "Atom =",atom+1,atom_label
+                        print("Atom = %d %s" % (atom+1, str(atom_label)))
                 else:
                     atom_label =str(atom)
                     if spin == 1:
-                        print "Atom =",atom+1
+                        print("Atom = %d" % atom+1)
 
             # 描画軸の作成
             plt.axes([ orgx,orgy, 0.80, size ])

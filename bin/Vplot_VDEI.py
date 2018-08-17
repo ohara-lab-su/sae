@@ -91,7 +91,7 @@ if __name__ == '__main__':
     for i in range(ndat):
         if bool(energy_reg.match(datlines[i])):
             tmp = datlines[i].split()
-            print tmp[7]
+            print(tmp[7])
 #           y.append(tmp[7])     # Y: free energy
 #           x.append(total_loop) # X: total_loop ( scf & ion loop)
 #           total_loop += 1

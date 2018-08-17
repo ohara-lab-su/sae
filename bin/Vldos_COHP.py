@@ -82,65 +82,65 @@ if __name__ == '__main__':
     LDOS_ALL = dos.get_ldos_all()
 
     for spin in range(NSPIN):
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
-        print >> out, "##"
-        print >> out, "## INFILE=",name
-        print >> out, "## ISPIN =",NSPIN
-        print >> out, "##  SPIN =",spin+1
-        print >> out, "## NATOM =",NATOM
-        print >> out, "## EMAX  =",EMAX
-        print >> out, "## EMIN  =",EMIN
-        print >> out, "## NLINE =",NEDOS
-        print >> out, "## FERMI =",EFERMI
-        print >> out, "##"
-        print >> out, "##"
-        print >> out, "##        total"
-        print >> out, "##        eng tdos tidos"
-        print >> out, "##"
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
+        print("##", file=out)
+        print("## INFILE=",name, file=out)
+        print("## ISPIN =",NSPIN, file=out)
+        print("##  SPIN =",spin+1, file=out)
+        print("## NATOM =",NATOM, file=out)
+        print("## EMAX  =",EMAX, file=out)
+        print("## EMIN  =",EMIN, file=out)
+        print("## NLINE =",NEDOS, file=out)
+        print("## FERMI =",EFERMI, file=out)
+        print("##", file=out)
+        print("##", file=out)
+        print("##        total", file=out)
+        print("##        eng tdos tidos", file=out)
+        print("##", file=out)
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
 
         TDOS = dos.get_tdos(spin)
         INTTDOS = dos.get_inttdos(spin)
 
         for i in range(NEDOS):
-            print "%9.5f %9.5f %9.5f " %( ENG[i],TDOS[i],INTTDOS[i] )
+            print("%9.5f %9.5f %9.5f " %( ENG[i],TDOS[i],INTTDOS[i] ))
 
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
 
         for atom in range(NATOM):
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
-            print >> out, "##"
-            print >> out, "## INFILE=",name
-            print >> out, "## ISPIN =",NSPIN
-            print >> out, "##  SPIN =",spin+1
-            print >> out, "## NATOM =",NATOM
-            print >> out, "## EMAX  =",EMAX
-            print >> out, "## EMIN  =",EMIN
-            print >> out, "## NLINE =",NEDOS
-            print >> out, "## FERMI =",EFERMI
-            print >> out, "##"
-            print >> out, "##"
-            print >> out, "##      ATOM=",atom+1
-            print >> out, "##      eng s p d"
-            print >> out, "##"
-            print >> out, ""
-            print >> out, ""
-            print >> out, ""
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("##", file=out)
+            print("## INFILE=",name, file=out)
+            print("## ISPIN =",NSPIN, file=out)
+            print("##  SPIN =",spin+1, file=out)
+            print("## NATOM =",NATOM, file=out)
+            print("## EMAX  =",EMAX, file=out)
+            print("## EMIN  =",EMIN, file=out)
+            print("## NLINE =",NEDOS, file=out)
+            print("## FERMI =",EFERMI, file=out)
+            print("##", file=out)
+            print("##", file=out)
+            print("##      ATOM=",atom+1, file=out)
+            print("##      eng s p d", file=out)
+            print("##", file=out)
+            print("", file=out)
+            print("", file=out)
+            print("", file=out)
 
             for i in range(NEDOS):
-                print >> out, "%9.5f " %( ENG[i] ),
+                print("%9.5f " %( ENG[i] ), file=out, end="")
                 for l in range(0,3):
-                    print >> out, "%9.5f " \
-                            % ( LDOS_ALL[i,l,atom,spin] ),
-                print ""
+                    print("%9.5f "
+                          % ( LDOS_ALL[i,l,atom,spin] ), file=out, end="")
+                print("")
 
 
 ################################################################################

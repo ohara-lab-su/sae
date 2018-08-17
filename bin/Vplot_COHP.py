@@ -82,11 +82,11 @@ if __name__ == '__main__':
         OPT_DMAX, OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_YMIN, \
         OPT_UP, OPT_DN, OPT_SPIN, OPT_PAIR = options()
 
-    if OPT_DMAX: print "Dmax=", OPT_DMAX
-    if OPT_EMAX: print "Emax=", OPT_EMAX
-    if OPT_EMIN: print "Emin=", OPT_EMIN
-    if OPT_YMAX: print "Ymax=", OPT_YMAX
-    if OPT_YMIN: print "Ymax=", OPT_YMIN
+    if OPT_DMAX: print("Dmax= %s" % str(OPT_DMAX))
+    if OPT_EMAX: print("Emax= %s" % str(OPT_EMAX))
+    if OPT_EMIN: print("Emin= %s" % str(OPT_EMIN))
+    if OPT_YMAX: print("Ymax= %s" % str(OPT_YMAX))
+    if OPT_YMIN: print("Ymax= %s" % str(OPT_YMIN))
 
     ##########################################################################
     # matplotlib
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     if OPT_PAIR:
         for i in OPT_PAIR:
             par_label = cohp.bond_index[int(i)]
-            print i,par_label
+            print(i,par_label)
 
     ######################################################## DOS
     plt.subplot(121)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     ######################################################## COHP Average
     plt.subplot(122)
 
-    print 'SPIN_LIST = ',spin_list
+    print('SPIN_LIST = ',spin_list)
     ################### COHP Average
     if not OPT_PAIR:
         for s in spin_list:

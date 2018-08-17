@@ -91,9 +91,9 @@ if __name__ == '__main__':
 
     TDOS_FLAG=True
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax= %s" % str(OPT_EMAX))
+    if OPT_EMIN: print("Emin= %s" % str(OPT_EMIN))
+    if OPT_YMAX: print("Ymax= %s" % str(OPT_YMAX))
 
     # set output device
     out = sys.stdout
@@ -143,9 +143,10 @@ if __name__ == '__main__':
         for spin in range(NSPIN-1,-1,-1):
 
             if NSPIN == 1:
-                print "ion = ",ion+1,atoms[ion]
+                print("ion = %d %s" % (ion+1, str(atoms[ion])))
             else:
-                print "ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion]
+               #print "ion(spin) = ",ion+1,"("+str(spin+1)+")",atoms[ion]
+                print("ion(spin) = %d (%s) %s" % (ion+1,str(spin+1), str(atoms[ion])))
 
             atom = str(atoms[ion])
 

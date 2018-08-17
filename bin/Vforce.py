@@ -126,14 +126,14 @@ if __name__ == '__main__':
     # OUTCAR 読み込み(原子位置とフォース), 座標系はPOSCARの座標系のまま
     SAE.read_outcar_position(OUTCAR,natom,nloop,position_loop,force_loop)
 
-    print ""
+    print("")
     for i in range(nloop):
         for j in range(natom):
-            print " %11.8f %11.8f %11.8f  %19.10f %19.10f %19.10f" \
-                    % ( position_loop[i,j,0],position_loop[i,j,1],position_loop[i,j,2],\
-                        force_loop[i,j,0],   force_loop[i,j,1],   force_loop[i,j,2] )
+            print(" %11.8f %11.8f %11.8f  %19.10f %19.10f %19.10f"
+                    % ( position_loop[i,j,0],position_loop[i,j,1],position_loop[i,j,2],
+                        force_loop[i,j,0],   force_loop[i,j,1],   force_loop[i,j,2] ))
 
-        print ""
+        print("")
 
 ################################################################################
      

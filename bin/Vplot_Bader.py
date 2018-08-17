@@ -51,7 +51,7 @@ import StructureAnalysisEnvironment.gui as SAEG
 
 #import numpy as np
 #import visual as vp
-import wx
+import wx # wxpython-3.x0 までは python2 専用なので注意 (python3 対応は wxpython4.0)
 #import time
 
 #import Image
@@ -95,7 +95,8 @@ def options():
         super_x = int(args[0])
         super_y = int(args[1])
         super_z = int(args[2])
-        print "Super Cell         : [",super_x,",",super_y,",",super_z,"]"
+       #print "Super Cell         : [",super_x,",",super_y,",",super_z,"]"
+        print("Super Cell         : [%s, %s, %s]" % (str(super_x), str(super_y), str(super_z)))
 
     return inpname,\
             options.bond,\
@@ -125,16 +126,16 @@ if __name__ == '__main__':
     #####################################
     # 入出力&モード確認
     #
-    print "INPUT file name    :",readfile
-    print "plot BOND Mode     :",OPT_BOND
-    print "plot without cell  :",OPT_CELL
+    print("INPUT file name    : %s" % str(readfile))
+    print("plot BOND Mode     : %s" % str(OPT_BOND))
+    print("plot without cell  : %s" % str(OPT_CELL))
     if OPT_CHARGE:
-        print "plot charge        : charge"
+        print("plot charge        : charge")
     else:
-        print "plot charge        : ABS(charge)"
-    if CMAX: print "charge MAX         :",CMAX
-    if CMIN: print "charge MIN         :",CMIN
-    print "-----------------------------------"
+        print("plot charge        : ABS(charge)")
+    if CMAX: print("charge MAX         : %s" % str(CMAX))
+    if CMIN: print("charge MIN         : %s" % str(CMIN))
+    print("-----------------------------------")
 
 
     #####################################

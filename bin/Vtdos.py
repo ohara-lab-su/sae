@@ -84,46 +84,46 @@ if __name__ == '__main__':
 
     ENG = dos.get_eng()
 
-    print >> out, ""
-    print >> out, ""
-    print >> out, ""
+    print("", file=out)
+    print("", file=out)
+    print("", file=out)
 
     if FERMI_FLAG:
         EFERMI = 0.0
-        print >> out, "## EF = 0"
+        print("## EF = 0", file=out)
     else:
         EFERMI = dos.get_efermi()
-        print >> out, "## EF = ", EFERMI
-    print >> out, "## Energy = E - EF"
+        print("## EF = ", EFERMI, file=out)
+    print("## Energy = E - EF", file=out)
 
     for spin in range(NSPIN):
-        print >> out, "##"
-        print >> out, "## INFILE= ",name
-        print >> out, "## ISPIN = ",NSPIN
-        print >> out, "##  SPIN = ",spin+1
-        print >> out, "## NATOM = ",NATOM
-        print >> out, "## EMAX  = ",EMAX
-        print >> out, "## EMIN  = ",EMIN
-        print >> out, "## NLINE = ",NEDOS
-        print >> out, "## FERMI = ",EFERMI
-        print >> out, "##"
-        print >> out, "##"
-        print >> out, "##        total"
-        print >> out, "##        eng tdos tidos"
-        print >> out, "##"
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
+        print("##", file=out)
+        print("## INFILE= ",name, file=out)
+        print("## ISPIN = ",NSPIN, file=out)
+        print("##  SPIN = ",spin+1, file=out)
+        print("## NATOM = ",NATOM, file=out)
+        print("## EMAX  = ",EMAX, file=out)
+        print("## EMIN  = ",EMIN, file=out)
+        print("## NLINE = ",NEDOS, file=out)
+        print("## FERMI = ",EFERMI, file=out)
+        print("##", file=out)
+        print("##", file=out)
+        print("##        total", file=out)
+        print("##        eng tdos tidos", file=out)
+        print("##", file=out)
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
 
         TDOS = dos.get_tdos(spin)
         INTTDOS = dos.get_inttdos(spin)
 
         for i in range(NEDOS):
-            print "%13.8f %13.8f %13.8f " %( ENG[i]-EFERMI,TDOS[i],INTTDOS[i] )
+            print("%13.8f %13.8f %13.8f " %( ENG[i]-EFERMI,TDOS[i],INTTDOS[i] ), file=out)
 
-        print >> out, ""
-        print >> out, ""
-        print >> out, ""
+        print("", file=out)
+        print("", file=out)
+        print("", file=out)
 
 
 ################################################################################

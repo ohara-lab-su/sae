@@ -127,8 +127,8 @@ if __name__ == '__main__':
     else:
         OPT_EMIN = EMIN0
 
-    print "Emin=",OPT_EMIN
-    print "Emax=",OPT_EMAX
+    print("Emin=",OPT_EMIN)
+    print("Emax=",OPT_EMAX)
     atom -= 1
 
     #####################################################
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
         #####################################################
         dname = dname+'/DOSCAR'
-        print "DOSCAR: ",dname
+        print("DOSCAR: ",dname)
 
         dos = SAE.ReadVaspDoscar(dname)
         eng = dos.get_eng() - dos.get_efermi()

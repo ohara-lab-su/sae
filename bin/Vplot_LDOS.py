@@ -146,20 +146,20 @@ if __name__ == '__main__':
             FLAG_VBM, OPT_SHIFT, \
             FLAG_LEFT, FLAG_NOEF, FLAG_PDF, FLAG_NW = options()
 
-    if OPT_EMAX: print "Emax=",OPT_EMAX
-    if OPT_EMIN: print "Emin=",OPT_EMIN
-    if OPT_YMAX: print "Ymax=",OPT_YMAX
+    if OPT_EMAX: print("Emax= %s" % str(OPT_EMAX))
+    if OPT_EMIN: print("Emin= %s" % str(OPT_EMIN))
+    if OPT_YMAX: print("Ymax= %s" % str(OPT_YMAX))
 
     # ION の種類ではなくて原子種の通し番号で入力
     if len(plot_atoms) > 1:
-        print "Plot Atoms:"
+        print("Plot Atoms:")
         for i in plot_atoms:
-            print i,
-        print ""
+            print("%d" % i, end="")
+        print("")
     elif plot_atom:
         plot_atoms[0] = plot_atom
 
-    print plot_atoms
+    print(plot_atoms)
 
     # set output device
     out = sys.stdout
@@ -185,15 +185,15 @@ if __name__ == '__main__':
 
     if FLAG_VBM:
         EFERMI0 = dos.efermi
-        print "SEARCH VBM MODE"
-        print "  ORIGINAL EF =",
-        print EFERMI0
+        print("SEARCH VBM MODE")
+        print("  ORIGINAL EF =", end="")
+        print(EFERMI0)
         EFERMI = dos.get_vbm()
-        print "          VBM =", EFERMI
+        print("          VBM = %s" % str(EFERMI), end="")
 
     if OPT_SHIFT:
-        print "EF_SHIFT MODE"
-        print "     NEW EF ="
+        print("EF_SHIFT MODE")
+        print("     NEW EF =")
         EFERMI = float(OPT_SHIFT)
 
     # makes instance ( Read OUTCAR )
@@ -253,15 +253,16 @@ if __name__ == '__main__':
             if FLAG_OUTCAR:
                 atom_label =str(atoms[atoms_j[atom]])+str(atom+1)
                 if NSPIN == 1:
-                    print "atom =",atom+1,atom_label
+                    print("atom = %s %s" % (str(atom+1), str(atom_label)))
                 else:
-                    print "atom(spin) =",atom+1,"("+str(spin+1)+")",atom_label
+                   #print "atom(spin) =",atom+1,"("+str(spin+1)+")",atom_label
+                    print("atom(spin) = %d (%s) %s" % (atom+1, str(spin+1), str(atom_label)))
             else:
                 atom_label =str(atom)
                 if NSPIN == 1:
-                    print "atom =",atom+1
+                    print("atom = %s" % str(atom+1))
                 else:
-                    print "atom(spin) =",atom+1,"("+str(spin+1)+")"
+                    print("atom(spin) = %d (%s)" % (atom+1, str(spin+1)))
 
             if not FLAG_TOT:
                 INTTDOS = dos.get_inttdos(spin)

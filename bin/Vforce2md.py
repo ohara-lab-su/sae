@@ -136,8 +136,8 @@ if __name__ == '__main__':
 
     for i in range(nloop):
 
-        print natom
-        print "   time="
+        print(natom)
+        print("   time=")
 
         # 座標変換のための準備
         if direct0 and conv:
@@ -159,10 +159,10 @@ if __name__ == '__main__':
                 position_loop[i,j,1] = position0[j,1]
                 position_loop[i,j,2] = position0[j,2]
 
-            print "     %2s  %10.7f %10.7f %10.7f  %17.9f %17.9f %17.9f" \
-                    % ( str(atoms_index[int(ion[j])]),\
-                        position_loop[i,j,0],position_loop[i,j,1],position_loop[i,j,2],\
-                        force_loop[i,j,0],   force_loop[i,j,1],   force_loop[i,j,2] )
+            print("     %2s  %10.7f %10.7f %10.7f  %17.9f %17.9f %17.9f"
+                    % ( str(atoms_index[int(ion[j])]),
+                        position_loop[i,j,0],position_loop[i,j,1],position_loop[i,j,2],
+                        force_loop[i,j,0],   force_loop[i,j,1],   force_loop[i,j,2] ))
 
 
 ################################################################################

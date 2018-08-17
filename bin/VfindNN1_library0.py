@@ -140,9 +140,9 @@ if not os.path.exists(POSCAR):
     else:
         sys.exit(POSCAR+" file not found")
 
-print "INPUT file name    :",POSCAR
-print "OUTPUT file name   :",cname+"_nn_"+str(find)+".out"
-print "SEARCH DISTANCE    :",distance
+print("INPUT file name    : %s" % str(POSCAR))
+print("OUTPUT file name   : %s" % str(cname+"_nn_"+str(find)+".out"))
+print("SEARCH DISTANCE    : %s" % str(distance))
 
 
 
@@ -340,7 +340,7 @@ def read_poscar(VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     i += 1
     tmp = datlines[i].split()
     if bool(num_reg.match(tmp[0])):
-        print tmp[0]
+        print(tmp[0])
         sys.exit("Format Error")
     else:
         if bool(selective_reg.match(tmp[0])):
@@ -353,7 +353,7 @@ def read_poscar(VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
             selective = False
     
         if bool(num_reg.match(tmp[0])):
-            print tmp[0]
+            print(tmp[0])
             sys.exit("Format Error")
         if bool(direct_reg.match(tmp[0])):
            #print "Direct Mode"
@@ -406,37 +406,37 @@ def read_poscar(VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
 #
 ################################################################################
 def print_poscar(title,scale,selective,direct,VASP,t,atoms,atoms_index,position,fix):
-    print title
-    print " ",scale
-    print "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+    print("%s" % str(title))
+    print(" %s" % str(scale))
+    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]))
+    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]))
+    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]))
 
     if VASP == 5:
-        print " ",
+        print(" ", end="")
         for i in range(nion):
-            print atoms_index[i],
-        print " "
-    print " ",
+            print("%s" % atoms_index[i], end="")
+        print(" ")
+    print(" ", end="")
 
     for i in range(nion):
-        print atoms[i],
-    print " "
+        print("%s" % atoms[i], end="")
+    print(" ")
 
     if selective:
-        print "Selective Dynamics"
+        print("Selective Dynamics")
 
     if direct:
-        print "Direct"
+        print("Direct")
     else:
-        print "Cartesian"
+        print("Cartesian")
 
     for i in range(int(natom)):
-        print " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]),
+        print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), end="")
         if selective:
-            print "",
-            print fix[i,0],fix[i,1],fix[i,2],
-        print ""
+            print("", end="")
+            print("%s %s %s" % (str(fix[i,0]), str(fix[i,1]), str(fix[i,2])), end="")
+        print("")
 
 
 ##################################################################################

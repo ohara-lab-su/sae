@@ -143,9 +143,9 @@ if __name__ == '__main__':
 
     #####################################################
     # オプションの確認
-    if OPT_EMAX: print "Emax=", OPT_EMAX
-    if OPT_EMIN: print "Emin=", OPT_EMIN
-    if OPT_YMAX: print "Ymax=", OPT_YMAX
+    if OPT_EMAX: print("Emax= %s" % str(OPT_EMAX))
+    if OPT_EMIN: print("Emin= %s" % str(OPT_EMIN))
+    if OPT_YMAX: print("Ymax= %s" % str(OPT_YMAX))
 
     atom -= 1
 
@@ -165,17 +165,17 @@ if __name__ == '__main__':
     nspin = dos.ispin
     lmax = dos.lmax
 
-    print "lmax = ", lmax
+    print("lmax = %s" % str(lmax))
     if not OPT_TITLE:
         title = dos.title
     else:
         title = OPT_TITLE
 
     if FLAG_VBM:
-        print "EF SHIFT"
+        print("EF SHIFT")
         efermi0 = dos.efermi
         efermi = dos.get_vbm()
-        print efermi0, efermi
+        print(efermi0, efermi)
 
     if OPT_SHIFT:
         efermi = float(OPT_SHIFT)
@@ -214,7 +214,7 @@ if __name__ == '__main__':
             orbit_list = ['s','p','d','f']
             orbit_out = '_spdf'
 
-    print "orbit list=", orbit_list
+    print("orbit list=", orbit_list)
 
 #   orbit_list = ['s','p','d','f']
 
@@ -222,24 +222,24 @@ if __name__ == '__main__':
 
     #####################################################
 
-    print "NSPIN = ",nspin
+    print("NSPIN = %s" % str(nspin))
 
     FLAG_SPIN = False
     norbit = norbit0
     if FLAG_UP:
-        print "SPIN-UP"
+        print("SPIN-UP")
         spin = 0
         spin_list = [0]
         spin_name = ['_up','']
         spin_out = '_up'
     elif FLAG_DN:
-        print "SPIN-DOWN"
+        print("SPIN-DOWN")
         spin = 1
         spin_list = [1]
         spin_name = ['','_dn']
         spin_out = '_dn'
     elif FLAG_SPIN or nspin >=2:
-        print "BOTH SPIN ( UP, DOWN-SPIN )"
+        print("BOTH SPIN ( UP, DOWN-SPIN )")
         spin = 1
         spin_list = [1,0]
         spin_name = ['_up','_dn']
@@ -247,7 +247,7 @@ if __name__ == '__main__':
         norbit = norbit0 * 2
         FLAG_SPIN = True
     else:
-        print "NONMAGNETIC or SPIN-UP "
+        print("NONMAGNETIC or SPIN-UP ")
         spin = 0
         spin_list = [0]
         spin_name = ['']
@@ -273,20 +273,22 @@ if __name__ == '__main__':
     if FLAG_OUTCAR:
 #       atom_label = str(atoms[atoms_j[atom]]) + str(atom + 1)
         atom_label = atoms_index_j[atom] + str(atom + 1)
-        print "atom =", atom + 1, atom_label+spin_out
+        print("atom = %d %s" % (atom + 1, str(atom_label+spin_out)))
     else:
         atom_label = str(atom)
-        print "atom =", atom + 1, atom_label+spin_out
+        print("atom = %d %s" % (atom + 1, str(atom_label+spin_out)))
 
     #####################################################
     if ALL_FLAG:
         a1 = 0
         a2 = natom
-        print "plot atom number: #"+str(a1)+" - #"+str(a2)
+       #print "plot atom number: #"+str(a1)+" - #"+str(a2)
+        print("plot atom number: #%s -%s" % (str(a1), str(a2)))
     else:
         a1 = int(atom)
         a2 = int(atom) + 1
-        print "plot atom number: #"+str(a2)
+       #print "plot atom number: #"+str(a2)
+        print("plot atom number: #%s" % str(a2))
 
     for atom in range(a1, a2):
 

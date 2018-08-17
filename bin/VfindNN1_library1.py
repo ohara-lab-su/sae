@@ -147,10 +147,10 @@ def options():
         else:
             sys.exit(POSCAR+" file not found")
 
-    print "INPUT file name    :",POSCAR
-    print "OUTPUT file name   :",cname+"_nn_"+str(find)+".out"
-    print "SEARCH DISTANCE    :",distance
-    print ""
+    print("INPUT file name    : %s" % str(POSCAR))
+    print("OUTPUT file name   : %s" % str(cname+"_nn_"+str(find)+".out"))
+    print("SEARCH DISTANCE    : %s" % str(distance))
+    print("")
 
     return [POSCAR,cname,distance,find]
 

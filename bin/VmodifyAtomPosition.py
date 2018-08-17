@@ -87,8 +87,8 @@ def options():
         else:
             sys.exit(POSCAR+" file not found")
 
-    print "INPUT file name    :",POSCAR
-    print "OUTPUT file name   :",cname+".vasp"
+    print("INPUT file name    :",POSCAR)
+    print("OUTPUT file name   :",cname+".vasp")
 
     return [POSCAR,cname]
 

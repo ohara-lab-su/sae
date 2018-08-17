@@ -43,6 +43,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  コメント: 基本的に古いルーチンなので呼び出しているものの仕様が異なるので使ってない
+#
 # 2015.0216
 #  import の名前空間を変更
 #
@@ -67,7 +70,9 @@ __version__    = "0.0.1"
 
 import numpy as np
 
+#from . import conv_direct2car
 import StructureAnalysisEnvironment as SAE
+
 #import SpaceGroupEnvironment as SGE
 
 def extract_struct0(scale,t,natom,direct,position,c0,c1,\
