@@ -66,11 +66,11 @@ if __name__ == '__main__':
     xyznames,FLAG_STD = options(suffix,sumfile)
 
     if not FLAG_STD:
-        print "OUTPUT   =",sumfile
-        print "SUMFILES ="
+        print("OUTPUT   =",sumfile)
+        print("SUMFILES =")
         for xyz in xyznames:
-            print "          ",
-            print xyz+"."+suffix
+            print("          ",)
+            print(xyz+"."+suffix)
 
     sumnum = 0
     sumdat = []

@@ -31,7 +31,7 @@ comment_reg = re.compile('^#.*',re.IGNORECASE)
 ########################################
 ## find_list は1次元配列
 ##
-def read_list1(name,find_list):
+def read_list1(name, find_list):
 
     if not os.path.exists(name):
         sys.exit(name+" not found")
@@ -60,7 +60,7 @@ def read_list1(name,find_list):
 ########################################
 ## find_list は3次元配列(num,atom,radius)
 ##
-def read_list3(name,find_list):
+def read_list3(name, find_list):
 
     if not os.path.exists(name):
         sys.exit(name+" not found")
@@ -89,7 +89,7 @@ def read_list3(name,find_list):
 ########################################
 ## find_list は4次元配列(atom,data_x,data_y,data_z)
 ##
-def read_list4(name,find_list):
+def read_list4(name, find_list):
 
     if not os.path.exists(name):
         sys.exit(name+" not found")

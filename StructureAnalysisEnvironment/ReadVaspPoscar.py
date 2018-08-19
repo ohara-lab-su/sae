@@ -211,7 +211,7 @@ class ReadVaspPoscar(SAEnv.Method):
         ##   atoms_index の原子番号版
         self.atoms_number = np.zeros(self.nion,dtype=int)
         for i in range(self.nion):
-            print("chek atoms_index[%d] = %s" % (i, self.atoms_index[i]))
+           #print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
             self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
         ###############################################
@@ -568,12 +568,12 @@ if __name__ == '__main__':
     if vasp >= 5:
         print(" ", file=out, end="")
         for i in range(nion):
-            print("%s" % str(atoms_index[i]), file=out, end="")
+            print("%s " % str(atoms_index[i]), file=out, end="")
         print(" ", file=out)
 
     print(" ", file=out, end="")
     for i in range(nion):
-        print("%s" % str(atoms[i]), file=out, end="")
+        print("%s " % str(atoms[i]), file=out, end="")
     print(" ", file=out)
 
     if selective:
