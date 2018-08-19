@@ -31,6 +31,9 @@
 #
 ################################################################################
 #
+# 2018.08.17
+#  Python2/3 両対応
+#
 # 2015.07.08
 #  stdout の close を修正
 #
@@ -71,37 +74,38 @@ def print_poscar(cname,STD,\
             out.close()
             sys.exit("STOP:"+cname+".vasp can't open")
 
-    print >> out, title
-    print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+    print("------------------------------------------------- START")
+    print(title, file=out)
+    print(" ",scale, file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
 
     if VASP == 5:
-        print >> out, " ",
+        print(" ", file=out, end="")
         for i in range(nion):
-            print >> out, atoms_index[i],
-        print >> out, " "
-    print >> out, " ",
+            print("%s " % atoms_index[i], file=out, end="")
+        print(" ", file=out)
+    print(" ", file=out, end="")
 
     for i in range(nion):
-        print >> out, atoms[i],
-    print >> out, " "
+        print("%s " % atoms[i], file=out, end="")
+    print(" ", file=out)
 
     if selective:
-        print >> out, "Selective Dynamics"
+        print("Selective Dynamics", file=out)
 
     if direct:
-        print >> out, "Direct"
+        print("Direct", file=out)
     else:
-        print >> out, "Cartesian"
+        print("Cartesian", file=out)
 
     for i in range(int(natom)):
-        print >> out, " %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]),
+        print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), file=out, end="")
         if selective:
-            print >> out, "",
-            print >> out, fix[i,0],fix[i,1],fix[i,2],
-        print >> out, ""
+            print("", file=out, end="")
+            print(fix[i,0],fix[i,1],fix[i,2], file=out, end="")
+        print("", file=out)
 
     if STD:
         sys.stdout = sys.__stdout__

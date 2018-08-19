@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 #__all__ = ["read_param_poscar", "read_poscar", "print_poscar", "conv_direct2car"]
 
@@ -91,7 +92,7 @@ from .ReadPfformat import *
 
 
 #################################################################################
-#### function
+#### function (個別機能)
 
 ### general
 from .write import *
@@ -153,6 +154,8 @@ from .read_md_param import *
 ### mathematica function
 from .func_rotate import *
 
+### ELF/CHG
+from .sphere_integral_of_elf import *
 
 ################################################################################
 ### function 2
