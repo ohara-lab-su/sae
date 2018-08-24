@@ -8,6 +8,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.06.30
 #   == None --> is None
 #
@@ -106,7 +109,7 @@ class ReadWienTxspec(object):
 
         nxas = len(self.xas)
         for i in range(nxas):
-            print >> out, "%9.5f %14.8f" % (self.eng[i], self.xas[i])
+            print("%9.5f %14.8f" % (self.eng[i], self.xas[i]), file=out)
 
         if not outputname is None:
             out.close()

@@ -37,6 +37,7 @@ from .ReadVaspPoscar import *
 from .ReadVaspIncar import *
 from .ReadVaspAcf import *
 from .ReadVaspPotcar import *
+from .ReadVaspChgcar import *
 
 ### LOBSTER,COHP for VASP
 from .ReadLobCohp import *

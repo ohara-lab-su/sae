@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  Python2/3 両対応
+#
 # 2015.02.27
 #  conv_direct2car --> conv_direct2car0
 #
@@ -66,7 +69,7 @@ if __name__ == '__main__':
     cname = 'igzo'
     ###########################################
 
-    print "INPUT file name   :",cname
+    print("INPUT file name   :",cname)
 
     # *.cfg (RMC_POT) ファイル読み込み準備
     natom,nion = SAE.read_cfg_param(cname)

@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  Python2/3 両対応 (runはpython3のみかもしれん)
+#
 # 2015.02.26
 #  startup
 #
@@ -64,8 +67,13 @@ def run(command, input=None):
         ret    = proc.wait()         # エラーコード
         return ret, result
 
-    except OSError, (e):
-      return (e.errno, e.args[1])
+# for Python2.7
+#   except OSError, (e):
+#       return (e.errno, e.args[1])
+
+# for Python3
+    except OSError as e:
+        return (e.errno, e.args[1])
 
 ###############################################################################
 # suffix1 と suffix2 の両方で find_datfile が成功した時に datname を返す
@@ -104,7 +112,7 @@ if __name__ == '__main__':
     suffix2 = 'Dos.vec'
     datname = check_datname(suffix1,suffix2)  # datname のデフォルト値作成
     if datname:
-        print datname
+        print(datname)
 
     parser = optparse.OptionParser()
     parser.add_option( '-i','--input',dest='INPUT',)
@@ -121,18 +129,18 @@ if __name__ == '__main__':
     # デフォルト値が存在したら
     if datname:
         command=dosmain+' '+datname+'.'+suffix1+' '+datname+'.'+suffix2
-        print command
+        print(command)
 
         ## 標準入力を受けて実行
         inline='1 1'
         ret, result = run(command,inline)
         if ret:
-            print '------'
-            print result
+            print('------')
+            print(result)
 
 
         ## 直ぐに実行
-        print '------'
+        print('------')
         proc = subprocess.Popen(\
                 shlex.split(command),\
                #stdin=subprocess.PIPE,\

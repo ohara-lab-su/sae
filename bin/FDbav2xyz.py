@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.06.24 startup
 #
 ################################################################################
@@ -82,10 +85,10 @@ if __name__ == '__main__':
         except:
             xyz.close()
 
-    print >> xyz, natom
-    print >> xyz, ""
+    print(natom, file=xyz)
+    print("", file=xyz)
     for i in range(natom):
-        print >> xyz, " %s %14.10f %14.10f %14.10f" \
-                %(atoms_index_j[i],position[i,0],position[i,1],position[i,2])
+        print(" %s %14.10f %14.10f %14.10f"
+                %(atoms_index_j[i],position[i,0],position[i,1],position[i,2]), file=xyz)
 
     xyz.close()

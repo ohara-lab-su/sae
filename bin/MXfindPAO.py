@@ -11,6 +11,12 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#  Python2/3 両対応
+#   dircache(python2) モジュール代理で使っている glob(python3) の部分のテストはしてない
+#  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
 # 2015.03.11
 #  DATA_PATH の検索関係を少し整備しなおし
 #
@@ -33,7 +39,11 @@ __version__    = "0.0.2"
 import sys
 import os
 import re
-import dircache
+try:
+    import dircache  # for Python2.x module
+except:
+    import glob
+    pass
 import optparse
 #import numpy as np
 #import glob
@@ -133,16 +143,22 @@ if __name__ == '__main__':
                 paolist = []
                 pao_txt = atom+'[0-9].*'+'\.pao'
                 pao_reg = re.compile( pao_txt )
-                for file in dircache.listdir(data+'/PAO/'):
-                    if pao_reg.search(file):
-                        paolist.append(file)
+                try:
+                    for file in dircache.listdir(data+'/PAO/'):
+                        if pao_reg.search(file):
+                            paolist.append(file)
+                except:
+                    ## 未テスト
+                    for file in glob.glob(data+'/PAO/*'):
+                        if pao_reg.search(file):
+                            paolist.append(file)
     if SUFFIX != 'dir':
-        print 'CUT  :',cut
-        print 'PATH :',fullname
-        print 'PAO  :',name
+        print('CUT  :',cut)
+        print('PATH :',fullname)
+        print('PAO  :',name)
     else:
         for i in range(len(paolist)):
-            print paolist[i]
+            print(paolist[i])
 
 #   vps = SAE.ReadMxVps(fullname)
 #   electron = vps.get_valence_electron()

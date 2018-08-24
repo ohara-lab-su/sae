@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.03.12
 #  startup
 #
@@ -169,94 +172,94 @@ if __name__ == '__main__':
     if OPT_STD or OPT_INP:
         #########################################################################
         # set
-        print >> system, ""
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "! General options"
-        print >> system, "!"
-        print >> system, " @SET SYSNAME                   "+title
-        print >> system, " @SET RTYPE                     "+RTYPE
-        print >> system, "!@SET RTYPE                     BAND"
-        print >> system, "!@SET RTYPE                     ENERGY_FORCE"
-        print >> system, "!@SET RTYPE                     GEO_OPT"
-        print >> system, "!@SET RTYPE                     MD"
-        print >> system, "!@SET CPUTIME                   "+CPUTIME
-        print >> system, ""
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "! Files options"
-        print >> system, "!"
-        print >> system, " @SET RESTART                   FALSE"
-        print >> system, " @SET BASISFILE                 "+BASIS_SET_FILE_NAME
-        print >> system, " @SET PSEUDOFILE                "+POTENTIAL_FILE_NAME
-        print >> system, "!@SET WAVEFILE                  "+WAVE_FILE_NAME
-        print >> system, "!@SET RESTARTFILE               "+RESTART_FILE_NAME
-        print >> system, ""
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "! DFT calculation options"
-        print >> system, "!"
-        print >> system, " @SET CUTOFF                    "+CUTOFF
-        print >> system, " @SET MGRIDS                    "+MGRIDS
-        print >> system, " @SET SCF_NCYCLES               "+SCF_NCYCLES
-        print >> system, " @SET SCF_CONV                  "+SCF_CONV
-        print >> system, " @IF ( ${RESTART} == TRUE )"
-        print >> system, "   @SET SCF_GUESS               RESTART"
-        print >> system, " @ENDIF"
-        print >> system, " @IF ( ${RESTART} == FALSE )"
-        print >> system, "   @SET SCF_GUESS               ATOMIC"
-        print >> system, " @ENDIF"
-        print >> system, ""
-        print >> system, " @SET SCF_MINI                  "+SCF_MIN
-        print >> system, " @SET FUNCTIONAL                "+FUNCTIONAL
-        print >> system, ""
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "! Geometry optimization options"
-        print >> system, "!"
-        print >> system, " @SET GEO_MIN                   "+GEO_MINI
-        print >> system, " @SET GEO_MAXS                  "+GEO_MAXS
-        print >> system, ""
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "! Molecular dynamics options"
-        print >> system, "!"
-        print >> system, " @SET MD_ENS                    "+MD_ENS
-        print >> system, " @SET MD_STEPS                  "+MD_STEPS
-        print >> system, " @SET MD_DT                     "+MD_DT
-        print >> system, " @SET MD_TEMP                   "+MD_TEMP
-        print >> system, ""
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "! Output options"
-        print >> system, "!"
-        print >> system, " @SET OUT_FORM                  "+OUT_FORM
-        print >> system, ""
-        print >> system, ""
-        print >> system, ""
+        print("", file=system)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("! General options", file=system)
+        print("!", file=system)
+        print(" @SET SYSNAME                   "+title, file=system)
+        print(" @SET RTYPE                     "+RTYPE, file=system)
+        print("!@SET RTYPE                     BAND", file=system)
+        print("!@SET RTYPE                     ENERGY_FORCE", file=system)
+        print("!@SET RTYPE                     GEO_OPT", file=system)
+        print("!@SET RTYPE                     MD", file=system)
+        print("!@SET CPUTIME                   "+CPUTIME, file=system)
+        print("", file=system)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("! Files options", file=system)
+        print("!", file=system)
+        print(" @SET RESTART                   FALSE", file=system)
+        print(" @SET BASISFILE                 "+BASIS_SET_FILE_NAME, file=system)
+        print(" @SET PSEUDOFILE                "+POTENTIAL_FILE_NAME, file=system)
+        print("!@SET WAVEFILE                  "+WAVE_FILE_NAME, file=system)
+        print("!@SET RESTARTFILE               "+RESTART_FILE_NAME, file=system)
+        print("", file=system)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("! DFT calculation options", file=system)
+        print("!", file=system)
+        print(" @SET CUTOFF                    "+CUTOFF, file=system)
+        print(" @SET MGRIDS                    "+MGRIDS, file=system)
+        print(" @SET SCF_NCYCLES               "+SCF_NCYCLES, file=system)
+        print(" @SET SCF_CONV                  "+SCF_CONV, file=system)
+        print(" @IF ( ${RESTART} == TRUE )", file=system)
+        print("   @SET SCF_GUESS               RESTART", file=system)
+        print(" @ENDIF", file=system)
+        print(" @IF ( ${RESTART} == FALSE )", file=system)
+        print("   @SET SCF_GUESS               ATOMIC", file=system)
+        print(" @ENDIF", file=system)
+        print("", file=system)
+        print(" @SET SCF_MINI                  "+SCF_MIN, file=system)
+        print(" @SET FUNCTIONAL                "+FUNCTIONAL, file=system)
+        print("", file=system)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("! Geometry optimization options", file=system)
+        print("!", file=system)
+        print(" @SET GEO_MIN                   "+GEO_MINI, file=system)
+        print(" @SET GEO_MAXS                  "+GEO_MAXS, file=system)
+        print("", file=system)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("! Molecular dynamics options", file=system)
+        print("!", file=system)
+        print(" @SET MD_ENS                    "+MD_ENS, file=system)
+        print(" @SET MD_STEPS                  "+MD_STEPS, file=system)
+        print(" @SET MD_DT                     "+MD_DT, file=system)
+        print(" @SET MD_TEMP                   "+MD_TEMP, file=system)
+        print("", file=system)
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("! Output options", file=system)
+        print("!", file=system)
+        print(" @SET OUT_FORM                  "+OUT_FORM, file=system)
+        print("", file=system)
+        print("", file=system)
+        print("", file=system)
 
         ########################################################################
         # GLOBAL
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, " &GLOBAL"
-        print >> system, "   PROJECT                     ${SYSNAME}"
-        print >> system, "   RUN_TYPE                    ${RTYPE}"
-        print >> system, "   PRINT_LEVEL                 LOW"
-        print >> system, "!  WALLTIME                    ${CPUTIME}"
-        print >> system, " &END GLOBAL"
-        print >> system, ""
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print(" &GLOBAL", file=system)
+        print("   PROJECT                     ${SYSNAME}", file=system)
+        print("   RUN_TYPE                    ${RTYPE}", file=system)
+        print("   PRINT_LEVEL                 LOW", file=system)
+        print("!  WALLTIME                    ${CPUTIME}", file=system)
+        print(" &END GLOBAL", file=system)
+        print("", file=system)
 
         ########################################################################
         # FORCE_EVAL (START)
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, " &FORCE_EVAL"
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print(" &FORCE_EVAL", file=system)
 
         ########################################################################
         # METHOD
-        print >> system, "   METHOD Quickstep"
-        print >> system, ""
-        print >> system, "   &PRINT"
-        print >> system, "     &FORCE"
-        print >> system, "     &END FORCE"
-        print >> system, "   &END PRINT"
-        print >> system, ""
+        print("   METHOD Quickstep", file=system)
+        print("", file=system)
+        print("   &PRINT", file=system)
+        print("     &FORCE", file=system)
+        print("     &END FORCE", file=system)
+        print("   &END PRINT", file=system)
+        print("", file=system)
         if not OPT_STD:
-            print >> system, "   @INCLUDE 'subsys.inc'"
-            print >> system, ""
+            print("   @INCLUDE 'subsys.inc'", file=system)
+            print("", file=system)
 
     ############################################################################
     if OPT_STD:
@@ -271,46 +274,46 @@ if __name__ == '__main__':
     ############################################################################
     # SUBSYS (START)
     if OPT_STD:
-        print >> subsys, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    print >> subsys, "   &SUBSYS"
-    print >> subsys, ""
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=subsys)
+    print("   &SUBSYS", file=subsys)
+    print("", file=subsys)
 
     for ion in range(nion):
-        print >> subsys, "     &KIND",atoms_index[ion]
-        print >> subsys, "       ELEMENT ",atoms_index[ion]
-        print >> subsys, "       BASIS_SET DZVP_GTH-PADE"
-        print >> subsys, "       POTENTIAL GTH-PADE-q4"
-        print >> subsys, "     &END KIND"
-        print >> subsys, ""
+        print("     &KIND",atoms_index[ion], file=subsys)
+        print("       ELEMENT ",atoms_index[ion], file=subsys)
+        print("       BASIS_SET DZVP_GTH-PADE", file=subsys)
+        print("       POTENTIAL GTH-PADE-q4", file=subsys)
+        print("     &END KIND", file=subsys)
+        print("", file=subsys)
 
     ########################################################################
     # Crystal Structure
-    print >> subsys, "     &CELL"
-    print >> subsys, "       A %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print >> subsys, "       B %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print >> subsys, "       C %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
-    print >> subsys, "       PERIODIC XYZ"
-   #print >> subsys, "       UNIT ANGSTROM"
-    print >> subsys, "     &END CELL"
-    print >> subsys, ""
+    print("     &CELL", file=subsys)
+    print("       A %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=subsys)
+    print("       B %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=subsys)
+    print("       C %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=subsys)
+    print("       PERIODIC XYZ", file=subsys)
+   #print("       UNIT ANGSTROM", file=subsys)
+    print("     &END CELL", file=subsys)
+    print("", file=subsys)
 
-    print >> subsys, "     &COORD"
+    print("     &COORD", file=subsys)
     for i in range(natom):
         atom = re.sub('_.*','',atoms_index_j[i])
         atoms_index_j[i]=atom
 
-        print >> subsys, "       %2s %12.8f %12.8f %12.8f " \
-               %(atoms_index_j[i], \
-               position[i][0],position[i][1],position[i][2])
+        print("       %2s %12.8f %12.8f %12.8f "
+               %(atoms_index_j[i],
+               position[i][0],position[i][1],position[i][2]), file=subsys)
 
-    print >> subsys, "     &END COORD"
-    print >> subsys, ""
+    print("     &END COORD", file=subsys)
+    print("", file=subsys)
 
 
     ############################################################################
     # SUBSYS (END)
-    print >> subsys, "   &END SUBSYS"
-    print >> subsys, ""
+    print("   &END SUBSYS", file=subsys)
+    print("", file=subsys)
 
     if not OPT_STD:
         subsys.close()
@@ -318,54 +321,54 @@ if __name__ == '__main__':
     if OPT_INP or OPT_STD:
         ########################################################################
         # DFT
-        print >> system, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print >> system, "   &DFT"
-        print >> system, "      BASIS_SET_FILE_NAME           ${BASISFILE}"
-        print >> system, "      POTENTIAL_FILE_NAME           ${PSEDOFILE}"
-        print >> system, ""
-        print >> system, "      @IF ( ${RESTART} == TRUE )"
-        print >> system, "          WFN_RESTART_FILE_NAME     ${WAVEFILE}"
-        print >> system, "      @ENDIF"
-        print >> system, ""
-        print >> system, "      &QS"
-        print >> system, "        EPS_DEFAULT                 1.0E-10"
-        print >> system, "      &END QS"
-        print >> system, ""
-        print >> system, "      &MGRID"
-        print >> system, "        MGRIDS                      ${MGRIDS}"
-        print >> system, "        CUTOFF                      ${CUTOFF}"
-        print >> system, "        REL_CUTOFF 60"
-        print >> system, "      &END MGRID"
-        print >> system, ""
-        print >> system, "     &XC"
-        print >> system, "       &XC_FUNCTIONAL PADE"
-        print >> system, "       &END XC_FUNCTIONAL"
-        print >> system, "     &END XC"
-        print >> system, ""
-        print >> system, "     &SCF"
-        print >> system, "       SCF_GUESS ATOMIC"
-        print >> system, "       EPS_SCF 1.0E-7"
-        print >> system, "       MAX_SCF 300"
-        print >> system, "       &DIAGONALIZATION ON"
-        print >> system, "         ALGORITHM STANDARD"
-        print >> system, "       &END DIAGONALIZATION"
-        print >> system, "       &MIXING T"
-        print >> system, "         METHOD BROYDEN_MIXING"
-        print >> system, "         ALPHA 0.4"
-        print >> system, "         NBROYDEN 8"
-        print >> system, "     &END SCF"
-        print >> system, ""
-        print >> system, "   &END DFT"
-        print >> system, ""
-        print >> system, "   &PRINT"
-        print >> system, "     &FORCES ON"
-        print >> system, "     &END FORCES"
-        print >> system, "   &END PRINT"
-        print >> system, ""
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", file=system)
+        print("   &DFT", file=system)
+        print("      BASIS_SET_FILE_NAME           ${BASISFILE}", file=system)
+        print("      POTENTIAL_FILE_NAME           ${PSEDOFILE}", file=system)
+        print("", file=system)
+        print("      @IF ( ${RESTART} == TRUE )", file=system)
+        print("          WFN_RESTART_FILE_NAME     ${WAVEFILE}", file=system)
+        print("      @ENDIF", file=system)
+        print("", file=system)
+        print("      &QS", file=system)
+        print("        EPS_DEFAULT                 1.0E-10", file=system)
+        print("      &END QS", file=system)
+        print("", file=system)
+        print("      &MGRID", file=system)
+        print("        MGRIDS                      ${MGRIDS}", file=system)
+        print("        CUTOFF                      ${CUTOFF}", file=system)
+        print("        REL_CUTOFF 60", file=system)
+        print("      &END MGRID", file=system)
+        print("", file=system)
+        print("     &XC", file=system)
+        print("       &XC_FUNCTIONAL PADE", file=system)
+        print("       &END XC_FUNCTIONAL", file=system)
+        print("     &END XC", file=system)
+        print("", file=system)
+        print("     &SCF", file=system)
+        print("       SCF_GUESS ATOMIC", file=system)
+        print("       EPS_SCF 1.0E-7", file=system)
+        print("       MAX_SCF 300", file=system)
+        print("       &DIAGONALIZATION ON", file=system)
+        print("         ALGORITHM STANDARD", file=system)
+        print("       &END DIAGONALIZATION", file=system)
+        print("       &MIXING T", file=system)
+        print("         METHOD BROYDEN_MIXING", file=system)
+        print("         ALPHA 0.4", file=system)
+        print("         NBROYDEN 8", file=system)
+        print("     &END SCF", file=system)
+        print("", file=system)
+        print("   &END DFT", file=system)
+        print("", file=system)
+        print("   &PRINT", file=system)
+        print("     &FORCES ON", file=system)
+        print("     &END FORCES", file=system)
+        print("   &END PRINT", file=system)
+        print("", file=system)
 
         ########################################################################
         # FORCE_EVAL (END)
-        print >> system, "&END FORCE_EVAL"
+        print("&END FORCE_EVAL", file=system)
 
     if not OPT_STD and OPT_INP:
         system.close()

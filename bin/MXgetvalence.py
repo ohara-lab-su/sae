@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  Python2/3 両対応
+#
 # 2015.03.11
 #  DATA_PATH の検索関係を少し整備しなおし
 #
@@ -119,13 +122,13 @@ if __name__ == '__main__':
     vps = SAE.ReadMxVps(fullname)
     electron = vps.get_valence_electron()
 
-    print 'DATAPATH        :',data
-    print 'VER             :',ver
-    print 'POT             :',pot
-    print 'ATOM            :',atom
-    print 'VPS             :',name
-    print 'PATH            :',fullname
-    print 'num of electron :',electron
+    print('DATAPATH        :',data)
+    print('VER             :',ver)
+    print('POT             :',pot)
+    print('ATOM            :',atom)
+    print('VPS             :',name)
+    print('PATH            :',fullname)
+    print('num of electron :',electron)
 
 ################################################################################
 

@@ -12,6 +12,9 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  Python2/3 両対応
+#
 # 2015.03.10
 #   NEGF モードの時の Left と Right の出力に対応
 #
@@ -99,9 +102,9 @@ if __name__ == '__main__':
     mxname,xyzname,OPT_STDOUT = options()
 
     if not OPT_STDOUT:
-        print "STDOUT             =",OPT_STDOUT
-        print "INPUT OpenMX File  =",mxname
-        print "OUTPUT XYZ file    =",xyzname
+        print("STDOUT             =",OPT_STDOUT)
+        print("INPUT OpenMX File  =",mxname)
+        print("OUTPUT XYZ file    =",xyzname)
 
         try:
             outputfile = open(xyzname,'w')
@@ -152,13 +155,13 @@ if __name__ == '__main__':
     ############################################################################
     ## print xyz  style
     ##
-    print >> outputfile,natom
-    print >> outputfile,""
+    print(outputfile,natom)
+    print(outputfile,"")
 
     # for Molecule
     for i in range(natom):
-        print >> outputfile, " %s %13.9f %13.9f %13.9f" \
-                % ( atoms_index_j[i], position[i,0],position[i,1],position[i,2] )
+        print(outputfile, " %s %13.9f %13.9f %13.9f"
+                % ( atoms_index_j[i], position[i,0],position[i,1],position[i,2] ))
 
     if not OPT_STDOUT:
         outputfile.close()
@@ -176,13 +179,15 @@ if __name__ == '__main__':
             out_left_xyz.close()
             sys.exit("STOP: "+left_xyz_outname+" does'nt open")
 
-        print "OUTPUT left xyz    =",left_xyz_outname
-        print >> out_left_xyz,left_natom
-        print >> out_left_xyz,""
+        print("OUTPUT left xyz    =",left_xyz_outname)
+        print(left_natom, file=out_left_xyz)
+        print("", file=out_left_xyz)
         for j in range(left_natom):
-            print >> out_left_xyz, " %s %13.9f %13.9f %13.9f" \
-                 %( left_atoms_index_j[j],\
-                    left_position[j,0],left_position[j,1],left_position[j,2] )
+            print(" %s %13.9f %13.9f %13.9f"
+                 %( left_atoms_index_j[j],
+                    left_position[j,0],
+                    left_position[j,1],
+                    left_position[j,2] ), file=out_left_xyz)
         out_left_xyz.close()
 
     ############################################################################
@@ -197,12 +202,14 @@ if __name__ == '__main__':
             out_right_xyz.close()
             sys.exit("STOP: "+right_xyz_outname+" does'nt open")
 
-        print "OUTPUT right xyz   =",right_xyz_outname
-        print >> out_right_xyz,right_natom
-        print >> out_right_xyz,""
+        print("OUTPUT right xyz   =",right_xyz_outname)
+        print(right_natom, file=out_right_xyz)
+        print("", file=out_right_xyz)
         for j in range(right_natom):
-            print >> out_right_xyz, " %s %13.9f %13.9f %13.9f"\
-                 %( right_atoms_index_j[j],\
-                    right_position[j,0],right_position[j,1],right_position[j,2] )
+            print(" %s %13.9f %13.9f %13.9f"
+                 %( right_atoms_index_j[j],
+                    right_position[j,0],
+                    right_position[j,1],
+                    right_position[j,2] ), file=out_right_xyz)
         out_right_xyz.close()
 

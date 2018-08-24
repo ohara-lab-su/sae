@@ -14,7 +14,7 @@
 #
 ################################################################################
 #
-# 2018.08.15
+# 2018.08.15, 08.23
 #  Python2/3 両対応
 #
 # 2015.03.12
@@ -130,15 +130,15 @@ if __name__ == '__main__':
             out.close()
             sys.exit("STOP: "+xyzname+" can't open")
 
-    print >> out, natom
-    print >> out, ""
+    print(natom, file=out)
+    print("", file=out)
     for i in range(natom):
         atom = re.sub('_.*','',atoms_index_j[i])
         atoms_index_j[i]=atom
 
-        print >> out, "%2s %12.8f %12.8f %12.8f " \
-               %(atoms_index_j[i], \
-               position[i][0],position[i][1],position[i][2])
+        print("%2s %12.8f %12.8f %12.8f "
+               %(atoms_index_j[i],
+               position[i][0],position[i][1],position[i][2]), file=out)
 
     if not OPT_STD:
         out.close()

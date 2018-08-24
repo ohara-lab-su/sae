@@ -3,8 +3,6 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
-#  Method --- ReadVaspDoscar
-#
 ################################################################################
 # CHGCAR/ELFCAR 読み込み class
 #
@@ -39,15 +37,19 @@
 ################################################################################
 # 2018.08.18 新インスタンス変数
 #
-# lattice_a         : 格子定数a
-# lattice_b         : 格子定数b
-# lattice_c         : 格子定数c
+# t1_len         : 格子定数a
+# t2_len         : 格子定数b
+# t3_len         : 格子定数c
 #
 # 2018.08.18 新Method
 #
 # get_lattice_a()
 # get_lattice_b()
 # get_lattice_c()
+#
+# get_t1_len()
+# get_t2_len()
+# get_t3_len()
 #
 ################################################################################
 #
@@ -92,6 +94,7 @@ import numpy as np
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
 
+from numba import jit
 
 ################################################################################
 class ReadVaspChgcar(SAEnv.Method):
@@ -106,6 +109,7 @@ class ReadVaspChgcar(SAEnv.Method):
         self.title = self.system
         self.scale = float(self.datlines[1])
 
+        print("--- Read STRUCTURE DATA")
         ###############################################
         ## Read Translation Vector
         ##         x   y   z
@@ -140,17 +144,27 @@ class ReadVaspChgcar(SAEnv.Method):
         self.t[2,2] = t3_z
 
         ###############################################
+        # 単位胞の長さの計算
+        #
+        self.t1_len = math.sqrt((t1_x * t1_x) + (t1_y * t1_y) + (t1_z * t1_z))
+        self.t2_len = math.sqrt((t2_x * t2_x) + (t2_y * t2_y) + (t2_z * t2_z))
+        self.t3_len = math.sqrt((t3_x * t3_x) + (t3_y * t3_y) + (t3_z * t3_z))
+
+       #print("lattice a = %s " % str(self.t1_len))
+       #print("lattice b = %s " % str(self.t2_len))
+       #print("lattice c = %s " % str(self.t3_len))
+
+        ###############################################
         ## VASP のバージョン番号確認(記号があるか否か)
         ##
         i=5
+        self.vasp_version = 5
         atoms = self.datlines[i].split()
-        if atoms[0].isdigit():
+        if atoms[0].isdigit(): # 数字ならば
             self.vasp_version = 4
-        else:
-            self.vasp_version = 5
         del atoms
 
-        print("vasp version = %s" % self.vasp_version)
+        print("    vasp version = %s" % self.vasp_version)
         ###############################################
         ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
         ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
@@ -166,7 +180,7 @@ class ReadVaspChgcar(SAEnv.Method):
         else:
             sys.exit("Error: unknown VASP format")
 
-        self.atoms = np.array(self.atoms,dtype=int)
+        self.atoms = np.array(self.atoms, dtype=int)
         self.nion = len(self.atoms)
 
         ###############################################
@@ -314,22 +328,11 @@ class ReadVaspChgcar(SAEnv.Method):
            #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
            #print ""
 
+        print("--- END")
+        self.read_mesh_data(startline=current_datlines+2)
 
-        ###############################################
-        # 単位胞の長さの計算
-        #
-        t1_len = math.sqrt((t1_x * t1_x) + (t1_y * t1_y) + (t1_z * t1_z))
-        t2_len = math.sqrt((t2_x * t2_x) + (t2_y * t2_y) + (t2_z * t2_z))
-        t3_len = math.sqrt((t3_x * t3_x) + (t3_y * t3_y) + (t3_z * t3_z))
-        self.lattice_a = t1_len
-        self.lattice_b = t2_len
-        self.lattice_c = t3_len
-
-       #print("lattice a = %s " % str(t1_len))
-       #print("lattice b = %s " % str(t2_len))
-       #print("lattice c = %s " % str(t3_len))
-
-
+#   @jit
+    def read_mesh_data(self, startline=None):
         ########################################################################
         #
         # 電荷密度構造 の読み込み (2018.08.18)
@@ -337,6 +340,9 @@ class ReadVaspChgcar(SAEnv.Method):
         # WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
         #
         ########################################################################
+        print("--- Read MESH DATA and Makes CELL INDEX")
+        if startline is None:
+            return
 
        #print(current_datlines)
        #print(self.datlines[current_datlines+2])
@@ -344,17 +350,17 @@ class ReadVaspChgcar(SAEnv.Method):
         ####################
         # FFT Mesh の読み込み
         #
-        self.ngxc = int(self.datlines[current_datlines+2].split()[0])
-        self.ngyz = int(self.datlines[current_datlines+2].split()[1])
-        self.ngzc = int(self.datlines[current_datlines+2].split()[2])
+        self.ngxc = int(self.datlines[startline].split()[0])
+        self.ngyz = int(self.datlines[startline].split()[1])
+        self.ngzc = int(self.datlines[startline].split()[2])
         #print("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
 
         ####################
         # FFT-Mesh 一つあたりの長さ(インスタンス変数の定義)
         #
-        self.rate_x = t1_len/self.ngxc
-        self.rate_y = t2_len/self.ngyz
-        self.rate_z = t3_len/self.ngzc
+        self.rate_x = self.t1_len/self.ngxc
+        self.rate_y = self.t2_len/self.ngyz
+        self.rate_z = self.t3_len/self.ngzc
 
        #print(self.rate_x)
        #print(self.rate_y)
@@ -367,7 +373,7 @@ class ReadVaspChgcar(SAEnv.Method):
         mesh_max_line = int(mesh_max / 10)
 
         # CHACAR 形式のメッシュデータの読み込み開始行のセット
-        start_mesh_index = current_datlines+3
+        start_mesh_index = startline+1
 
         self.chgdata = np.zeros((self.ngxc, self.ngyz, self.ngzc))
 
@@ -418,9 +424,10 @@ class ReadVaspChgcar(SAEnv.Method):
 #                   if inner_counter >= 10:
 #                       inner_counter = 0
 #                       print("")
+        print("--- END")
 
 
-
+    @jit
     def init_ave_elf(self):
         """
         ELF 積算解析（ある原点を中心としたELFの球積分値の解析)用のために
@@ -516,6 +523,16 @@ class ReadVaspChgcar(SAEnv.Method):
 
         return self.ave_elf
 
+    def inverce_chgcar(self, chgcar=None):
+        """
+        入力の CHGCAR を各要素毎に 1/CHGCAR して結果を 新しい CHGCAR を返す
+        :param chgcar:
+        :return:
+        """
+        if chgcar is None:
+            chgcar = self.chgdata
+
+        return 1/chgcar
 
     def print_chgcar(self, chgcar=None, ngx_max=None, ngy_max=None, ngz_max=None, outname=None):
         """
@@ -567,14 +584,15 @@ class ReadVaspChgcar(SAEnv.Method):
         position = self.get_position()
         fix = self.get_fix()
 
-        ion = poscar.get_ion()
-        ion_local = poscar.get_ion_local()
-        atoms_index_j = poscar.get_atoms_index_j()
+        ion = self.get_ion()
+        ion_local = self.get_ion_local()
+        atoms_index_j = self.get_atoms_index_j()
 
         ## POSCAR 相当情報の書き込み
         ##
         print("%s" % str(title), file=out)
-        print(" %s" % str(scale), file=out)
+        print("  %13.9f" %scale, file=out)
+
         print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
         print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
         print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
@@ -606,14 +624,14 @@ class ReadVaspChgcar(SAEnv.Method):
             print("", file=out)
 
 
-        print("write VASP style (new)CHGCAR files: plase waite...", file=sys.stdout)
+        print("write VASP style (new) CHGCAR files: plase waite...", file=sys.stdout)
         ngx_max = self.ngxc * 1
         ngy_max = self.ngyz * 1
         ngz_max = self.ngzc * 1
 
         inner_counter = 0
 
-        print("", file=out)
+        ## WRITE CHGCAR/ELFCAR DATA
         print("", file=out)
         print("%d %d %d" %(ngx_max, ngy_max, ngz_max), file=out)
 
@@ -621,12 +639,16 @@ class ReadVaspChgcar(SAEnv.Method):
             for ny in range(0, ngy_max):
                 for nz in range(0, ngz_max):
                     inner_counter += 1
-                    if chgcar[nx, ny, nz] >= 0.001:
+                    if ( chgcar[nx, ny, nz] < 0.001):
+                        print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
+                    if ( 0.001 <= chgcar[nx, ny, nz] < 10):
                         print("{:<12.5f}".format(chgcar[nx, ny, nz]), file=out, end="")
                        #print("%11.5f " % self.chgdata[nx, ny, nz], end="")
-                    else:
+                    elif chgcar[nx, ny, nz] >= 10.00:
                        print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
                        #print("%12.5e " % self.chgdata[nx, ny, nz], end="")
+                    else:
+                        print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
                     if inner_counter >= 10:
                         inner_counter = 0
                         print("", file=out)
@@ -887,23 +909,23 @@ if __name__ == '__main__':
     poscar = ReadVaspChgcar(name)
 #   poscar.print_chgcar(outname='ELFCAR_NEW') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
 
-    poscar.init_ave_elf()  # ELF 積算のための準備
+#   poscar.init_ave_elf()  # ELF 積算のための準備
 
-    print('================================================= 1.0')
-    newchg = poscar.sphere_integral_elf(r_diff=1.0)  # 半径 1.0A にて積算サーチ
-    poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_1.0') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 1.0')
+#   newchg = poscar.sphere_integral_elf(r_diff=1.0)  # 半径 1.0A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_1.0') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
 
-    print('================================================= 1.5')
-    newchg = poscar.sphere_integral_elf(r_diff=1.5)  # 半径 1.5A にて積算サーチ
-    poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_1.5') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 1.5')
+#   newchg = poscar.sphere_integral_elf(r_diff=1.5)  # 半径 1.5A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_1.5') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
 
-    print('================================================= 2.0')
-    newchg = poscar.sphere_integral_elf(r_diff=2.0)  # 半径 1.5A にて積算サーチ
-    poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_2.0') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 2.0')
+#   newchg = poscar.sphere_integral_elf(r_diff=2.0)  # 半径 1.5A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_2.0') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
 
-    print('================================================= 0.5')
-    newchg = poscar.sphere_integral_elf(r_diff=0.5)  # 半径 1.5A にて積算サーチ
-    poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_0.5') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 0.5')
+#   newchg = poscar.sphere_integral_elf(r_diff=0.5)  # 半径 1.5A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_0.5') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
 
 #   poscar.print_super_chgcar(outname='ELFCAR_NEW')    # 積算結果をVASP形式にて(FFT-mesh上)保存
 

@@ -13,7 +13,7 @@
 #
 ################################################################################
 #
-# 2018.08.15
+# 2018.08.15, 2018.08.23
 #  Python2/3 両対応
 #
 # 2015.03.09
@@ -136,11 +136,11 @@ if __name__ == '__main__':
 ################################################################################
 #   print >> out, title
     if DEBUG:
-        print >> out, " ",scale
-        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-        print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
-        print >> out, ""
+        print(" ",scale, file=out)
+        print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
+        print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
+        print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
+        print("", file=out)
 #
 #   if vasp >= 5:
 #       print >> out, " ",
@@ -180,32 +180,32 @@ if __name__ == '__main__':
     # オイラー角で回した時の基本並進ベクトル
     t,position = poscar.conv_rot_euler(alpha,beta,gamma)
 
-    print >> out, title+": "+title0
-    print >> out, " ",scale
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1])
-    print >> out, "  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2])
+    print(title+": "+title0, file=out)
+    print(" ",scale, file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
+    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
 
     if vasp >= 5:
-        print >> out, " ",
+        print(" ", file=out, end="")
         for i in range(nion):
-            print >> out,atoms_index[i],
-        print >> out, " "
+            print(atoms_index[i], file=out, end="")
+        print(" ", file=out)
 
-    print >> out, " ",
+    print(" ", file=out, end="")
     for i in range(nion):
-        print >> out, atoms[i],
-    print >> out, " "
+        print(atoms[i], file=out, end="")
+    print(" ", file=out)
 
     if direct:
-        print >> out, "Direct"
+        print("Direct", file=out)
     else:
-        print >> out, "Cartesian"
+        print("Cartesian", file=out)
 
     for j in range(natom):
-        print >> out, " %13.9f %13.9f %13.9f" \
-                %(position[j,0], position[j,1], position[j,2]),
-        print >> out, ""
+        print(" %13.9f %13.9f %13.9f"
+                %(position[j,0], position[j,1], position[j,2]), file=out, end="")
+        print("")
 
     if not STD:
         out.close()

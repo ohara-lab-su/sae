@@ -14,9 +14,14 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2014.10.11.07 1st
 #
 ################################################################################
+from __future__ import print_function
+###############################################################################
 __author__     = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__    = ["Kengo NAKADA"]
@@ -56,15 +61,15 @@ def change_density(STD,datname,outname,density):
     else:
         out = open(outname+'.dat','w')
 
-    print >> out, datlines[0].rstrip()
+    print(datlines[0].rstrip(), file=out)
 
     lines[0] = density
     for i in range(n):
-        print >> out, lines[i],
-    print >> out, ""
+        print(lines[i], file=out, end="")
+    print("", file=out)
 
     for i in range(2,nline):
-        print >> out, datlines[i].rstrip()
+        print(datlines[i].rstrip(), file=out)
 
     out.close
 

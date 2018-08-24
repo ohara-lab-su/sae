@@ -11,6 +11,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.05.18 startup
 #
 ################################################################################
@@ -57,7 +60,7 @@ def print_fdmnes0(outname='POSCAR',atoms=None,STD=True,MOL=False):
             out = open(outname+'.fdmnes','w')
         except:
             out.close()
-            sys.exit("STOP:"+name+".fdmnes file can't open")
+            sys.exit("STOP:"+outname+".fdmnes file can't open")
 
 #   atoms = atoms2.copy()
 
@@ -65,17 +68,17 @@ def print_fdmnes0(outname='POSCAR',atoms=None,STD=True,MOL=False):
     a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cellparam0(atoms)
 
     if MOL:
-        print >> out, " molecule"
+        print(" molecule", file=out)
     else:
-        print >> out, " Crystal"
+        print(" Crystal", file=out)
 
-    print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
+    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma ), file=out)
     for ii in range(nat):
         zzn = atoms.get_atomic_numbers()[ii]
        #pos = atoms.get_positions()[ii]
         pos = atoms.get_scaled_positions()[ii]
         sym = atoms.get_chemical_symbols()[ii]
-        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym )
+        print("   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym ), file=out)
 
     if not STD:
         out.close()
@@ -105,16 +108,16 @@ def print_fdmnes1(outname='POSCAR',cell=None,STD=True,MOL=False):
     a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cellparam1(cell)
 
     if MOL:
-        print >> out, " molecule"
+        print(" molecule", file=out)
     else:
-        print >> out, " Crystal"
+        print(" Crystal", file=out)
 
-    print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
+    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma ), file=out)
     for ii in range(nat):
         zzn = cell.atoms_number_j[ii]
         pos = cell.position[ii,:]
         sym = cell.atoms_index_j[ii]
-        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym )
+        print("   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym ), file=out)
 
     if not STD:
         out.close()

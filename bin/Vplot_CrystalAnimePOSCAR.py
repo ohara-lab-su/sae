@@ -8,7 +8,7 @@
 #
 ################################################################################
 #
-# 2018.08.15
+# 2018.08.15, 08.23
 #  Python2/3 両対応
 #
 # 2015.02.27
@@ -65,9 +65,9 @@ def options():
     OUTCAR = "OUTCAR"
     POSCAR = "POSCAR" # INPUT (BASE) filename
 
-    print "INPUT POSCAR file  :",POSCAR
-    print "INPUT OUTCAR file  :",OUTCAR
-    print "OUTPUT file name   :",cname+".vasp"
+    print("INPUT POSCAR file  :",POSCAR)
+    print("INPUT OUTCAR file  :",OUTCAR)
+    print("OUTPUT file name   :",cname+".vasp")
 
     return [POSCAR,OUTCAR,cname]
 
@@ -84,8 +84,8 @@ if __name__ == '__main__':
     POSCAR = "POSCAR"
     OUTCAR = "OUTCAR"
 
-    print "INPUT POSCAR file  :",POSCAR
-    print "INPUT OUTCAR file  :",OUTCAR
+    print("INPUT POSCAR file  :",POSCAR)
+    print("INPUT OUTCAR file  :",OUTCAR)
 
     # Default & OptionParser
 #   POSCAR,cname = options()

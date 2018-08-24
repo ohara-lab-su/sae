@@ -785,16 +785,16 @@ if __name__ == '__main__':
     STD=False
     FRAC=True
 
-    print_mx_dat(datname,STD,\
-        title,scale,natom,nion,selective,direct,vasp_version,\
-        t,atoms,atoms_index,position,fix,\
-        atoms_index_j,\
-        NSW=NSW,\
-        NELM=NELM,\
-        IBRION=IBRION,\
-        EDIFF=EDIFF,\
-        EDIFFG=EDIFFG,\
-        KP=KP,\
+    print_mx_dat(datname,STD,
+        title,scale,natom,nion,selective,direct,vasp_version,
+        t,atoms,atoms_index,position,fix,
+        atoms_index_j,
+        NSW=NSW,
+        NELM=NELM,
+        IBRION=IBRION,
+        EDIFF=EDIFF,
+        EDIFFG=EDIFFG,
+        KP=KP,
         FRAC=FRAC)
 
     if direct and not FRAC:

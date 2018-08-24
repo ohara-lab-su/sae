@@ -83,9 +83,9 @@ def sphere_integral_of_elf(chgcar, ngxc, ngyz, ngzc, rate_x, rate_y, rate_z, r_d
                     for ny in range(0, ngyz*3):
                         for nz in range(0, ngzc*3):
                             # 二点間の距離
-                            r = (((org[0] - nx)*rate_x)**2
-                               + ((org[1] - ny)*rate_y)**2
-                               + ((org[2] - nz)*rate_z)**2)
+                            r = math.sqrt(((org[0] - nx)*rate_x)**2
+                                        + ((org[1] - ny)*rate_y)**2
+                                        + ((org[2] - nz)*rate_z)**2)
                             if r < r_diff:
                                 elf_sum += chgdata_s[nx, ny, nz]
                                #print(nx, ny, nz, self.chgdata_s[nx, ny, nz])

@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  Python2/3 両対応
+#
 # 2015.08.25
 #  現時点では moulecule モードに対応してない
 #  (旧バージョンでは対応済み)
@@ -89,8 +92,8 @@ def options():
 if __name__ == '__main__':
 
     mxname,poscarname,xyzname,STD,DIRECT = options()
-    print "INPUT",mxname
-    print "OUTPUT",poscarname+".vasp"
+    print("INPUT",mxname)
+    print("OUTPUT",poscarname+".vasp")
 
     cell = SAEnv.Read(filename=mxname,code='OpenMX')
     cell.write(outname=poscarname,code='VASP',STD=STD)

@@ -25,6 +25,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2014.10.30/31 1st
 #
 ################################################################################
@@ -73,39 +76,38 @@ def print_rmcpot_cfg_raw(cname,STD,title,t,natom,nion,atoms,position):
     else:
         cfg = open(cname+'.cfg','w')
 
-    print >> cfg, title
-    print >> cfg, cname
-    print >> cfg, ""
-    print >> cfg, ""
+    print(title, file=cfg)
+    print(cname, file=cfg)
+    print("", file=cfg)
+    print("", file=cfg)
 
     moves = 0
     tried = 0
     accepted = 0
     saved = 0
-    print >> cfg, "        ",moves,"        ",tried,"        ",accepted
-    print >> cfg, "        ",saved,"        ","configurations saved"
-    print >> cfg, ""
-    print >> cfg, "        ",natom," ","molecules of all types"
-    print >> cfg, "        ",nion ," ","types of molecules"
-    print >> cfg, "        ","1"  ," ","is the largest number of atoms in a molecule"
-    print >> cfg, "        ","0"  ," ","Euler angles are provided"
-    print >> cfg, ""
-    print >> cfg, "        ","F (box is cubic)	"
-    print >> cfg, "        ","  Defining vectors are:"
-    print >> cfg, "        ","  %13.9f %13.9f %13.9f" %(t1_x,t1_y,t1_z)
-    print >> cfg, "        ","  %13.9f %13.9f %13.9f" %(t2_x,t2_y,t2_z)
-    print >> cfg, "        ","  %13.9f %13.9f %13.9f" %(t3_x,t3_y,t3_z)
-    print >> cfg, ""
+    print("        ",moves,"        ",tried,"        ",accepted, file=cfg)
+    print("        ",saved,"        ","configurations saved", file=cfg)
+    print("", file=cfg)
+    print("        ",natom," ","molecules of all types", file=cfg)
+    print("        ",nion ," ","types of molecules", file=cfg)
+    print("        ","1"  ," ","is the largest number of atoms in a molecule", file=cfg)
+    print("        ","0"  ," ","Euler angles are provided", file=cfg)
+    print("", file=cfg)
+    print("        ","F (box is cubic)	", file=cfg)
+    print("        ","  Defining vectors are:", file=cfg)
+    print("        ","  %13.9f %13.9f %13.9f" %(t1_x,t1_y,t1_z), file=cfg)
+    print("        ","  %13.9f %13.9f %13.9f" %(t2_x,t2_y,t2_z), file=cfg)
+    print("        ","  %13.9f %13.9f %13.9f" %(t3_x,t3_y,t3_z), file=cfg)
+    print("", file=cfg)
 
     for j in range(int(nion)):
-        print >> cfg, "        ",atoms[j]," ","molecules of types  ",j+1
-        print >> cfg, "        ","1"     ," ","atomic sites"
-        print >> cfg, "        ","     ","0.000000   0.000000   0.000000"
-        print >> cfg, ""
+        print("        ",atoms[j]," ","molecules of types  ",j+1, file=cfg)
+        print("        ","1"     ," ","atomic sites", file=cfg)
+        print("        ","     ","0.000000   0.000000   0.000000", file=cfg)
+        print("", file=cfg)
 
     for j in range(natom):
-        print >> cfg, "%15.12f %15.12f %15.12f" %(position[j,0],position[j,1],position[j,2])
-
+        print("%15.12f %15.12f %15.12f" %(position[j,0],position[j,1],position[j,2]), file=cfg)
 
     cfg.close()
 

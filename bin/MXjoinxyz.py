@@ -7,6 +7,9 @@
 #
 ################################################################################
 #
+# 2018.08.23
+#  Python2/3 両対応
+#
 # 2015.03.10
 #  startup (python版)
 #
@@ -88,10 +91,10 @@ if __name__ == '__main__':
     else:
         dat = sys.stdout
 
-    print >> dat ,sumnum
-    print >> dat ,""
+    print(sumnum, file=dat)
+    print("", file=dat)
     for i in range(sumnum):
-        print >> dat, sumdat[i]
+        print(sumdat[i], file=dat)
 
     dat.close()
 

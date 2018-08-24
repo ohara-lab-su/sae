@@ -8,6 +8,11 @@
 # 群論対応版(試験中)
 #
 ################################################################################
+#
+# 2018.08.23
+#  Python2/3 両対応
+#
+################################################################################
 from __future__ import print_function
 ################################################################################
 __author__     = "Kengo NAKADA"
@@ -116,41 +121,41 @@ if __name__ == '__main__':
     RCMT = np.linalg.inv(BRMT.T)*2*PI
 
 
-    print '== Space Group Name    :',spg_name
-    print '== Space Group Number  :',spg_n
-    print '== Crystal Type        :',spg_type
-    print '== System              :',system
-    print '== Number of Gen       :',spg_ngen
+    print('== Space Group Name    :',spg_name)
+    print('== Space Group Number  :',spg_n)
+    print('== Crystal Type        :',spg_type)
+    print('== System              :',system)
+    print('== Number of Gen       :',spg_ngen)
     for i in range(spg_ngen):
-        print " %2d %2d %2d %2d /%2d" \
-                % ( gen_type[i], gen[i][0],gen[i][1],gen[i][2],gen[i][3] )
-    print ""
+        print(" %2d %2d %2d %2d /%2d"
+                % ( gen_type[i], gen[i][0],gen[i][1],gen[i][2],gen[i][3] ))
+    print("")
 
 
-    print 'TCMT-MATRIX'
+    print('TCMT-MATRIX')
     for i in range(3):
-        print " %10.6f %10.6f %10.6f " % (TCMT[i,0],TCMT[i,1],TCMT[i,2])
-    print ""
+        print(" %10.6f %10.6f %10.6f " % (TCMT[i,0],TCMT[i,1],TCMT[i,2]))
+    print("")
 
-    print 'TPMT-MATRIX'
+    print('TPMT-MATRIX')
     for i in range(3):
-        print " %10.6f %10.6f %10.6f " % (TPMT[i,0],TPMT[i,1],TPMT[i,2])
-    print ""
+        print(" %10.6f %10.6f %10.6f " % (TPMT[i,0],TPMT[i,1],TPMT[i,2]))
+    print("")
 
-    print 'BRMT-MATRIX'
+    print('BRMT-MATRIX')
     for i in range(3):
-        print " %10.6f %10.6f %10.6f " % (BRMT[i,0],BRMT[i,1],BRMT[i,2])
-    print ""
+        print(" %10.6f %10.6f %10.6f " % (BRMT[i,0],BRMT[i,1],BRMT[i,2]))
+    print("")
 
-    print 'TIMT-MATRIX'
+    print('TIMT-MATRIX')
     for i in range(3):
-        print " %10.6f %10.6f %10.6f " % (TIMT[i,0],TIMT[i,1],TIMT[i,2])
-    print ""
+        print(" %10.6f %10.6f %10.6f " % (TIMT[i,0],TIMT[i,1],TIMT[i,2]))
+    print("")
 
-    print 'RCMT-MATRIX'
+    print('RCMT-MATRIX')
     for i in range(3):
-        print " %10.6f %10.6f %10.6f " % (RCMT[i,0],RCMT[i,1],RCMT[i,2])
-    print ""
+        print(" %10.6f %10.6f %10.6f " % (RCMT[i,0],RCMT[i,1],RCMT[i,2]))
+    print("")
 
 
     # 生成元によるコンベンショナル基本並進(TCMT)ベクトルの操作
@@ -274,7 +279,7 @@ if __name__ == '__main__':
     rote_eular = np.zeros((3,3))
     SGE.make_euler_rotation(alpha,beta,gamma,rote_eular)
 
-    print rote_eular
+    print(rote_eular)
 
 
 

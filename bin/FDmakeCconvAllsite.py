@@ -102,7 +102,7 @@ if __name__ == '__main__':
             convinp = open(convname,'w')
         except:
             convinp.close()
-        print >> fdmlist, convname
+        print(convname, file=fdmlist)
 
         print("", file=convinp)
         print(" Filout", file=convinp)

@@ -10,6 +10,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.05.18 startup
 #
 ################################################################################
@@ -59,87 +62,87 @@ def print_fdmnes_inp0(outname='read_pdb.inp',atoms=None,MOL=False):
     a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cellparam0(atoms)
 #   atoms = atoms2.copy()
 
-    print >> out, "! FDMNES indata file"
-    print >> out, ""
-    print >> out, "!Nonexc"
-    print >> out, ""
-    print >> out, " Absorber"
-    print >> out, "  1"
-    print >> out, "! allsite"
-    print >> out, ""
-    print >> out, " Filout"
-    print >> out, "  Cu"
-    print >> out, ""
-    print >> out, " Range                        ! Energy range of calculation (eV)"
-    print >> out, "  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy"
-    print >> out, "! -15. 0.1 50. 1. 200.        !"
-    print >> out, ""
-    print >> out, "!Energpho"
-    print >> out, ""
-    print >> out, " Edge"
-    print >> out, "  K"
-    print >> out, "! L23"
-    print >> out, ""
-    print >> out, "!Quadrupole"
-    print >> out, ""
-    print >> out, " Relativism"
-    print >> out, ""
-    print >> out, " Convolution"
-    print >> out, ""
-    print >> out, "!No_Fermi"
-    print >> out, "!Efermi"
-    print >> out, "!  -6.0"
-    print >> out, "!Estart"
-    print >> out, "! -10.0"
-    print >> out, ""
-    print >> out, "!SCF"
-    print >> out, "!R_self"
-    print >> out, "! 5.0"
-    print >> out, "!N_self"
-    print >> out, "! 100"
-    print >> out, "!P_self"
-    print >> out, "! 0.05"
-    print >> out, "!Delta_E_conv"
-    print >> out, "! 0.01"
-    print >> out, ""
-    print >> out, "!Magnetism"
-    print >> out, "!SCF_mag_free"
-    print >> out, ""
-    print >> out, "!Hubbard"
-    print >> out, "! 0.0 6.3 0.0"
-    print >> out, ""
-    print >> out, "!TDDFT"
-    print >> out, ""
-    print >> out, "!Green"
-    print >> out, ""
-    print >> out, " Radius                       ! Radius of the cluster where final state calculation is performed"
-    print >> out, "   5.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems"
-    print >> out, ""
-    print >> out, " Memory_save"
-    print >> out, ""
+    print("! FDMNES indata file", file=out)
+    print("", file=out)
+    print("!Nonexc", file=out)
+    print("", file=out)
+    print(" Absorber", file=out)
+    print("  1", file=out)
+    print("! allsite", file=out)
+    print("", file=out)
+    print(" Filout", file=out)
+    print("  Cu", file=out)
+    print("", file=out)
+    print(" Range                        ! Energy range of calculation (eV)", file=out)
+    print("  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy", file=out)
+    print("! -15. 0.1 50. 1. 200.        !", file=out)
+    print("", file=out)
+    print("!Energpho", file=out)
+    print("", file=out)
+    print(" Edge", file=out)
+    print("  K", file=out)
+    print("! L23", file=out)
+    print("", file=out)
+    print("!Quadrupole", file=out)
+    print("", file=out)
+    print(" Relativism", file=out)
+    print("", file=out)
+    print(" Convolution", file=out)
+    print("", file=out)
+    print("!No_Fermi", file=out)
+    print("!Efermi", file=out)
+    print("!  -6.0", file=out)
+    print("!Estart", file=out)
+    print("! -10.0", file=out)
+    print("", file=out)
+    print("!SCF", file=out)
+    print("!R_self", file=out)
+    print("! 5.0", file=out)
+    print("!N_self", file=out)
+    print("! 100", file=out)
+    print("!P_self", file=out)
+    print("! 0.05", file=out)
+    print("!Delta_E_conv", file=out)
+    print("! 0.01", file=out)
+    print("", file=out)
+    print("!Magnetism", file=out)
+    print("!SCF_mag_free", file=out)
+    print("", file=out)
+    print("!Hubbard", file=out)
+    print("! 0.0 6.3 0.0", file=out)
+    print("", file=out)
+    print("!TDDFT", file=out)
+    print("", file=out)
+    print("!Green", file=out)
+    print("", file=out)
+    print(" Radius                       ! Radius of the cluster where final state calculation is performed", file=out)
+    print("   5.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems", file=out)
+    print("", file=out)
+    print(" Memory_save", file=out)
+    print("", file=out)
 
     if MOL:
-        print >> out, " molecule"
+        print(" molecule", file=out)
     else:
-        print >> out, " Crystal"
+        print(" Crystal", file=out)
 
-    print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
+    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma ), file=out)
     for ii in range(nat):
         zzn = atoms.get_atomic_numbers()[ii]
        #pos = atoms.get_positions()[ii]
         pos = atoms.get_scaled_positions()[ii]
         sym = atoms.get_chemical_symbols()[ii]
-        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym )
+        print("   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym ), file=out)
 
-    print >> out, ""
-    print >> out, " Density"
-    print >> out, "  state_all"
-    print >> out, ""
-    print >> out, "!Adimp"
-    print >> out, "! 0.20"
-    print >> out, ""
-    print >> out, " End"
-    print >> out, ""
+    print("", file=out)
+    print(" Density", file=out)
+    print("  state_all", file=out)
+    print("", file=out)
+    print("!Adimp", file=out)
+    print("! 0.20", file=out)
+    print("", file=out)
+    print(" End", file=out)
+    print("", file=out)
 
     out.close()
 
@@ -165,86 +168,86 @@ def print_fdmnes_inp1(outname='read_pdb.inp',cell=None,MOL=False):
     a,b,c,alpha,beta,gamma,nat = SAEnv.conv_cellparam1(cell)
 #   atoms = atoms2.copy()
 
-    print >> out, "! FDMNES indata file"
-    print >> out, ""
-    print >> out, "!Nonexc"
-    print >> out, ""
-    print >> out, " Absorber"
-    print >> out, "  1"
-    print >> out, "! allsite"
-    print >> out, ""
-    print >> out, " Filout"
-    print >> out, "  Cu"
-    print >> out, ""
-    print >> out, " Range                        ! Energy range of calculation (eV)"
-    print >> out, "  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy"
-    print >> out, "! -15. 0.1 50. 1. 200.        !"
-    print >> out, ""
-    print >> out, "!Energpho"
-    print >> out, ""
-    print >> out, " Edge"
-    print >> out, "  K"
-    print >> out, "! L23"
-    print >> out, ""
-    print >> out, "!Quadrupole"
-    print >> out, ""
-    print >> out, " Relativism"
-    print >> out, ""
-    print >> out, " Convolution"
-    print >> out, ""
-    print >> out, "!No_Fermi"
-    print >> out, "!Efermi"
-    print >> out, "!  -6.0"
-    print >> out, "!Estart"
-    print >> out, "! -10.0"
-    print >> out, ""
-    print >> out, "!SCF"
-    print >> out, "!R_self"
-    print >> out, "! 5.0"
-    print >> out, "!N_self"
-    print >> out, "! 100"
-    print >> out, "!P_self"
-    print >> out, "! 0.05"
-    print >> out, "!Delta_E_conv"
-    print >> out, "! 0.01"
-    print >> out, ""
-    print >> out, "!Magnetism"
-    print >> out, "!SCF_mag_free"
-    print >> out, ""
-    print >> out, "!Hubbard"
-    print >> out, "! 0.0 6.3 0.0"
-    print >> out, ""
-    print >> out, "!TDDFT"
-    print >> out, ""
-    print >> out, "!Green"
-    print >> out, ""
-    print >> out, " Radius                       ! Radius of the cluster where final state calculation is performed"
-    print >> out, "   5.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems"
-    print >> out, ""
-    print >> out, " Memory_save"
-    print >> out, ""
+    print("! FDMNES indata file", file=out)
+    print("", file=out)
+    print("!Nonexc", file=out)
+    print("", file=out)
+    print(" Absorber", file=out)
+    print("  1", file=out)
+    print("! allsite", file=out)
+    print("", file=out)
+    print(" Filout", file=out)
+    print("  Cu", file=out)
+    print("", file=out)
+    print(" Range                        ! Energy range of calculation (eV)", file=out)
+    print("  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy", file=out)
+    print("! -15. 0.1 50. 1. 200.        !", file=out)
+    print("", file=out)
+    print("!Energpho", file=out)
+    print("", file=out)
+    print(" Edge", file=out)
+    print("  K", file=out)
+    print("! L23", file=out)
+    print("", file=out)
+    print("!Quadrupole", file=out)
+    print("", file=out)
+    print(" Relativism", file=out)
+    print("", file=out)
+    print(" Convolution", file=out)
+    print("", file=out)
+    print("!No_Fermi", file=out)
+    print("!Efermi", file=out)
+    print("!  -6.0", file=out)
+    print("!Estart", file=out)
+    print("! -10.0", file=out)
+    print("", file=out)
+    print("!SCF", file=out)
+    print("!R_self", file=out)
+    print("! 5.0", file=out)
+    print("!N_self", file=out)
+    print("! 100", file=out)
+    print("!P_self", file=out)
+    print("! 0.05", file=out)
+    print("!Delta_E_conv", file=out)
+    print("! 0.01", file=out)
+    print("", file=out)
+    print("!Magnetism", file=out)
+    print("!SCF_mag_free", file=out)
+    print("", file=out)
+    print("!Hubbard", file=out)
+    print("! 0.0 6.3 0.0", file=out)
+    print("", file=out)
+    print("!TDDFT", file=out)
+    print("", file=out)
+    print("!Green", file=out)
+    print("", file=out)
+    print(" Radius                       ! Radius of the cluster where final state calculation is performed", file=out)
+    print("   5.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems", file=out)
+    print("", file=out)
+    print(" Memory_save", file=out)
+    print("", file=out)
 
     if MOL:
-        print >> out, " molecule"
+        print(" molecule", file=out)
     else:
-        print >> out, " Crystal"
+        print(" Crystal", file=out)
 
-    print >> out, "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma )
+    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma ), file=out)
     for ii in range(nat):
         zzn = cell.atoms_number_j[ii]
         pos = cell.position[ii,:]
         sym = cell.atoms_index_j[ii]
-        print >> out, "   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym )
+        print("   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zzn,pos[0],pos[1],pos[2],sym ), file=out)
 
-    print >> out, ""
-    print >> out, " Density"
-    print >> out, "  state_all"
-    print >> out, ""
-    print >> out, "!Adimp"
-    print >> out, "! 0.20"
-    print >> out, ""
-    print >> out, " End"
-    print >> out, ""
+    print("", file=out)
+    print(" Density", file=out)
+    print("  state_all", file=out)
+    print("", file=out)
+    print("!Adimp", file=out)
+    print("! 0.20", file=out)
+    print("", file=out)
+    print(" End", file=out)
+    print("", file=out)
 
     out.close()
 

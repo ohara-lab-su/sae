@@ -14,7 +14,7 @@
 #
 ################################################################################
 #
-# 2018.08.15
+# 2018.08.15, 08.23
 #  Python2/3 両対応
 #
 # 2014.11.13 1st
@@ -178,21 +178,21 @@ if __name__ == '__main__':
     else:
         mode="Cartesian"
 
-    print >>out, "# "
-    print >>out, "# "+mode+" Mode"
-    print >>out, "# num,   positon(x,y,z),                          atomtype, atom"
+    print("# ", file=out)
+    print("# "+mode+" Mode", file=out)
+    print("# num,   positon(x,y,z),                          atomtype, atom", file=out)
     for i in range(ex_natom):
-        print >>out, "%3i    %13.9f %13.9f %13.9f %3i %2s" \
-                      % ( ex_j[i], \
-                          ex_position[i,0], ex_position[i,1], ex_position[i,2], \
-                          ion[ex_j[i]]+1, atoms_index[int(ion[ex_j[i]])] )
+        print("%3i    %13.9f %13.9f %13.9f %3i %2s"
+                      % ( ex_j[i],
+                          ex_position[i,0], ex_position[i,1], ex_position[i,2],
+                          ion[ex_j[i]]+1, atoms_index[int(ion[ex_j[i]])] ), file=out)
     out.close
 
 
     # POSCAR の標準出力(特定原子のみの POSCAR)
     STD=False
    #STD=True
-    SAE.print_poscar(cname,STD,title,scale,ex_natom,ex_nion,selective,direct,VASP,\
+    SAE.print_poscar(cname,STD,title,scale,ex_natom,ex_nion,selective,direct,VASP,
                      t,ex_atoms,ex_atoms_index,ex_position,ex_fix)
 
 ################################################################################

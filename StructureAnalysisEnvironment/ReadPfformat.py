@@ -3,6 +3,9 @@
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.02.17
 #   一般的なpythonルールに合わせて PFformat クラスを ReadPfformat に変更
 #   およびそれに合わせた class のコンストラクタとメッソドの整備
@@ -243,72 +246,72 @@ class ReadPfformat(object):
         else:
             out = sys.stdout
 
-        print >> out, u"ステーション名                  :",self.BL
-        print >> out, u"測定開始日                      :",self.YMD1
-        print >> out, u"測定終了日時                    :",self.YMD2
-        print >> out, u"コメント(試料名)                :",self.SAMP
-        print >> out, u"電子(陽電子)ビームのエネルギー  :",str(self.ERING)+" GeV"
-        print >> out, u"蓄積電流(測定開始時)            :",str(self.CRING1)+" mA"
-        print >> out, u"蓄積電流(測定終了時)            :",str(self.CRING2)+" mA"
-        print >> out, u"分光結晶面                      :",self.XTAL
-        print >> out, u"分光結晶面の格子面間隔          :",str(self.D)+" Ang"
-        print >> out, u"測定開始前の現在角              :",str(self.PANG)+" Deg"
-        print >> out, u"測定モード                      :",self.CMODE
+        print("ステーション名                  :",self.BL, file=out)
+        print("測定開始日                      :",self.YMD1, file=out)
+        print("測定終了日時                    :",self.YMD2, file=out)
+        print("コメント(試料名)                :",self.SAMP, file=out)
+        print("電子(陽電子)ビームのエネルギー  :",str(self.ERING)+" GeV", file=out)
+        print("蓄積電流(測定開始時)            :",str(self.CRING1)+" mA", file=out)
+        print("蓄積電流(測定終了時)            :",str(self.CRING2)+" mA", file=out)
+        print("分光結晶面                      :",self.XTAL, file=out)
+        print("分光結晶面の格子面間隔          :",str(self.D)+" Ang", file=out)
+        print("測定開始前の現在角              :",str(self.PANG)+" Deg", file=out)
+        print("測定モード                      :",self.CMODE, file=out)
         if self.MODE == 2:
-            print >> out, u"測定モードのコード              :"+u" 透過法"
+            print("測定モードのコード              : 透過法", file=out)
         if self.MODE == 3:
-            print >> out, u"測定モードのコード              :"+u" 蛍光法"
+            print("測定モードのコード              : 蛍光法", file=out)
         if self.MODE == 4:
-            print >> out, u"測定モードのコード              :"+u" 電子吸量法"
-        print >> out, u"測定の繰り返し回数              :",self.IREP
-        print >> out, u"1測定中のデータ点数             :",self.NPT
-        print >> out, u"使用したパラメータファイル名    :",self.PFN
+            print("測定モードのコード              : 電子吸量法", file=out)
+        print("測定の繰り返し回数              :",self.IREP, file=out)
+        print("1測定中のデータ点数             :",self.NPT, file=out)
+        print("使用したパラメータファイル名    :",self.PFN, file=out)
         if self.IAE == 1:
-            print >> out, u"パラメータの単位                :"+u" 角度"
+            print("パラメータの単位                : 角度", file=out)
         if self.IAE == 2:
-            print >> out, u"パラメータの単位                :"+u" エネルギー"
-        print >> out, u"ブロック数                      :",self.NBLK
+            print("パラメータの単位                : エネルギー", file=out)
+        print("ブロック数                      :",self.NBLK, file=out)
 
-        print >> out, ""
+        print("", file=out)
         if self.IAE == 1:
-            print >> out, " "+\
-                    "Block      Init-ang  final-ang     Step/deg     Time/s       Num"
+            print(" "+
+                    "Block      Init-ang  final-ang     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
-                print >> out, " %5d     %10.5f%10.5f%13.6f%11.2f%10d" \
-                         %( i+1 , self.block[i,0], self.block[i,1],\
-                            self.STEP[i], self.RTIME[i], self.NUM[i] )
+                print(" %5d     %10.5f%10.5f%13.6f%11.2f%10d"
+                         %( i+1 , self.block[i,0], self.block[i,1],
+                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
         if self.IAE == 2:
-            print >> out, " "+\
-                    "Block      Init-ang  final-Eng     Step/deg     Time/s       Num"
+            print(" "+
+                    "Block      Init-ang  final-Eng     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
-                print >> out, " %5d     %10.5f%10.5f%13.2f%11.2f%10d" \
-                         %( i+1 , self.block[i,0], self.block[i,1],\
-                            self.STEP[i], self.RTIME[i], self.NUM[i] )
+                print(" %5d     %10.5f%10.5f%13.2f%11.2f%10d"
+                         %( i+1 , self.block[i,0], self.block[i,1],
+                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
 
-        print >> out, ""
+        print("", file=out)
         if self.ICA == 1:
-            print >> out, u"測定に用いたスケーラ            :"+u" CAMAC"
+            print("測定に用いたスケーラ            : CAMAC", file=out)
         if self.ICA == 0:
-            print >> out, u"測定に用いたスケーラ            :"+u" ORTEC 974"
+            print("測定に用いたスケーラ            : ORTEC 974", file=out)
         if self.ICA == -1:
-            print >> out, u"測定に用いたスケーラ            :"+u" novice mode"
-        print >> out, u"ブロック数                      :",self.NBLK
-        print >> out, u"測定に用いたデータチャンネルの数:",self.NDCH
+            print("測定に用いたスケーラ            : novice mode", file=out)
+        print("ブロック数                      :",self.NBLK, file=out)
+        print("測定に用いたデータチャンネルの数:",self.NDCH, file=out)
 
-        print >> out, ""
-        print >> out, " "+"Angle(c)  Angle(o)    time/s",
+        print("", file=out)
+        print(" "+"Angle(c)  Angle(o)    time/s", file=out, end="")
         if self.ICA == 0:
             for j in range(self.NDCH0,self.NDCH):
-                print >> out, "%10d" %( j+1 ),
-            print >> out, ""
-            print >> out, " "+"    Mode         0         0",
+                print("%10d" %( j+1 ), file=out, end="")
+            print("", file=out)
+            print(" "+"    Mode         0         0", file=out, end="")
             for j in range(self.NDCH0,self.NDCH):
-                print >> out, "%10d" %( self.MODEM[j] ),
-            print >> out, ""
-            print >> out, " "+"  Offset         0         0",
+                print("%10d" %( self.MODEM[j] ), file=out, end="")
+            print("", file=out)
+            print(" "+"  Offset         0         0", file=out, end="")
             for j in range(self.NDCH0,self.NDCH):
-                print >> out, "%10.3f" %( self.OFFS[j] ),
-            print >> out, ""
+                print("%10.3f" %( self.OFFS[j] ), file=out, end="")
+            print("", file=out)
 
         out.close()
 
@@ -331,63 +334,63 @@ class ReadPfformat(object):
             out = sys.stdout
 
         # write DATA
-        print >> out, " %5s     %8s %5s"   %( self.IFCD, self.BL0, self.BL )
-        print >> out, " %14s  %14s - %14s" %( self.FN, self.YMD1, self.YMD2 )
-        print >> out, " "+self.SAMP
-        print >> out, " Ring : %5.1f GeV  %6.1f mA - %6.1f mA" \
-                                   %( self.ERING,self.CRING1,self.CRING2 )
-        print >> out, " Mono :   %10s    D= %8.5f A    Initial angle=%9.5f deg" \
-                                   %( self.XTAL, self.D, self.PANG )
-        print >> out, " %5s    %13s(%2d)   Repetition=%3d     Points=%5d" \
-                                   %( self.BL,self.CMODE,self.MODE,self.IREP,self.NPT )
+        print(" %5s     %8s %5s"   %( self.IFCD, self.BL0, self.BL ), file=out)
+        print(" %14s  %14s - %14s" %( self.FN, self.YMD1, self.YMD2 ), file=out)
+        print(" "+self.SAMP, file=out)
+        print(" Ring : %5.1f GeV  %6.1f mA - %6.1f mA"
+                                   %( self.ERING,self.CRING1,self.CRING2 ), file=out)
+        print(" Mono :   %10s    D= %8.5f A    Initial angle=%9.5f deg"
+                                   %( self.XTAL, self.D, self.PANG ), file=out)
+        print(" %5s    %13s(%2d)   Repetition=%3d     Points=%5d"
+                                   %( self.BL,self.CMODE,self.MODE,self.IREP,self.NPT ), file=out)
         if self.IAE == 1:
-            print >> out, " Param file : %14s  angle axis (%1d)     Block =%5d" \
-                                       %( self.PFN, self.IAE,self.NBLK )
+            print(" Param file : %14s  angle axis (%1d)     Block =%5d"
+                                       %( self.PFN, self.IAE,self.NBLK ), file=out)
         if self.IAE == 2:
-            print >> out, " Param file : %14s  energy axis (%1d)     Block =%5d" \
-                                       %( self.PFN, self.IAE,self.NBLK )
-        print >> out, ""
+            print(" Param file : %14s  energy axis (%1d)     Block =%5d"
+                                       %( self.PFN, self.IAE,self.NBLK ), file=out)
+        print("", file=out)
         if self.IAE == 1:
-            print >> out, " "+\
-                    "Block      Init-ang  final-ang     Step/deg     Time/s       Num"
+            print(" "+
+                    "Block      Init-ang  final-ang     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
-                print >> out, " %5d     %10.5f%10.5f%13.6f%11.2f%10d" \
-                         %( i+1 , self.block[i,0], self.block[i,1],\
-                            self.STEP[i], self.RTIME[i], self.NUM[i] )
+                print(" %5d     %10.5f%10.5f%13.6f%11.2f%10d"
+                         %( i+1 , self.block[i,0], self.block[i,1],
+                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
         if self.IAE == 2:
-            print >> out, " "+\
-                    "Block      Init-ang  final-Eng     Step/deg     Time/s       Num"
+            print(" "+
+                    "Block      Init-ang  final-Eng     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
-                print >> out, " %5d     %10.5f%10.5f%13.2f%11.2f%10d" \
-                         %( i+1 , self.block[i,0], self.block[i,1],\
-                            self.STEP[i], self.RTIME[i], self.NUM[i] )
+                print(" %5d     %10.5f%10.5f%13.2f%11.2f%10d"
+                         %( i+1 , self.block[i,0], self.block[i,1],
+                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
 
         if self.ICA > 0:
             self.ICA_CHAR = 'CAMCA'
         if self.ICA <= 0:
             self.ICA_CHAR = 'Ortec'
-        print >> out, " %5s(%2d)     NDCH =%2d" %(self.ICA_CHAR,self.ICA,self.NDCH )
+        print(" %5s(%2d)     NDCH =%2d" %(self.ICA_CHAR,self.ICA,self.NDCH ), file=out)
 
-        print >> out, "  "+"Angle(c)  Angle(o)    time/s",
+        print("  "+"Angle(c)  Angle(o)    time/s", file=out, end="")
         if self.ICA == 0:
             for j in range(self.NDCH0,self.NDCH):
-                print >> out, "%10d" %( j+1 ),
-            print >> out, ""
-            print >> out, "  "+"    Mode         0         0",
+                print("%10d" %( j+1 ), file=out, end="")
+            print("")
+            print("  "+"    Mode         0         0", file=out, end="")
             for j in range(self.NDCH0,self.NDCH):
-                print >> out, "%10d" %( self.MODEM[j] ),
-            print >> out, ""
-            print >> out, "  "+"  Offset         0         0",
+                print("%10d" %( self.MODEM[j] ), file=out, end="")
+            print("", file=out)
+            print("  "+"  Offset         0         0", file=out, end="")
             for j in range(self.NDCH0,self.NDCH):
-                print >> out, "%10.3f" %( self.OFFS[j] ),
-            print >> out, ""
+                print("%10.3f" %( self.OFFS[j] ), file=out, end="")
+            print("", file=out)
 
         for i in range(self.NPT):
-            print >> out, "%10.5f%10.5f%10.3f" \
-                    %( self.ANGM[i],self.ANGE[i],self.DWT[i] ),
+            print("%10.5f%10.5f%10.3f"
+                    %( self.ANGM[i],self.ANGE[i],self.DWT[i] ), file=out, end="")
             for j in range(self.NDCH0,self.NDCH):
-                 print >> out, "%10d" %( self.IDTM[i,j] ),
-            print >> out, ""
+                 print("%10d" %( self.IDTM[i,j] ), file=out, end="")
+            print("", file=out)
 
 
 ################################################################################

@@ -6,6 +6,9 @@
 #
 ################################################################################
 #
+# 2018.08.21
+#  Python2/3 両対応
+#
 # 2015.06.30
 #  == None --> is None
 #
@@ -49,15 +52,15 @@ def write_fdmnes(xyz,name='POSCAR',STD=True):
     atoms_index_j = xyz.get_atoms_index_j()
     position = xyz.get_position()
 
-    print >> out, " molecule"
+    print(" molecule", file=out)
 
-    print >> out, "      1.0 1.0 1.0 90.0 90.0 90.0"
+    print("      1.0 1.0 1.0 90.0 90.0 90.0", file=out)
     for ii in range(natom):
         pos = position[ii]
         sym = atoms_index_j[ii]
         zza = SAE.get_atomic_number1(atoms_index_j[ii])
 
-        print >> out, "   %2d %12.6f %12.6f %12.6f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym )
+        print("   %2d %12.6f %12.6f %12.6f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym ), file=out)
 
     if not STD:
         out.close()
@@ -93,48 +96,48 @@ def write_fdmnes_inp(xyz,name='read_pdb.inp'):
         out.close()
         sys.exit("STOP:"+name+".fdmnes file can't open")
 
-    print >> out, "! FDMNES indata file"
-    print >> out, ""
-    print >> out, " Absorber"
-    print >> out, "  1"
-    print >> out, "! allsite"
-    print >> out, ""
-    print >> out, " Filout"
-    print >> out, "  Cu"
-    print >> out, ""
-    print >> out, " Range                        ! Energy range of calculation (eV)"
-    print >> out, "  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy"
-    print >> out, "! -15. 0.1 50. 1. 200.        !"
-    print >> out, ""
-    print >> out, "!Energpho"
-    print >> out, ""
-    print >> out, " Edge"
-    print >> out, "  K"
-    print >> out, "! L23"
-    print >> out, ""
-    print >> out, " Relativism"
-    print >> out, ""
-    print >> out, "!Magnetism"
-    print >> out, ""
-    print >> out, "!Quadrupole"
-    print >> out, ""
-    print >> out, "!TDDFT"
-    print >> out, ""
-    print >> out, " Green"
-    print >> out, ""
-    print >> out, "!No_Fermi"
-    print >> out, "! SCF"
-    print >> out, ""
-    print >> out, " Radius                       ! Radius of the cluster where final state calculation is performed"
-    print >> out, "   3.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems"
-    print >> out, ""
-    print >> out, " Memory_save"
-    print >> out, ""
+    print("! FDMNES indata file", file=out)
+    print("", file=out)
+    print(" Absorber", file=out)
+    print("  1", file=out)
+    print("! allsite", file=out)
+    print("", file=out)
+    print(" Filout", file=out)
+    print("  Cu", file=out)
+    print("", file=out)
+    print(" Range                        ! Energy range of calculation (eV)", file=out)
+    print("  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy", file=out)
+    print("! -15. 0.1 50. 1. 200.        !", file=out)
+    print("", file=out)
+    print("!Energpho", file=out)
+    print("", file=out)
+    print(" Edge", file=out)
+    print("  K", file=out)
+    print("! L23", file=out)
+    print("", file=out)
+    print(" Relativism", file=out)
+    print("", file=out)
+    print("!Magnetism", file=out)
+    print("", file=out)
+    print("!Quadrupole", file=out)
+    print("", file=out)
+    print("!TDDFT", file=out)
+    print("", file=out)
+    print(" Green", file=out)
+    print("", file=out)
+    print("!No_Fermi", file=out)
+    print("! SCF", file=out)
+    print("", file=out)
+    print(" Radius                       ! Radius of the cluster where final state calculation is performed", file=out)
+    print("   3.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems", file=out)
+    print("", file=out)
+    print(" Memory_save", file=out)
+    print("", file=out)
 
-    print >> out, " molecule"
+    print(" molecule", file=out)
 
-    print >> out, "      1.0 1.0 1.0 90.0 90.0 90.0"
-#   print >> out, "      "+str(lattice)+" "+str(lattice)+" "+str(lattice)+" 90.0 90.0 90.0"
+    print("      1.0 1.0 1.0 90.0 90.0 90.0", file=out)
+#   print("      "+str(lattice)+" "+str(lattice)+" "+str(lattice)+" 90.0 90.0 90.0", file=out)
     for ii in range(natom):
         pos = position[ii]
         sym = atoms_index_j[ii]
@@ -145,19 +148,19 @@ def write_fdmnes_inp(xyz,name='read_pdb.inp'):
         px = pos[0]
         py = pos[1]
         pz = pos[2]
-        print >> out, "   %2d %12.6f %12.6f %12.6f    ! %s"  % ( zza,px,py,pz,sym )
+        print("   %2d %12.6f %12.6f %12.6f    ! %s"  % ( zza,px,py,pz,sym ), file=out)
 
-    print >> out, ""
-    print >> out, " Density"
-    print >> out, "  state_all"
-    print >> out, ""
-    print >> out, "!Adimp"
-    print >> out, "! 0.20"
-    print >> out, ""
-    print >> out, " Convolution"
-    print >> out, ""
-    print >> out, " End"
-    print >> out, ""
+    print("", file=out)
+    print(" Density", file=out)
+    print("  state_all", file=out)
+    print("", file=out)
+    print("!Adimp", file=out)
+    print("! 0.20", file=out)
+    print("", file=out)
+    print(" Convolution", file=out)
+    print("", file=out)
+    print(" End", file=out)
+    print("", file=out)
 
     out.close()
 
