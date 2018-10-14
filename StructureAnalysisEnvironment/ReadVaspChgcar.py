@@ -534,6 +534,12 @@ class ReadVaspChgcar(SAEnv.Method):
 
         return 1/chgcar
 
+    def get_chgcar(self, chgcar=None):
+        if chgcar is None:
+            chgcar = self.chgdata
+
+        return chgcar
+
     def print_chgcar(self, chgcar=None, ngx_max=None, ngy_max=None, ngz_max=None, outname=None):
         """
         CHGCAR 形式での出力
