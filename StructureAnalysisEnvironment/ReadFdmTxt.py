@@ -8,6 +8,11 @@
 #
 ###############################################################################
 #
+# 2019.01.08
+#  新しい FDMNES における
+#  Cu.txt などのログから E_Fermi が消えたことによる対応
+#  （フェルミレベルが強制ゼロ、自動シフトに対する対応）
+#
 # 2018.08.15
 #  Python2/3 両対応
 #
@@ -130,7 +135,9 @@ class ReadFdmTxt(object):
                 self.xas_all[i - 2, spin] = \
                         float(self.datlines[i].split()[1+spin+edge]) / weight
 
-        self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+       #self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+        self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        self.E_Fermi = self.E_fermi
         self.ispin = self.nspin
         self.xas = self.xas_all[:,0]
 
@@ -143,12 +150,14 @@ class ReadFdmTxt(object):
 
     # ヘッダー項目
     def get_efermi(self):
-        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+       #self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
         return self.E_Fermi
 
     # ヘッダー項目
     def get_e_fermi(self):
-        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+       #self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
         return self.E_Fermi
 
     # ヘッダー項目
@@ -263,18 +272,18 @@ def options():
     return name, suffix
 
 
-# ###############################################################################
-# if __name__ == '__main__':
-#
-#     name, suffix = options()
-#     conv = ReadFdm(name, suffix)
-#
-#     eng = conv.get_eng()
-#     xas = conv.get_xas()
-#
-#     print("E-Edge  = %s" % str(conv.get_eedge()))
-#     print("E-Fermi = %s" % str(conv.get_efermi()))
-#
-# #   plot_fdm_xas(eng,xas)
+###############################################################################
+if __name__ == '__main__':
 
-# #   print "NAME",name
+    name, suffix = options()
+    conv = ReadFdmTxt(name, suffix)
+
+    eng = conv.get_eng()
+    xas = conv.get_xas()
+
+    print("E-Edge  = %s" % str(conv.get_eedge()))
+    print("E-Fermi = %s" % str(conv.get_efermi()))
+
+#   plot_fdm_xas(eng,xas)
+
+#   print "NAME",name

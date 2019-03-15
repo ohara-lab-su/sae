@@ -207,6 +207,7 @@ class ReadFdmInp(SAEnv.Method):
                         x = float(self.datlines[i].split()[1])
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
+
                         self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
                         self.position.append([x, y, z])
 
@@ -242,6 +243,7 @@ class ReadFdmInp(SAEnv.Method):
                 self.t = coorsys(self.cellparam)
 
                 self.atoms_index_j = []
+                print('====')
                 while 1:
                     i += 1
                     if len(self.datlines[i].split()) > 0:  # 空白行はスキップ
@@ -253,6 +255,7 @@ class ReadFdmInp(SAEnv.Method):
                         x = float(self.datlines[i].split()[1])
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
+
                         self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
                         self.position.append([x, y, z])
 
@@ -260,8 +263,13 @@ class ReadFdmInp(SAEnv.Method):
                         break
 
             else:
-                self.position = []
-                self.atoms_index_j = []
+                ########
+                # 2019.03.14 2019.03.14 commented out
+                #self.position = []
+                #self.atoms_index_j = []
+                ########
+                pass
+
                #self.position = np.array(self.position)
             ################################################# END Crystal #####
 
@@ -434,6 +442,13 @@ class ReadFdmInp(SAEnv.Method):
         self.position = SAEnv.sort_position(self.sort_index_r, self.position)
         return self.position
 
+    # add 2019.03.14
+    def get_atoms_index_j(self):
+        return self.atoms_index_j
+
+    # add 2019.03.14
+    def get_natom(self):
+        return self.natom
 
 ##########################################################################
 def options():
@@ -484,7 +499,7 @@ if __name__ == '__main__':
     print('allsite    : %s' % str(allsite))
     print('absorber   : %s' % str(absorber))
     print('energygpho : %s' % str(energygpho))
-    print('ispin      : %s' % str(ispin))
+
     print('filout     : %s' % str(filout))
     print('natom      : %s' % str(natom))
     print('')

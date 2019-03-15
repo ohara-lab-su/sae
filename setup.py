@@ -43,7 +43,7 @@ setup(
 #       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
 #       author_email = 'kengo.nakada@gmail.com',
         author_email = 'kengo.nakada@spring8.or.jp',
-        license = 'MIT',
+        license = 'Apache2.0',
         install_requires = ['numpy','matplotlib'],
 #       platforms = ['linux','OSX','Window'],
 #       classifiers = [

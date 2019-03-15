@@ -581,6 +581,8 @@ if __name__ == '__main__':
 
     ##########################################################################
 
+    plt.ylim(ymin=0.0)
+
     if outputname:
         _head = outputname+'_'
         print("output header = ", outputname)
