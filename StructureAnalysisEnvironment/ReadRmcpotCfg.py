@@ -113,6 +113,19 @@ class ReadRmcpotCfg(SAEnv.Method):
         self.t[1,2] = float(t3_y)
         self.t[2,2] = float(t3_z)
 
+        print("t1_x = %s" % self.t[0,0])
+        print("t1_y = %s" % self.t[1,0])
+        print("t1_z = %s" % self.t[2,0])
+        print("")
+        print("t2_x = %s" % self.t[0,1])
+        print("t2_y = %s" % self.t[1,1])
+        print("t2_z = %s" % self.t[2,1])
+        print("")
+        print("t3_x = %s" % self.t[0,2])
+        print("t3_y = %s" % self.t[1,2])
+        print("t3_z = %s" % self.t[2,2])
+        print("")
+
         ###############################################
         ## 原子の種類ごとの読み込み
         ##
@@ -121,6 +134,7 @@ class ReadRmcpotCfg(SAEnv.Method):
         for i in range(self.nion):
             lines += 1
             self.atoms[i] =  int(self.datlines[lines].split()[0])
+            print(self.atoms[i])
             lines += 1
             tmp = self.datlines[lines]
             lines += 1
@@ -131,6 +145,12 @@ class ReadRmcpotCfg(SAEnv.Method):
         ###############################################
         ## 原子種の (仮) Index を作成する
         ##
+        print("nion = %s" % self.nion)
+        print("dummy atoms_index = %s" % atoms_index)
+        #atoms_index = ['Fe','Ni','Co']
+        #atoms_index = ['N','O','Co', 'K']
+        atoms_index = ['Ba','O','Ti']
+
         index = 0
         self.atoms_j = np.zeros(self.natom,dtype=int)
         for j in range(self.nion):
@@ -139,6 +159,7 @@ class ReadRmcpotCfg(SAEnv.Method):
                #print atoms_j[index],index
                 index += 1
 
+        print("END of atoms index (1)")
         # 入力の原子情報基づく基本情報マトリックスの作成
         if atoms_index:
             # 入力原子情報に基づいて atoms_index を作成する
@@ -195,6 +216,7 @@ class ReadRmcpotCfg(SAEnv.Method):
             self.ion_local = []
 
 
+        print("END of atoms index (2)")
         ###############################################
         ## Read Internal Coordinate
         ##
@@ -310,7 +332,8 @@ if __name__ == '__main__':
     # Default & OptionParser
     cname = 'igzo'
 
-    atoms_index = ['In','Ga','Zn','O']
+    #atoms_index = ['In','Ga','Zn','O']
+    atoms_index = ['N','O','Ca','K']
     cfg = SAEnv.ReadRmcpotCfg(cname+'.cfg',atoms_index=atoms_index)
 #   print cfg.title
 #   print cfg.atoms
@@ -323,7 +346,9 @@ if __name__ == '__main__':
 #           cfg.position)
 
     # 擬似VASP5 設定
-    dummy   = "In Ga Zn O"
+    #dummy   = "In Ga Zn O"
+    #dummy   = "N O Ca K"
+    dummy   = "Ba O Ti"
     PV5FLAG = True  # 擬似VASP5 出力
 
     # VASP4+擬似VASP5 出力
