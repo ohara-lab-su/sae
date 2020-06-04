@@ -13,19 +13,29 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from .copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.1"
 
 ################################################################################
 
-# import sys
-# import os
+import sys
+import os
 # import re
 # import gzip
 # import numpy as np
-import StructureAnalysisEnvironment as SAEnv
+
+try:
+    # sys.path.append('..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
 
 
 # import SpaceGroupEnvironment as SGE

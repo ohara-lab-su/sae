@@ -23,16 +23,14 @@
 #
 ###############################################################################
 from __future__ import print_function
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2014-2015, Kengo NAKADA"
-__license__ = "MIT"
-#
+try:
+    from ..copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__ = "alpha"
 __version__ = "0.1.4"
+
 ###############################################################################
 # import sys
 # import os
@@ -40,6 +38,7 @@ __version__ = "0.1.4"
 # import gzip
 
 import numpy as np
+
 
 # import optparse
 

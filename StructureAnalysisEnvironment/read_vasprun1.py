@@ -47,7 +47,12 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from .copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
 
 __status__ = "alpha"
 __version__ = "0.0.4"
@@ -61,8 +66,11 @@ import gzip
 import xml.etree.ElementTree as ET
 
 import numpy as np
-import StructureAnalysisEnvironment as SAE
 
+try:
+    import StructureAnalysisEnvironment as SAE
+except:
+    import StructureAnalysisEnvironment as SAE
 
 # import SpaceGroupEnvironment as SGE
 

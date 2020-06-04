@@ -19,35 +19,41 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.1.1"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.1.1"
+
 ################################################################################
 
-#import sys
-#import gzip
-#import os
-#import re
+import sys
+# import gzip
+import os
+# import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadPwTdos(object):
 
-    def __init__(self,cname='input.dos'):
+    def __init__(self, cname='input.dos'):
 
-        self.datlines,self.num = SAE.read_dataline(cname)
-        self.nedos = self.num -1
+        self.datlines, self.num = SAEnv.read_dataline(cname)
+        self.nedos = self.num - 1
 
         if len(self.datlines[1].split()) > 3:
             self.ispin = 2
@@ -55,31 +61,31 @@ class ReadPwTdos(object):
             self.ispin = 1
 
         self.eng = np.zeros((self.nedos))
-        self.tdos_all = np.zeros((self.nedos,self.ispin))
-        self.inttdos_all = np.zeros((self.nedos,1))
+        self.tdos_all = np.zeros((self.nedos, self.ispin))
+        self.inttdos_all = np.zeros((self.nedos, 1))
 
         for i in range(self.nedos):
-            self.eng[i] = float(self.datlines[1+i].split()[0])
+            self.eng[i] = float(self.datlines[1 + i].split()[0])
             if self.ispin >= 2:
-                self.tdos_all[i,0] = float(self.datlines[1+i].split()[1])
-                self.tdos_all[i,1] = float(self.datlines[1+i].split()[2])
-                self.inttdos_all[i,0] = float(self.datlines[1+i].split()[3])
+                self.tdos_all[i, 0] = float(self.datlines[1 + i].split()[1])
+                self.tdos_all[i, 1] = float(self.datlines[1 + i].split()[2])
+                self.inttdos_all[i, 0] = float(self.datlines[1 + i].split()[3])
             else:
-                self.tdos_all[i,0] = float(self.datlines[1+i].split()[1])
-                self.inttdos_all[i,0] = float(self.datlines[1+i].split()[2])
+                self.tdos_all[i, 0] = float(self.datlines[1 + i].split()[1])
+                self.inttdos_all[i, 0] = float(self.datlines[1 + i].split()[2])
 
         # default spin=1
-        self.tdos = self.tdos_all[:,0]
-        self.inttdos = self.inttdos_all[:,0]
+        self.tdos = self.tdos_all[:, 0]
+        self.inttdos = self.inttdos_all[:, 0]
 
     def get_eng(self):
         return self.eng
 
-    def get_tdos(self,spin=0):
-        return self.tdos_all[:,spin]
+    def get_tdos(self, spin=0):
+        return self.tdos_all[:, spin]
 
-    def get_inttdos(self,spin=0):
-        return self.intdos_all[:,spin]
+    def get_inttdos(self, spin=0):
+        return self.intdos_all[:, spin]
 
     def get_ispin(self):
         return self.ispin
@@ -87,18 +93,20 @@ class ReadPwTdos(object):
     def get_nedos(self):
         return self.nedos
 
+
 ################################################################################
 def options():
     name = 'Fe.dos'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT', default=name,)
-    options,args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', default=name, )
+    options, args = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     return name
+
 
 ################################################################################
 if __name__ == '__main__':
@@ -112,5 +120,4 @@ if __name__ == '__main__':
     print("ISPIN %s" % str(dos.get_ispin()))
 
     for i in range(nedos):
-        print( " %11.8f %11.8f " %( eng[i],tdos[i] ))
-
+        print(" %11.8f %11.8f " % (eng[i], tdos[i]))

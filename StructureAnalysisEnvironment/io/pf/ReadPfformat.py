@@ -24,16 +24,15 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.2"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.2"
+
 ################################################################################
 
 import sys
@@ -43,250 +42,247 @@ import numpy as np
 
 import codecs
 
-#from __future__ import print_function
 
-#import re
-#import optparse
-#import copy
+# from __future__ import print_function
+
+# import re
+# import optparse
+# import copy
 
 ################################################################################
 class ReadPfformat(object):
 
-
     ############################################################################
     # read file
     #
-    def __init__(self,name):
+    def __init__(self, name):
         if os.path.exists(name):
-            GZIP=False
-        elif os.path.exists(name+".gz"):
-            GZIP=True
+            GZIP = False
+        elif os.path.exists(name + ".gz"):
+            GZIP = True
         else:
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+            sys.exit("STOP: " + name + " or " + name + ".gz file not found")
 
         try:
             if GZIP:
-                tmp = gzip.open(name+".gz")
+                tmp = gzip.open(name + ".gz")
             else:
                 tmp = open(name)
 
             datfile = tmp.read()
         except:
             tmp.close()
-            sys.exit("STOP: "+name+" does'nt open")
+            sys.exit("STOP: " + name + " does'nt open")
         finally:
             tmp.close()
 
         self.datlines = datfile.split('\n')
-        self.num = len(self.datlines) -1
-
+        self.num = len(self.datlines) - 1
 
         ########################################################################
         # read PF format
         #
-    
-        tmp       = self.datlines[0]  # 1H,I5,5X,T21,A5
-        self.IFCD = tmp[1:6]     # I5: フォーマット識別コード
-        self.BL0  = tmp[11:19]    # PF フォーマット外ヘッダデータ
-        self.BL   = tmp[20:25]   # A5: ステーション名
-    
-        tmp       = self.datlines[1]  # 1H,A14,2X,A14,A14
-        self.FN   = tmp[1:15]    # A14: データファイル名
-        self.YMD1 = tmp[17:31]   # A14: 開始日時
-        self.YMD2 = tmp[34:48]   # A14: 終了日時
-    
-        tmp       = self.datlines[2]    # 1H,A80
-        self.SAMP = str(tmp[1:80]) # A80: コメント
+
+        tmp = self.datlines[0]  # 1H,I5,5X,T21,A5
+        self.IFCD = tmp[1:6]  # I5: フォーマット識別コード
+        self.BL0 = tmp[11:19]  # PF フォーマット外ヘッダデータ
+        self.BL = tmp[20:25]  # A5: ステーション名
+
+        tmp = self.datlines[1]  # 1H,A14,2X,A14,A14
+        self.FN = tmp[1:15]  # A14: データファイル名
+        self.YMD1 = tmp[17:31]  # A14: 開始日時
+        self.YMD2 = tmp[34:48]  # A14: 終了日時
+
+        tmp = self.datlines[2]  # 1H,A80
+        self.SAMP = str(tmp[1:80])  # A80: コメント
         self.SAMP = self.SAMP.rstrip()
-    
-        tmp         = self.datlines[3]        # 1H,'**',F5.1,'**', 2X, F6.1, '**',F6.1,'**'
-        self.ERING  = float(tmp[8:13])   # F5.1: 電子(陽電子)ビームのエネルギー GeV 単位
+
+        tmp = self.datlines[3]  # 1H,'**',F5.1,'**', 2X, F6.1, '**',F6.1,'**'
+        self.ERING = float(tmp[8:13])  # F5.1: 電子(陽電子)ビームのエネルギー GeV 単位
         self.CRING1 = float(tmp[19:25])  # F6.1: 備蓄電流
         self.CRING2 = float(tmp[31:37])  # F6.1
-    
-        tmp         = self.datlines[4]        # 1H,'12345678',3X,A10,4X,'123',F8.5,'12',4X,'*',F9.5
-        self.XTAL   = tmp[10:20]         # A10:  分光結晶面(Mono)
-        self.D      = float(tmp[27:35])  # F8.5: 分光結晶の格子面間隔 (Ang)
-        self.PANG   = float(tmp[55:64])  # F9.5: 測定開始時前の現在角(Initial angle) (deg)
-    
-        tmp         = self.datlines[5] # 1H,A5,4X,A13,'12',I2,'1',3X,'Repetition=',I3,5X,'*',I5A
-    #   self.BL     = tmp[1:6]
-        self.CMODE  = str(tmp[10:23])  # A13: 測定モード Transmisson, Fluorescene 等
-        self.CMODE  = self.CMODE.lstrip()
 
-        self.MODE   = int(tmp[24:26])  # I2:  測定モードのコード 2:透過法, 3:蛍光法, 4:電子吸量法
-        self.IREP   = int(tmp[41:44])  # I3:  測定の繰り返し回数(Repetition)
-        self.NPT    = int(tmp[56:61])  # I5:  1測定中のデーター数(Points)
-    
-        tmp         = self.datlines[6]
-        self.PFN    = tmp[14:28]       # A14: 使用したパラメータファイル名
-        self.IAE    = int(tmp[42:43])  # I1:  パラメーターの単位
-        self.NBLK   = int(tmp[56:61])  # I5:  ブロック数
-        
-        tmp    = self.datlines[7]
-        tmp    = self.datlines[8]
-    
-        self.K     = np.zeros((self.NBLK),dtype='5S')
-        self.block = np.zeros((self.NBLK,2))
-        self.STEP  = np.zeros((self.NBLK))
+        tmp = self.datlines[4]  # 1H,'12345678',3X,A10,4X,'123',F8.5,'12',4X,'*',F9.5
+        self.XTAL = tmp[10:20]  # A10:  分光結晶面(Mono)
+        self.D = float(tmp[27:35])  # F8.5: 分光結晶の格子面間隔 (Ang)
+        self.PANG = float(tmp[55:64])  # F9.5: 測定開始時前の現在角(Initial angle) (deg)
+
+        tmp = self.datlines[5]  # 1H,A5,4X,A13,'12',I2,'1',3X,'Repetition=',I3,5X,'*',I5A
+        #   self.BL     = tmp[1:6]
+        self.CMODE = str(tmp[10:23])  # A13: 測定モード Transmisson, Fluorescene 等
+        self.CMODE = self.CMODE.lstrip()
+
+        self.MODE = int(tmp[24:26])  # I2:  測定モードのコード 2:透過法, 3:蛍光法, 4:電子吸量法
+        self.IREP = int(tmp[41:44])  # I3:  測定の繰り返し回数(Repetition)
+        self.NPT = int(tmp[56:61])  # I5:  1測定中のデーター数(Points)
+
+        tmp = self.datlines[6]
+        self.PFN = tmp[14:28]  # A14: 使用したパラメータファイル名
+        self.IAE = int(tmp[42:43])  # I1:  パラメーターの単位
+        self.NBLK = int(tmp[56:61])  # I5:  ブロック数
+
+        tmp = self.datlines[7]
+        tmp = self.datlines[8]
+
+        self.K = np.zeros((self.NBLK), dtype='5S')
+        self.block = np.zeros((self.NBLK, 2))
+        self.STEP = np.zeros((self.NBLK))
         self.RTIME = np.zeros((self.NBLK))
-        self.NUM   = np.zeros((self.NBLK))
+        self.NUM = np.zeros((self.NBLK))
         for i in range(self.NBLK):
-            tmp        = self.datlines[9+i] # 1H, I5, 5X, 2F10.2, F13.2, F11.2, I10
-            self.K[i]       = tmp[1:6]      # I5: ブロックの番号(K)
-            self.block[i,0] = tmp[11:21]    # F10.5: ブロックの区切りの角度(度単位)orエネルギー単位
-            self.block[i,1] = tmp[21:31]    # F10.5: ブロックの区切りの角度(度単位)orエネルギー単位
-            self.STEP[i]    = tmp[31:44]    # F13.2 or 1PG13.6E: データ点毎の送り角度/エネルギー
-            self.RTIME[i]   = tmp[44:55]    # F11.2: ブロック点内の測定時間
-            self.NUM[i]     = tmp[55:65]    # I10: ブロック内のデータ点数
+            tmp = self.datlines[9 + i]  # 1H, I5, 5X, 2F10.2, F13.2, F11.2, I10
+            self.K[i] = tmp[1:6]  # I5: ブロックの番号(K)
+            self.block[i, 0] = tmp[11:21]  # F10.5: ブロックの区切りの角度(度単位)orエネルギー単位
+            self.block[i, 1] = tmp[21:31]  # F10.5: ブロックの区切りの角度(度単位)orエネルギー単位
+            self.STEP[i] = tmp[31:44]  # F13.2 or 1PG13.6E: データ点毎の送り角度/エネルギー
+            self.RTIME[i] = tmp[44:55]  # F11.2: ブロック点内の測定時間
+            self.NUM[i] = tmp[55:65]  # I10: ブロック内のデータ点数
         line = 8 + self.NBLK
-    
-        tmp       = self.datlines[line+1]   # 1H,'**',I2,'*', 5X,'**',I2
-        line      = line + 1
-        self.ICA  = int(tmp[7:9])      # I2: 測定に用いラスケーラ(1:CAMAC, 0:ORTEC974, -1:novice mode)
-        self.NDCH = int(tmp[21:23])    # I2: 測定に用いたでたチャンネルの数
-    
+
+        tmp = self.datlines[line + 1]  # 1H,'**',I2,'*', 5X,'**',I2
+        line = line + 1
+        self.ICA = int(tmp[7:9])  # I2: 測定に用いラスケーラ(1:CAMAC, 0:ORTEC974, -1:novice mode)
+        self.NDCH = int(tmp[21:23])  # I2: 測定に用いたでたチャンネルの数
+
         #####################
         # for CAMAC scaler
         #
         if self.ICA > 0:
-     
-            tmp  = self.datlines[line+1]  # Mode
+
+            tmp = self.datlines[line + 1]  # Mode
             line = line + 1
             # MODEM: Jチェンネルの測定モード
             #         1:I0, 2:透過, 3:蛍光, 4:電子吸量, 5:その他
-            self.MODEM = np.zeros((self.NDCH,2),dtype=int)
-            self.OFFS  = np.zeros((self.NDCH,2),dtype=float)
-    
+            self.MODEM = np.zeros((self.NDCH, 2), dtype=int)
+            self.OFFS = np.zeros((self.NDCH, 2), dtype=float)
+
             for j in range(self.NDCH):
-                tmp             = self.datlines[line+1]
-                a10             = int((j-1)*10)
-                start           = a10+30
-                end             = a10+40
-                self.MODEM[j,0] = tmp[start:end]
+                tmp = self.datlines[line + 1]
+                a10 = int((j - 1) * 10)
+                start = a10 + 30
+                end = a10 + 40
+                self.MODEM[j, 0] = tmp[start:end]
             for j in range(self.NDCH):
-                tmp             = self.datlines[line+1]
-                start           = end
-                end             = start+10
-                self.MODEM[j,1] = tmp[start:end]
+                tmp = self.datlines[line + 1]
+                start = end
+                end = start + 10
+                self.MODEM[j, 1] = tmp[start:end]
             line = line + 1
-    
+
             for j in range(self.NDCH):
-                tmp            = self.datlines[line+1]
-                a10            = int((j-1)*10)
-                start          = a10+30
-                end            = a10+40
-                self.OFFS[j,0] = tmp[start:end]
+                tmp = self.datlines[line + 1]
+                a10 = int((j - 1) * 10)
+                start = a10 + 30
+                end = a10 + 40
+                self.OFFS[j, 0] = tmp[start:end]
             for j in range(self.NDCH):
-                tmp            = self.datlines[line+1]
-                start          = end
-                end            = start+10
-                self.OFFS[j,1] = tmp[start:end]
+                tmp = self.datlines[line + 1]
+                start = end
+                end = start + 10
+                self.OFFS[j, 1] = tmp[start:end]
             line = line + 1
-    
-        
+
         #####################
         # for Ortec 974
         #
         if self.ICA <= 0:
-    
-            tmp  = self.datlines[line+1]  # Mode
+
+            tmp = self.datlines[line + 1]  # Mode
             line = line + 1
-            self.MODEM = np.zeros((self.NDCH),dtype=int)
-            self.OFFS  = np.zeros((self.NDCH),dtype=float)
-    
-            for j in range(1,self.NDCH):
-                tmp           = self.datlines[line+1]  # Mode
-                a10           = int((j-1)*10)
-                self.MODEM[j] = tmp[a10+30:a10+40]
+            self.MODEM = np.zeros((self.NDCH), dtype=int)
+            self.OFFS = np.zeros((self.NDCH), dtype=float)
+
+            for j in range(1, self.NDCH):
+                tmp = self.datlines[line + 1]  # Mode
+                a10 = int((j - 1) * 10)
+                self.MODEM[j] = tmp[a10 + 30:a10 + 40]
             line = line + 1
-    
-            for j in range(1,self.NDCH):
-                tmp          = self.datlines[line+1]  # Mode
-                a10          = int((j-1)*10)
-                self.OFFS[j] = tmp[a10+30:a10+40]
+
+            for j in range(1, self.NDCH):
+                tmp = self.datlines[line + 1]  # Mode
+                a10 = int((j - 1) * 10)
+                self.OFFS[j] = tmp[a10 + 30:a10 + 40]
             line = line + 1
-    
+
         #####################
         # DATA
         self.ANGM = np.zeros((self.NPT))
         self.ANGE = np.zeros((self.NPT))
-        self.DWT  = np.zeros((self.NPT))
-        self.IDTM = np.zeros((self.NPT,self.NDCH))
-        
+        self.DWT = np.zeros((self.NPT))
+        self.IDTM = np.zeros((self.NPT, self.NDCH))
+
         line = line + 1
         for i in range(self.NPT):
-            tmp          = self.datlines[line+i]
+            tmp = self.datlines[line + i]
             self.ANGM[i] = tmp[0:10]
             self.ANGE[i] = tmp[10:20]
-            self.DWT[i]  = tmp[20:30]
+            self.DWT[i] = tmp[20:30]
             if self.ICA > 0:
                 self.NDCH0 = 0
             if self.ICA <= 0:
                 self.NDCH0 = 1
-            for j in range(self.NDCH0,self.NDCH):
-                a10           = int((j-1)*10)
-                self.IDTM[i,j] = tmp[a10+30:a10+40]
-
+            for j in range(self.NDCH0, self.NDCH):
+                a10 = int((j - 1) * 10)
+                self.IDTM[i, j] = tmp[a10 + 30:a10 + 40]
 
     ############################################################################
     # write Header of PF format
     #
-    def write_head(self,*args):
+    def write_head(self, *args):
 
         num_args = len(args)
         if num_args >= 1:
             outfile = args[0]
             try:
-#               out = codecs.open(outfile,'w','utf-8')
-                out = codecs.open(outfile,'a','utf-8')
+                #               out = codecs.open(outfile,'w','utf-8')
+                out = codecs.open(outfile, 'a', 'utf-8')
             except:
                 out.close()
-                sys.exit("STOP:"+outfile+" can'nt open")
+                sys.exit("STOP:" + outfile + " can'nt open")
         else:
             out = sys.stdout
 
-        print("ステーション名                  :",self.BL, file=out)
-        print("測定開始日                      :",self.YMD1, file=out)
-        print("測定終了日時                    :",self.YMD2, file=out)
-        print("コメント(試料名)                :",self.SAMP, file=out)
-        print("電子(陽電子)ビームのエネルギー  :",str(self.ERING)+" GeV", file=out)
-        print("蓄積電流(測定開始時)            :",str(self.CRING1)+" mA", file=out)
-        print("蓄積電流(測定終了時)            :",str(self.CRING2)+" mA", file=out)
-        print("分光結晶面                      :",self.XTAL, file=out)
-        print("分光結晶面の格子面間隔          :",str(self.D)+" Ang", file=out)
-        print("測定開始前の現在角              :",str(self.PANG)+" Deg", file=out)
-        print("測定モード                      :",self.CMODE, file=out)
+        print("ステーション名                  :", self.BL, file=out)
+        print("測定開始日                      :", self.YMD1, file=out)
+        print("測定終了日時                    :", self.YMD2, file=out)
+        print("コメント(試料名)                :", self.SAMP, file=out)
+        print("電子(陽電子)ビームのエネルギー  :", str(self.ERING) + " GeV", file=out)
+        print("蓄積電流(測定開始時)            :", str(self.CRING1) + " mA", file=out)
+        print("蓄積電流(測定終了時)            :", str(self.CRING2) + " mA", file=out)
+        print("分光結晶面                      :", self.XTAL, file=out)
+        print("分光結晶面の格子面間隔          :", str(self.D) + " Ang", file=out)
+        print("測定開始前の現在角              :", str(self.PANG) + " Deg", file=out)
+        print("測定モード                      :", self.CMODE, file=out)
         if self.MODE == 2:
             print("測定モードのコード              : 透過法", file=out)
         if self.MODE == 3:
             print("測定モードのコード              : 蛍光法", file=out)
         if self.MODE == 4:
             print("測定モードのコード              : 電子吸量法", file=out)
-        print("測定の繰り返し回数              :",self.IREP, file=out)
-        print("1測定中のデータ点数             :",self.NPT, file=out)
-        print("使用したパラメータファイル名    :",self.PFN, file=out)
+        print("測定の繰り返し回数              :", self.IREP, file=out)
+        print("1測定中のデータ点数             :", self.NPT, file=out)
+        print("使用したパラメータファイル名    :", self.PFN, file=out)
         if self.IAE == 1:
             print("パラメータの単位                : 角度", file=out)
         if self.IAE == 2:
             print("パラメータの単位                : エネルギー", file=out)
-        print("ブロック数                      :",self.NBLK, file=out)
+        print("ブロック数                      :", self.NBLK, file=out)
 
         print("", file=out)
         if self.IAE == 1:
-            print(" "+
-                    "Block      Init-ang  final-ang     Step/deg     Time/s       Num", file=out)
+            print(" " +
+                  "Block      Init-ang  final-ang     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
                 print(" %5d     %10.5f%10.5f%13.6f%11.2f%10d"
-                         %( i+1 , self.block[i,0], self.block[i,1],
-                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
+                      % (i + 1, self.block[i, 0], self.block[i, 1],
+                         self.STEP[i], self.RTIME[i], self.NUM[i]), file=out)
         if self.IAE == 2:
-            print(" "+
-                    "Block      Init-ang  final-Eng     Step/deg     Time/s       Num", file=out)
+            print(" " +
+                  "Block      Init-ang  final-Eng     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
                 print(" %5d     %10.5f%10.5f%13.2f%11.2f%10d"
-                         %( i+1 , self.block[i,0], self.block[i,1],
-                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
+                      % (i + 1, self.block[i, 0], self.block[i, 1],
+                         self.STEP[i], self.RTIME[i], self.NUM[i]), file=out)
 
         print("", file=out)
         if self.ICA == 1:
@@ -295,111 +291,108 @@ class ReadPfformat(object):
             print("測定に用いたスケーラ            : ORTEC 974", file=out)
         if self.ICA == -1:
             print("測定に用いたスケーラ            : novice mode", file=out)
-        print("ブロック数                      :",self.NBLK, file=out)
-        print("測定に用いたデータチャンネルの数:",self.NDCH, file=out)
+        print("ブロック数                      :", self.NBLK, file=out)
+        print("測定に用いたデータチャンネルの数:", self.NDCH, file=out)
 
         print("", file=out)
-        print(" "+"Angle(c)  Angle(o)    time/s", file=out, end="")
+        print(" " + "Angle(c)  Angle(o)    time/s", file=out, end="")
         if self.ICA == 0:
-            for j in range(self.NDCH0,self.NDCH):
-                print("%10d" %( j+1 ), file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10d" % (j + 1), file=out, end="")
             print("", file=out)
-            print(" "+"    Mode         0         0", file=out, end="")
-            for j in range(self.NDCH0,self.NDCH):
-                print("%10d" %( self.MODEM[j] ), file=out, end="")
+            print(" " + "    Mode         0         0", file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10d" % (self.MODEM[j]), file=out, end="")
             print("", file=out)
-            print(" "+"  Offset         0         0", file=out, end="")
-            for j in range(self.NDCH0,self.NDCH):
-                print("%10.3f" %( self.OFFS[j] ), file=out, end="")
+            print(" " + "  Offset         0         0", file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10.3f" % (self.OFFS[j]), file=out, end="")
             print("", file=out)
 
         out.close()
 
-
     ############################################################################
     # write PF format
     #
-    def write_pf(self,*args):    
+    def write_pf(self, *args):
 
         num_args = len(args)
         if num_args >= 1:
             outfile = args[0]
             try:
-#               out = codecs.open(outfile,'w','utf-8')
-                out = codecs.open(outfile,'a','utf-8')
+                #               out = codecs.open(outfile,'w','utf-8')
+                out = codecs.open(outfile, 'a', 'utf-8')
             except:
                 out.close()
-                sys.exit("STOP:"+outfile+" can'nt open")
+                sys.exit("STOP:" + outfile + " can'nt open")
         else:
             out = sys.stdout
 
         # write DATA
-        print(" %5s     %8s %5s"   %( self.IFCD, self.BL0, self.BL ), file=out)
-        print(" %14s  %14s - %14s" %( self.FN, self.YMD1, self.YMD2 ), file=out)
-        print(" "+self.SAMP, file=out)
+        print(" %5s     %8s %5s" % (self.IFCD, self.BL0, self.BL), file=out)
+        print(" %14s  %14s - %14s" % (self.FN, self.YMD1, self.YMD2), file=out)
+        print(" " + self.SAMP, file=out)
         print(" Ring : %5.1f GeV  %6.1f mA - %6.1f mA"
-                                   %( self.ERING,self.CRING1,self.CRING2 ), file=out)
+              % (self.ERING, self.CRING1, self.CRING2), file=out)
         print(" Mono :   %10s    D= %8.5f A    Initial angle=%9.5f deg"
-                                   %( self.XTAL, self.D, self.PANG ), file=out)
+              % (self.XTAL, self.D, self.PANG), file=out)
         print(" %5s    %13s(%2d)   Repetition=%3d     Points=%5d"
-                                   %( self.BL,self.CMODE,self.MODE,self.IREP,self.NPT ), file=out)
+              % (self.BL, self.CMODE, self.MODE, self.IREP, self.NPT), file=out)
         if self.IAE == 1:
             print(" Param file : %14s  angle axis (%1d)     Block =%5d"
-                                       %( self.PFN, self.IAE,self.NBLK ), file=out)
+                  % (self.PFN, self.IAE, self.NBLK), file=out)
         if self.IAE == 2:
             print(" Param file : %14s  energy axis (%1d)     Block =%5d"
-                                       %( self.PFN, self.IAE,self.NBLK ), file=out)
+                  % (self.PFN, self.IAE, self.NBLK), file=out)
         print("", file=out)
         if self.IAE == 1:
-            print(" "+
-                    "Block      Init-ang  final-ang     Step/deg     Time/s       Num", file=out)
+            print(" " +
+                  "Block      Init-ang  final-ang     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
                 print(" %5d     %10.5f%10.5f%13.6f%11.2f%10d"
-                         %( i+1 , self.block[i,0], self.block[i,1],
-                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
+                      % (i + 1, self.block[i, 0], self.block[i, 1],
+                         self.STEP[i], self.RTIME[i], self.NUM[i]), file=out)
         if self.IAE == 2:
-            print(" "+
-                    "Block      Init-ang  final-Eng     Step/deg     Time/s       Num", file=out)
+            print(" " +
+                  "Block      Init-ang  final-Eng     Step/deg     Time/s       Num", file=out)
             for i in range(self.NBLK):
                 print(" %5d     %10.5f%10.5f%13.2f%11.2f%10d"
-                         %( i+1 , self.block[i,0], self.block[i,1],
-                            self.STEP[i], self.RTIME[i], self.NUM[i] ), file=out)
+                      % (i + 1, self.block[i, 0], self.block[i, 1],
+                         self.STEP[i], self.RTIME[i], self.NUM[i]), file=out)
 
         if self.ICA > 0:
             self.ICA_CHAR = 'CAMCA'
         if self.ICA <= 0:
             self.ICA_CHAR = 'Ortec'
-        print(" %5s(%2d)     NDCH =%2d" %(self.ICA_CHAR,self.ICA,self.NDCH ), file=out)
+        print(" %5s(%2d)     NDCH =%2d" % (self.ICA_CHAR, self.ICA, self.NDCH), file=out)
 
-        print("  "+"Angle(c)  Angle(o)    time/s", file=out, end="")
+        print("  " + "Angle(c)  Angle(o)    time/s", file=out, end="")
         if self.ICA == 0:
-            for j in range(self.NDCH0,self.NDCH):
-                print("%10d" %( j+1 ), file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10d" % (j + 1), file=out, end="")
             print("")
-            print("  "+"    Mode         0         0", file=out, end="")
-            for j in range(self.NDCH0,self.NDCH):
-                print("%10d" %( self.MODEM[j] ), file=out, end="")
+            print("  " + "    Mode         0         0", file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10d" % (self.MODEM[j]), file=out, end="")
             print("", file=out)
-            print("  "+"  Offset         0         0", file=out, end="")
-            for j in range(self.NDCH0,self.NDCH):
-                print("%10.3f" %( self.OFFS[j] ), file=out, end="")
+            print("  " + "  Offset         0         0", file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10.3f" % (self.OFFS[j]), file=out, end="")
             print("", file=out)
 
         for i in range(self.NPT):
             print("%10.5f%10.5f%10.3f"
-                    %( self.ANGM[i],self.ANGE[i],self.DWT[i] ), file=out, end="")
-            for j in range(self.NDCH0,self.NDCH):
-                 print("%10d" %( self.IDTM[i,j] ), file=out, end="")
+                  % (self.ANGM[i], self.ANGE[i], self.DWT[i]), file=out, end="")
+            for j in range(self.NDCH0, self.NDCH):
+                print("%10d" % (self.IDTM[i, j]), file=out, end="")
             print("", file=out)
 
 
 ################################################################################
 if __name__ == '__main__':
-
     pf = ReadPfformat('Cu-foil_10ms.dat')
 
-#   pf.write_pf()
+    #   pf.write_pf()
     pf.write_head()
-        
-################################################################################
 
+################################################################################

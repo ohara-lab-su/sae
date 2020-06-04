@@ -15,27 +15,34 @@
 #
 ###############################################################################
 from __future__ import print_function
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2015, Kengo NAKADA"
-__license__ = "MIT"
-#
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ###############################################################################
 
-#import sys
-#import gzip
-#import os
+import sys
+# import gzip
+import os
 import re
-#import optparse
-#import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+# import optparse
+# import numpy as np
+
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ###############################################################################
 
@@ -44,7 +51,7 @@ class ReadFdmFdmfile(object):
 
     def __init__(self, cname='fdmfile', suffix='.txt'):
 
-        name = cname+suffix
+        name = cname + suffix
 
         self.datlines, self.num = SAEnv.read_dataline1(name)
 
@@ -56,7 +63,7 @@ class ReadFdmFdmfile(object):
 
                 if bool(re.compile(r'^[0-9]').match(_line)):
                     if _line == '1':
-                        self.filout = self.datlines[i+1].split()[0]
+                        self.filout = self.datlines[i + 1].split()[0]
                     else:
                         self.filout = None
                     break
@@ -64,9 +71,8 @@ class ReadFdmFdmfile(object):
     def get_filout(self):
         return self.filout
 
+
 ###############################################################################
 if __name__ == '__main__':
-
     conv = ReadFdmFdmfile()
     print("%s" % str(conv.filout))
-

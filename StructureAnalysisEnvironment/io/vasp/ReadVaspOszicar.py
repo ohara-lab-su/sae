@@ -25,16 +25,15 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.4"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.4"
+
 ################################################################################
 
 import sys
@@ -43,40 +42,41 @@ import os
 import re
 import numpy as np
 
-#import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadVaspOszicar(object):
 
-    def __init__(self,cname):
+    def __init__(self, cname):
 
         if os.path.exists(cname):
-            GZIP=False
-        elif os.path.exists(cname+".gz"):
-            GZIP=True
+            GZIP = False
+        elif os.path.exists(cname + ".gz"):
+            GZIP = True
         else:
-            sys.exit("STOP: "+cname+" or "+cname+".gz file not found")
+            sys.exit("STOP: " + cname + " or " + cname + ".gz file not found")
 
         try:
             if GZIP:
-                tmp = gzip.open(cname+".gz")
+                tmp = gzip.open(cname + ".gz")
             else:
                 tmp = open(cname)
             datfile = tmp.read()
         except:
             tmp.close()
-            sys.exit("STOP: "+cname+" or "+cname+".gz does'nt open")
+            sys.exit("STOP: " + cname + " or " + cname + ".gz does'nt open")
         finally:
             tmp.close()
 
         self.datlines = datfile.split('\n')
-        self.num = len(self.datlines) -1
+        self.num = len(self.datlines) - 1
 
     # get_n_ion_loop (旧名) get_iter_num
     # 実際に計算した ION iter 数をゲットする
     def get_n_ion_loop(self):
-        iter_reg = re.compile('.*F=',re.IGNORECASE)
+        iter_reg = re.compile('.*F=', re.IGNORECASE)
         for i in range(self.num):
             if bool(iter_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
@@ -98,30 +98,30 @@ class ReadVaspOszicar(object):
     def get_temperature(self):
         MD_FLAG = self.get_md_mode()
         if MD_FLAG:
-           n_ion_loop = self.get_n_ion_loop()
-           self.temperature = np.zeros(n_ion_loop)
-           iter_reg = re.compile('.*T=',re.IGNORECASE)
-           j = 0
-           for i in range(self.num):
-               if bool(iter_reg.match(self.datlines[i])):
-                   tmp = self.datlines[i].split()
-                   self.temperature[j] = float(tmp[2])
-                   j += 1
+            n_ion_loop = self.get_n_ion_loop()
+            self.temperature = np.zeros(n_ion_loop)
+            iter_reg = re.compile('.*T=', re.IGNORECASE)
+            j = 0
+            for i in range(self.num):
+                if bool(iter_reg.match(self.datlines[i])):
+                    tmp = self.datlines[i].split()
+                    self.temperature[j] = float(tmp[2])
+                    j += 1
 
         return self.temperature
 
     def get_etotal(self):
         MD_FLAG = self.get_md_mode()
         if MD_FLAG:
-           n_ion_loop = self.get_n_ion_loop()
-           self.ETOTAL = np.zeros(n_ion_loop)
-           iter_reg = re.compile('.*E=',re.IGNORECASE)
-           j = 0
-           for i in range(self.num):
-               if bool(iter_reg.match(self.datlines[i])):
-                   tmp = self.datlines[i].split()
-                   self.ETOTAL[j] = float(tmp[4])
-                   j += 1
+            n_ion_loop = self.get_n_ion_loop()
+            self.ETOTAL = np.zeros(n_ion_loop)
+            iter_reg = re.compile('.*E=', re.IGNORECASE)
+            j = 0
+            for i in range(self.num):
+                if bool(iter_reg.match(self.datlines[i])):
+                    tmp = self.datlines[i].split()
+                    self.ETOTAL[j] = float(tmp[4])
+                    j += 1
 
         return self.ETOTAL
 
@@ -130,14 +130,15 @@ class ReadVaspOszicar(object):
 if __name__ == '__main__':
 
     import optparse
+
     name = 'OSZICAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    options, args = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     oszicar = ReadVaspOszicar(name)
 
@@ -151,5 +152,4 @@ if __name__ == '__main__':
         etotal = oszicar.get_etotal()
 
         for i in range(n_ion_loop):
-            print("%d %s %s" % (i+1, str(temperature[i]), str(etotal[i])))
-
+            print("%d %s %s" % (i + 1, str(temperature[i]), str(etotal[i])))

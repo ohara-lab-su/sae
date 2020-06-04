@@ -16,36 +16,43 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
-#import sys
-#import os
+import sys
+import os
 import re
-#import gzip
-#import numpy as np
 
-#import optparse
+# import gzip
+# import numpy as np
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+# import optparse
+
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadWienOutputt(object):
 
     ###############################################
     ## init and Read POSCAR
-    def __init__(self,name):
-        self.datlines,self.num = SAE.read_dataline(name)
+    def __init__(self, name):
+        self.datlines, self.num = SAEnv.read_dataline(name)
 
         jatom_txt = '.*JATOM'
         jatom_reg = re.compile(jatom_txt)
@@ -53,11 +60,10 @@ class ReadWienOutputt(object):
         self.isplits = []
         for i in range(self.num):
             if bool(jatom_reg.match(self.datlines[i])):
+                jatom = re.sub(jatom_txt, '', self.datlines[i])
+                jatom = int(re.sub(' *MULT=.*$', '', jatom))
 
-                jatom = re.sub(jatom_txt,'',self.datlines[i])
-                jatom = int(re.sub(' *MULT=.*$','',jatom))
-
-                isplit = re.sub('.*ISPLIT=','',self.datlines[i]).split()[1].split(',')
+                isplit = re.sub('.*ISPLIT=', '', self.datlines[i]).split()[1].split(',')
                 self.isplits.append(isplit)
 
         self.nion = jatom
@@ -68,12 +74,11 @@ class ReadWienOutputt(object):
     def get_wien_orbital(self):
         return self.isplits
 
+
 ################################################################################
 if __name__ == '__main__':
-
     name = 'Cu.outputt'
     tetra = ReadWienOutputt(name)
 
     print(tetra.nion)
     print(tetra.isplits[0])
-

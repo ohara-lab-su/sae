@@ -28,16 +28,15 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.2"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.2"
+
 ################################################################################
 
 import os
@@ -46,34 +45,36 @@ import gzip
 import xml.etree.ElementTree as ET
 
 import numpy as np
-#import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
 
-#import re
-#from copy import deepcopy
+
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+
+# import re
+# from copy import deepcopy
 
 
 ################################################################################
 class ReadVaspVasprun(object):
 
-    def __init__(self,name='vasprun.xml'):
+    def __init__(self, name='vasprun.xml'):
 
         if os.path.exists(name):
             f = name
             ZIP_FLAG = False
-        elif os.path.exists(name+".gz"):
-            f = gzip.open(name+".gz")
+        elif os.path.exists(name + ".gz"):
+            f = gzip.open(name + ".gz")
             ZIP_FLAG = True
         else:
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+            sys.exit("STOP: " + name + " or " + name + ".gz file not found")
 
         try:
             tree = ET.parse(f)
         except:
             if ZIP_FLAG:
-                sys.exit("can't parse "+XMLFILE+".gz")
+                sys.exit("can't parse " + XMLFILE + ".gz")
             else:
-                sys.exit("can't parse "+XMLFILE)
+                sys.exit("can't parse " + XMLFILE)
         finally:
             if ZIP_FLAG:
                 f.close()
@@ -92,7 +93,7 @@ class ReadVaspVasprun(object):
         version = self.root.findtext("generator/i[@name='version']")
         subversion = self.root.findtext("generator/i[@name='subversion']")
 
-        GENERATOR = [program,version,subversion]
+        GENERATOR = [program, version, subversion]
         return [GENERATOR]
 
     ###################################################
@@ -102,18 +103,17 @@ class ReadVaspVasprun(object):
         INCAR_TAG = []
         INCAR_TEXT = []
         for i in self.root.find('incar'):
-               INCAR_TAG.append(i.attrib.get("name"))
-               INCAR_TEXT.append(i.text)
+            INCAR_TAG.append(i.attrib.get("name"))
+            INCAR_TEXT.append(i.text)
 
-        INCAR = [INCAR_TAG,INCAR_TEXT]
+        INCAR = [INCAR_TAG, INCAR_TEXT]
         return [INCAR]
-
 
     ###################################################
     # from kpoints
     def get_kpoints(self):
         generation = self.root.find('kpoints/generation').get('param')
-        divition =  self.root.find("kpoints/generation/v[@name='divisions']").text
+        divition = self.root.find("kpoints/generation/v[@name='divisions']").text
 
         KPOINTS = []
         KPOINTS.append("K-POINTS")
@@ -125,7 +125,6 @@ class ReadVaspVasprun(object):
 
         return [KPOINTS]
 
-
     ###################################################
     # Get Number of atom
     def get_natom(self):
@@ -133,26 +132,25 @@ class ReadVaspVasprun(object):
         return self.natom
 
     def get_nion(self):
-        self.nion = int(self.root.findtext("atominfo/types"))   # types
+        self.nion = int(self.root.findtext("atominfo/types"))  # types
         return self.nion
-
 
     ###################################################
     # atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
     # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
     def get_types(self):
-#       NION = self.nion()
+        #       NION = self.nion()
         NION = self.get_nion()
-        atoms = np.zeros(NION,dtype=int)
-        atoms_index = np.zeros(NION,dtype='S2')
+        atoms = np.zeros(NION, dtype=int)
+        atoms_index = np.zeros(NION, dtype='S2')
         number = 0
         local_nion = 1
         for es in self.root.findall("atominfo/array[@name='atoms']/set/rc"):
-            index_FLAG=True
+            index_FLAG = True
             for rc in es:
                 if index_FLAG:
                     name = str(rc.text).strip()
-                    index_FLAG=False
+                    index_FLAG = False
                 else:
                     number_tmp = int(rc.text)
                     if number_tmp == number:
@@ -160,10 +158,10 @@ class ReadVaspVasprun(object):
                     else:
                         local_nion = 1
                         number = number_tmp
-            atoms[number-1] = local_nion
-            atoms_index[number-1] = name
+            atoms[number - 1] = local_nion
+            atoms_index[number - 1] = name
 
-        TYPES = atoms,atoms_index
+        TYPES = atoms, atoms_index
         return TYPES
 
     def get_atoms(self):
@@ -179,7 +177,7 @@ class ReadVaspVasprun(object):
         nion = self.get_nion()
         atoms = self.get_atoms()
         j = 0
-        atoms_j = np.zeros(natom,dtype=int)
+        atoms_j = np.zeros(natom, dtype=int)
         for ion in range(nion):
             for atom in range(atoms[ion]):
                 atoms_j[j] = ion
@@ -189,9 +187,9 @@ class ReadVaspVasprun(object):
     def get_atoms_index_j(self):
         natom = self.get_natom()
         nion = self.get_nion()
-        atoms,atoms_index = self.get_types()
+        atoms, atoms_index = self.get_types()
         j = 0
-        atoms_index_j = np.zeros(natom,dtype='S2')
+        atoms_index_j = np.zeros(natom, dtype='S2')
         for ion in range(nion):
             for atom in range(atoms[ion]):
                 atoms_index_j[j] = atoms_index[ion]
@@ -209,15 +207,15 @@ class ReadVaspVasprun(object):
     #     t3 = a13 a23 a33  ! lattice vector t3
     #
     def get_t_initial(self):
-        t_initial = np.zeros((3,3))
-        j=0
-        for e in self.root.find(\
+        t_initial = np.zeros((3, 3))
+        j = 0
+        for e in self.root.find( \
                 "structure[@name='initialpos']/crystal/varray[@name='basis']"):
             tmp = e.text.split()
-            t_initial[0,j] = tmp[0]
-            t_initial[1,j] = tmp[1]
-            t_initial[2,j] = tmp[2]
-           #print t_initial[0,j],t_initial[1,j],t_initial[2,j]
+            t_initial[0, j] = tmp[0]
+            t_initial[1, j] = tmp[1]
+            t_initial[2, j] = tmp[2]
+            # print t_initial[0,j],t_initial[1,j],t_initial[2,j]
             j += 1
 
         return [t_initial]
@@ -225,17 +223,17 @@ class ReadVaspVasprun(object):
     ###################################################
     # [initial] [position]
     def get_position_initial(self):
-#       NATOM = self.natom()
+        #       NATOM = self.natom()
         NATOM = self.get_natom()
-        position_initial = np.zeros((NATOM,3))
-        j=0
-        for e in self.root.find(\
+        position_initial = np.zeros((NATOM, 3))
+        j = 0
+        for e in self.root.find( \
                 "structure[@name='initialpos']/varray[@name='positions']"):
             tmp = e.text.split()
-            position_initial[j,0] = tmp[0]
-            position_initial[j,1] = tmp[1]
-            position_initial[j,2] = tmp[2]
-           #print position_initial[j,0],position_initial[j,1],position_initial[j,2]
+            position_initial[j, 0] = tmp[0]
+            position_initial[j, 1] = tmp[1]
+            position_initial[j, 2] = tmp[2]
+            # print position_initial[j,0],position_initial[j,1],position_initial[j,2]
             j += 1
 
         return [position_initial]
@@ -243,36 +241,36 @@ class ReadVaspVasprun(object):
     ###################################################
     # [initial] [selective]
     def get_selective_initial(self):
-#       NATOM = self.natom()
+        #       NATOM = self.natom()
         NATOM = self.get_natom()
-        fix_initial = np.zeros((NATOM,3),dtype='S')
-        selective=False
-        if self.root.find(\
+        fix_initial = np.zeros((NATOM, 3), dtype='S')
+        selective = False
+        if self.root.find( \
                 "structure[@name='initialpos']").findall("varray[@name='selective']"):
-            selective=True
+            selective = True
         if selective:
-            j=0
+            j = 0
             for e in self.root.find("structure[@name='initialpos']/varray[@name='selective']"):
                 tmp = e.text.split()
-                fix_initial[j,0] = str(tmp[0])
-                fix_initial[j,1] = str(tmp[1])
-                fix_initial[j,2] = str(tmp[2])
-               #print fix[j,0],fix[j,1],fix[j,2]
-                j +=1
+                fix_initial[j, 0] = str(tmp[0])
+                fix_initial[j, 1] = str(tmp[1])
+                fix_initial[j, 2] = str(tmp[2])
+                # print fix[j,0],fix[j,1],fix[j,2]
+                j += 1
 
         return [fix_initial]
 
     ###################################################
     # [final] [lattice vector]
     def get_t_final(self):
-        t_final = np.zeros((3,3))
-        j=0
-        for e in self.root.find(\
+        t_final = np.zeros((3, 3))
+        j = 0
+        for e in self.root.find( \
                 "structure[@name='finalpos']/crystal/varray[@name='basis']"):
             tmp = e.text.split()
-            t_final[0,j] = tmp[0]
-            t_final[1,j] = tmp[1]
-            t_final[2,j] = tmp[2]
+            t_final[0, j] = tmp[0]
+            t_final[1, j] = tmp[1]
+            t_final[2, j] = tmp[2]
             j += 1
 
         return [t_final]
@@ -281,15 +279,15 @@ class ReadVaspVasprun(object):
     # [final] [position]
     def get_position_final(self):
         natom = self.get_natom()
-        position_final = np.zeros((natom,3))
-        j=0
-        for e in self.root.find(\
+        position_final = np.zeros((natom, 3))
+        j = 0
+        for e in self.root.find( \
                 "structure[@name='finalpos']/varray[@name='positions']"):
             tmp = e.text.split()
-            position_final[j,0] = tmp[0]
-            position_final[j,1] = tmp[1]
-            position_final[j,2] = tmp[2]
-           #print position_final[j,0],position_final[j,1],position_final[j,2]
+            position_final[j, 0] = tmp[0]
+            position_final[j, 1] = tmp[1]
+            position_final[j, 2] = tmp[2]
+            # print position_final[j,0],position_final[j,1],position_final[j,2]
             j += 1
 
         return [position_final]
@@ -298,63 +296,63 @@ class ReadVaspVasprun(object):
     # [final] [selective]
     def get_fix_final(self):
         natom = self.get_natom()
-        fix_final = np.zeros((natom,3),dtype='S')
-        selective=False
-        if self.root.find(\
+        fix_final = np.zeros((natom, 3), dtype='S')
+        selective = False
+        if self.root.find( \
                 "structure[@name='finalpos']").findall("varray[@name='selective']"):
-            selective=True
+            selective = True
         if selective:
-            j=0
-            for e in self.root.find(\
+            j = 0
+            for e in self.root.find( \
                     "structure[@name='finalpos']/varray[@name='selective']"):
                 tmp = e.text.split()
-                fix_final[j,0] = str(tmp[0])
-                fix_final[j,1] = str(tmp[1])
-                fix_final[j,2] = str(tmp[2])
-               #print fix[j,0],fix[j,1],fix[j,2]
-                j +=1
+                fix_final[j, 0] = str(tmp[0])
+                fix_final[j, 1] = str(tmp[1])
+                fix_final[j, 2] = str(tmp[2])
+                # print fix[j,0],fix[j,1],fix[j,2]
+                j += 1
 
         return [fix_final]
 
     ###################################################
     # [ion_loop] [lattice vector]
     def get_t_loop(self):
-        t_loop = np.zeros((3,3,self.n_ion_loop))
-        ion_loop=0
-        for cal in self.root.findall(\
+        t_loop = np.zeros((3, 3, self.n_ion_loop))
+        ion_loop = 0
+        for cal in self.root.findall( \
                 "calculation/structure/crystal/varray[@name='basis']"):
-            j=0
+            j = 0
             for e in cal:
                 tmp = e.text.split()
-                t_loop[0,j,ion_loop] = tmp[0]
-                t_loop[1,j,ion_loop] = tmp[1]
-                t_loop[2,j,ion_loop] = tmp[2]
-               #print t_loop[0,j,ion_loop],\
-               #      t_loop[1,j,ion_loop],\
-               #      t_loop[2,j,ion_loop]
+                t_loop[0, j, ion_loop] = tmp[0]
+                t_loop[1, j, ion_loop] = tmp[1]
+                t_loop[2, j, ion_loop] = tmp[2]
+                # print t_loop[0,j,ion_loop],\
+                #      t_loop[1,j,ion_loop],\
+                #      t_loop[2,j,ion_loop]
                 j += 1
-            ion_loop +=1
+            ion_loop += 1
 
         return [t_loop]
 
     ###################################################
     # [ion_loop] [position]
-#   for cal in root.findall("calculation/structure/varray[@name='positions']/v"):
+    #   for cal in root.findall("calculation/structure/varray[@name='positions']/v"):
     def get_position_loop(self):
         natom = self.get_natom()
-        ion_loop=0
-        position_loop = np.zeros((natom,3,self.n_ion_loop))
-        for cal in self.root.findall(\
+        ion_loop = 0
+        position_loop = np.zeros((natom, 3, self.n_ion_loop))
+        for cal in self.root.findall( \
                 "calculation/structure/varray[@name='positions']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
-                position_loop[j,0,ion_loop] = tmp[0]
-                position_loop[j,1,ion_loop] = tmp[1]
-                position_loop[j,2,ion_loop] = tmp[2]
-               #print position_loop[j,0,ion_loop],\
-               #      position_loop[j,1,ion_loop],\
-               #      position_loop[j,2,ion_loop]
+                position_loop[j, 0, ion_loop] = tmp[0]
+                position_loop[j, 1, ion_loop] = tmp[1]
+                position_loop[j, 2, ion_loop] = tmp[2]
+                # print position_loop[j,0,ion_loop],\
+                #      position_loop[j,1,ion_loop],\
+                #      position_loop[j,2,ion_loop]
                 j += 1
             ion_loop += 1
 
@@ -364,19 +362,19 @@ class ReadVaspVasprun(object):
     # [ion_loop] [forces]
     def get_force_loop(self):
         natom = self.get_natom()
-        ion_loop=0
-        force_loop = np.zeros((natom,3,self.n_ion_loop))
-        for cal in self.root.findall(\
+        ion_loop = 0
+        force_loop = np.zeros((natom, 3, self.n_ion_loop))
+        for cal in self.root.findall( \
                 "calculation/varray[@name='forces']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
-                force_loop[j,0,ion_loop] = tmp[0]
-                force_loop[j,1,ion_loop] = tmp[1]
-                force_loop[j,2,ion_loop] = tmp[2]
-               #print force_loop[j,0,ion_loop],\
-               #      force_loop[j,1,ion_loop],\
-               #      force_loop[j,2,ion_loop]
+                force_loop[j, 0, ion_loop] = tmp[0]
+                force_loop[j, 1, ion_loop] = tmp[1]
+                force_loop[j, 2, ion_loop] = tmp[2]
+                # print force_loop[j,0,ion_loop],\
+                #      force_loop[j,1,ion_loop],\
+                #      force_loop[j,2,ion_loop]
                 j += 1
             ion_loop += 1
 
@@ -386,18 +384,18 @@ class ReadVaspVasprun(object):
     # [ion_loop] [stress]
     def get_stress_loop(self):
         natom = self.get_natom()
-        ion_loop=0
-        stress_loop = np.zeros((natom,3,self.n_ion_loop))
+        ion_loop = 0
+        stress_loop = np.zeros((natom, 3, self.n_ion_loop))
         for cal in self.root.findall("calculation/varray[@name='stress']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
-                stress_loop[j,0,ion_loop] = tmp[0]
-                stress_loop[j,1,ion_loop] = tmp[1]
-                stress_loop[j,2,ion_loop] = tmp[2]
-               #print stress_loop[j,0,ion_loop],\
-               #      stress_loop[j,1,ion_loop],\
-               #      stress_loop[j,2,ion_loop]
+                stress_loop[j, 0, ion_loop] = tmp[0]
+                stress_loop[j, 1, ion_loop] = tmp[1]
+                stress_loop[j, 2, ion_loop] = tmp[2]
+                # print stress_loop[j,0,ion_loop],\
+                #      stress_loop[j,1,ion_loop],\
+                #      stress_loop[j,2,ion_loop]
                 j += 1
             ion_loop += 1
 
@@ -418,8 +416,9 @@ class ReadVaspVasprun(object):
             e_fr_energy_loop[i] = e.text
             i += 1
 
-        energy = [e_fr_energy_loop,e_wo_entrp_loop]
+        energy = [e_fr_energy_loop, e_wo_entrp_loop]
         return [energy]
+
 
 #   title=SYSTEM
 #   scale=1.0
@@ -439,30 +438,30 @@ class ReadVaspVasprun(object):
 #   return [n_ion_loop,POSCAR,CONTCAR,CONTCAR_ALL,FORCE_ALL,ENERGY_ALL]
 
 
-
 ################################################################################
 # テスト用
 ################################################################################
 if __name__ == '__main__':
 
     import optparse
+
     # Default & OptionParser
-   #XMLFILE = options()
+    # XMLFILE = options()
     XMLFILE = "vasprun.xml"  # default name
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    options, args = parser.parse_args()
 
-    if options.INPUT: XMLFILE=options.INPUT
-    if len(args) > 0: XMLFILE=args[0]
+    if options.INPUT: XMLFILE = options.INPUT
+    if len(args) > 0: XMLFILE = args[0]
 
     # vasprun.xml parse
     vasprun = ReadVaspVasprun(XMLFILE)
 
     nion = vasprun.get_nion()
     natom = vasprun.get_natom()
-    n_ion_loop =  vasprun.get_n_ion_loop()
+    n_ion_loop = vasprun.get_n_ion_loop()
     atoms = vasprun.get_atoms()
     atoms_j = vasprun.get_atoms_j()
     atoms_index = vasprun.get_atoms_index()
@@ -492,4 +491,3 @@ if __name__ == '__main__':
 #   print "atoms_index_j"
 #   for atom in range(natom):
 #       print atom,atoms_index_j[atom]
-

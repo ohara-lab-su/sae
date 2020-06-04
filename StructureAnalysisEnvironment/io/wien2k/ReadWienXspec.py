@@ -35,41 +35,47 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
 import os
 import re
-#import gzip
+# import gzip
 import numpy as np
 
-#import optparse
+# import optparse
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadWienXspec(object):
 
-    def __init__(self,case='case',spin=None,suffix='.xspec'):
+    def __init__(self, case='case', spin=None, suffix='.xspec'):
 
         if spin is None:
             spin = ''
 
-        if not os.path.exists(case+suffix):
-            case = case.replace(suffix,'')
+        if not os.path.exists(case + suffix):
+            case = case.replace(suffix, '')
 
-        self.datlines,self.num = SAE.read_dataline(case+suffix+spin)
+        self.datlines, self.num = SAEnv.read_dataline(case + suffix + spin)
 
         self.head = []
         self.head.append(self.datlines[0])
@@ -79,7 +85,7 @@ class ReadWienXspec(object):
         g_reg = re.compile(' #GAMMA=.*')
 
         self.eng = []
-        self.xas  = []
+        self.xas = []
         self.s = 0.0
         self.g = 0.0
 
@@ -108,23 +114,23 @@ class ReadWienXspec(object):
         return self.head
 
     def get_eng(self):
-       #self.eng = np.array(self.eng)
+        # self.eng = np.array(self.eng)
         return self.eng
 
     def get_xas(self):
-       #self.xas = np.array(self.xas)
+        # self.xas = np.array(self.xas)
         return self.xas
 
     def get_ymax_xas(self):
-       #self.ymax_xas = max(self.xas)
+        # self.ymax_xas = max(self.xas)
         return self.ymax_xas
 
     def get_emin(self):
-       #self.emin = min(self.eng)
+        # self.emin = min(self.eng)
         return self.emin
 
     def get_emax(self):
-       #self.emax = max(self.eng)
+        # self.emax = max(self.eng)
         return self.emax
 
     def get_s(self):
@@ -133,15 +139,15 @@ class ReadWienXspec(object):
     def get_gamma(self):
         return self.g
 
-    def write(self,outputname=None):
+    def write(self, outputname=None):
         if outputname is None:
             out = sys.stdout
         else:
             try:
-                out = open(outputname,'w')
+                out = open(outputname, 'w')
             except:
                 out.close()
-                sys.exit(outputname+" can't not open")
+                sys.exit(outputname + " can't not open")
 
         nxas = len(self.xas)
         for i in range(nxas):
@@ -150,27 +156,27 @@ class ReadWienXspec(object):
         if not outputname is None:
             out.close()
 
+
 ################################################################################
 if __name__ == '__main__':
 
     import optparse
 
-    case = re.sub('.*/','',os.getcwd())
-   #case = 'Cu'
+    case = re.sub('.*/', '', os.getcwd())
+    # case = 'Cu'
 
     suffix = '.xspec'
 
     unit = 'ev'
 
     parser = optparse.OptionParser(os.getcwd())
-    parser.add_option( '-i','--input', dest='INPUT', )
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
-    if options.INPUT: case=options.INPUT
+    if options.INPUT: case = options.INPUT
 
-    xspec = ReadWienXspec(case=case,suffix=suffix)
+    xspec = ReadWienXspec(case=case, suffix=suffix)
     head = xspec.get_head()
     for i in head:
         print("%d" % i)
     xspec.write()
-

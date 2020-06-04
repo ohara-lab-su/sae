@@ -107,40 +107,47 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014-2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.1.4"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.1.4"
+
 ################################################################################
 
 import sys
-#import os
+import os
 import re
-#import gzip
+# import gzip
 import numpy as np
 
-#import optparse
-import StructureAnalysisEnvironment as SAEnv
+# import optparse
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
+
 
 ################################################################################
-class ReadMxDatMethod(SAEnv.Method):
+class ReadMxDatMethod(Method):
 
     ###################################
     # title (System.Name)
     def get_title(self):
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         title_reg = re.compile('.*System\.Name')
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(title_reg.match(self.datlines[i])):
                     src = self.datlines[i].split()[1]
-                    self.SYSTEM = re.sub(' *$','',src)
+                    self.SYSTEM = re.sub(' *$', '', src)
                     break
         return self.SYSTEM
 
@@ -148,10 +155,10 @@ class ReadMxDatMethod(SAEnv.Method):
     # spin の有無( SpinPolarization on = 2, off = 1 )
     # scf.SpinPolarization        on
     def get_ispin(self):
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
-        reg_spin =  re.compile('.*scf\.SpinPolarization',re.IGNORECASE)
-        reg_switch_off = re.compile('Off',re.IGNORECASE)
-        reg_switch_on = re.compile('On',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
+        reg_spin = re.compile('.*scf\.SpinPolarization', re.IGNORECASE)
+        reg_switch_off = re.compile('Off', re.IGNORECASE)
+        reg_switch_on = re.compile('On', re.IGNORECASE)
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg_spin.match(self.datlines[i])):
@@ -167,7 +174,7 @@ class ReadMxDatMethod(SAEnv.Method):
     ###################################
     # natom
     def get_natom(self):
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg = re.compile('.*Atoms\.Number')
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
@@ -176,11 +183,10 @@ class ReadMxDatMethod(SAEnv.Method):
                     break
         return self.natom
 
-
     ###################################
     # NION
     def get_nion(self):
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg = re.compile('.*Species\.Number')
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
@@ -189,13 +195,12 @@ class ReadMxDatMethod(SAEnv.Method):
                     break
         return self.NION
 
-
     ###################################
     # atoms_index
     def get_atoms_index(self):
         nion = self.get_nion()
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg0 = re.compile('.*\<Definition\.of\.Atomic\.Species')
         reg1 = re.compile('.*Definition\.of\.Atomic\.Species\>')
 
@@ -204,43 +209,41 @@ class ReadMxDatMethod(SAEnv.Method):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg0.match(self.datlines[i])):
                     j = 1
-                    while not bool(reg1.match(self.datlines[i+j])):
-                        self.atoms_index.append(self.datlines[i+j].split()[0])
+                    while not bool(reg1.match(self.datlines[i + j])):
+                        self.atoms_index.append(self.datlines[i + j].split()[0])
                         j += 1
-                    if nion != j -1 :
+                    if nion != j - 1:
                         sys.exit("STOP: Atomic.Species Tag Error")
                     break
-       #print "self.atoms_index =",self.atoms_index
+        # print "self.atoms_index =",self.atoms_index
         return self.atoms_index
-
 
     ###################################
     # atoms (get_atoms version1) 正しく動作します
     #  連続する原子を同種原子と考えて、連続してない同一元素記号の元は
     #  別種類とする考え方での分類。に基づく Method
-   #def get_atoms(self):
-   #    nion = self.get_nion()
-   #    natom = self.get_natom()
-   #    reg0 = re.compile('.*\<Atoms\.SpeciesAndCoordinates')
-   #    reg1 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
-   #    self.atoms = np.zeros(nion,dtype=int)
-   #    for i in range(self.num):
-   #        if bool(reg0.match(self.datlines[i])):
-   #            j = 1
-   #            species0 = ''
-   #            types = -1
-   #            while not bool(reg1.match(self.datlines[i+j])):
-   #                species = self.datlines[i+j].split()[1]
-   #                if species != species0:
-   #                    types += 1
-   #                self.atoms[types] += 1
-   #                species0 = species
-   #                j += 1
-   #            if natom != j -1 :
-   #                sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
-   #            break
-   #    return self.atoms
-
+    # def get_atoms(self):
+    #    nion = self.get_nion()
+    #    natom = self.get_natom()
+    #    reg0 = re.compile('.*\<Atoms\.SpeciesAndCoordinates')
+    #    reg1 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
+    #    self.atoms = np.zeros(nion,dtype=int)
+    #    for i in range(self.num):
+    #        if bool(reg0.match(self.datlines[i])):
+    #            j = 1
+    #            species0 = ''
+    #            types = -1
+    #            while not bool(reg1.match(self.datlines[i+j])):
+    #                species = self.datlines[i+j].split()[1]
+    #                if species != species0:
+    #                    types += 1
+    #                self.atoms[types] += 1
+    #                species0 = species
+    #                j += 1
+    #            if natom != j -1 :
+    #                sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
+    #            break
+    #    return self.atoms
 
     ###################################
     # atoms (get_atoms version2) 正しく動作します
@@ -253,24 +256,23 @@ class ReadMxDatMethod(SAEnv.Method):
         natom = self.get_natom()
         atoms_index = self.get_atoms_index()
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg0 = re.compile('.*\<Atoms\.SpeciesAndCoordinates')
         reg1 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
 
-        self.atoms = np.zeros(nion,dtype=int)
+        self.atoms = np.zeros(nion, dtype=int)
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg0.match(self.datlines[i])):
                     i += 1
                     for j in range(natom):
                         for k in range(nion):
-                            if self.datlines[i+j].split()[1] == atoms_index[k]:
+                            if self.datlines[i + j].split()[1] == atoms_index[k]:
                                 self.atoms[k] += 1
-                    if not bool(reg1.match(self.datlines[i+j+1])):
+                    if not bool(reg1.match(self.datlines[i + j + 1])):
                         sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
 
         return self.atoms
-
 
     ###################################
     # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
@@ -289,13 +291,13 @@ class ReadMxDatMethod(SAEnv.Method):
         natom = self.get_natom()
         atoms = self.get_atoms()
         j = 0
-        self.atoms_j = np.zeros(natom,dtype=int)
+        self.atoms_j = np.zeros(natom, dtype=int)
         for ion in range(nion):
             for atom in range(atoms[ion]):
                 self.atoms_j[j] = int(ion)
                 j += 1
 
-       #print '(method) self.atom_j',self.atoms_j
+        # print '(method) self.atom_j',self.atoms_j
         return self.atoms_j
 
     ###################################
@@ -329,16 +331,15 @@ class ReadMxDatMethod(SAEnv.Method):
         for j in range(natom):
             self.atoms_index_j.append(atoms_index[atoms_j[j]])
 
-       #print "self.atoms_index_j",self.atoms_index_j
+        # print "self.atoms_index_j",self.atoms_index_j
         return self.atoms_index_j
-
 
     ###################################
     # natom の Left 版
     def get_left_natom(self):
         self.FLAG_left = False
         self.left_natom = 0
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg = re.compile('.*LeftLeadAtoms\.Number')
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
@@ -356,9 +357,9 @@ class ReadMxDatMethod(SAEnv.Method):
         self.FLAG_left = False
         left_natom = self.get_left_natom()
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg0 = re.compile('.*\<LeftLeadAtoms\.SpeciesAndCoordinates')
-#       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
+        #       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
 
         self.left_atoms_index_j = []
         for i in range(self.num):
@@ -366,8 +367,8 @@ class ReadMxDatMethod(SAEnv.Method):
                 if bool(reg0.match(self.datlines[i])):
                     self.FLAG_left = True
                     for j in range(left_natom):
-                        self.left_atoms_index_j.append(\
-                                self.datlines[i+j+1].split()[1])
+                        self.left_atoms_index_j.append( \
+                            self.datlines[i + j + 1].split()[1])
                     break
         return self.left_atoms_index_j
 
@@ -380,33 +381,32 @@ class ReadMxDatMethod(SAEnv.Method):
         self.FLAG_left = False
         left_natom = self.get_left_natom()
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg0 = re.compile('.*\<LeftLeadAtoms\.SpeciesAndCoordinates')
-#       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
+        #       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
 
         self.FLAG_left = False
-        self.left_position = np.zeros((left_natom,3))
+        self.left_position = np.zeros((left_natom, 3))
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg0.match(self.datlines[i])):
                     self.FLAG_left = True
                     for j in range(left_natom):
-                        self.left_position[j,0] = \
-                                float(self.datlines[i+j+1].split()[2])*self.UNIT
-                        self.left_position[j,1] = \
-                                float(self.datlines[i+j+1].split()[3])*self.UNIT
-                        self.left_position[j,2] = \
-                                float(self.datlines[i+j+1].split()[4])*self.UNIT
+                        self.left_position[j, 0] = \
+                            float(self.datlines[i + j + 1].split()[2]) * self.UNIT
+                        self.left_position[j, 1] = \
+                            float(self.datlines[i + j + 1].split()[3]) * self.UNIT
+                        self.left_position[j, 2] = \
+                            float(self.datlines[i + j + 1].split()[4]) * self.UNIT
                     break
         return self.left_position
-
 
     ###################################
     # natom の Right 版
     def get_right_natom(self):
         self.FLAG_right = False
         self.right_natom = 0
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg = re.compile('.*RightLeadAtoms\.Number')
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
@@ -424,7 +424,7 @@ class ReadMxDatMethod(SAEnv.Method):
         self.FLAG_right = False
         right_natom = self.get_right_natom()
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg0 = re.compile('.*\<RightLeadAtoms\.SpeciesAndCoordinates')
 
         self.right_atoms_index_j = []
@@ -433,8 +433,8 @@ class ReadMxDatMethod(SAEnv.Method):
                 if bool(reg0.match(self.datlines[i])):
                     self.FLAG_right = True
                     for j in range(right_natom):
-                        self.right_atoms_index_j.append(\
-                                self.datlines[i+j+1].split()[1])
+                        self.right_atoms_index_j.append( \
+                            self.datlines[i + j + 1].split()[1])
                     break
         return self.right_atoms_index_j
 
@@ -447,31 +447,28 @@ class ReadMxDatMethod(SAEnv.Method):
         self.FLAG_right = False
         right_natom = self.get_right_natom()
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg0 = re.compile('.*\<RightLeadAtoms\.SpeciesAndCoordinates')
 
-        self.right_position = np.zeros((right_natom,3))
+        self.right_position = np.zeros((right_natom, 3))
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg0.match(self.datlines[i])):
                     self.FLAG_right = True
                     for j in range(right_natom):
-                        self.right_position[j,0] = \
-                                float(self.datlines[i+j+1].split()[2])*self.UNIT
-                        self.right_position[j,1] = \
-                                float(self.datlines[i+j+1].split()[3])*self.UNIT
-                        self.right_position[j,2] = \
-                                float(self.datlines[i+j+1].split()[4])*self.UNIT
+                        self.right_position[j, 0] = \
+                            float(self.datlines[i + j + 1].split()[2]) * self.UNIT
+                        self.right_position[j, 1] = \
+                            float(self.datlines[i + j + 1].split()[3]) * self.UNIT
+                        self.right_position[j, 2] = \
+                            float(self.datlines[i + j + 1].split()[4]) * self.UNIT
                     break
         return self.right_position
-
-
 
     ###################################
     ## scale factor
     def get_scale(self):
         return 1.0
-
 
     ###################################
     ## Read Translation Vector
@@ -483,11 +480,11 @@ class ReadMxDatMethod(SAEnv.Method):
     ##   Unit を調べて AU のときは Ang にして返す
     ##
     def get_t(self):
-        BOHR= 0.529177   # Bohr radius in Angstrom
+        BOHR = 0.529177  # Bohr radius in Angstrom
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
-        reg_unit0 = re.compile('AU',re.IGNORECASE)
-        reg_unit1 = re.compile('Ang',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
+        reg_unit0 = re.compile('AU', re.IGNORECASE)
+        reg_unit1 = re.compile('Ang', re.IGNORECASE)
         reg2 = re.compile('.*Atoms\.UnitVectors\.Unit')
         reg3 = re.compile('.*\<Atoms\.UnitVectors')
         reg4 = re.compile('.*Atoms\.UnitVectors\>')
@@ -497,66 +494,64 @@ class ReadMxDatMethod(SAEnv.Method):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg2.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
-                       #FLAG_UNIT = True   # 'Atomic Unit'
-                       self.UNIT = BOHR
+                        # FLAG_UNIT = True   # 'Atomic Unit'
+                        self.UNIT = BOHR
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-                       #FLAG_UNIT = False  # 'Ang'
-                       self.UNIT = 1.0
+                        # FLAG_UNIT = False  # 'Ang'
+                        self.UNIT = 1.0
                     else:
                         sys.exit("STOP: Unknown Atoms.UnitVectors.Unit")
                     break
 
         # get translation vector
-        self.t = np.zeros((3,3))
+        self.t = np.zeros((3, 3))
         self.FLAG_t = False
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg3.match(self.datlines[i])):
                     self.FLAG_t = True
 
-                    self.t[0,0] = float(self.datlines[i+1+0].split()[0])*self.UNIT
-                    self.t[1,0] = float(self.datlines[i+1+0].split()[1])*self.UNIT
-                    self.t[2,0] = float(self.datlines[i+1+0].split()[2])*self.UNIT
+                    self.t[0, 0] = float(self.datlines[i + 1 + 0].split()[0]) * self.UNIT
+                    self.t[1, 0] = float(self.datlines[i + 1 + 0].split()[1]) * self.UNIT
+                    self.t[2, 0] = float(self.datlines[i + 1 + 0].split()[2]) * self.UNIT
 
-                    self.t[0,1] = float(self.datlines[i+1+1].split()[0])*self.UNIT
-                    self.t[1,1] = float(self.datlines[i+1+1].split()[1])*self.UNIT
-                    self.t[2,1] = float(self.datlines[i+1+1].split()[2])*self.UNIT
+                    self.t[0, 1] = float(self.datlines[i + 1 + 1].split()[0]) * self.UNIT
+                    self.t[1, 1] = float(self.datlines[i + 1 + 1].split()[1]) * self.UNIT
+                    self.t[2, 1] = float(self.datlines[i + 1 + 1].split()[2]) * self.UNIT
 
-                    self.t[0,2] = float(self.datlines[i+1+2].split()[0])*self.UNIT
-                    self.t[1,2] = float(self.datlines[i+1+2].split()[1])*self.UNIT
-                    self.t[2,2] = float(self.datlines[i+1+2].split()[2])*self.UNIT
+                    self.t[0, 2] = float(self.datlines[i + 1 + 2].split()[0]) * self.UNIT
+                    self.t[1, 2] = float(self.datlines[i + 1 + 2].split()[1]) * self.UNIT
+                    self.t[2, 2] = float(self.datlines[i + 1 + 2].split()[2]) * self.UNIT
 
-                    if not bool(reg4.match(self.datlines[i+1+3])):
+                    if not bool(reg4.match(self.datlines[i + 1 + 3])):
                         sys.exit("STOP: Atoms.UnitVectors Error")
                     break
 
         return self.t
 
-
     ###################################
     ## selective モードの取得
     def get_selective(self):
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
         reg_md0 = re.compile('.*\<MD\.Fixed\.XYZ')
 
-        self.selective =False
+        self.selective = False
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg_md0.match(self.datlines[i])):
-                    self.selective=True
+                    self.selective = True
                     break
 
         return self.selective
-
 
     ###################################
     # 内部座標のDirect Mode の取得
     def get_direct(self):
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
-        reg_unit0 = re.compile('AU',re.IGNORECASE)
-        reg_unit1 = re.compile('Ang',re.IGNORECASE)
-        reg_unit2 = re.compile('FRAC',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
+        reg_unit0 = re.compile('AU', re.IGNORECASE)
+        reg_unit1 = re.compile('Ang', re.IGNORECASE)
+        reg_unit2 = re.compile('FRAC', re.IGNORECASE)
         reg3 = re.compile('.*Atoms\.SpeciesAndCoordinates\.Unit')
 
         # get UNIT
@@ -564,17 +559,16 @@ class ReadMxDatMethod(SAEnv.Method):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg3.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
-                       direct = False
+                        direct = False
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-                       direct = False
+                        direct = False
                     elif bool(reg_unit2.match(self.datlines[i].split()[1])):
-                       direct = True
+                        direct = True
                     else:
                         sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
                     break
 
         return direct
-
 
     ###################################
     ##  position (正しく動作する)
@@ -584,50 +578,49 @@ class ReadMxDatMethod(SAEnv.Method):
     ##    (カーテシアンとダイレクトの変換はここでは行わない)
     ##    並んでいる順番通りに並べる
     ##
-   #def get_position(self):
-   #    BOHR= 0.529177   # Bohr radius in Angstrom
+    # def get_position(self):
+    #    BOHR= 0.529177   # Bohr radius in Angstrom
 
-   #    comment_reg = re.compile('^#.*',re.IGNORECASE)
-   #    reg_unit0 = re.compile('AU',re.IGNORECASE)
-   #    reg_unit1 = re.compile('Ang',re.IGNORECASE)
-   #    reg_unit2 = re.compile('FRAC',re.IGNORECASE)
-   #    reg_position0 = re.compile('.*Atoms\.SpeciesAndCoordinates\.Unit')
-   #    reg_position1 = re.compile('.*\<Atoms\.SpeciesAndCoordinates ')
-   #    reg_position2 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
+    #    comment_reg = re.compile('^#.*',re.IGNORECASE)
+    #    reg_unit0 = re.compile('AU',re.IGNORECASE)
+    #    reg_unit1 = re.compile('Ang',re.IGNORECASE)
+    #    reg_unit2 = re.compile('FRAC',re.IGNORECASE)
+    #    reg_position0 = re.compile('.*Atoms\.SpeciesAndCoordinates\.Unit')
+    #    reg_position1 = re.compile('.*\<Atoms\.SpeciesAndCoordinates ')
+    #    reg_position2 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
 
-   #    natom = self.get_natom()
+    #    natom = self.get_natom()
 
-   #    # get UNIT
-   #    for i in range(self.num):
-   #        if bool(reg_position0.match(self.datlines[i])):
-   #            if bool(reg_unit0.match(self.datlines[i].split()[1])):
-   #              #direct = False
-   #               self.UNIT = BOHR        # 'Atomic Unit'
-   #            elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-   #              #direct = False
-   #               self.UNIT = 1.0 # 'Ang'
-   #            elif bool(reg_unit2.match(self.datlines[i].split()[1])):
-   #              #direct = True
-   #               self.UNIT = 1.0
-   #            else:
-   #                sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
-   #            break
+    #    # get UNIT
+    #    for i in range(self.num):
+    #        if bool(reg_position0.match(self.datlines[i])):
+    #            if bool(reg_unit0.match(self.datlines[i].split()[1])):
+    #              #direct = False
+    #               self.UNIT = BOHR        # 'Atomic Unit'
+    #            elif bool(reg_unit1.match(self.datlines[i].split()[1])):
+    #              #direct = False
+    #               self.UNIT = 1.0 # 'Ang'
+    #            elif bool(reg_unit2.match(self.datlines[i].split()[1])):
+    #              #direct = True
+    #               self.UNIT = 1.0
+    #            else:
+    #                sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
+    #            break
 
-   #    self.p = np.zeros((natom,3))
-   #    for i in range(self.num):
-   #        if not bool(comment_reg.match(self.datlines[i])):
-   #            if bool(reg_position1.match(self.datlines[i])):
-   #                j = 1
-   #                while not bool(reg_position2.match(self.datlines[i+j])):
-   #                    self.p[j-1,0] = float(self.datlines[i+j].split()[2])*self.UNIT
-   #                    self.p[j-1,1] = float(self.datlines[i+j].split()[3])*self.UNIT
-   #                    self.p[j-1,2] = float(self.datlines[i+j].split()[4])*self.UNIT
-   #                    j += 1
-   #                if natom != j -1 :
-   #                    sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
+    #    self.p = np.zeros((natom,3))
+    #    for i in range(self.num):
+    #        if not bool(comment_reg.match(self.datlines[i])):
+    #            if bool(reg_position1.match(self.datlines[i])):
+    #                j = 1
+    #                while not bool(reg_position2.match(self.datlines[i+j])):
+    #                    self.p[j-1,0] = float(self.datlines[i+j].split()[2])*self.UNIT
+    #                    self.p[j-1,1] = float(self.datlines[i+j].split()[3])*self.UNIT
+    #                    self.p[j-1,2] = float(self.datlines[i+j].split()[4])*self.UNIT
+    #                    j += 1
+    #                if natom != j -1 :
+    #                    sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
 
-   #    return self.p
-
+    #    return self.p
 
     ###################################
     ##  position (正しく動作する)
@@ -639,15 +632,15 @@ class ReadMxDatMethod(SAEnv.Method):
     ##    並んでいる順番通りに並べる
     ##
     def get_position(self):
-        BOHR= 0.529177   # Bohr radius in Angstrom
+        BOHR = 0.529177  # Bohr radius in Angstrom
 
-        comment_reg = re.compile('^#.*',re.IGNORECASE)
-        reg_unit0 = re.compile('AU',re.IGNORECASE)
-        reg_unit1 = re.compile('Ang',re.IGNORECASE)
-        reg_unit2 = re.compile('FRAC',re.IGNORECASE)
+        comment_reg = re.compile('^#.*', re.IGNORECASE)
+        reg_unit0 = re.compile('AU', re.IGNORECASE)
+        reg_unit1 = re.compile('Ang', re.IGNORECASE)
+        reg_unit2 = re.compile('FRAC', re.IGNORECASE)
         reg_position0 = re.compile('.*Atoms\.SpeciesAndCoordinates\.Unit')
         reg_position1 = re.compile('.*\<Atoms\.SpeciesAndCoordinates')
-       #reg_position2 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
+        # reg_position2 = re.compile('.*Atoms\.SpeciesAndCoordinates\>')
 
         natom = self.get_natom()
         nion = self.get_nion()
@@ -658,41 +651,40 @@ class ReadMxDatMethod(SAEnv.Method):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg_position0.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
-                      #direct = False
-                       self.UNIT = BOHR        # 'Atomic Unit'
+                        # direct = False
+                        self.UNIT = BOHR  # 'Atomic Unit'
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
-                      #direct = False
-                       self.UNIT = 1.0 # 'Ang'
+                        # direct = False
+                        self.UNIT = 1.0  # 'Ang'
                     elif bool(reg_unit2.match(self.datlines[i].split()[1])):
-                      #direct = True
-                       self.UNIT = 1.0
+                        # direct = True
+                        self.UNIT = 1.0
                     else:
                         sys.exit("STOP: Unknown Atoms.SpeciesAndCoordinates.Unit")
                     break
 
-        self.position = np.zeros((natom,3))
-        self.position_index = np.zeros(natom,dtype=int)   # sort_index --> original_index
-        self.position_index_r = np.zeros(natom,dtype=int) # original_index --> sort_index
+        self.position = np.zeros((natom, 3))
+        self.position_index = np.zeros(natom, dtype=int)  # sort_index --> original_index
+        self.position_index_r = np.zeros(natom, dtype=int)  # original_index --> sort_index
         for i in range(self.num):
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg_position1.match(self.datlines[i])):
-                    l = 0 # sort_index
+                    l = 0  # sort_index
                     for k in range(nion):
-                        for j in range(1,natom+1): # original_index
-                            if atoms_index[k] == self.datlines[i+j].split()[1]:
+                        for j in range(1, natom + 1):  # original_index
+                            if atoms_index[k] == self.datlines[i + j].split()[1]:
                                 self.position_index[l] = \
-                                      int(self.datlines[i+j].split()[0]) -1
-                                self.position_index_r[j-1] = l
-                                self.position[l,0] = \
-                                      float(self.datlines[i+j].split()[2])*self.UNIT
-                                self.position[l,1] = \
-                                      float(self.datlines[i+j].split()[3])*self.UNIT
-                                self.position[l,2] = \
-                                      float(self.datlines[i+j].split()[4])*self.UNIT
+                                    int(self.datlines[i + j].split()[0]) - 1
+                                self.position_index_r[j - 1] = l
+                                self.position[l, 0] = \
+                                    float(self.datlines[i + j].split()[2]) * self.UNIT
+                                self.position[l, 1] = \
+                                    float(self.datlines[i + j].split()[3]) * self.UNIT
+                                self.position[l, 2] = \
+                                    float(self.datlines[i + j].split()[4]) * self.UNIT
                                 l += 1
                     break
         return self.position
-
 
     ###################################
     ## fixed
@@ -710,23 +702,23 @@ class ReadMxDatMethod(SAEnv.Method):
     def get_fix(self):
         natom = self.get_natom()
         selective = self.get_selective()
-       #self.fix = []
-        self.fix = np.zeros((natom,3),dtype='S')
+        # self.fix = []
+        self.fix = np.zeros((natom, 3), dtype='S')
         if selective:
-            comment_reg = re.compile('^#.*',re.IGNORECASE)
+            comment_reg = re.compile('^#.*', re.IGNORECASE)
             reg_md0 = re.compile('.*\<MD\.Fixed\.XYZ')
             reg_md1 = re.compile('.*MD\.Fixed\.XYZ\>')
 
-            self.selective =False
+            self.selective = False
             for i in range(self.num):
                 if not bool(comment_reg.match(self.datlines[i])):
                     if bool(reg_md0.match(self.datlines[i])):
-                        self.selective=True
+                        self.selective = True
                         j = 1
-                        while not bool(reg_md1.match(self.datlines[i+j])):
-                            fix_x = int(self.datlines[i+j].split()[1])
-                            fix_y = int(self.datlines[i+j].split()[2])
-                            fix_z = int(self.datlines[i+j].split()[3])
+                        while not bool(reg_md1.match(self.datlines[i + j])):
+                            fix_x = int(self.datlines[i + j].split()[1])
+                            fix_y = int(self.datlines[i + j].split()[2])
+                            fix_z = int(self.datlines[i + j].split()[3])
 
                             if fix_x == 1:
                                 fix_x = 'F'  # Moving False ( Fixed )
@@ -749,22 +741,21 @@ class ReadMxDatMethod(SAEnv.Method):
                             else:
                                 sys.exit("STOP: unknown Fixed Parameter")
 
-                           #self.fix.append([fix_x, fix_y, fix_z])
+                            # self.fix.append([fix_x, fix_y, fix_z])
 
-                           ### original の index で fix を作るのではなく
-                           ### atoms_index の並びで sort した index で fix を作る
-                           #self.fix[j-1,0] = fix_x
-                           #self.fix[j-1,1] = fix_y
-                           #self.fix[j-1,2] = fix_z
-                            self.fix[self.position_index_r[j-1],0] = fix_x
-                            self.fix[self.position_index_r[j-1],1] = fix_y
-                            self.fix[self.position_index_r[j-1],2] = fix_z
-                           #########################
+                            ### original の index で fix を作るのではなく
+                            ### atoms_index の並びで sort した index で fix を作る
+                            # self.fix[j-1,0] = fix_x
+                            # self.fix[j-1,1] = fix_y
+                            # self.fix[j-1,2] = fix_z
+                            self.fix[self.position_index_r[j - 1], 0] = fix_x
+                            self.fix[self.position_index_r[j - 1], 1] = fix_y
+                            self.fix[self.position_index_r[j - 1], 2] = fix_z
+                            #########################
                             j += 1
-                        if natom != j -1 :
+                        if natom != j - 1:
                             sys.exit("STOP: Atomic.Number and Atoms.SpeciesAndCoordinates Tag Error")
                         break
         return self.fix
 
 ################################################################################
-

@@ -88,27 +88,31 @@
 #
 ##########################################################################
 from __future__ import print_function
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2015, Kengo NAKADA"
-__license__ = "MIT"
-#
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__ = "alpha"
 __version__ = "0.1.00"
 ##########################################################################
 
 import sys
-#import os
+import os
 #import gzip
 import re
 import numpy as np
 
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAEnv
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import *
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import *
 #import SpaceGroupEnvironment as SGE
 
 ##########################################################################
@@ -494,8 +498,8 @@ class ReadVaspDoscar(object):
 
         oname = 'OUTCAR'
 
-        import StructureAnalysisEnvironment as SAEnv
-        outcar = SAEnv.ReadVaspOutcar(oname)
+        # import StructureAnalysisEnvironment as SAEnv
+        outcar = SAEnv.io.vasp.ReadVaspOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
         ATOMS_J = outcar.get_atoms_j()
@@ -550,8 +554,8 @@ class ReadVaspDoscar(object):
 
         oname = 'OUTCAR'
 
-        import StructureAnalysisEnvironment as SAEnv
-        outcar = SAEnv.ReadVaspOutcar(oname)
+        # import StructureAnalysisEnvironment as SAEnv
+        outcar = SAEnv.io.vasp.ReadVaspOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
         ATOMS_J = outcar.get_atoms_j()

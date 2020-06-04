@@ -16,53 +16,58 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
-#import sys
-#import os
-#import gzip
+import sys
+import os
+# import gzip
 import re
-#import optparse
+# import optparse
 import numpy as np
 
-#from copy import deepcopy
+# from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadLobOut(object):
 
-    def __init__(self,name='lobsterout'):
+    def __init__(self, name='lobsterout'):
 
-        self.datlines,self.num = SAE.read_dataline(name)
-        orbital_reg = re.compile('.*\(Bunge\)',re.IGNORECASE)
+        self.datlines, self.num = SAEnv.read_dataline(name)
+        orbital_reg = re.compile('.*\(Bunge\)', re.IGNORECASE)
 
         self.atoms_index = []
         self.orbit_index = []  # ion ごとにプロジェクションされた軌道
-        self.orbit = [] # ion ごとの軌道の数
+        self.orbit = []  # ion ごとの軌道の数
         ion = 0
         for i in range(self.num):
             if bool(orbital_reg.match(self.datlines[i])):
                 self.atoms_index.append(self.datlines[i].split()[0])
-                orbit = re.sub('.*\(Bunge\)','',self.datlines[i]).split()
+                orbit = re.sub('.*\(Bunge\)', '', self.datlines[i]).split()
                 self.orbit_index.append(orbit)
                 self.orbit.append(len(orbit))
-                ion +=1
+                ion += 1
 
         self.nion = ion
         self.orbit = np.array(self.orbit)
-
 
     ############################################################################
     def get_nion(self):
@@ -89,17 +94,15 @@ if __name__ == '__main__':
     #    orbit_index  # ion ごとにプロジェクションされた軌道
     #    orbit        # ion ごとの軌道の数
     #
-#   print out.nion
-#   print out.atoms_index
-#   print out.orbit
-#   print out.orbit_index
-#   print ""
+    #   print out.nion
+    #   print out.atoms_index
+    #   print out.orbit
+    #   print out.orbit_index
+    #   print ""
     for i in range(out.nion):
         print("%s:" % str(out.atoms_index[i]), end="")
         for j in range(out.orbit[i]):
             print("%s" % str(out.orbit_index[i][j]), end="")
         print("")
 
-
 ################################################################################
-

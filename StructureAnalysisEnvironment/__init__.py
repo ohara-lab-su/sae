@@ -3,22 +3,34 @@
 # __all__ = ["read_param_poscar", "read_poscar", "print_poscar", "conv_direct2car"]
 
 ################################################################################
-### gui function (using VPython and wxPython )
+# gui function (using VPython and wxPython )
 # try:
 #    from gui.crystal_make_unit import *
 # except:
 #    pass
 
 ################################################################################
-### current (using Numpy and Matplotlib )
-
+# current (using Numpy and Matplotlib )
 
 # Python3 のときはたとえば、
 # from Read import * ではダメで相対的に記述
 # from .Read improt * としないとほぼほぼうまく動かない
 # Python2 はどちらでも OK
 
-from Method.Method import *
+try:
+    from .io import *
+except ImportError:
+    from StructureAnalysisEnvironment.io import *
+
+try:
+    from .Method import *
+except ImportError:
+    from StructureAnalysisEnvironment.Method import *
+
+try:
+    from .copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
 
 #################################################################################
 #### function
@@ -62,7 +74,7 @@ from .find_suffix import *
 ### general (structure converter)
 from .conv_car2carABS import *  # general
 from .conv_car2direct import *  # general
-from .conv_cellparam import *   # FDMNES
+from .conv_cellparam import *  # FDMNES
 
 ### function for WIEN2k
 from .plot_xas import *
@@ -108,7 +120,6 @@ from .make_supercell_param import *
 from .make_supercell_zb import *
 from .move_atoms import *
 
-
 ### for RMC_pot
 from .read_cfg import *
 from .read_cfg_coll import *
@@ -128,4 +139,3 @@ from .read_sets_param import *
 from .read_vasprun0 import *
 from .read_vasprun1 import *
 from .read_vasprun2 import *
-

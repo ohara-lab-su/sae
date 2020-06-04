@@ -15,44 +15,50 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.1.1"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.1.1"
+
 ################################################################################
 
-#import sys
-#import gzip
-#import os
+import sys
+# import gzip
+import os
 import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadPwXanes(object):
 
-    def __init__(self,cname='xanes.dat'):
+    def __init__(self, cname='xanes.dat'):
 
-        self.datlines,self.num = SAE.read_dataline(cname)
+        self.datlines, self.num = SAEnv.read_dataline(cname)
 
-        self.xas = np.zeros(self.num -4)
-        self.eng = np.zeros(self.num -4)
+        self.xas = np.zeros(self.num - 4)
+        self.eng = np.zeros(self.num - 4)
 
         comment_reg = re.compile('^#.*')
         space_reg = re.compile('^$')
         broad_reg = re.compile('^#.*broadening')
         absorber_reg = re.compile('^#.*absorbing')
 
-        j=0
+        j = 0
         for line in self.datlines:
 
             if bool(broad_reg.match(line)):
@@ -63,8 +69,8 @@ class ReadPwXanes(object):
 
             if not bool(comment_reg.match(line)):
                 if not bool(space_reg.match(line)):
-                    self.eng[j] =float(line.split()[0])
-                    self.xas[j] =float(line.split()[1])
+                    self.eng[j] = float(line.split()[0])
+                    self.xas[j] = float(line.split()[1])
                     j += 1
         self.num = j
 
@@ -80,18 +86,20 @@ class ReadPwXanes(object):
     def get_broad(self):
         return self.broad
 
+
 ################################################################################
 def options():
     name = 'scf.out'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT', default=name,)
-    options,args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', default=name, )
+    options, args = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     return name
+
 
 ################################################################################
 if __name__ == '__main__':
@@ -101,4 +109,3 @@ if __name__ == '__main__':
 
     for i in range(dat.num):
         print("%s %s" % (str(dat.eng[i]), str(dat.xas[i])))
-

@@ -154,26 +154,35 @@
 #
 ##########################################################################
 from __future__ import print_function
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2015, Kengo NAKADA"
-__license__ = "MIT"
-#
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__ = "alpha"
 __version__ = "0.1.0"
+
 ##########################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
 import re
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import *
+    from StructureAnalysisEnvironment.io import *
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+
+
+# import SpaceGroupEnvironment as SGE
 
 ##########################################################################
 
@@ -182,7 +191,7 @@ class ReadVaspOutcar(object):
 
     def __init__(self, cname):
 
-        self.datlines, self.num = SAE.read_dataline(cname)
+        self.datlines, self.num = SAEnv.read_dataline(cname)
 
         rec_reg = re.compile('.*reciprocal lattice vectors', re.IGNORECASE)
         title_reg = re.compile('.*POSCAR:')
@@ -220,7 +229,7 @@ class ReadVaspOutcar(object):
 
         i = 0
         ####################### Iter ループ前の情報 #######################
-#       for j in range(self.num):
+        #       for j in range(self.num):
         while not bool(iter_reg.match(self.datlines[i])):
 
             # title
@@ -289,7 +298,7 @@ class ReadVaspOutcar(object):
                 # 大きなNION のときのバグ対策
                 if self.nion >= 10:  # OUTCAR出力バグ対策
                     if os.path.exists('vasprun.xml'):
-                        vrun = SAE.ReadVasprun()
+                        vrun = SAEnv.io.vasp.ReadVasprun()
                         self.nion = vrun.get_nion()
                     else:
                         sys.exit("STOP(get_nion): NION >= 10")
@@ -301,43 +310,42 @@ class ReadVaspOutcar(object):
 
             # t and recipcola
             if bool(rec_reg.match(self.datlines[i])):
-
-#               t1_x = float(self.datlines[i+1].split()[0])
-#               t1_y = float(self.datlines[i+1].split()[1])
-#               t1_z = float(self.datlines[i+1].split()[2])
+                #               t1_x = float(self.datlines[i+1].split()[0])
+                #               t1_y = float(self.datlines[i+1].split()[1])
+                #               t1_z = float(self.datlines[i+1].split()[2])
                 t1_x = float(self.datlines[i + 1][3:16])
                 t1_y = float(self.datlines[i + 1][16:29])
                 t1_z = float(self.datlines[i + 1][29:42])
 
-#               rec1_x = float(self.datlines[i+1].split()[3])
-#               rec1_y = float(self.datlines[i+1].split()[4])
-#               rec1_z = float(self.datlines[i+1].split()[5])
+                #               rec1_x = float(self.datlines[i+1].split()[3])
+                #               rec1_y = float(self.datlines[i+1].split()[4])
+                #               rec1_z = float(self.datlines[i+1].split()[5])
                 rec1_x = float(self.datlines[i + 1][45:58])
                 rec1_y = float(self.datlines[i + 1][58:71])
                 rec1_z = float(self.datlines[i + 1][71:84])
 
-#               t2_x = float(self.datlines[i+2].split()[0])
-#               t2_y = float(self.datlines[i+2].split()[1])
-#               t2_z = float(self.datlines[i+2].split()[2])
+                #               t2_x = float(self.datlines[i+2].split()[0])
+                #               t2_y = float(self.datlines[i+2].split()[1])
+                #               t2_z = float(self.datlines[i+2].split()[2])
                 t2_x = float(self.datlines[i + 2][3:16])
                 t2_y = float(self.datlines[i + 2][16:29])
                 t2_z = float(self.datlines[i + 2][29:42])
-#               rec2_x = float(self.datlines[i+2].split()[3])
-#               rec2_y = float(self.datlines[i+2].split()[4])
-#               rec2_z = float(self.datlines[i+2].split()[5])
+                #               rec2_x = float(self.datlines[i+2].split()[3])
+                #               rec2_y = float(self.datlines[i+2].split()[4])
+                #               rec2_z = float(self.datlines[i+2].split()[5])
                 rec2_x = float(self.datlines[i + 2][45:58])
                 rec2_y = float(self.datlines[i + 2][58:71])
                 rec2_z = float(self.datlines[i + 2][71:84])
 
-#               t3_x = float(self.datlines[i+3].split()[0])
-#               t3_y = float(self.datlines[i+3].split()[1])
-#               t3_z = float(self.datlines[i+3].split()[2])
+                #               t3_x = float(self.datlines[i+3].split()[0])
+                #               t3_y = float(self.datlines[i+3].split()[1])
+                #               t3_z = float(self.datlines[i+3].split()[2])
                 t3_x = float(self.datlines[i + 3][3:16])
                 t3_y = float(self.datlines[i + 3][16:29])
                 t3_z = float(self.datlines[i + 3][29:42])
-#               rec3_x = float(self.datlines[i+3].split()[3])
-#               rec3_y = float(self.datlines[i+3].split()[4])
-#               rec3_z = float(self.datlines[i+3].split()[5])
+                #               rec3_x = float(self.datlines[i+3].split()[3])
+                #               rec3_y = float(self.datlines[i+3].split()[4])
+                #               rec3_z = float(self.datlines[i+3].split()[5])
                 rec3_x = float(self.datlines[i + 3][45:58])
                 rec3_y = float(self.datlines[i + 3][58:71])
                 rec3_z = float(self.datlines[i + 3][71:84])
@@ -372,7 +380,6 @@ class ReadVaspOutcar(object):
 
             i += 1
 
-
         ###################### for Iter and Ion ##########################
         self.toten_ion = []
 
@@ -382,7 +389,7 @@ class ReadVaspOutcar(object):
             # get_n_ion_loop (旧名) get_iter_num
             if bool(iter_reg.match(self.datlines[i])):
                 self.n_ion_loop = \
-                        int(self.datlines[i].split()[2].replace('(', ''))
+                    int(self.datlines[i].split()[2].replace('(', ''))
 
             # Total Free Energy
             if bool(toten_ion_reg.match(self.datlines[i])):
@@ -398,11 +405,10 @@ class ReadVaspOutcar(object):
 
             i += 1
 
-
         ##################### after Iter Loop #############################
 
         # last total_energy
-        self.toten = self.toten_ion[self.n_ion_loop-1]
+        self.toten = self.toten_ion[self.n_ion_loop - 1]
 
         # last Volume # initial 状態(計算前)があるので loop + 1
         self.volume = self.volume_ion[self.n_ion_loop]
@@ -671,15 +677,17 @@ class ReadVaspOutcar(object):
     def get_volume(self):
         return self.volume
 
+
 ##########################################################################
 if __name__ == '__main__':
 
     import optparse
+
     name = 'OUTCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT',)
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    options, args = parser.parse_args()
 
     if options.INPUT:
         name = options.INPUT
@@ -687,24 +695,24 @@ if __name__ == '__main__':
         name = args[0]
 
     outcar = ReadVaspOutcar(name)
-#   NION = outcar.get_nion()
-#   NSPIN = outcar.get_ispin()
-#   LORBIT = outcar.get_lorbit()
-#   NATOM = outcar.get_natom()
-#   NSW = outcar.get_nsw()
-#   NKPTS = outcar.get_nkpts()
-#   NBANDS = outcar.get_nbands()
-#   TITLE = outcar.get_title()
-#   ISYM = outcar.get_isym()
-#   IBRION = outcar.get_ibrion()
-#   NWRITE = outcar.get_nwrite()
-#   point_sym = outcar.get_point_symmetry()
-#   n_ion_loop = outcar.get_n_ion_loop()
-#   efermi = outcar.get_efermi()
-#   atoms = outcar.get_atoms()
-#   atoms_index = outcar.get_atoms_index()
-#   atoms_j = outcar.get_atoms_j()
-#   atoms_index_j = outcar.get_atoms_index_j()
+    #   NION = outcar.get_nion()
+    #   NSPIN = outcar.get_ispin()
+    #   LORBIT = outcar.get_lorbit()
+    #   NATOM = outcar.get_natom()
+    #   NSW = outcar.get_nsw()
+    #   NKPTS = outcar.get_nkpts()
+    #   NBANDS = outcar.get_nbands()
+    #   TITLE = outcar.get_title()
+    #   ISYM = outcar.get_isym()
+    #   IBRION = outcar.get_ibrion()
+    #   NWRITE = outcar.get_nwrite()
+    #   point_sym = outcar.get_point_symmetry()
+    #   n_ion_loop = outcar.get_n_ion_loop()
+    #   efermi = outcar.get_efermi()
+    #   atoms = outcar.get_atoms()
+    #   atoms_index = outcar.get_atoms_index()
+    #   atoms_j = outcar.get_atoms_j()
+    #   atoms_index_j = outcar.get_atoms_index_j()
 
     NION = outcar.nion
     NSPIN = outcar.ispin
@@ -736,7 +744,6 @@ if __name__ == '__main__':
     print("E-fermi   = %s" % str(efermi))
     print("NWRITE    = %s" % str(NWRITE))
 
-
     print("")
     print("atoms_index")
     print("   ", end="")
@@ -759,29 +766,27 @@ if __name__ == '__main__':
     for i in range(NATOM):
         print(" %d %s" % (i, str(outcar.atoms_index_j[i])))
 
-#   temperature = outcar.get_temperature()
-#   for j in range(n_ion_loop):
-#       print temperature[j]
+    #   temperature = outcar.get_temperature()
+    #   for j in range(n_ion_loop):
+    #       print temperature[j]
 
-#   outcar.get_etotal()
-#   ETOTAL = outcar.get_etotal()
-#   for j in range(n_ion_loop):
-#       print ETOTAL[j]
+    #   outcar.get_etotal()
+    #   ETOTAL = outcar.get_etotal()
+    #   for j in range(n_ion_loop):
+    #       print ETOTAL[j]
 
-#   etotal_ion = outcar.get_toten_ion()
-#   for j in range(n_ion_loop):
-#       print etotal_ion[j]
+    #   etotal_ion = outcar.get_toten_ion()
+    #   for j in range(n_ion_loop):
+    #       print etotal_ion[j]
 
-#   kpoints_FLAGS = outcar.get_kpoints_mode()
-#   kpoints_type = outcar.get_kpoints_type()
+    #   kpoints_FLAGS = outcar.get_kpoints_mode()
+    #   kpoints_type = outcar.get_kpoints_type()
 
-#   print kpoints_type
-#   print " reciprocal lattice vectors "
+    #   print kpoints_type
+    #   print " reciprocal lattice vectors "
 
     print("")
     rec_t = outcar.get_reciprocal_t_init()
     print(" %12.9f %12.9f %12.9f" % (rec_t[0, 0], rec_t[1, 0], rec_t[2, 0]))
     print(" %12.9f %12.9f %12.9f" % (rec_t[0, 1], rec_t[1, 1], rec_t[2, 1]))
     print(" %12.9f %12.9f %12.9f" % (rec_t[0, 2], rec_t[1, 2], rec_t[2, 2]))
-
-

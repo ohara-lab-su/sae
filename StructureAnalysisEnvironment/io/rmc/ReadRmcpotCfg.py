@@ -42,7 +42,11 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.1"
@@ -50,18 +54,23 @@ __version__ = "0.0.1"
 ################################################################################
 
 import sys
-# import os
+import os
 import numpy as np
 
 try:
-    sys.path.append('../../')
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
     import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.Method import Method
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.Method import Method
 
 
 ################################################################################
-class ReadRmcpotCfg(SAEnv.Method):
+class ReadRmcpotCfg(Method):
     """
     for RMC version 3 format
     """
@@ -348,7 +357,7 @@ if __name__ == '__main__':
 
     # atoms_index = ['In','Ga','Zn','O']
     atoms_index = ['N', 'O', 'Ca', 'K']
-    cfg = SAEnv.io.ReadRmcpotCfg(cname + '.cfg', atoms_index=atoms_index)
+    cfg = SAEnv.io.rmc.ReadRmcpotCfg(cname + '.cfg', atoms_index=atoms_index)
     #   print cfg.title
     #   print cfg.atoms
 

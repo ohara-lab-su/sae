@@ -14,7 +14,11 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.5"
@@ -28,19 +32,23 @@ import numpy as np
 
 import optparse
 
-import StructureAnalysisEnvironment as SAE
-
 
 # import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 class ReadVaspAcf(object):
 
     def __init__(self, poscar=None, potcar=None, acf='ACF.dat'):
 
-        self.datlines, self.num = SAE.read_dataline(acf)
+        self.datlines, self.num = SAEnv.read_dataline(acf)
 
-        if isinstance(poscar, SAE.ReadVaspPoscar):
+        if isinstance(poscar, SAEnv.io.vasp.ReadVaspPoscar):
             self.poscar = poscar
             self.natom = self.poscar.natom
             self.nion = self.poscar.nion
@@ -49,7 +57,7 @@ class ReadVaspAcf(object):
         else:
             sys.exit("STOP: poscar is not ReadPoscar instance")
 
-        if isinstance(potcar, SAE.ReadVaspPotcar):
+        if isinstance(potcar, SAEnv.io.vasp.ReadVaspPotcar):
             self.potcar = potcar
             self.atoms_index = self.potcar.atoms_index
             self.atoms_zval = self.potcar.atoms_zval
@@ -143,8 +151,8 @@ if __name__ == '__main__':
 
     name = options()
 
-    poscar = SAE.ReadPoscar(name)
-    potcar = SAE.ReadVaspPotcar()
+    poscar = SAEnv.io.vasp.ReadPoscar(name)
+    potcar = SAEnv.io.vasp.ReadVaspPotcar()
     acfdat = ReadVaspAcf(poscar=poscar, potcar=potcar, acf='ACF.dat')
     acfdat.get_max_bader()
     acfdat.get_min_bader()

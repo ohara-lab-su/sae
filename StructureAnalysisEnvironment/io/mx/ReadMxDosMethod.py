@@ -56,29 +56,32 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.4"
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.4"
+
 ################################################################################
 
 import sys
 import os
-#import gzip
-#import re
-#import optparse
+# import gzip
+# import re
+# import optparse
 import numpy as np
 
-#from copy import deepcopy
+# from copy import deepcopy
+# import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
 
-#import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadMxDosMethod(object):
@@ -87,17 +90,17 @@ class ReadMxDosMethod(object):
     # *.out or *.dat から ISPIN 情報を読み込む( out 優先 )
     def get_ispin(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
+        if os.path.exists(self.name + '.out') or os.path.exists(self.name + '.out' + '.gz'):
             class_name = 'ReadMxOut'
-            datname = self.name+'.out'
-        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
+            datname = self.name + '.out'
+        elif os.path.exists(self.name + '.dat') or os.path.exists(self.name + '.dat' + '.gz'):
             class_name = 'ReadMxDat'
-            datname = self.name+'.dat'
+            datname = self.name + '.dat'
         else:
-            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
+            sys.exit("STOP: " + self.name + ".out or " + self.name + ".dat file not found")
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+        klass = getattr(module, class_name)
 
         dat = klass(datname)
         self.ispin = dat.get_ispin()
@@ -108,17 +111,17 @@ class ReadMxDosMethod(object):
     # *.out or *.dat から NATOM 情報を読み込む( out 優先 )
     def get_natom(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
+        if os.path.exists(self.name + '.out') or os.path.exists(self.name + '.out' + '.gz'):
             class_name = 'ReadMxOut'
-            datname = self.name+'.out'
-        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
+            datname = self.name + '.out'
+        elif os.path.exists(self.name + '.dat') or os.path.exists(self.name + '.dat' + '.gz'):
             class_name = 'ReadMxDat'
-            datname = self.name+'.dat'
+            datname = self.name + '.dat'
         else:
-            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
+            sys.exit("STOP: " + self.name + ".out or " + self.name + ".dat file not found")
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+        klass = getattr(module, class_name)
 
         dat = klass(datname)
         self.natom = dat.get_natom()
@@ -130,29 +133,28 @@ class ReadMxDosMethod(object):
     def get_title(self):
 
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
+        if os.path.exists(self.name + '.out') or os.path.exists(self.name + '.out' + '.gz'):
             class_name = 'ReadMxOut'
-            datname = self.name+'.out'
-        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
+            datname = self.name + '.out'
+        elif os.path.exists(self.name + '.dat') or os.path.exists(self.name + '.dat' + '.gz'):
             class_name = 'ReadMxDat'
-            datname = self.name+'.dat'
+            datname = self.name + '.dat'
         else:
-            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
+            sys.exit("STOP: " + self.name + ".out or " + self.name + ".dat file not found")
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+        klass = getattr(module, class_name)
 
         dat = klass(datname)
         self.title = dat.get_title()
 
         return self.title
 
-
     ###################################
     # EMAX (エネルギー固有値の最大値)
     def get_emax(self):
         NEDOS = self.get_nedos()
-        self.EMAX = float(self.datlines[NEDOS-1].split()[0])
+        self.EMAX = float(self.datlines[NEDOS - 1].split()[0])
         return self.EMAX
 
     ###################################
@@ -188,17 +190,17 @@ class ReadMxDosMethod(object):
     # ION の数を求める ( *.out or *.dat から読み込む)
     def get_nion(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
+        if os.path.exists(self.name + '.out') or os.path.exists(self.name + '.out' + '.gz'):
             class_name = 'ReadMxOut'
-            datname = self.name+'.out'
-        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
+            datname = self.name + '.out'
+        elif os.path.exists(self.name + '.dat') or os.path.exists(self.name + '.dat' + '.gz'):
             class_name = 'ReadMxDat'
-            datname = self.name+'.dat'
+            datname = self.name + '.dat'
         else:
-            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
+            sys.exit("STOP: " + self.name + ".out or " + self.name + ".dat file not found")
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+        klass = getattr(module, class_name)
 
         dat = klass(datname)
         self.NION = dat.get_nion()
@@ -209,23 +211,22 @@ class ReadMxDosMethod(object):
     # atoms_j を求める ( *.out or *.dat から読み込む)
     def get_atoms_j(self):
         module_name = 'StructureAnalysisEnvironment'
-        if os.path.exists(self.name+'.out') or os.path.exists(self.name+'.out'+'.gz'):
+        if os.path.exists(self.name + '.out') or os.path.exists(self.name + '.out' + '.gz'):
             class_name = 'ReadMxOut'
-            datname = self.name+'.out'
-        elif os.path.exists(self.name+'.dat') or os.path.exists(self.name+'.dat'+'.gz'):
+            datname = self.name + '.out'
+        elif os.path.exists(self.name + '.dat') or os.path.exists(self.name + '.dat' + '.gz'):
             class_name = 'ReadMxDat'
-            datname = self.name+'.dat'
+            datname = self.name + '.dat'
         else:
-            sys.exit("STOP: "+self.name+".out or "+self.name+".dat file not found")
+            sys.exit("STOP: " + self.name + ".out or " + self.name + ".dat file not found")
 
-        module = __import__(module_name,globals(),locals(),[class_name],-1)
-        klass = getattr(module,class_name)
+        module = __import__(module_name, globals(), locals(), [class_name], -1)
+        klass = getattr(module, class_name)
 
         dat = klass(datname)
         self.atoms_j = dat.get_atoms_j()
 
         return self.atoms_j
-
 
 #   ReadMxPdos.py で実装
 #   def get_pdos(self,lm=0,atom=0,spin=0):

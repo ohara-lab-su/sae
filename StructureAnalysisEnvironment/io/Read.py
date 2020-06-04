@@ -17,7 +17,11 @@
 #
 ###############################################################################
 from __future__ import print_function
-from ..copyright import *
+
+try:
+    from ..copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.1"
@@ -26,19 +30,19 @@ __version__ = "0.0.1"
 
 import sys
 
-# import os
+import os
 # import re
 # import gzip
 # import numpy as np
 
+# import SpaceGroupEnvironment as SGE
 try:
-    sys.path.append('../../')
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
     import StructureAnalysisEnvironment as SAEnv
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv
 
-
-# import SpaceGroupEnvironment as SGE
 
 ###############################################################################
 # RMC_POT や VASP4 などでは atoms_index 情報が存在しないので自分で
@@ -105,11 +109,11 @@ class Read(object):
 
         # module の動的ロード
         try:
-            # このリフレクションは python2 方式なので注意
-            module = __import__(module_name, globals(), locals(), [class_name], -1)
-        except:
             # for Python3
             module = __import__(module_name, fromlist=[class_name])
+        except:
+            # このリフレクションは python2 方式なので注意
+            module = __import__(module_name, globals(), locals(), [class_name], -1)
 
         # class の動的ロード
         klass = getattr(module, class_name)

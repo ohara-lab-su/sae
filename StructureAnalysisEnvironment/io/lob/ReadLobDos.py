@@ -29,29 +29,35 @@
 #
 ##########################################################################
 from __future__ import print_function
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2015, Kengo NAKADA"
-__license__ = "MIT"
-#
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ##########################################################################
 
-#import sys
-#import os
-#import gzip
+import sys
+import os
+# import gzip
 import re
-#import optparse
+# import optparse
 import numpy as np
 
-#from copy import deepcopy
+# from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ##########################################################################
 
@@ -72,7 +78,7 @@ class ReadLobDos(object):
         self.nedos = int(self.datlines[5].split()[2])
         self.efermi = float(self.datlines[5].split()[3])
 
-        self.lorbit = 11 # DOSCAR.lobster は LORBIT11 のみ(変則的)
+        self.lorbit = 11  # DOSCAR.lobster は LORBIT11 のみ(変則的)
 
         # total DOS part
         #  energy  DOS(up) DOS(dwn)  integrated DOS(up) integrated DOS(dwn)
@@ -84,11 +90,11 @@ class ReadLobDos(object):
             self.eng[i] = float(self.datlines[6 + i].split()[0])
             for spin in range(self.nspin):
                 self.tdos_all[i, spin] = \
-                             float(self.datlines[6 + i].split()\
-                             [1 + spin * (self.nspin - 1)])
+                    float(self.datlines[6 + i].split() \
+                              [1 + spin * (self.nspin - 1)])
                 self.inttdos_all[i, spin] = \
-                             float(self.datlines[6 + i].split()\
-                             [1 + spin * (self.nspin - 1) + self.nspin])
+                    float(self.datlines[6 + i].split() \
+                              [1 + spin * (self.nspin - 1) + self.nspin])
 
         # total DOS パート&ヘッダをスキップ(PDOSパートの先頭行)
         j0 = 6 + i + 1
@@ -138,7 +144,7 @@ class ReadLobDos(object):
                             row = \
                                 int(orb + (orb - 1 + spin) * (self.nspin - 1))
                             self.pdos_all[j - 1, orb - 1, atom, spin] \
-                                    = float(pdos[row])
+                                = float(pdos[row])
                 i += 1
 
         # 中身はMethodで計算される(引数で選択して PDOS を部分的に足し合わせる)
@@ -292,9 +298,9 @@ class ReadLobDos(object):
             lm = -1
             for orbit in self.orbit_index_j[atom]:
                 lm += 1
-                if re.match('^\d'+orbit_name, orbit):
+                if re.match('^\d' + orbit_name, orbit):
                     pdos[:] = self.pdos_all[:, lm, atom, spin]
-#                   print lm,orbit_name
+        #                   print lm,orbit_name
         else:
             pdos[:] = self.pdos_all[:, lm, atom, spin]
 
@@ -319,7 +325,7 @@ class ReadLobDos(object):
 
         for i in range(start, end + 1):
             self.pdos_sum[:] = \
-                    self.pdos_all[:, i, atom, spin] + self.pdos_sum[:]
+                self.pdos_all[:, i, atom, spin] + self.pdos_sum[:]
 
         return self.pdos_sum
 
@@ -376,7 +382,7 @@ class ReadLobDos(object):
 
         for atom in range(self.natom):
             norbit = len(self.orbit_index_j[atom])
-#           print norbit,self.orbit_index_j[atom]
+            #           print norbit,self.orbit_index_j[atom]
             orbit_list_s = []
             orbit_list_p = []
             orbit_list_d = []
@@ -395,16 +401,16 @@ class ReadLobDos(object):
 
             for orb in orbit_list_s:
                 ldos_all[:, 0, atom, :] = \
-                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 0, atom, :]
+                    self.pdos_all[:, orb, atom, :] + ldos_all[:, 0, atom, :]
             for orb in orbit_list_p:
                 ldos_all[:, 1, atom, :] = \
-                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 1, atom, :]
+                    self.pdos_all[:, orb, atom, :] + ldos_all[:, 1, atom, :]
             for orb in orbit_list_d:
                 ldos_all[:, 2, atom, :] = \
-                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 2, atom, :]
+                    self.pdos_all[:, orb, atom, :] + ldos_all[:, 2, atom, :]
             for orb in orbit_list_f:
                 ldos_all[:, 3, atom, :] = \
-                       self.pdos_all[:, orb, atom, :] + ldos_all[:, 3, atom, :]
+                    self.pdos_all[:, orb, atom, :] + ldos_all[:, 3, atom, :]
 
         self.ldos_all = ldos_all
         del ldos_all
@@ -414,14 +420,14 @@ class ReadLobDos(object):
     def print_doscar(self):
         pass
 
+
 ##########################################################################
 if __name__ == '__main__':
+    dos = SAEnv.io.lob.ReadLobDos()
 
-    dos = SAEnv.ReadLobDos()
-
-#   dos.get_ldos()
-#   dos.get_ldos_all()
-    dos.get_pdos(lm = 'px')
+    #   dos.get_ldos()
+    #   dos.get_ldos_all()
+    dos.get_pdos(lm='px')
 #   dos.get_pdos(lm = 'r2')
 
 #   # atom=0, spin=0 の lm: 1 から 3 まで足し合わせた pdos を出力

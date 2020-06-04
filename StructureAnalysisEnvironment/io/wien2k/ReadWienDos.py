@@ -93,14 +93,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
-#
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
@@ -113,7 +110,14 @@ import numpy as np
 
 #import optparse
 
-import StructureAnalysisEnvironment as SAE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -139,7 +143,7 @@ class ReadWienDos(object):
         self.dos_list_orbit = []
         for data in range(self.nfiles):
             name = lists[data]
-            datlines,num = SAE.read_dataline(name)
+            datlines,num = SAEnv.read_dataline(name)
 
             self.head_file.append(datlines[0])
             self.head_file.append(datlines[1])
@@ -295,7 +299,7 @@ class ReadWienDos(object):
             sys.exit("STOP: output0 file not found")
 
         # SCF計算を行った際のすべての原子種の記号リスト
-        output0 = SAE.ReadWienOutput0(output0_file)
+        output0 = SAEnv.io.wien2k.ReadWienOutput0(output0_file)
         atoms_index = output0.get_atoms_index()
 
         plot_ions = self.get_plot_ions()
@@ -352,7 +356,7 @@ class ReadWienDos(object):
         else:
             sys.exit("STOP: output0 file not found")
 
-        output0 = SAE.ReadWienOutput0(output0_file)
+        output0 = SAEnv.io.wien2k.ReadWienOutput0(output0_file)
         atoms = output0.get_atoms()
         times = float(atoms[atom-1])
 
@@ -405,16 +409,16 @@ if __name__ == '__main__':
 
     print("case               : %s" % str(case))
 
-    lists = SAE.find_suffix2(case+'.dos','ev')
+    lists = SAEnv.find_suffix2(case+'.dos','ev')
     print("lists              : %s" % str(lists))
 
-    output0 = SAE.ReadWienOutput0(case+'.output0')
+    output0 = SAEnv.io.wien2k.ReadWienOutput0(case+'.output0')
     atoms_index = output0.atoms_index
     atoms = output0.atoms
     print("atoms_index(output): %s" % str(atoms_index))
     print("atoms      (output): %s" % str(atoms))
 
-    dos = SAE.ReadWienDos(lists)
+    dos = SAEnv.io.wien2k.ReadWienDos(lists)
 
 #   head = dos.get_head()
 #   for i in head[0]:

@@ -16,36 +16,42 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
-#import os
+import os
 import re
-#import gzip
+# import gzip
 import numpy as np
 
-#import optparse
+# import optparse
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadWienOutput0(object):
 
     ###############################################
     ## init and Read POSCAR
-    def __init__(self,name):
-        self.datlines,self.num = SAE.read_dataline(name)
+    def __init__(self, name):
+        self.datlines, self.num = SAEnv.read_dataline(name)
 
         ion_txt = '^:NATO'
         ion_reg = re.compile(ion_txt)
@@ -68,15 +74,15 @@ class ReadWienOutput0(object):
             if bool(ion_reg.match(self.datlines[i])):
                 self.nion = int(self.datlines[i].split()[2])
                 self.natom = int(self.datlines[i].split()[5])
-                self.atoms = np.zeros(self.nion,dtype=int)
+                self.atoms = np.zeros(self.nion, dtype=int)
 
             # chk NOT EQUIV ATOM
             if bool(not_equiv_reg.match(self.datlines[i])):
                 atom = self.datlines[i].split()[3]
                 self.atoms_index.append(atom)
-                while not bool(not_equiv_reg.match(self.datlines[i+1])):
+                while not bool(not_equiv_reg.match(self.datlines[i + 1])):
                     if bool(equiv_reg.match(self.datlines[i])):
-                       self.atoms[j] = int(self.datlines[i].split()[2])
+                        self.atoms[j] = int(self.datlines[i].split()[2])
                     if bool(spin_reg.match(self.datlines[i])):
                         break
                     i += 1
@@ -92,8 +98,7 @@ class ReadWienOutput0(object):
                 else:
                     sys.exit("STOP: UNKNOWN SPIN MODE")
 
-            i += 1 # END_while
-
+            i += 1  # END_while
 
     ############################################################################
     # atoms_index と ions_index は同じ意味
@@ -124,9 +129,9 @@ class ReadWienOutput0(object):
     def get_natom(self):
         return self.natom
 
+
 ################################################################################
 if __name__ == '__main__':
-
     name = 'Cu.output0'
     dos = ReadWienOutput0(name)
 
@@ -142,4 +147,3 @@ if __name__ == '__main__':
     print("nion        %s" % str(nion))
     print("atoms_index %s" % str(atoms_index))
     print("atoms       %s" % str(atoms))
-

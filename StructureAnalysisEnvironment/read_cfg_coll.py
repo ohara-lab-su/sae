@@ -33,7 +33,10 @@
 #   ion_site[i] を追加 (read_cfg.py と互換機能および互換引数化)
 #
 ################################################################################
-from copyright import *
+try:
+    from .copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.1"

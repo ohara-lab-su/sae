@@ -23,15 +23,11 @@
 #
 ###############################################################################
 from __future__ import print_function
+try:
+    from ...copyright import *
+except ImportError:
+    from StructureAnalysisEnvironment.copyright import *
 
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2014,2015 Kengo NAKADA"
-__license__ = "MIT"
-#
 __status__ = "alpha"
 __version__ = "0.0.1"
 
@@ -46,7 +42,8 @@ import numpy as np
 # import optparse
 
 try:
-    sys.path.append('../../')
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
     import StructureAnalysisEnvironment as SAEnv
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv

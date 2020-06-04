@@ -74,26 +74,38 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.0"
 
 ################################################################################
 import sys
-# import os
+import os
 import re
 # import gzip
 import math
 import numpy as np
-import StructureAnalysisEnvironment as SAEnv
+
+try:
+    # sys.path.append('../..')
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
 # import SpaceGroupEnvironment as SGE
 
 from numba import jit
 
 
 ################################################################################
-class ReadVaspChgcar(SAEnv.Method):
+class ReadVaspChgcar(Method):
 
     ###############################################
     ## init and Read CHGCAR
@@ -786,7 +798,7 @@ class ReadVaspChgcar(SAEnv.Method):
                 if ABS == 'vasp' or ABS == 'VASP':
                     ABS = True
 
-        self.scale, self.direct = SAEnv.conv_direct2cara( \
+        self.scale, self.direct = SAEnv.conv_direct2cara(
             ABS,
             self.scale,
             self.t,
@@ -873,7 +885,7 @@ class ReadVaspChgcar(SAEnv.Method):
 
         # cartesian --> direct
         if not self.direct:
-            self.scale, self.direct = SAEnv.conv_car2direct( \
+            self.scale, self.direct = SAEnv.conv_car2direct(
                 self.scale,
                 self.t,
                 self.natom,
