@@ -74,27 +74,23 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2018 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.0"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.0"
+
 ################################################################################
 import sys
-#import os
+# import os
 import re
-#import gzip
+# import gzip
 import math
 import numpy as np
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+# import SpaceGroupEnvironment as SGE
 
 from numba import jit
+
 
 ################################################################################
 class ReadVaspChgcar(SAEnv.Method):
@@ -121,7 +117,6 @@ class ReadVaspChgcar(SAEnv.Method):
         t1_y = float(self.datlines[2].split()[1])
         t1_z = float(self.datlines[2].split()[2])
 
-
         t2_x = float(self.datlines[3].split()[0])
         t2_y = float(self.datlines[3].split()[1])
         t2_z = float(self.datlines[3].split()[2])
@@ -130,18 +125,18 @@ class ReadVaspChgcar(SAEnv.Method):
         t3_y = float(self.datlines[4].split()[1])
         t3_z = float(self.datlines[4].split()[2])
 
-        self.t = np.zeros((3,3))
-        self.t[0,0] = t1_x
-        self.t[1,0] = t1_y
-        self.t[2,0] = t1_z
+        self.t = np.zeros((3, 3))
+        self.t[0, 0] = t1_x
+        self.t[1, 0] = t1_y
+        self.t[2, 0] = t1_z
 
-        self.t[0,1] = t2_x
-        self.t[1,1] = t2_y
-        self.t[2,1] = t2_z
+        self.t[0, 1] = t2_x
+        self.t[1, 1] = t2_y
+        self.t[2, 1] = t2_z
 
-        self.t[0,2] = t3_x
-        self.t[1,2] = t3_y
-        self.t[2,2] = t3_z
+        self.t[0, 2] = t3_x
+        self.t[1, 2] = t3_y
+        self.t[2, 2] = t3_z
 
         ###############################################
         # 単位胞の長さの計算
@@ -150,17 +145,17 @@ class ReadVaspChgcar(SAEnv.Method):
         self.t2_len = math.sqrt((t2_x * t2_x) + (t2_y * t2_y) + (t2_z * t2_z))
         self.t3_len = math.sqrt((t3_x * t3_x) + (t3_y * t3_y) + (t3_z * t3_z))
 
-       #print("lattice a = %s " % str(self.t1_len))
-       #print("lattice b = %s " % str(self.t2_len))
-       #print("lattice c = %s " % str(self.t3_len))
+        # print("lattice a = %s " % str(self.t1_len))
+        # print("lattice b = %s " % str(self.t2_len))
+        # print("lattice c = %s " % str(self.t3_len))
 
         ###############################################
         ## VASP のバージョン番号確認(記号があるか否か)
         ##
-        i=5
+        i = 5
         self.vasp_version = 5
         atoms = self.datlines[i].split()
-        if atoms[0].isdigit(): # 数字ならば
+        if atoms[0].isdigit():  # 数字ならば
             self.vasp_version = 4
         del atoms
 
@@ -169,14 +164,14 @@ class ReadVaspChgcar(SAEnv.Method):
         ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
         ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
         ##
-        i=5
+        i = 5
         self.atoms_index = []
         self.atoms = []
         if self.vasp_version == 4:
             self.atoms.extend(self.datlines[i].split())
         elif self.vasp_version == 5:
             self.atoms_index.extend(self.datlines[i].split())
-            self.atoms.extend(self.datlines[i+1].split())
+            self.atoms.extend(self.datlines[i + 1].split())
         else:
             sys.exit("Error: unknown VASP format")
 
@@ -186,9 +181,9 @@ class ReadVaspChgcar(SAEnv.Method):
         ###############################################
         ## atoms_number[i]
         ##   atoms_index の原子番号版
-        self.atoms_number = np.zeros(self.nion,dtype=int)
+        self.atoms_number = np.zeros(self.nion, dtype=int)
         for i in range(self.nion):
-           #print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
+            # print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
             self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
         ###############################################
@@ -220,7 +215,7 @@ class ReadVaspChgcar(SAEnv.Method):
         ## get ion (makes index)
         ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
         ##
-        self.ion = np.zeros(self.natom,dtype=int)
+        self.ion = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
             local = -1
@@ -228,12 +223,12 @@ class ReadVaspChgcar(SAEnv.Method):
                 tmp += 1
                 local += 1
                 self.ion[tmp] = int(j)
-               #print tmp, int(ion[tmp])
+            # print tmp, int(ion[tmp])
 
         ###############################################
         ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
         ##
-        self.ion_local = np.zeros(self.natom,dtype=int)
+        self.ion_local = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
             local = -1
@@ -241,14 +236,13 @@ class ReadVaspChgcar(SAEnv.Method):
                 tmp += 1
                 local += 1
                 self.ion_local[tmp] = int(local)
-               #print tmp, int(ion[tmp]), int(ion_local[tmp])
-
+            # print tmp, int(ion[tmp]), int(ion_local[tmp])
 
         ###############################################
         ## natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
         ##                               <---> atoms_index_j() は元素記号を返す
         ## ReadOutcar.py, ReadMxDatMethod.py 互換
-        self.atoms_j = np.zeros(self.natom,dtype=int)
+        self.atoms_j = np.zeros(self.natom, dtype=int)
         j = 0
         for ion in range(self.nion):
             for atom in range(self.atoms[ion]):
@@ -259,12 +253,12 @@ class ReadVaspChgcar(SAEnv.Method):
         ## get atomc coordinate mode
         ##
         if self.vasp_version == 4:
-            i = 5+1
+            i = 5 + 1
         else:
-            i = 6+1
+            i = 6 + 1
 
         num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
-        selective_reg = re.compile('^S.*',re.IGNORECASE)
+        selective_reg = re.compile('^S.*', re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
             print("%s" % str(self.datlines[i].split()[0]))
@@ -279,13 +273,13 @@ class ReadVaspChgcar(SAEnv.Method):
         ## 内部座標のモードを取得
         ##
         if self.vasp_version == 4:
-            i = 5+1
+            i = 5 + 1
         else:
-            i = 6+1
-        if self.selective: i +=1
+            i = 6 + 1
+        if self.selective: i += 1
 
-        direct_reg = re.compile('^D.*',re.IGNORECASE)
-        car_reg = re.compile('^C.*',re.IGNORECASE)
+        direct_reg = re.compile('^D.*', re.IGNORECASE)
+        car_reg = re.compile('^C.*', re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
             print("%s" % str(self.datlines[i].split()[0]))
@@ -294,7 +288,6 @@ class ReadVaspChgcar(SAEnv.Method):
             self.direct = True
         elif bool(car_reg.match(self.datlines[i].split()[0])):
             self.direct = False
-
 
         ###############################################
         ## get atomic coordinate position
@@ -305,33 +298,33 @@ class ReadVaspChgcar(SAEnv.Method):
             i = 6
         if self.selective: i += 1
 
-        self.position = np.zeros((int(self.natom),3))
-        self.fix= np.zeros((int(self.natom),3),dtype='S')
+        self.position = np.zeros((int(self.natom), 3))
+        self.fix = np.zeros((int(self.natom), 3), dtype='S')
 
         i += 2
         current_datlines = i
 
         for j in range(self.natom):
-            self.position[j,0] = float(self.datlines[i+j].split()[0])
-            self.position[j,1] = float(self.datlines[i+j].split()[1])
-            self.position[j,2] = float(self.datlines[i+j].split()[2])
+            self.position[j, 0] = float(self.datlines[i + j].split()[0])
+            self.position[j, 1] = float(self.datlines[i + j].split()[1])
+            self.position[j, 2] = float(self.datlines[i + j].split()[2])
             if self.selective:
-                if len(self.datlines[i+j].split()) < 6:
+                if len(self.datlines[i + j].split()) < 6:
                     sys.exit("STOP: corrdinate line Format Error")
-                self.fix[j,0] = str(self.datlines[i+j].split()[3])
-                self.fix[j,1] = str(self.datlines[i+j].split()[4])
-                self.fix[j,2] = str(self.datlines[i+j].split()[5])
+                self.fix[j, 0] = str(self.datlines[i + j].split()[3])
+                self.fix[j, 1] = str(self.datlines[i + j].split()[4])
+                self.fix[j, 2] = str(self.datlines[i + j].split()[5])
 
-            current_datlines = i+j
-           #print j,
-           #print " %16.12f %16.12f %16.12f" \
-           #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
-           #print ""
+            current_datlines = i + j
+        # print j,
+        # print " %16.12f %16.12f %16.12f" \
+        #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
+        # print ""
 
         print("--- END")
-        self.read_mesh_data(startline=current_datlines+2)
+        self.read_mesh_data(startline=current_datlines + 2)
 
-#   @jit
+    #   @jit
     def read_mesh_data(self, startline=None):
         ########################################################################
         #
@@ -344,8 +337,8 @@ class ReadVaspChgcar(SAEnv.Method):
         if startline is None:
             return
 
-       #print(current_datlines)
-       #print(self.datlines[current_datlines+2])
+        # print(current_datlines)
+        # print(self.datlines[current_datlines+2])
 
         ####################
         # FFT Mesh の読み込み
@@ -353,18 +346,18 @@ class ReadVaspChgcar(SAEnv.Method):
         self.ngxc = int(self.datlines[startline].split()[0])
         self.ngyz = int(self.datlines[startline].split()[1])
         self.ngzc = int(self.datlines[startline].split()[2])
-        #print("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
+        # print("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
 
         ####################
         # FFT-Mesh 一つあたりの長さ(インスタンス変数の定義)
         #
-        self.rate_x = self.t1_len/self.ngxc
-        self.rate_y = self.t2_len/self.ngyz
-        self.rate_z = self.t3_len/self.ngzc
+        self.rate_x = self.t1_len / self.ngxc
+        self.rate_y = self.t2_len / self.ngyz
+        self.rate_z = self.t3_len / self.ngzc
 
-       #print(self.rate_x)
-       #print(self.rate_y)
-       #print(self.rate_z)
+        # print(self.rate_x)
+        # print(self.rate_y)
+        # print(self.rate_z)
 
         ####################
         # 総Mesh数および読み込むべき総ライン数の算出 (一行に10個のデータがある)
@@ -373,7 +366,7 @@ class ReadVaspChgcar(SAEnv.Method):
         mesh_max_line = int(mesh_max / 10)
 
         # CHACAR 形式のメッシュデータの読み込み開始行のセット
-        start_mesh_index = startline+1
+        start_mesh_index = startline + 1
 
         self.chgdata = np.zeros((self.ngxc, self.ngyz, self.ngzc))
 
@@ -382,7 +375,7 @@ class ReadVaspChgcar(SAEnv.Method):
         # 行を全部 join
         chglist = ''
         for i in range(mesh_max_line):
-            chglist += ''.join(self.datlines[start_mesh_index+i])
+            chglist += ''.join(self.datlines[start_mesh_index + i])
 
         # join後のデーターを split して LIST化
         chgarray = chglist.split()
@@ -393,7 +386,7 @@ class ReadVaspChgcar(SAEnv.Method):
 
         # 最終データーの確認
         # ( python だと 0 から index start なので -1 するのを忘れない)
-       #print(chgarray[mesh_max-1])
+        # print(chgarray[mesh_max-1])
 
         i = 0
         # 元の Matrix は 1 から始まるので注意
@@ -401,31 +394,30 @@ class ReadVaspChgcar(SAEnv.Method):
             for ny in range(0, self.ngyz):
                 for nz in range(0, self.ngzc):
                     self.chgdata[nx, ny, nz] = float(chgarray[i])
-                   #print(self.chgdata[nx,ny,nz], chgarray[i])
+                    # print(self.chgdata[nx,ny,nz], chgarray[i])
                     i += 1
         # WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
 
-#       # CHGCAR 形式でのデータ吐き出しテスト
-#       print("write VASP style CHGCAR files: plase waite...")
-#       ngx_max = self.ngxc
-#       ngy_max = self.ngyz
-#       ngz_max = self.ngzc
-#       inner_counter = 0
-#       for nx in range(0, ngx_max):
-#           for ny in range(0, ngy_max):
-#               for nz in range(0, ngz_max):
-#                   inner_counter += 1
-#                   if self.chgdata[nx, ny, nz] >= 0.001:
-#                       print("{:<12.5f}".format(self.chgdata[nx, ny, nz]), end="")
-#                      #print("%11.5f " % self.chgdata[nx, ny, nz], end="")
-#                   else:
-#                      print("{:<12.5e}".format(self.chgdata[nx, ny, nz]), end="")
-#                      #print("%12.5e " % self.chgdata[nx, ny, nz], end="")
-#                   if inner_counter >= 10:
-#                       inner_counter = 0
-#                       print("")
+        #       # CHGCAR 形式でのデータ吐き出しテスト
+        #       print("write VASP style CHGCAR files: plase waite...")
+        #       ngx_max = self.ngxc
+        #       ngy_max = self.ngyz
+        #       ngz_max = self.ngzc
+        #       inner_counter = 0
+        #       for nx in range(0, ngx_max):
+        #           for ny in range(0, ngy_max):
+        #               for nz in range(0, ngz_max):
+        #                   inner_counter += 1
+        #                   if self.chgdata[nx, ny, nz] >= 0.001:
+        #                       print("{:<12.5f}".format(self.chgdata[nx, ny, nz]), end="")
+        #                      #print("%11.5f " % self.chgdata[nx, ny, nz], end="")
+        #                   else:
+        #                      print("{:<12.5e}".format(self.chgdata[nx, ny, nz]), end="")
+        #                      #print("%12.5e " % self.chgdata[nx, ny, nz], end="")
+        #                   if inner_counter >= 10:
+        #                       inner_counter = 0
+        #                       print("")
         print("--- END")
-
 
     @jit
     def init_ave_elf(self):
@@ -443,13 +435,13 @@ class ReadVaspChgcar(SAEnv.Method):
         # 2018.08.18 12:36 正しく計算されるのを確認
         #
 
-        self.chgdata_s = np.zeros((self.ngxc*3, self.ngyz*3, self.ngzc*3))
+        self.chgdata_s = np.zeros((self.ngxc * 3, self.ngyz * 3, self.ngzc * 3))
 
         ### 3x3 の super-cell を作った場合の原点 shift
         #
-        sx = [0, self.ngxc, self.ngxc*2] # supre-cell 用の Meth 原点
-        sy = [0, self.ngyz, self.ngyz*2]
-        sz = [0, self.ngzc, self.ngzc*2]
+        sx = [0, self.ngxc, self.ngxc * 2]  # supre-cell 用の Meth 原点
+        sy = [0, self.ngyz, self.ngyz * 2]
+        sz = [0, self.ngzc, self.ngzc * 2]
 
         print("makes chgcar super-cell: plase waite...")
         # 基本セル情報 chgdata[nx,ny,nz] のループを new-cell 内で行う
@@ -461,7 +453,6 @@ class ReadVaspChgcar(SAEnv.Method):
                         for j in range(3):
                             for k in range(3):
                                 self.chgdata_s[nx + sx[i], ny + sy[j], nz + sz[k]] = s
-
 
         #######################################################################
         # ある原点からのある半径内での ELF の平均値 (単独テスト用)
@@ -477,27 +468,27 @@ class ReadVaspChgcar(SAEnv.Method):
         # 2. super_cell と 原点の差を全て探す(mesh-dataのみ)
         #
         #######################################################################
-#       print("search ...")
-#       org = [0 + sx[2], 0 + sy[2], 0 + sz[2]]
-#       r_diff = 2.0 # Angstrom
-#       elf_sum = 0
-#       v = 4.0/3.0*math.pi*r_diff**3 # Volume /A^3
-#       for nx in range(0, self.ngxc*3):
-#           for ny in range(0, self.ngyz*3):
-#               for nz in range(0, self.ngzc*3):
-#                   # 二点間の距離
-#                   r = (((org[0] - nx)*self.rate_x)**2
-#                      + ((org[1] - ny)*self.rate_y)**2
-#                      + ((org[2] - nz)*self.rate_z)**2)
-#                   if r < r_diff:
-#                       elf_sum += self.chgdata_s[nx, ny, nz]
-#                       print(nx, ny, nz, self.chgdata_s[nx, ny, nz])
+        #       print("search ...")
+        #       org = [0 + sx[2], 0 + sy[2], 0 + sz[2]]
+        #       r_diff = 2.0 # Angstrom
+        #       elf_sum = 0
+        #       v = 4.0/3.0*math.pi*r_diff**3 # Volume /A^3
+        #       for nx in range(0, self.ngxc*3):
+        #           for ny in range(0, self.ngyz*3):
+        #               for nz in range(0, self.ngzc*3):
+        #                   # 二点間の距離
+        #                   r = (((org[0] - nx)*self.rate_x)**2
+        #                      + ((org[1] - ny)*self.rate_y)**2
+        #                      + ((org[2] - nz)*self.rate_z)**2)
+        #                   if r < r_diff:
+        #                       elf_sum += self.chgdata_s[nx, ny, nz]
+        #                       print(nx, ny, nz, self.chgdata_s[nx, ny, nz])
 
-#       # 体積中のELFの平均値(ELF/A^3)
-#       ave_elf = elf_sum/v
-#       print("Volume         %f" % v)
-#       print("sum elf        %f" % elf_sum)
-#       print("sum elf/Volume %f" % ave_elf)
+        #       # 体積中のELFの平均値(ELF/A^3)
+        #       ave_elf = elf_sum/v
+        #       print("Volume         %f" % v)
+        #       print("sum elf        %f" % elf_sum)
+        #       print("sum elf/Volume %f" % ave_elf)
 
         return self.chgdata_s
 
@@ -518,8 +509,8 @@ class ReadVaspChgcar(SAEnv.Method):
         :return: self.ave_elf[nx, ny, nz]: CHGCAR 形式(FFT-MESHパートのみ)のマトリックス
         """
 
-        self.ave_elf  = SAEnv.sphere_integral_of_elf(self.chgdata_s, self.ngxc, self.ngyz, self.ngzc,
-                                                     self.rate_x, self.rate_y, self.rate_z, r_diff=r_diff)
+        self.ave_elf = SAEnv.sphere_integral_of_elf(self.chgdata_s, self.ngxc, self.ngyz, self.ngzc,
+                                                    self.rate_x, self.rate_y, self.rate_z, r_diff=r_diff)
 
         return self.ave_elf
 
@@ -532,7 +523,7 @@ class ReadVaspChgcar(SAEnv.Method):
         if chgcar is None:
             chgcar = self.chgdata
 
-        return 1/chgcar
+        return 1 / chgcar
 
     def get_chgcar(self, chgcar=None):
         if chgcar is None:
@@ -597,11 +588,11 @@ class ReadVaspChgcar(SAEnv.Method):
         ## POSCAR 相当情報の書き込み
         ##
         print("%s" % str(title), file=out)
-        print("  %13.9f" %scale, file=out)
+        print("  %13.9f" % scale, file=out)
 
-        print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
-        print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
-        print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
+        print("  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0]), file=out)
+        print("  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1]), file=out)
+        print("  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2]), file=out)
 
         if vasp >= 5:
             print(" ", file=out, end="")
@@ -623,12 +614,11 @@ class ReadVaspChgcar(SAEnv.Method):
 
         for j in range(natom):
             print(" %13.9f %13.9f %13.9f"
-                    %(position[j,0], position[j,1], position[j,2]), file=out, end="")
+                  % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
             if selective:
                 print("", file=out, end="")
-                print("%s %s %s" % (str(fix[j,0]), str(fix[i,1]), str(fix[i,2])), file=out, end="")
+                print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
             print("", file=out)
-
 
         print("write VASP style (new) CHGCAR files: plase waite...", file=sys.stdout)
         ngx_max = self.ngxc * 1
@@ -639,20 +629,20 @@ class ReadVaspChgcar(SAEnv.Method):
 
         ## WRITE CHGCAR/ELFCAR DATA
         print("", file=out)
-        print("%d %d %d" %(ngx_max, ngy_max, ngz_max), file=out)
+        print("%d %d %d" % (ngx_max, ngy_max, ngz_max), file=out)
 
         for nx in range(0, ngx_max):
             for ny in range(0, ngy_max):
                 for nz in range(0, ngz_max):
                     inner_counter += 1
-                    if ( chgcar[nx, ny, nz] < 0.001):
+                    if (chgcar[nx, ny, nz] < 0.001):
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
-                    if ( 0.001 <= chgcar[nx, ny, nz] < 10):
+                    if (0.001 <= chgcar[nx, ny, nz] < 10):
                         print("{:<12.5f}".format(chgcar[nx, ny, nz]), file=out, end="")
-                       #print("%11.5f " % self.chgdata[nx, ny, nz], end="")
+                    # print("%11.5f " % self.chgdata[nx, ny, nz], end="")
                     elif chgcar[nx, ny, nz] >= 10.00:
-                       print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
-                       #print("%12.5e " % self.chgdata[nx, ny, nz], end="")
+                        print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
+                        # print("%12.5e " % self.chgdata[nx, ny, nz], end="")
                     else:
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
                     if inner_counter >= 10:
@@ -660,7 +650,6 @@ class ReadVaspChgcar(SAEnv.Method):
                         print("", file=out)
 
         out.close()
-
 
     def print_ave_elfcar(self, outname=None):
         """
@@ -672,7 +661,6 @@ class ReadVaspChgcar(SAEnv.Method):
         :return:
         """
         self.print_chgcar(self.ave_elf, ngx_max=self.ngxc, ngy_max=self.ngyz, ngz_max=self.ngzc, outname=outname)
-
 
     def print_super_chgcar(self, x_times=3, y_times=3, z_times=3, outname=None):
         """
@@ -708,7 +696,7 @@ class ReadVaspChgcar(SAEnv.Method):
 
         print("", file=out)
         print("", file=out)
-        print("%d %d %d" %(ngx_max, ngy_max, ngz_max), file=out)
+        print("%d %d %d" % (ngx_max, ngy_max, ngz_max), file=out)
 
         for nx in range(0, ngx_max):
             for ny in range(0, ngy_max):
@@ -716,10 +704,10 @@ class ReadVaspChgcar(SAEnv.Method):
                     inner_counter += 1
                     if self.chgdata_s[nx, ny, nz] >= 0.001:
                         print("{:<12.5f}".format(self.chgdata_s[nx, ny, nz]), file=out, end="")
-                       #print("%11.5f " % self.chgdata[nx, ny, nz], end="")
+                    # print("%11.5f " % self.chgdata[nx, ny, nz], end="")
                     else:
-                       print("{:<12.5e}".format(self.chgdata_s[nx, ny, nz]), file=out, end="")
-                       #print("%12.5e " % self.chgdata[nx, ny, nz], end="")
+                        print("{:<12.5e}".format(self.chgdata_s[nx, ny, nz]), file=out, end="")
+                        # print("%12.5e " % self.chgdata[nx, ny, nz], end="")
                     if inner_counter >= 10:
                         inner_counter = 0
                         print("", file=out)
@@ -731,104 +719,104 @@ class ReadVaspChgcar(SAEnv.Method):
     # VASP 表記とは転置した形で t ベクトルに入っているの注意
     # 注意) むしろ VASP 表記が転置している
     # ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
-    def conv_rot_euler(self,alpha,beta,gamma):
+    def conv_rot_euler(self, alpha, beta, gamma):
 
-        R = SAEnv.rotate_euler(alpha,beta,gamma)
+        R = SAEnv.rotate_euler(alpha, beta, gamma)
 
         # 基本並進ベクトルの変換
         t = self.get_t()
 
-       #print "t"
-       #print t
-       #print ""
+        # print "t"
+        # print t
+        # print ""
 
-       #t1 = np.matrix( [ t[0,0],t[1,0],t[2,0] ] )
-        t1 = np.matrix( [ t[0,0],t[0,1],t[0,2] ] )
+        # t1 = np.matrix( [ t[0,0],t[1,0],t[2,0] ] )
+        t1 = np.matrix([t[0, 0], t[0, 1], t[0, 2]])
         t1r = t1 * R
-       #print " t1r = %14.8f %14.8f %14.8f" % (t1r[0,0],t1r[0,1],t1r[0,2])
+        # print " t1r = %14.8f %14.8f %14.8f" % (t1r[0,0],t1r[0,1],t1r[0,2])
 
-       #t2 = np.matrix( [ t[0,1],t[1,1],t[2,1] ] )
-        t2 = np.matrix( [ t[1,0],t[1,1],t[1,2] ] )
+        # t2 = np.matrix( [ t[0,1],t[1,1],t[2,1] ] )
+        t2 = np.matrix([t[1, 0], t[1, 1], t[1, 2]])
         t2r = t2 * R
-       #print " t2r = %14.8f %14.8f %14.8f" % (t2r[0,0],t2r[0,1],t2r[0,2])
+        # print " t2r = %14.8f %14.8f %14.8f" % (t2r[0,0],t2r[0,1],t2r[0,2])
 
-       #t3 = np.matrix( [ t[0,2],t[1,2],t[2,2] ] )
-        t3 = np.matrix( [ t[2,0],t[2,1],t[2,2] ] )
+        # t3 = np.matrix( [ t[0,2],t[1,2],t[2,2] ] )
+        t3 = np.matrix([t[2, 0], t[2, 1], t[2, 2]])
         t3r = t3 * R
-       #print " t3r = %14.8f %14.8f %14.8f" % (t3r[0,0],t3r[0,1],t3r[0,2])
+        # print " t3r = %14.8f %14.8f %14.8f" % (t3r[0,0],t3r[0,1],t3r[0,2])
 
-       #print ""
+        # print ""
 
         # オイラー角で基本並進ベクトルを回したときの基本並進ベクトル
-#       R_t = np.matrix([
-#               [ t1r[0,0],t2r[0,0],t3r[0,0] ],
-#               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
-#               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
-#               ])
+        #       R_t = np.matrix([
+        #               [ t1r[0,0],t2r[0,0],t3r[0,0] ],
+        #               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
+        #               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
+        #               ])
         R_t = np.matrix([
-                [ t1r[0,0],t1r[0,1],t1r[0,2] ],
-                [ t2r[0,0],t2r[0,1],t2r[0,2] ],
-                [ t3r[0,0],t3r[0,1],t3r[0,2] ]
-                ])
+            [t1r[0, 0], t1r[0, 1], t1r[0, 2]],
+            [t2r[0, 0], t2r[0, 1], t2r[0, 2]],
+            [t3r[0, 0], t3r[0, 1], t3r[0, 2]]
+        ])
 
-       #print "R_t"
-       #print R_t
+        # print "R_t"
+        # print R_t
 
         # 内部座標の変換
         position = self.get_position()
         natom = self.get_natom()
-        R_position = np.zeros((natom,3))
+        R_position = np.zeros((natom, 3))
         for j in range(natom):
-            p  = np.matrix( [position[j,0],position[j,1],position[j,2]] )
+            p = np.matrix([position[j, 0], position[j, 1], position[j, 2]])
             pr = p * R
-            R_position[j,0] =pr[0,0]
-            R_position[j,1] =pr[0,1]
-            R_position[j,2] =pr[0,2]
+            R_position[j, 0] = pr[0, 0]
+            R_position[j, 1] = pr[0, 1]
+            R_position[j, 2] = pr[0, 2]
 
-        return R_t,R_position
+        return R_t, R_position
 
     ############################################################################
     # direct to cartesian method
     def conv_direct2car(self, ABS=None):
 
         if ABS is not None:
-            ABS=False
+            ABS = False
         else:
-            if isinstance( ABS, str ):
+            if isinstance(ABS, str):
                 if ABS == 'vasp' or ABS == 'VASP':
-                    ABS=True
+                    ABS = True
 
-        self.scale, self.direct = SAEnv.conv_direct2cara(\
-                ABS,
-                self.scale,
-                self.t,
-                self.natom,
-                self.direct,
-                self.position)
+        self.scale, self.direct = SAEnv.conv_direct2cara( \
+            ABS,
+            self.scale,
+            self.t,
+            self.natom,
+            self.direct,
+            self.position)
 
     ############################################################################
     # print POSCAR
-    def print_poscar(self, outname='POSCAR', STD=True ):
+    def print_poscar(self, outname='POSCAR', STD=True):
 
         SAEnv.print_poscar(
-                outname,STD,
-                self.title,
-                self.scale,
-                self.natom,
-                self.nion,
-                self.selective,
-                self.direct,
-                self.vasp_version,
-                self.t,
-                self.atoms,
-                self.atoms_index,
-                self.position,
-                self.fix)
+            outname, STD,
+            self.title,
+            self.scale,
+            self.natom,
+            self.nion,
+            self.selective,
+            self.direct,
+            self.vasp_version,
+            self.t,
+            self.atoms,
+            self.atoms_index,
+            self.position,
+            self.fix)
 
     ############################################################################
     # スーパーセル作成 Method
     # 関数版を持ってきただけのやっつけ対応
-    def conv_supercell(self,times=(1,1,1)):
+    def conv_supercell(self, times=(1, 1, 1)):
 
         super_x = int(times[0])
         super_y = int(times[1])
@@ -836,79 +824,80 @@ class ReadVaspChgcar(SAEnv.Method):
 
         # direct --> cartesian
         if self.direct:
-            ABS=True
+            ABS = True
             self.scale, self.direct = SAEnv.conv_direct2cara(
-                    ABS,
-                    self.scale,
-                    self.t,
-                    self.natom,
-                    self.direct,
-                    self.position)
+                ABS,
+                self.scale,
+                self.t,
+                self.natom,
+                self.direct,
+                self.position)
 
         # super 用の配列
-        supers = super_x*super_y*super_x
-        sv = np.zeros((supers,3))                          # (super) t
-        sp = np.zeros((self.natom*supers,3))               # (super) position
-        ion_sp = np.zeros(self.natom*supers)               # (super) ion
-        ion_local_sp = np.zeros(self.natom*supers)         # (super) ion_local
-        fix_sp = np.zeros((self.natom*supers,3),dtype='S') # (super) fix
-        sp_j  = np.zeros(self.natom*supers)                # super cell と orijinal cell の対応
+        supers = super_x * super_y * super_x
+        sv = np.zeros((supers, 3))  # (super) t
+        sp = np.zeros((self.natom * supers, 3))  # (super) position
+        ion_sp = np.zeros(self.natom * supers)  # (super) ion
+        ion_local_sp = np.zeros(self.natom * supers)  # (super) ion_local
+        fix_sp = np.zeros((self.natom * supers, 3), dtype='S')  # (super) fix
+        sp_j = np.zeros(self.natom * supers)  # super cell と orijinal cell の対応
 
         # super 用の内部座標作成
         SAEnv.make_supercell1(
-                super_x,
-                super_y,
-                super_z,
-                self.t,
-                self.natom,
-                self.nion,
-                self.atoms,
-                self.ion,
-                self.ion_local,
-                self.position,
-                sv,
-                ion_sp,
-                ion_local_sp,
-                sp_j,
-                sp,
-                self.fix,
-                fix_sp)
+            super_x,
+            super_y,
+            super_z,
+            self.t,
+            self.natom,
+            self.nion,
+            self.atoms,
+            self.ion,
+            self.ion_local,
+            self.position,
+            sv,
+            ion_sp,
+            ion_local_sp,
+            sp_j,
+            sp,
+            self.fix,
+            fix_sp)
 
         # super 用の基本並進ベクトル/原子種数を作る
         SAEnv.make_supercell_param(
-                super_x,super_y,super_z,
-                self.nion,
-                self.atoms,
-                self.t)
+            super_x, super_y, super_z,
+            self.nion,
+            self.atoms,
+            self.t)
 
-        self.natom = self.natom*supers
+        self.natom = self.natom * supers
 
         # cartesian --> direct
         if not self.direct:
-            self.scale, self.direct = SAEnv.conv_car2direct(\
-                    self.scale,
-                    self.t,
-                    self.natom,
-                    self.direct,
-                    sp)
+            self.scale, self.direct = SAEnv.conv_car2direct( \
+                self.scale,
+                self.t,
+                self.natom,
+                self.direct,
+                sp)
 
         self.ion = ion_sp
         self.ion_local = ion_local_sp
         self.position = sp
         self.fix = fix_sp
         self.sp_j = sp_j  # super cell と orijinal cell の対応
-                          # super の通し番号を与えると元cellの通し番号を与える)
+        # super の通し番号を与えると元cellの通し番号を与える)
+
 
 ################################################################################
 if __name__ == '__main__':
-
     import optparse
+
     name = 'POSCAR'
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input',
-                        dest='INPUT',
-                        default=name,
-                        )
+    parser.add_option('-i', '--input',
+                      dest='INPUT',
+                      default=name,
+                      )
     options, args = parser.parse_args()
     name = options.INPUT
 
@@ -992,5 +981,4 @@ if __name__ == '__main__':
 ##     ############################################################################
 ##
 ## #   print ion
-  #   print ion_local
-
+#   print ion_local

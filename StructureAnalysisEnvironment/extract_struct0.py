@@ -53,70 +53,65 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
-#import sys
-#import os
+# import sys
+# import os
 
 import numpy as np
 
-#from . import conv_direct2car
+# from . import conv_direct2car
 import StructureAnalysisEnvironment as SAE
 
-#import SpaceGroupEnvironment as SGE
 
-def extract_struct0(scale,t,natom,direct,position,c0,c1,\
-                    atoms,atoms_index,ion,ion_local,\
-                    ex_j,ex_natom,ex_atoms,ex_atoms_index,ex_position):
+# import SpaceGroupEnvironment as SGE
 
+def extract_struct0(scale, t, natom, direct, position, c0, c1, \
+                    atoms, atoms_index, ion, ion_local, \
+                    ex_j, ex_natom, ex_atoms, ex_atoms_index, ex_position):
     # リージョン選択の座標系の変換
-    t1_x = t[0,0]
-    t1_y = t[1,0]
-    t1_z = t[2,0]
+    t1_x = t[0, 0]
+    t1_y = t[1, 0]
+    t1_z = t[2, 0]
 
-    t2_x = t[0,1]
-    t2_y = t[1,1]
-    t2_z = t[2,1]
+    t2_x = t[0, 1]
+    t2_y = t[1, 1]
+    t2_z = t[2, 1]
 
-    t3_x = t[0,2]
-    t3_y = t[1,2]
-    t3_z = t[2,2]
+    t3_x = t[0, 2]
+    t3_y = t[1, 2]
+    t3_z = t[2, 2]
 
     c0_new = np.zeros(3)
-    c0_new[0] = ( t1_x*c0[0] + t2_x*c0[1] + t3_x*c0[2] )*scale
-    c0_new[1] = ( t1_y*c0[0] + t2_y*c0[1] + t3_y*c0[2] )*scale
-    c0_new[2] = ( t1_z*c0[0] + t2_z*c0[1] + t3_z*c0[2] )*scale
+    c0_new[0] = (t1_x * c0[0] + t2_x * c0[1] + t3_x * c0[2]) * scale
+    c0_new[1] = (t1_y * c0[0] + t2_y * c0[1] + t3_y * c0[2]) * scale
+    c0_new[2] = (t1_z * c0[0] + t2_z * c0[1] + t3_z * c0[2]) * scale
 
     c1_new = np.zeros(3)
-    c1_new[0] = ( t1_x*c1[0] + t2_x*c1[1] + t3_x*c1[2] )*scale
-    c1_new[1] = ( t1_y*c1[0] + t2_y*c1[1] + t3_y*c1[2] )*scale
-    c1_new[2] = ( t1_z*c1[0] + t2_z*c1[1] + t3_z*c1[2] )*scale
+    c1_new[0] = (t1_x * c1[0] + t2_x * c1[1] + t3_x * c1[2]) * scale
+    c1_new[1] = (t1_y * c1[0] + t2_y * c1[1] + t3_y * c1[2]) * scale
+    c1_new[2] = (t1_z * c1[0] + t2_z * c1[1] + t3_z * c1[2]) * scale
 
     # cartesian系へ変換
     if direct:
-        ABS=False
-        scale,direct = SAE.conv_direct2cara(ABS,scale,t,natom,direct,position)
+        ABS = False
+        scale, direct = SAE.conv_direct2cara(ABS, scale, t, natom, direct, position)
 
     # 絶対座標系へ変換(引数版)
-    SAE.conv_car2carABSa(scale,t,natom,direct,position)
+    SAE.conv_car2carABSa(scale, t, natom, direct, position)
 
     # リージョン内の原子探索(c軸のリージョンのみ)
-    j=0
+    j = 0
     for i in range(natom):
-        if c0_new[2] <= position[i,2] <= c1_new[2]:
-            ex_position[j,0] = position[i,0]
-            ex_position[j,1] = position[i,1]
-            ex_position[j,2] = position[i,2]
+        if c0_new[2] <= position[i, 2] <= c1_new[2]:
+            ex_position[j, 0] = position[i, 0]
+            ex_position[j, 1] = position[i, 1]
+            ex_position[j, 2] = position[i, 2]
             ex_j[j] = i
 
             j += 1
@@ -129,7 +124,7 @@ def extract_struct0(scale,t,natom,direct,position,c0,c1,\
     tmp = 'ZZ'
     local_atom_index = 0
     for i in range(ex_natom):
-        atom0       = int(atoms[int(ion[ex_j[i]])])
+        atom0 = int(atoms[int(ion[ex_j[i]])])
         atom_index0 = str(atoms_index[int(ion[ex_j[i]])])
         local_atom_index += 1
         if tmp != atom_index0:

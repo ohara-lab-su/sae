@@ -41,45 +41,41 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
-#import os
-#import re
-#from numpy import *
 
 
-def print_poscar(cname,STD,\
-                 title,scale,natom,nion,selective,direct,VASP,\
-                 t,atoms,atoms_index,position,fix):
+# import os
+# import re
+# from numpy import *
 
+
+def print_poscar(cname, STD, \
+                 title, scale, natom, nion, selective, direct, VASP, \
+                 t, atoms, atoms_index, position, fix):
     ## open poscar file
     ##
     if STD:
         out = sys.stdout
     else:
         try:
-            out = open(cname+'.vasp','w')
+            out = open(cname + '.vasp', 'w')
         except:
             out.close()
-            sys.exit("STOP:"+cname+".vasp can't open")
+            sys.exit("STOP:" + cname + ".vasp can't open")
 
     print("------------------------------------------------- START")
     print(title, file=out)
-    print(" ",scale, file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
+    print(" ", scale, file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2]), file=out)
 
     if VASP == 5:
         print(" ", file=out, end="")
@@ -101,14 +97,13 @@ def print_poscar(cname,STD,\
         print("Cartesian", file=out)
 
     for i in range(int(natom)):
-        print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), file=out, end="")
+        print(" %13.9f %13.9f %13.9f" % (position[i, 0], position[i, 1], position[i, 2]), file=out, end="")
         if selective:
             print("", file=out, end="")
-            print(fix[i,0],fix[i,1],fix[i,2], file=out, end="")
+            print(fix[i, 0], fix[i, 1], fix[i, 2], file=out, end="")
         print("", file=out)
 
     if STD:
         sys.stdout = sys.__stdout__
     else:
         out.close()
-

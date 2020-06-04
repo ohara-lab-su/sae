@@ -1,99 +1,27 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 ################################################################################
-#__all__ = ["read_param_poscar", "read_poscar", "print_poscar", "conv_direct2car"]
+# __all__ = ["read_param_poscar", "read_poscar", "print_poscar", "conv_direct2car"]
 
 ################################################################################
 ### gui function (using VPython and wxPython )
-#try:
+# try:
 #    from gui.crystal_make_unit import *
-#except:
+# except:
 #    pass
 
 ################################################################################
 ### current (using Numpy and Matplotlib )
 
 
-# Python3 $B$N$H$-$O$?$H$($P!"(B
-# from Read import * $B$G$O%@%a$GAjBPE*$K5-=R(B
-# from .Read improt * $B$H$7$J$$$H$[$\$[$\$&$^$/F0$+$J$$(B
-# Python2 $B$O$I$A$i$G$b(B OK
+# Python3 のときはたとえば、
+# from Read import * ではダメで相対的に記述
+# from .Read improt * としないとほぼほぼうまく動かない
+# Python2 はどちらでも OK
 
-### general class
-from .Read import *
-from .ReadMd import *
-from .Method import *
-
-### class for VASP (+alpha)
-from .ReadVaspOutcar import *
-from .ReadVaspDoscar import *
-from .ReadVaspXdat import *
-from .ReadVaspVasprun import *
-from .ReadVaspOszicar import *
-from .ReadVaspEigenval import *
-from .ReadVaspKpoints import *
-from .ReadVaspSymdat import *
-from .ReadVaspProcar import *
-from .ReadVaspPoscar import *
-from .ReadVaspIncar import *
-from .ReadVaspAcf import *
-from .ReadVaspPotcar import *
-from .ReadVaspChgcar import *
-
-### LOBSTER,COHP for VASP
-from .ReadLobCohp import *
-from .ReadLobDos import *
-from .ReadLobOut import *
-
-### class for OpenMX
-from .ReadMxVps import *
-from .ReadMxVpsList import *
-
-from .ReadMxDatMethod import *
-from .ReadMxDat import *
-from .ReadMxOut import *
-from .ReadMxDftscf import *
-from .ReadMxDosMethod import *
-from .ReadMxTdos import *
-from .ReadMxPdos import *
-
-### class for WIEN2k
-from .ReadWienDos import *
-from .ReadWienOutput0 import *
-from .ReadWienOutputt import *
-from .ReadWienXspec import *
-from .ReadWienTxspec import *
-from .ReadWienScf import *
-
-### class for HiLAPW
-from .ReadHiSets import *
-
-### class for PWScf (Quantum ESPRESSO)
-from .ReadPwIn import *
-from .ReadPwOut import *
-from .ReadPwTdos import *
-from .ReadPwPdos import *
-from .ReadPwXanes import *
-
-### class for FDMNES
-from .ReadFdmTxt import *
-from .ReadFdmConv import *
-from .ReadFdmInp import *
-from .ReadFdmBav import *
-from .ReadFdmSd import *
-from .ReadFdmFdmfile import *
-
-### class for RMC
-from .ReadRmcpotCfg import *
-
-### class for Athena
-from .ReadAthenaNor import *
-
-### class for PF format
-from .ReadPfformat import *
-
+from Method.Method import *
 
 #################################################################################
-#### function (個別機能)
+#### function
 
 ### general
 from .write import *

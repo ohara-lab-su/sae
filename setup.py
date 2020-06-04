@@ -21,7 +21,7 @@ import glob
 #version = __version__
 from StructureAnalysisEnvironment.version import __version__
 
-script =  glob.glob("bin/*.py")
+script =  glob.glob("StructureAnalysisEnvironment/bin/*.py")
 
 long_description = 'Structure Analysis Environment'
 import os

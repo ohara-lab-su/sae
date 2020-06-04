@@ -13,46 +13,42 @@
 #   startup
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from __future__ import print_function
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
 import os
 import gzip
 
-################################################################################
-def read_row(name,column=0):
 
+################################################################################
+def read_row(name, column=0):
     if os.path.exists(name):
-        GZIP=False
-    elif os.path.exists(name+".gz"):
-        GZIP=True
+        GZIP = False
+    elif os.path.exists(name + ".gz"):
+        GZIP = True
     else:
-        sys.exit("STOP: "+name+" or "+name+".gz file not found")
+        sys.exit("STOP: " + name + " or " + name + ".gz file not found")
 
     try:
         if GZIP:
-            tmp = gzip.open(name+".gz")
+            tmp = gzip.open(name + ".gz")
         else:
             tmp = open(name)
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+        sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
     finally:
         tmp.close()
 
     datlines = datfile.split('\n')
-    num = len(datlines) -1
+    num = len(datlines) - 1
     row = len(datlines[column].split())
 
-    return row,num
-
+    return row, num

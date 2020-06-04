@@ -25,6 +25,7 @@
 #
 ###############################################################################
 from __future__ import print_function
+
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -35,17 +36,23 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ###############################################################################
 
-#import sys
-#import gzip
+import sys
+# import gzip
 import os
-#import re
+# import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+# import SpaceGroupEnvironment as SGE
 
 ###############################################################################
 
@@ -87,7 +94,7 @@ class ReadFdmConv(object):
     # 平均を self.xas に返す
     #
     # non-spin
-#   def average_conv(self,name,*allsite):
+    #   def average_conv(self,name,*allsite):
     def average_conv(self, name, absorber, weight=None):
         if weight is None:
             n_site = float(len(absorber))
@@ -95,7 +102,7 @@ class ReadFdmConv(object):
             print("weight : %s" % str(weight))
             n_site = float(weight)
         s_xas = np.zeros(self.num - 1)
-       # print absorber
+        # print absorber
         for site in absorber:
             convname = name + "_" + str(site) + self.suffix
             datlines, num = SAEnv.read_dataline(convname)
@@ -108,7 +115,6 @@ class ReadFdmConv(object):
 
 ###############################################################################
 def plot_fdm_xas(eng, xas):
-
     import matplotlib.pyplot as plt
 
     plt.rcParams['font.family'] = 'Times New Roman'
@@ -144,16 +150,16 @@ def plot_fdm_xas(eng, xas):
 
     plt.close('all')
 
+
 ###############################################################################
 
 
 def options():
-
     name = 'POSCAR'
     suffix = '_conv.txt'
 
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
     if not os.path.exists(name):
@@ -170,11 +176,11 @@ def options():
 
     return name, suffix
 
+
 ###############################################################################
 if __name__ == '__main__':
-
     name, suffix = options()
-#   print name,suffix
+    #   print name,suffix
     conv = ReadFdmConv(name, suffix)
 
     eng = conv.get_eng()

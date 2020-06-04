@@ -21,16 +21,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -39,12 +34,11 @@ import optparse
 import numpy as np
 
 
-def change_density(STD,datname,outname,density):
-
+def change_density(STD, datname, outname, density):
     ###############################################
     ## Open RMC_POT cfg file
     ##
-    tmp = open(datname+'.dat')
+    tmp = open(datname + '.dat')
     datfile = tmp.read()
     tmp.close
 
@@ -59,7 +53,7 @@ def change_density(STD,datname,outname,density):
     if STD:
         out = sys.stdout
     else:
-        out = open(outname+'.dat','w')
+        out = open(outname + '.dat', 'w')
 
     print(datlines[0].rstrip(), file=out)
 
@@ -68,10 +62,9 @@ def change_density(STD,datname,outname,density):
         print(lines[i], file=out, end="")
     print("", file=out)
 
-    for i in range(2,nline):
+    for i in range(2, nline):
         print(datlines[i].rstrip(), file=out)
 
     out.close
 
     return
-

@@ -27,15 +27,12 @@
 # 2014.10.30/31 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from __future__ import print_function
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -44,16 +41,15 @@ import optparse
 from numpy import *
 
 
-def read_cfg(cname,t,atoms,ion_site,position):
-
+def read_cfg(cname, t, atoms, ion_site, position):
     ###############################################
     ## Open RMC_POT cfg file
     ##
     try:
-        tmp = open(cname+'.cfg')
+        tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg.py): "+cname+".cfg not open")
+        sys.exit("Error(read_cfg.py): " + cname + ".cfg not open")
 
     datfile = tmp.read()
     tmp.close()
@@ -102,25 +98,25 @@ def read_cfg(cname,t,atoms,ion_site,position):
     t3_y = float(v[1])
     t3_z = float(v[2])
 
-    t[0,0] = float(t1_x)
-    t[1,0] = float(t1_y)
-    t[2,0] = float(t1_z)
+    t[0, 0] = float(t1_x)
+    t[1, 0] = float(t1_y)
+    t[2, 0] = float(t1_z)
 
-    t[0,1] = float(t2_x)
-    t[1,1] = float(t2_y)
-    t[2,1] = float(t2_z)
+    t[0, 1] = float(t2_x)
+    t[1, 1] = float(t2_y)
+    t[2, 1] = float(t2_z)
 
-    t[0,2] = float(t3_x)
-    t[1,2] = float(t3_y)
-    t[2,2] = float(t3_z)
+    t[0, 2] = float(t3_x)
+    t[1, 2] = float(t3_y)
+    t[2, 2] = float(t3_z)
 
     tmp = datlines[17]
 
     ###############################################
     ## 原子の種類ごとの読み込み
     ##
-    lines=17
-   #atoms = zeros((int(nion)+1))
+    lines = 17
+    # atoms = zeros((int(nion)+1))
     for i in range(int(nion)):
         lines += 1
         n = datlines[lines].split()
@@ -138,21 +134,20 @@ def read_cfg(cname,t,atoms,ion_site,position):
     index = 0
     for j in range(nion):
         for k in range(atoms[j]):
-            ion_site[index] = j # イオン種別の通し番号を与えておく
-           #print ion_site[index],index
+            ion_site[index] = j  # イオン種別の通し番号を与えておく
+            # print ion_site[index],index
             index += 1
 
     ###############################################
     ## Read Internal Coordinate
     ##
-   #position = zeros((int(natom)+1,3))
+    # position = zeros((int(natom)+1,3))
     for i in range(int(natom)):
         lines += 1
         xyz = datlines[lines].split()
-        position[i,0] = xyz[0]
-        position[i,1] = xyz[1]
-        position[i,2] = xyz[2]
-       #print position[i,0], position[i,1], position[i,2]
+        position[i, 0] = xyz[0]
+        position[i, 1] = xyz[1]
+        position[i, 2] = xyz[2]
+    # print position[i,0], position[i,1], position[i,2]
 
-    return [header,comment]
-
+    return [header, comment]

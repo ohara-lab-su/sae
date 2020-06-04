@@ -7,6 +7,7 @@
 #
 ################################################################################
 from __future__ import print_function
+from copyright import *
 ################################################################################
 
 import numpy as np
@@ -14,6 +15,7 @@ import math
 
 # using jit
 from numba import jit
+
 
 @jit
 def sphere_integral_of_elf(chgcar, ngxc, ngyz, ngzc, rate_x, rate_y, rate_z, r_diff=1.0):
@@ -57,16 +59,16 @@ def sphere_integral_of_elf(chgcar, ngxc, ngyz, ngzc, rate_x, rate_y, rate_z, r_d
 
     chgdata_s = chgcar
 
-    #r_diff = 1.0 # Angstrom
+    # r_diff = 1.0 # Angstrom
 
     ### 3x3 の super-cell を作った場合の原点 shift
     #
-    sx = [0, ngxc, ngxc*2] # supre-cell 用の Meth 原点
-    sy = [0, ngyz, ngyz*2]
-    sz = [0, ngzc, ngzc*2]
+    sx = [0, ngxc, ngxc * 2]  # supre-cell 用の Meth 原点
+    sy = [0, ngyz, ngyz * 2]
+    sz = [0, ngzc, ngzc * 2]
 
     # ある原点を中心とした ELF の平均値を取るための、ある半径の体積の計算
-    v = 4.0/3.0*math.pi*r_diff**3 # Volume /A^3
+    v = 4.0 / 3.0 * math.pi * r_diff ** 3  # Volume /A^3
 
     # 初期化
     ave_elf = np.zeros((ngxc, ngyz, ngzc))
@@ -79,18 +81,18 @@ def sphere_integral_of_elf(chgcar, ngxc, ngyz, ngzc, rate_x, rate_y, rate_z, r_d
                 org = [org_nx + sx[2], org_ny + sy[2], org_nz + sz[2]]
                 elf_sum = 0
                 print("search (%d,%d,%d) ..." % (org_nx, org_ny, org_nz), end="")
-                for nx in range(0, ngxc*3):
-                    for ny in range(0, ngyz*3):
-                        for nz in range(0, ngzc*3):
+                for nx in range(0, ngxc * 3):
+                    for ny in range(0, ngyz * 3):
+                        for nz in range(0, ngzc * 3):
                             # 二点間の距離
-                            r = math.sqrt(((org[0] - nx)*rate_x)**2
-                                        + ((org[1] - ny)*rate_y)**2
-                                        + ((org[2] - nz)*rate_z)**2)
+                            r = math.sqrt(((org[0] - nx) * rate_x) ** 2
+                                          + ((org[1] - ny) * rate_y) ** 2
+                                          + ((org[2] - nz) * rate_z) ** 2)
                             if r < r_diff:
                                 elf_sum += chgdata_s[nx, ny, nz]
-                               #print(nx, ny, nz, self.chgdata_s[nx, ny, nz])
+                            # print(nx, ny, nz, self.chgdata_s[nx, ny, nz])
 
-                ave_elf[org_nx, org_ny, org_nz] = elf_sum/v  # 体積中のELFの平均値(ELF/A^3)
+                ave_elf[org_nx, org_ny, org_nz] = elf_sum / v  # 体積中のELFの平均値(ELF/A^3)
                 print(" ave_elf=%f" % ave_elf[org_nx, org_ny, org_nz])
 
     return ave_elf

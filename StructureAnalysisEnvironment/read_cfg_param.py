@@ -14,15 +14,11 @@
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -32,15 +28,14 @@ from numpy import *
 
 
 def read_cfg_param(cname):
-
     ###############################################
     ## Open RMC_POT cfg file
     ##
     try:
-        tmp = open(cname+'.cfg')
+        tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg_param.py): "+cname+".cfg not open")
+        sys.exit("Error(read_cfg_param.py): " + cname + ".cfg not open")
 
     datfile = tmp.read()
     tmp.close()
@@ -55,6 +50,4 @@ def read_cfg_param(cname):
     a = datlines[8].split()
     nion = int(a[0])
 
-    return [natom,nion]
-
-
+    return [natom, nion]

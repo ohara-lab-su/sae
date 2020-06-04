@@ -1,41 +1,52 @@
 .DS_Store
 .ide*
 *.nor
-*.pdb
 *.log
 *.dvi
 *.aux
-*.pdf
 *.pdf.*
 *.zip
 *.gz
+
+# for Python
 *.pyc
+_*.py
+
+# for Binary
 *.tar.gz
 *.tgz
+*.swp
+
+# for images
 *.png
 *.pdf
 *.eps
-*.cfg
+
 *.dat
-*.vasp
+
+# for INPUT/OUPUT file
 *.in
-*.int
-*.def
-*.inp
-*.cif
-*.md2
-*.xyz
-*.inp
 *.wfn*
-*.UPF
-*.upf
-*.wfc
-*.swp
-*.struct*
 *.output*
 *.weight*
 *.klist
 *.kgen
+
+# for structurefile
+*.pdb
+*.cfg
+*.vasp
+*.cif
+*.md2
+*.xyz
+*.int
+*.def
+*.inp
+*.struct*
+
+*.UPF
+*.upf
+*.wfc
 *.in*
 *.help*
 *.qtl*
@@ -48,14 +59,10 @@
 *.gnuplot*
 *.dos*
 *.out
-_*.py
 _*
 *_
-wycoff
-spgrdata
-atomdata
-atomdens
-generator
+
+# for VASP
 POSCAR*
 POTCAR*
 CONTCAR*
@@ -64,20 +71,27 @@ INCAR*
 BASIS_SET
 GTH_POTENTIALS
 update.csh
+# for HiLAPWS
 xsets
-src/
-source*
-SAE
-SAE_dev
-SAE_my
-SGE
-SGE_dev
-SGE_my
-MY_PYTHON
+wycoff
+spgrdata
+atomdata
+atomdens
+generator
+
+# src/
+# source*
+# SAE
+# SAE_dev
+# SAE_my
+# SGE
+# SGE_dev
+# SGE_my
+# MY_PYTHON
 BACKUP/
 build/
 dist/
 StructureAnalysisEnvironment.egg-info/
+
 IGZO*
 Graph*
-update.csh

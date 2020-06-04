@@ -29,37 +29,37 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ###############################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2014, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
 import os
 from numpy import *
 
-def make_supercell_param(super_x,super_y,super_z,nion,atoms,t):
 
-    t[0,0] = t[0,0]*super_x # t1_x
-    t[1,0] = t[1,0]*super_y # t1_y
-    t[2,0] = t[2,0]*super_z # t1_z
+def make_supercell_param(super_x, super_y, super_z, nion, atoms, t):
+    t[0, 0] = t[0, 0] * super_x  # t1_x
+    t[1, 0] = t[1, 0] * super_y  # t1_y
+    t[2, 0] = t[2, 0] * super_z  # t1_z
 
-    t[0,1] = t[0,1]*super_x # t2_x
-    t[1,1] = t[1,1]*super_y # t2_y
-    t[2,1] = t[2,1]*super_z # t2_z
+    t[0, 1] = t[0, 1] * super_x  # t2_x
+    t[1, 1] = t[1, 1] * super_y  # t2_y
+    t[2, 1] = t[2, 1] * super_z  # t2_z
 
-    t[0,2] = t[0,2]*super_x # t3_x
-    t[1,2] = t[1,2]*super_y # t3_y
-    t[2,2] = t[2,2]*super_z # t3_z
+    t[0, 2] = t[0, 2] * super_x  # t3_x
+    t[1, 2] = t[1, 2] * super_y  # t3_y
+    t[2, 2] = t[2, 2] * super_z  # t3_z
 
     for j in range(nion):
-        atoms[j] = int(atoms[j])*super_x*super_y*super_z
-
-
+        atoms[j] = int(atoms[j]) * super_x * super_y * super_z

@@ -9,16 +9,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 #
 # 2018.08.15
@@ -36,65 +31,66 @@ import re
 
 import numpy as np
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 
 ### 原子番号から原子量を返す
 def get_atomic_weight0(num):
-
-    name='atomic_weight.list'
-   #libpath = re.sub('__init__.pyc','',SAE.__file__) # for Python2
-    libpath = re.sub('__init__.py','',SAE.__file__)
+    name = 'atomic_weight.list'
+    # libpath = re.sub('__init__.pyc','',SAE.__file__) # for Python2
+    libpath = re.sub('__init__.py', '', SAE.__file__)
     if os.path.exists(libpath):
-        name=libpath+name
+        name = libpath + name
         if not os.path.exists(name):
-            name0='atomic_weight.list.py'
-            name=libpath+name0
+            name0 = 'atomic_weight.list.py'
+            name = libpath + name0
     else:
         for libpath in os.getenv('PYTHONPATH').split(':'):
-            name=libpath+'/'+name
+            name = libpath + '/' + name
             if os.path.exists(name):
                 break
 
     nlist = SAE.read_list_param(name)
 
-    radius_list = np.zeros((nlist,3),dtype='S4')
-    nlist = SAE.read_list3(name,radius_list)
+    radius_list = np.zeros((nlist, 3), dtype='S4')
+    nlist = SAE.read_list3(name, radius_list)
 
     for i in range(nlist):
-        if num == radius_list[i,0]:
-            weight=float(radius_list[i,2])
+        if num == radius_list[i, 0]:
+            weight = float(radius_list[i, 2])
 
     return weight
 
 
 ### 元素記号から原子量を返す
 def get_atomic_weight1(atom):
-
-    name='atomic_weight.list'
-   #libpath = re.sub('__init__.pyc','',SAE.__file__)
-    libpath = re.sub('__init__.py','',SAE.__file__)
+    name = 'atomic_weight.list'
+    # libpath = re.sub('__init__.pyc','',SAE.__file__)
+    libpath = re.sub('__init__.py', '', SAE.__file__)
     if os.path.exists(libpath):
-        name=libpath+name
+        name = libpath + name
         if not os.path.exists(name):
-            name0='atomic_weight.list.py'
-            name=libpath+name0
+            name0 = 'atomic_weight.list.py'
+            name = libpath + name0
     else:
         for libpath in os.getenv('PYTHONPATH').split(':'):
-            name=libpath+'/'+name
+            name = libpath + '/' + name
             if os.path.exists(name):
                 break
 
     nlist = SAE.read_list_param(name)
 
-    radius_list = np.zeros((nlist,3),dtype='S4')
-    nlist = SAE.read_list3(name,radius_list)
+    radius_list = np.zeros((nlist, 3), dtype='S4')
+    nlist = SAE.read_list3(name, radius_list)
 
     for i in range(nlist):
-        if atom == radius_list[i,1]:
-            weight=float(radius_list[i,2])
+        if atom == radius_list[i, 1]:
+            weight = float(radius_list[i, 2])
 
     return weight
+
 
 #############################
 #
@@ -132,6 +128,4 @@ def get_atomic_weight1(atom):
 ################################################################################
 
 if __name__ == '__main__':
-
     print("%s" % str(get_atomic_weight1('Cu')))
-

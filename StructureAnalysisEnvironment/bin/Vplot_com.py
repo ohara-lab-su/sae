@@ -159,7 +159,7 @@ if __name__ == '__main__':
     if SPD_FLAG: print("SPD MODE   :",SPD_FLAG)
 
     # 基本インスタンス生成
-    procar = SAE.ReadVaspProcar(procarname)
+    procar = StructureAnalysisEnvironment.io.ReadVaspProcar(procarname)
     kpoints = SAE.ReadVaspKpoints(kpointsname)
 
     # バンドの基本情報取得

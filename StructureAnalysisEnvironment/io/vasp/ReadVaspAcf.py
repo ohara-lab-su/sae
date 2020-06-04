@@ -14,32 +14,29 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.5"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.5"
+
 ################################################################################
 import sys
 import os
 import re
-#import gzip
+# import gzip
 import numpy as np
 
 import optparse
 
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadVaspAcf(object):
 
-    def __init__(self,poscar=None,potcar=None,acf='ACF.dat'):
+    def __init__(self, poscar=None, potcar=None, acf='ACF.dat'):
 
         self.datlines, self.num = SAE.read_dataline(acf)
 
@@ -71,20 +68,20 @@ class ReadVaspAcf(object):
         self.charge = np.zeros(self.natom)
         self.bader = np.zeros(self.natom)
         i = 2
-        while 1 :
-            self.charge[i-2] = float(self.datlines[i].split()[4])
-           #self.bader[i-2] = self.atoms_zval_j[i-2] - self.charge[i-2]
-            self.bader[i-2] = self.charge[i-2] - self.atoms_zval_j[i-2]
+        while 1:
+            self.charge[i - 2] = float(self.datlines[i].split()[4])
+            # self.bader[i-2] = self.atoms_zval_j[i-2] - self.charge[i-2]
+            self.bader[i - 2] = self.charge[i - 2] - self.atoms_zval_j[i - 2]
             i += 1
             if bool(line_reg.match(self.datlines[i])):
-                    break
-        acfline = i-2
+                break
+        acfline = i - 2
         if self.poscar is not None:
             if acfline != self.poscar.natom:
                 sys.exit("STOP: natom =! ACF.dat line#")
 
-#       for i in range(self.natom):
-#           print i+1,self.atoms_index_j[i],self.atoms_zval_j[i],self.charge[i]
+    #       for i in range(self.natom):
+    #           print i+1,self.atoms_index_j[i],self.atoms_zval_j[i],self.charge[i]
 
     def get_nion(self):
         return self.nion
@@ -121,12 +118,12 @@ class ReadVaspAcf(object):
     def get_atoms_index_j(self):
         return self.atoms_index
 
+
 ################################################################################
 def options():
-
     name = 'POSCAR'
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
     if options.INPUT: name = options.INPUT
@@ -134,11 +131,12 @@ def options():
     if not os.path.exists(name):
         name0 = 'CONTCAR'
         if not os.path.exists(name0):
-            sys.exit("STOP: "+name+" and "+name0+" file not found")
+            sys.exit("STOP: " + name + " and " + name0 + " file not found")
         else:
             name = name0
 
     return name
+
 
 ################################################################################
 if __name__ == '__main__':
@@ -147,18 +145,16 @@ if __name__ == '__main__':
 
     poscar = SAE.ReadPoscar(name)
     potcar = SAE.ReadVaspPotcar()
-    acfdat = ReadVaspAcf(poscar=poscar,potcar=potcar,acf='ACF.dat')
+    acfdat = ReadVaspAcf(poscar=poscar, potcar=potcar, acf='ACF.dat')
     acfdat.get_max_bader()
     acfdat.get_min_bader()
 
     print("#  atom  zval  charge  diff")
     for i in range(acfdat.natom):
         print("%3d %s %5.2f %7.3f %7.3f"
-                %(i+1,acfdat.atoms_index_j[i],acfdat.atoms_zval_j[i],
-                acfdat.charge[i],acfdat.bader[i]))
+              % (i + 1, acfdat.atoms_index_j[i], acfdat.atoms_zval_j[i],
+                 acfdat.charge[i], acfdat.bader[i]))
 
     print("MAX charge %s" % str(acfdat.max_bader))
     print("MIN charge %s" % str(acfdat.min_bader))
 #   print poscar.natom
-
-

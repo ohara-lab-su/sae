@@ -15,29 +15,25 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.1.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.1.1"
+
 ################################################################################
 #
-#from ase.io.xyz import *
+# from ase.io.xyz import *
 
 from ase.io.wien2k import *  ## using cellconst
 from ase import Atoms
 
-#import os
-#import sys
-#import optparse
+# import os
+# import sys
+# import optparse
 import numpy as np
 
-#import StructureAnalysisEnvironment as SAEnv
+
+# import StructureAnalysisEnvironment as SAEnv
 
 
 ################################################################################
@@ -46,11 +42,11 @@ import numpy as np
 def conv_cellparam(atoms):
     return
 
+
 ################################################################################
 ## ASE 利用 & atoms はASEの構造
 ##
 def conv_cellparam0(atoms):
-
     cell = atoms.get_cell()  # from ASE ( translation vector)
     metT = np.dot(cell, np.transpose(cell))
     cell2 = cellconst(metT)  # from ASE module
@@ -64,13 +60,13 @@ def conv_cellparam0(atoms):
 
     natom = len(atoms.get_positions())
 
-    return a,b,c,alpha,beta,gamma,natom
+    return a, b, c, alpha, beta, gamma, natom
+
 
 ################################################################################
 ## ASE 利用 & atoms(cell) は SAEnv の構造
 ##
 def conv_cellparam1(cell):
-
     t = cell.t
     metT = np.dot(t, np.transpose(t))
     param = cellconst(metT)  # from ASE module
@@ -84,5 +80,4 @@ def conv_cellparam1(cell):
 
     natom = cell.natom
 
-    return a,b,c,alpha,beta,gamma,natom
-
+    return a, b, c, alpha, beta, gamma, natom

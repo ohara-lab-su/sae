@@ -15,32 +15,30 @@
 #  startup
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from __future__ import print_function
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 #
-#import os
+# import os
 import sys
-#import optparse
-#import numpy as np
 
-#import StructureAnalysisEnvironment as SAEnv
+
+# import optparse
+# import numpy as np
+
+# import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 def chk_pdb_cryst1(filename):
-
     try:
         pdbfile = open(filename)
     except:
         pdbfile.close()
-        sys.exit("STOP(chk_cryst1):"+filename+"file can'nt open")
+        sys.exit("STOP(chk_cryst1):" + filename + "file can'nt open")
 
     cryst1 = False
     for line in pdbfile.readlines():
@@ -50,5 +48,3 @@ def chk_pdb_cryst1(filename):
     pdbfile.close()
 
     return cryst1
-
-

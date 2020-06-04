@@ -15,29 +15,25 @@
 #  startup
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import numpy as np
-#import copy
-#import collections
 
-def sort_fix(sort_index_r,fix):
 
+# import copy
+# import collections
+
+def sort_fix(sort_index_r, fix):
     natom = len(fix)
 
-    fix_s = np.zeros((natom,3),dtype='S')
+    fix_s = np.zeros((natom, 3), dtype='S')
     for original in range(natom):
         sort = sort_index_r[original]
-        fix_s[sort,:] = fix[original,:]
+        fix_s[sort, :] = fix[original, :]
 
     return fix_s
-

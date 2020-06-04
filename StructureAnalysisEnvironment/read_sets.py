@@ -10,22 +10,21 @@
 # 2014.11.26
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from __future__ import print_function
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
 import os
-#import re
-#import optparse
-#import numpy as np
+
+
+# import re
+# import optparse
+# import numpy as np
 
 ################################################################################
 #
@@ -51,16 +50,15 @@ import os
 # [return] kinfo
 #
 ###################################################################################
-def read_sets(cname,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kpoints):
-
+def read_sets(cname, lattices, nion, sg_atoms, sg_atoms_index, sg_position, kpoints):
     if not os.path.exists(cname):
-        sys.exit("STOP: "+cname+" file not found")
+        sys.exit("STOP: " + cname + " file not found")
 
     try:
         tmp = open(cname)
     except:
         tmp.close()
-        sys.exit("STOP: "+cname+" does'nt open")
+        sys.exit("STOP: " + cname + " does'nt open")
 
     setsfile = tmp.read()
     tmp.close()
@@ -68,14 +66,14 @@ def read_sets(cname,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kpoints):
 
     title = setslines[0]
     nspin = setslines[2]
-    sgn   = setslines[4]
+    sgn = setslines[4]
 
     lattice_a = setslines[5].split()[0]
     lattice_b = setslines[5].split()[1]
     lattice_c = setslines[5].split()[2]
 
     alpha = setslines[6].split()[0]
-    beta  = setslines[6].split()[1]
+    beta = setslines[6].split()[1]
     gamma = setslines[6].split()[2]
 
     lattices[0] = lattice_a
@@ -85,13 +83,13 @@ def read_sets(cname,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kpoints):
     lattices[4] = beta
     lattices[5] = gamma
 
-    nion  = int(setslines[8])
+    nion = int(setslines[8])
 
-    sg_natom       = 0
-#   sg_atoms       = []
-#   sg_atoms_index = []
+    sg_natom = 0
+    #   sg_atoms       = []
+    #   sg_atoms_index = []
 
-    index          = 8
+    index = 8
     for i in range(nion):
         index += 1
         tmp = setslines[index].split()
@@ -101,20 +99,19 @@ def read_sets(cname,lattices,nion,sg_atoms,sg_atoms_index,sg_position,kpoints):
         for j in range(int(tmp[1])):
             index += 1
             tmp = setslines[index].split()
-            sg_position[sg_natom,0] = float(tmp[0])
-            sg_position[sg_natom,1] = float(tmp[1])
-            sg_position[sg_natom,2] = float(tmp[2])
-#           print " %8.6f %8.6f %8.6f " % (sg_position[sg_natom,0],
-#                                          sg_position[sg_natom,1],
-#                                          sg_position[sg_natom,2])
+            sg_position[sg_natom, 0] = float(tmp[0])
+            sg_position[sg_natom, 1] = float(tmp[1])
+            sg_position[sg_natom, 2] = float(tmp[2])
+            #           print " %8.6f %8.6f %8.6f " % (sg_position[sg_natom,0],
+            #                                          sg_position[sg_natom,1],
+            #                                          sg_position[sg_natom,2])
             sg_natom += 1
 
-    kinfo = int(setslines[index+2])
+    kinfo = int(setslines[index + 2])
 
-    tmp = setslines[index+3].split()
+    tmp = setslines[index + 3].split()
     kpoints[0] = int(tmp[0])
     kpoints[1] = int(tmp[1])
     kpoints[2] = int(tmp[2])
 
-    return [title,nspin,kinfo]
-
+    return [title, nspin, kinfo]

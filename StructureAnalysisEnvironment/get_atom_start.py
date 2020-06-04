@@ -18,16 +18,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -36,22 +31,21 @@ import re
 from numpy import *
 
 
-def get_atom_start(atom1,nion,atoms):
+def get_atom_start(atom1, nion, atoms):
+    atom1_0 = atom1 - 1
 
-    atom1_0 = atom1 -1
-
-    k=0
+    k = 0
     for i in range(nion):
         if atom1 < 1:
-            sys.exit("STOP: unknown number, atom1 = "+str(atom1))
+            sys.exit("STOP: unknown number, atom1 = " + str(atom1))
         if i == (atom1_0):
             start = k
-            end   = k + int(atoms[i]) - 1
-        k = k+ int(atoms[i])
+            end = k + int(atoms[i]) - 1
+        k = k + int(atoms[i])
 
-#   print "==="
-#   print "k_start", start
-#   print "k_end",   end
-#   print "k_last", k
+    #   print "==="
+    #   print "k_start", start
+    #   print "k_end",   end
+    #   print "k_last", k
 
-    return [start,end]
+    return [start, end]

@@ -37,51 +37,49 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.6"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.6"
+
 ################################################################################
 
-#import sys
-#import os
-#import gzip
+# import sys
+# import os
+# import gzip
 
 import re
 import glob
 import optparse
 
+
 ################################################################################
 # ls name*
 #
 def find_suffix1(name):
-    files = glob.glob(str(name)+"*")
+    files = glob.glob(str(name) + "*")
     return files
+
 
 ################################################################################
 # ls head*tail
 #
-def find_suffix2(head,tail):
-    filelist = glob.glob(str(head)+"*"+str(tail))
+def find_suffix2(head, tail):
+    filelist = glob.glob(str(head) + "*" + str(tail))
     return filelist
+
 
 ################################################################################
 # ls head* | sed 's/tail//'
 #
-def find_suffix3(head='case',tail='ev',delete='ev'):
+def find_suffix3(head='case', tail='ev', delete='ev'):
     if not tail == 'None':
-        filelist = glob.glob(str(head)+"*"+str(tail)+"*")
+        filelist = glob.glob(str(head) + "*" + str(tail) + "*")
     else:
-        files = glob.glob(str(head)+"*")
+        files = glob.glob(str(head) + "*")
         filelist = []
         for i in files:
-            filelist.append(re.sub(delete,'',i))
+            filelist.append(re.sub(delete, '', i))
 
         filelist = sorted(set(filelist), key=filelist.index)
 
@@ -93,12 +91,12 @@ if __name__ == '__main__':
 
     name = 'Cu.dos'
     tail = 'ev'
-#   tail = 'None'
+    #   tail = 'None'
     parser = optparse.OptionParser()
-    parser.add_option( '-n','--name',)
+    parser.add_option('-n', '--name', )
     options, args = parser.parse_args()
 
-    if len(args) >0:
+    if len(args) > 0:
         name = args[0]
 
     if options.name:
@@ -107,12 +105,11 @@ if __name__ == '__main__':
     try:
         files = find_suffix1(name)
         print("name %s" % str(files))
-        files = find_suffix2(name,tail)
+        files = find_suffix2(name, tail)
         print("name,tail %s" % str(files))
-        files = find_suffix3(name,'None')
+        files = find_suffix3(name, 'None')
         print("name,None %s" % str(files))
-        files = find_suffix3(name,'None','ev')
+        files = find_suffix3(name, 'None', 'ev')
         print("name,None %s" % str(files))
     except:
         pass
-

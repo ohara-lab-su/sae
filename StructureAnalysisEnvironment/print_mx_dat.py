@@ -121,45 +121,41 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.1.0"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.1.0"
+
 ################################################################################
 
-#import optparse
+# import optparse
 import sys
 import os
 import re
 import numpy as np
 
-#import glob
+# import glob
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 #
 #  using ReadMxVps.py and ReadMxVpsList.py
 #
-def print_mx_dat(datname,STD,\
-        title,scale,natom,nion,selective,direct,vasp_version,\
-        t,atoms,atoms_index,position,fix,\
-        atoms_index_j,\
-        NSW=None,\
-        NELM=None,\
-        IBRION=None,\
-        EDIFF=None,\
-        EDIFFG=None,\
-        KP=None,\
-        FRAC=True):
-
-    if vasp_version is None : vasp_version = 5
+def print_mx_dat(datname, STD, \
+                 title, scale, natom, nion, selective, direct, vasp_version, \
+                 t, atoms, atoms_index, position, fix, \
+                 atoms_index_j, \
+                 NSW=None, \
+                 NELM=None, \
+                 IBRION=None, \
+                 EDIFF=None, \
+                 EDIFFG=None, \
+                 KP=None, \
+                 FRAC=True):
+    if vasp_version is None: vasp_version = 5
 
     if KP:
         kx = KP[0:0]
@@ -169,11 +165,11 @@ def print_mx_dat(datname,STD,\
     ############################################################################
     ## OpenMX Version チェック & DATAPATH 環境変数の確認
     ##
-    version_FLAG=False
+    version_FLAG = False
     if sys.version_info[0] >= 2 and sys.version_info[1] >= 7:
-         version_FLAG=True
+        version_FLAG = True
 
-    DATAPATH=os.environ.get('OPENMXDATAPATH', "")
+    DATAPATH = os.environ.get('OPENMXDATAPATH', "")
     if not DATAPATH:
         print("can't found OPENMXDATAPATH environment on yuur system")
         print("please export OPENMXDATAPATH=~/DFT_DATA13")
@@ -186,7 +182,7 @@ def print_mx_dat(datname,STD,\
     VPSLIST = 'openmx_defaults_vpsdata.list'
     DFT_DATA = 'DFT_DATA13'
 
-    data = '../'+DFT_DATA
+    data = '../' + DFT_DATA
     pot = 'PBE'
     ver = '13'
 
@@ -195,34 +191,31 @@ def print_mx_dat(datname,STD,\
         data = DATAPATH
     print("DATA PATH %s" % str(data))
 
-
     # VPS 及び PAO のパス設定
-    vpspath = data+'/VPS/'
-    paopath = data+'/PAO/'
-
+    vpspath = data + '/VPS/'
+    paopath = data + '/PAO/'
 
     ############################################################################
     ## VPSLIST のファイル場所確認
     ##   元素記号からPAOとVPS情報を取り出すためのリストの存在している場所探し
     ##
-    HOMEPATH=os.environ.get('HOME',"")
+    HOMEPATH = os.environ.get('HOME', "")
     if os.path.exists(VPSLIST):
         vpslistpath = VPSLIST
-    elif os.path.exists(data+'/'+VPSLIST):
-        vpslistpath = data+'/'+VPSLIST
-    elif os.path.exists(HOMEPATH+'/'+DFT_DATA+'/'+VPSLIST):
-        vpslistpath = HOMEPATH+'/openmx2/'+DFT_DATA+'/'+VPSLIST
-    elif os.path.exists(HOMEPATH+'/openmx1/'+VPSLIST):
-        vpslistpath = HOMEPATH+'/openmx1/'+VPSLIST
+    elif os.path.exists(data + '/' + VPSLIST):
+        vpslistpath = data + '/' + VPSLIST
+    elif os.path.exists(HOMEPATH + '/' + DFT_DATA + '/' + VPSLIST):
+        vpslistpath = HOMEPATH + '/openmx2/' + DFT_DATA + '/' + VPSLIST
+    elif os.path.exists(HOMEPATH + '/openmx1/' + VPSLIST):
+        vpslistpath = HOMEPATH + '/openmx1/' + VPSLIST
     else:
-        sys.exit("STOP: "+VPSLIST+" file not found")
-
+        sys.exit("STOP: " + VPSLIST + " file not found")
 
     ############################################################################
     ## OpenMX(*.dat) 出力ファイル名をセット
     ##
-    OUT=datname
-    datfile = open(OUT+'.dat','w')
+    OUT = datname
+    datfile = open(OUT + '.dat', 'w')
 
     if not STD:
         sys.stdout = datfile
@@ -231,31 +224,30 @@ def print_mx_dat(datname,STD,\
     ## 座標系を Cartesian に変換
     ##    (non FRAC モードは Cartesian, 対してFRAC はdirect-mode
     ##
-   #if direct and not OPT_FRAC:
-   #    car_x = np.zeros(natom)
-   #    car_y = np.zeros(natom)
-   #    car_z = np.zeros(natom)
-   #    for i in range(natom):
-   #        car_x[i] = t[0][0]*position[i][0] + t[1][0]*position[i][1] + t[2][0]*position[i][2]
-   #        car_y[i] = t[0][1]*position[i][0] + t[1][1]*position[i][1] + t[2][1]*position[i][2]
-   #        car_z[i] = t[0][2]*position[i][0] + t[1][2]*position[i][1] + t[2][2]*position[i][2]
-   #
-   #        position[i][0]=car_x[i]
-   #        position[i][1]=car_y[i]
-   #        position[i][2]=car_z[i]
+    # if direct and not OPT_FRAC:
+    #    car_x = np.zeros(natom)
+    #    car_y = np.zeros(natom)
+    #    car_z = np.zeros(natom)
+    #    for i in range(natom):
+    #        car_x[i] = t[0][0]*position[i][0] + t[1][0]*position[i][1] + t[2][0]*position[i][2]
+    #        car_y[i] = t[0][1]*position[i][0] + t[1][1]*position[i][1] + t[2][1]*position[i][2]
+    #        car_z[i] = t[0][2]*position[i][0] + t[1][2]*position[i][1] + t[2][2]*position[i][2]
+    #
+    #        position[i][0]=car_x[i]
+    #        position[i][1]=car_y[i]
+    #        position[i][2]=car_z[i]
 
     if direct and not FRAC:
-        scale,t,natom,direct,position = \
-                SAEnv.conv_direct2carABS(scale,t,natom,direct,position)
+        scale, t, natom, direct, position = \
+            SAEnv.conv_direct2carABS(scale, t, natom, direct, position)
 
     # scale factor を1に変更(内部座標もスケール)
-    scale,t,natom,direct,position = \
-            SAEnv.conv_scale21(scale,t,natom,direct,position)
+    scale, t, natom, direct, position = \
+        SAEnv.conv_scale21(scale, t, natom, direct, position)
 
     ############################################################################
     # VPS と PAO の情報リストのインスタンス生成
     vpslist = SAEnv.ReadMxVpsList(vpslistpath)
-
 
     ############################################################################
     # VPS の情報から valence electron の電子数をゲットする
@@ -264,23 +256,21 @@ def print_mx_dat(datname,STD,\
     #
     electron = np.zeros(natom)
     for j in range(natom):
+        num, symbol, cutoff, vps_orbit = vpslist.get_vps_name(atoms_index_j[j])
+        opt = re.sub(r'[0-9\.]+', '', cutoff)  # cutoff 名から英数文字のみ取り出す
+        fullname = vpspath + symbol + '_' + pot + ver + opt + '.vps'
 
-        num,symbol,cutoff,vps_orbit = vpslist.get_vps_name(atoms_index_j[j])
-        opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
-        fullname = vpspath+symbol+'_'+pot+ver+opt+'.vps'
-
-       #fullname = vpspath+atoms_index_j[i]+'_'+pot+ver+'.vps'
-       #if not os.path.exists(fullname):
-       #    SUFFIX='S'
-       #    if not os.path.exists(fullname):
-       #        SUFFIX='H'
-       #    fullname = vpspath+atoms_index_j[i]+'_'+pot+ver+SUFFIX+'.vps'
-       #    if not os.path.exists(fullname):
-       #        sys.exit("STOP: VPS file not found")
+        # fullname = vpspath+atoms_index_j[i]+'_'+pot+ver+'.vps'
+        # if not os.path.exists(fullname):
+        #    SUFFIX='S'
+        #    if not os.path.exists(fullname):
+        #        SUFFIX='H'
+        #    fullname = vpspath+atoms_index_j[i]+'_'+pot+ver+SUFFIX+'.vps'
+        #    if not os.path.exists(fullname):
+        #        sys.exit("STOP: VPS file not found")
 
         vpsfile = SAEnv.ReadMxVps(fullname)
-        electron[j] = vpsfile.get_valence_electron() / 2.0 # 初期なので非磁性を仮定
-
+        electron[j] = vpsfile.get_valence_electron() / 2.0  # 初期なので非磁性を仮定
 
     ############################################################################
     ## output OpenMX *.dat file
@@ -296,7 +286,6 @@ def print_mx_dat(datname,STD,\
     print("level.of.fileout                   1    # default=1 (0-2)")
     print("DATA.PATH                        %s" % str(data))
 
-
     ################################################
     print("")
     print("###########################################")
@@ -310,28 +299,27 @@ def print_mx_dat(datname,STD,\
 
     for i in range(nion):
 
-        atom = re.sub('_.*','',atoms_index[i])
-        atoms_index[i]=atom
+        atom = re.sub('_.*', '', atoms_index[i])
+        atoms_index[i] = atom
 
         ## VPS と PAO の情報リストから PAO と VPS の情報ゲット
-        num,symbol,cutoff,vps_orbit = vpslist.get_vps_name(atoms_index[i])
-        opt = re.sub(r'[0-9\.]+','',cutoff) # cutoff 名から英数文字のみ取り出す
+        num, symbol, cutoff, vps_orbit = vpslist.get_vps_name(atoms_index[i])
+        opt = re.sub(r'[0-9\.]+', '', cutoff)  # cutoff 名から英数文字のみ取り出す
 
-        vps_name = symbol+cutoff+'-'+vps_orbit
-        vps_file = vpspath+symbol+'_'+pot+ver+opt+'.vps'
-        pao_file = paopath+symbol+cutoff+'.pao'
+        vps_name = symbol + cutoff + '-' + vps_orbit
+        vps_file = vpspath + symbol + '_' + pot + ver + opt + '.vps'
+        pao_file = paopath + symbol + cutoff + '.pao'
 
         if not os.path.exists(pao_file):
-            sys.exit("STOP: "+pao_file+" not found")
+            sys.exit("STOP: " + pao_file + " not found")
         if not os.path.exists(vps_file):
-            sys.exit("STOP: "+vps_file+" not found")
+            sys.exit("STOP: " + vps_file + " not found")
 
-        vps0 = symbol+cutoff+'-'+vps_orbit
-        pao0 = symbol+'_'+pot+ver+opt
-        print("  %2s  %13s  %13s " %( symbol, vps0, pao0 ))
+        vps0 = symbol + cutoff + '-' + vps_orbit
+        pao0 = symbol + '_' + pot + ver + opt
+        print("  %2s  %13s  %13s " % (symbol, vps0, pao0))
 
     print("Definition.of.Atomic.Species>")
-
 
     ################################################
     print("")
@@ -339,7 +327,6 @@ def print_mx_dat(datname,STD,\
     print("# Ni  1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 4.0 2d 0.0")
     print("# O   1s 0.0 2s 0.0 1p 0.0 2p 0.0 1d 0.0")
     print("#Hubbard.U.values>")
-
 
     ################################################
     print("")
@@ -358,30 +345,29 @@ def print_mx_dat(datname,STD,\
         print("<Atoms.SpeciesAndCoordinates            # Unit=Ang.")
 
     for i in range(natom):
-        atom = re.sub('_.*','',atoms_index_j[i])
-        atoms_index_j[i]=atom
+        atom = re.sub('_.*', '', atoms_index_j[i])
+        atoms_index_j[i] = atom
 
         if not version_FLAG:
             print("%4d  %2s %12.8f %12.8f %12.8f  %12.8f  %12.8f "
-                   %(i+1, atoms_index_j[i],
-                   position[i][0],position[i][1],position[i][2],
-                   electron[i], electron[i]))
+                  % (i + 1, atoms_index_j[i],
+                     position[i][0], position[i][1], position[i][2],
+                     electron[i], electron[i]))
         else:
             myStr = "{:>4}  {:^2} {:12f}  {:12f}  {:12f}   {:12f}  {:12f}"
-            print(myStr.format(i+1, atoms_index_j[i],
-                    position[i][0],position[i][1],position[i][2],
-                    electron[i], electron[i]))
+            print(myStr.format(i + 1, atoms_index_j[i],
+                               position[i][0], position[i][1], position[i][2],
+                               electron[i], electron[i]))
 
     print("Atoms.SpeciesAndCoordinates>")
 
     print("Atoms.UnitVectors.Unit            Ang   # Ang|AU")
     print("<Atoms.UnitVectors                      # Unit=Ang.")
-    print("   %12.8f %12.8f %12.8f" %(t[0][0], t[1][0], t[2][0]))
-    print("   %12.8f %12.8f %12.8f" %(t[0][1], t[1][1], t[2][1]))
-    print("   %12.8f %12.8f %12.8f" %(t[0][2], t[1][2], t[2][2]))
+    print("   %12.8f %12.8f %12.8f" % (t[0][0], t[1][0], t[2][0]))
+    print("   %12.8f %12.8f %12.8f" % (t[0][1], t[1][1], t[2][1]))
+    print("   %12.8f %12.8f %12.8f" % (t[0][2], t[1][2], t[2][2]))
 
     print("Atoms.UnitVectors>")
-
 
     ################################################
     print("")
@@ -406,15 +392,15 @@ def print_mx_dat(datname,STD,\
 
     ################################################
     if not KP:
-        KP = np.zeros((1,3))
-        KP[0,0] = 12
-        KP[0,1] = 12
-        KP[0,2] = 12
-   #print "scf.Kgrid                 "\
-   #        +str(int(KP[0,0]))+" "+str(int(KP[0,1]))+" "+str(int(KP[0,2]))+\
-   #        "     # means 4x4x4"
+        KP = np.zeros((1, 3))
+        KP[0, 0] = 12
+        KP[0, 1] = 12
+        KP[0, 2] = 12
+    # print "scf.Kgrid                 "\
+    #        +str(int(KP[0,0]))+" "+str(int(KP[0,1]))+" "+str(int(KP[0,2]))+\
+    #        "     # means 4x4x4"
     print("scf.Kgrid                 %s %s %s     # means 4x4x4"
-          % ( str(int(KP[0,0])), str(int(KP[0,1])), str(int(KP[0,2]))))
+          % (str(int(KP[0, 0])), str(int(KP[0, 1])), str(int(KP[0, 2]))))
     ################################################
 
     print("scf.Generation.Kpoint     regular      # regular|MP")
@@ -422,8 +408,8 @@ def print_mx_dat(datname,STD,\
 
     ################################################
     EDIFF = EDIFF if 'EDIFF' in locals() else 1.0e-6
-   #print "scf.criterion             "+str(EDIFF)+"       # default=1.0e-6 (Hartree) "
-    print("scf.criterion             %s       # default=1.0e-6 (Hartree) " % str(EDIFF) )
+    # print "scf.criterion             "+str(EDIFF)+"       # default=1.0e-6 (Hartree) "
+    print("scf.criterion             %s       # default=1.0e-6 (Hartree) " % str(EDIFF))
     ################################################
 
     print("scf.lapack.dste            dstevx      # dstegr|dstedc|dstevx, default=dstevx")
@@ -437,7 +423,7 @@ def print_mx_dat(datname,STD,\
 
     ################################################
     NELM = NELM if 'NELM' in locals() else 40
-   #print "scf.maxIter                 "+str(NELM)+"         # default=40"
+    # print "scf.maxIter                 "+str(NELM)+"         # default=40"
     print("scf.maxIter                 %s         # default=40" % str(NELM))
     ################################################
 
@@ -445,7 +431,6 @@ def print_mx_dat(datname,STD,\
     print("scf.Max.Mixing.Weight      0.400       # default=0.40 ")
     print("#scf.Kerker.factor")
     print("scf.Mixing.StartPulay       6          # default=6")
-
 
     ################################################
     print("")
@@ -457,7 +442,6 @@ def print_mx_dat(datname,STD,\
     print("#1DFFT.NumGridK             900         # default=900")
     print("#1DFFT.NumGridR             900         # default=900")
     print("#1DFFT.EnergyCutoff        3600.0       # default=3600 (Ry)")
-
 
     ################################################
     print("")
@@ -485,7 +469,6 @@ def print_mx_dat(datname,STD,\
     print("# 1")
     print("#Atoms.Cont.Orbitals>")
 
-
     ################################################
     print("")
     print("###########################################")
@@ -496,7 +479,6 @@ def print_mx_dat(datname,STD,\
     print("#orderN.HoppingRanges        7.0        # default=5.0 (Ang) ")
     print("#orderN.NumHoppings           2         # default=2")
 
-
     ################################################
     print("")
     print("###########################################")
@@ -505,7 +487,7 @@ def print_mx_dat(datname,STD,\
     print("")
 
     ################################################
-    #print "MD.Type                   nomd         # Nomd|Opt|NVE|NVT_VS|NVT_NH or EvsLC"
+    # print "MD.Type                   nomd         # Nomd|Opt|NVE|NVT_VS|NVT_NH or EvsLC"
     print("# Nomd|Opt|DIIS|BFGS|RF|EF, MD( NVE|NVT_VS|NVT_NH ) or EvsLC")
     NSW = NSW if 'NSW' in locals() else 0
     if NSW == 0:
@@ -527,7 +509,7 @@ def print_mx_dat(datname,STD,\
 
     ################################################
     if NSW > 0:
-       #print "MD.maxIter                 "+str(NSW)+"        # default=1 (only MD=1)"
+        # print "MD.maxIter                 "+str(NSW)+"        # default=1 (only MD=1)"
         print("MD.maxIter                 %s        # default=1 (only MD=1)" % str(NSW))
     else:
         print("MD.maxIter                 1       # default=1 (only MD=1)")
@@ -536,8 +518,8 @@ def print_mx_dat(datname,STD,\
     print("MD.TimeStep                1.0         # default=0.5 (fs)")
 
     ################################################
-    EDIFFG = EDIFFG if 'EDIFFG' in locals() else EDIFF*10.
-   #print "MD.Opt.criterion          "+str(EDIFFG)+"       # default=1.0e-4 (Hartree/bohr)"
+    EDIFFG = EDIFFG if 'EDIFFG' in locals() else EDIFF * 10.
+    # print "MD.Opt.criterion          "+str(EDIFFG)+"       # default=1.0e-4 (Hartree/bohr)"
     print("MD.Opt.criterion          %s       # default=1.0e-4 (Hartree/bohr)" % str(EDIFFG))
     ################################################
 
@@ -561,23 +543,22 @@ def print_mx_dat(datname,STD,\
         print("<MD.Fixed.XYZ")
         for i in range(natom):
             if fix[i][0] == 'F':
-                fix_x = 1 # fix
+                fix_x = 1  # fix
             else:
-                fix_x = 0 # non fix
+                fix_x = 0  # non fix
 
             if fix[i][1] == 'F':
-                fix_y = 1 # fix
+                fix_y = 1  # fix
             else:
-                fix_y = 0 # non fix
+                fix_y = 0  # non fix
 
             if fix[i][2] == 'F':
-                fix_z = 1 # fix
+                fix_z = 1  # fix
             else:
-                fix_z = 0 # non fix
+                fix_z = 0  # non fix
 
-            print("  %d  %d %d %d" %(i+1,fix_x,fix_y,fix_z))
+            print("  %d  %d %d %d" % (i + 1, fix_x, fix_y, fix_z))
         print("MD.Fixed.XYZ>")
-
 
     ################################################
     print("")
@@ -634,7 +615,6 @@ def print_mx_dat(datname,STD,\
     print("#DosGauss.Num.Mesh           200        # default=200")
     print("#DosGauss.Width              0.2        # default=0.2 (eV)")
 
-
     ################################################
     print("")
     print("###########################################")
@@ -642,7 +622,6 @@ def print_mx_dat(datname,STD,\
     print("###########################################")
     print("")
     print("#HS.fileout               off    # on|off, default=off")
-
 
     ################################################
     print("")
@@ -652,7 +631,6 @@ def print_mx_dat(datname,STD,\
     print("")
     print("#scf.Electric.Field")
 
-
     ################################################
     print("")
     print("###########################################")
@@ -660,7 +638,6 @@ def print_mx_dat(datname,STD,\
     print("###########################################")
     print("")
     print("#scf.system.charge         1.0   # default=0.0")
-
 
     ################################################
     print("###########################################")
@@ -675,7 +652,6 @@ def print_mx_dat(datname,STD,\
     print("")
     print("#ESM.buffer.range             4.5      # default=10.0 (ang)")
     print("")
-
 
     ################################################
     print("###########################################")
@@ -733,39 +709,40 @@ def print_mx_dat(datname,STD,\
         datfile.close()
         sys.stdout = sys.__stdout__
 
+
 ################################################################################
 if __name__ == '__main__':
 
     import optparse
+
     poscarname = 'POSCAR'
-    datname    = 'POSCAR'
+    datname = 'POSCAR'
     parser = optparse.OptionParser(os.getcwd())
     parser = optparse.OptionParser()
-    parser.add_option( '-s','--stdout', action='store_true',)
-    parser.add_option( '-i','--input', dest='INPUT',)
-    parser.add_option( '-o','--output', dest='OUTPUT',)
-    parser.add_option( '-d','--direct', action='store_true', dest='FRAC',)
+    parser.add_option('-s', '--stdout', action='store_true', )
+    parser.add_option('-i', '--input', dest='INPUT', )
+    parser.add_option('-o', '--output', dest='OUTPUT', )
+    parser.add_option('-d', '--direct', action='store_true', dest='FRAC', )
     options, args = parser.parse_args()
 
     if not os.path.exists(poscarname):
         poscarname0 = SAEnv.find_datfile('vasp')
         if poscarname0 is None:
             sys.exxit("STOP: POSCAR or .vasp files not found")
-        poscarname = poscarname0+'.vasp'
+        poscarname = poscarname0 + '.vasp'
 
-    if options.INPUT: poscarname=options.INPUT
-    if options.OUTPUT: datname=options.OUTPUT
-    datname=re.sub('\.dat','',datname) # 拡張子 .dat がついていたらそれを消す
+    if options.INPUT: poscarname = options.INPUT
+    if options.OUTPUT: datname = options.OUTPUT
+    datname = re.sub('\.dat', '', datname)  # 拡張子 .dat がついていたらそれを消す
 
     # オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
-    if len(args) >0: poscarname=args[0]
-
+    if len(args) > 0: poscarname = args[0]
 
     ###################################################################
     # 必殺オプション
-    NSW,NELM,IBRION,EDIFF,EDIFFG,KP = SAEnv.get_calinfo(code='VASP')
+    NSW, NELM, IBRION, EDIFF, EDIFFG, KP = SAEnv.get_calinfo(code='VASP')
 
-    cell = SAEnv.Read(filename=poscarname,code='VASP')
+    cell = SAEnv.Read(filename=poscarname, code='VASP')
 
     title = cell.title
     scale = cell.scale
@@ -781,21 +758,21 @@ if __name__ == '__main__':
     fix = cell.fix
     atoms_index_j = cell.atoms_index_j
 
-#   STD=True
-    STD=False
-    FRAC=True
+    #   STD=True
+    STD = False
+    FRAC = True
 
-    print_mx_dat(datname,STD,
-        title,scale,natom,nion,selective,direct,vasp_version,
-        t,atoms,atoms_index,position,fix,
-        atoms_index_j,
-        NSW=NSW,
-        NELM=NELM,
-        IBRION=IBRION,
-        EDIFF=EDIFF,
-        EDIFFG=EDIFFG,
-        KP=KP,
-        FRAC=FRAC)
+    print_mx_dat(datname, STD,
+                 title, scale, natom, nion, selective, direct, vasp_version,
+                 t, atoms, atoms_index, position, fix,
+                 atoms_index_j,
+                 NSW=NSW,
+                 NELM=NELM,
+                 IBRION=IBRION,
+                 EDIFF=EDIFF,
+                 EDIFFG=EDIFFG,
+                 KP=KP,
+                 FRAC=FRAC)
 
     if direct and not FRAC:
         print("CARTESIAN MODE")
@@ -804,5 +781,3 @@ if __name__ == '__main__':
     print("INPUT  %s" % str(poscarname))
     print("OUTPUT %s.dat" % str(datname))
     print("NORMAL END")
-
-

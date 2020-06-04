@@ -17,24 +17,27 @@
 #
 ###############################################################################
 from __future__ import print_function
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2014,2015 Kengo NAKADA"
-__license__ = "MIT"
-#
+from ..copyright import *
+
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ###############################################################################
 
 import sys
+
 # import os
 # import re
 # import gzip
 # import numpy as np
-import StructureAnalysisEnvironment as SAEnv
+
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
 # import SpaceGroupEnvironment as SGE
 
 ###############################################################################
@@ -54,13 +57,13 @@ class Read(object):
         class_name = 'ReadVaspPoscar'
         suffix = '.vasp'
         if filename is None:
-            filename = 'POSCAR'
+            filename = '../POSCAR'
 
         if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
             suffix = '.vasp'
             if filename is None:
-                filename = 'POSCAR'
+                filename = '../POSCAR'
 
         if code.upper() == 'FDMNES' or code.upper() == 'FDM':
             class_name = 'ReadFdmInp'
@@ -112,7 +115,7 @@ class Read(object):
         klass = getattr(module, class_name)
         self.cell = klass(filename, suffix=suffix, atoms_index=atoms_index)
 
-       #self.cell = SAEnv.ReadVaspPoscar(suffix=suffix, atoms_index=atoms_index)
+        # self.cell = SAEnv.ReadVaspPoscar(suffix=suffix, atoms_index=atoms_index)
 
         # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title
@@ -237,9 +240,10 @@ class Read(object):
 if __name__ == '__main__':
 
     import optparse
+
     name = 'POSCAR'
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT', default=name,)
+    parser.add_option('-i', '--input', dest='INPUT', default=name, )
     options, args = parser.parse_args()
     name = options.INPUT
 
@@ -262,10 +266,10 @@ if __name__ == '__main__':
     ion_local = cell.get_ion_local()
     atoms_index_j = cell.get_atoms_index_j()
 
-#   for i in range(natom):
-#       print i, atoms_index_j[i]
+    #   for i in range(natom):
+    #       print i, atoms_index_j[i]
 
-#   ###########################################################################
+    #   ###########################################################################
     out = sys.stdout
 
     print(title)
@@ -284,7 +288,7 @@ if __name__ == '__main__':
             for i in range(nion):
                 print("%s" % str(atoms_index[i]), file=out, end="")
             print(" ", file=out)
-        print(" ") # for VASP5
+        print(" ")  # for VASP5
 
     print(" ", file=out, end="")
     for i in range(nion):
@@ -300,7 +304,7 @@ if __name__ == '__main__':
 
     for j in range(natom):
         print(" %13.9f %13.9f %13.9f"
-            % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
+              % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
         if selective:
             print("", file=out, end="")
             print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
@@ -309,4 +313,3 @@ if __name__ == '__main__':
 
 #   print ion
 #   print ion_local
-

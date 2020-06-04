@@ -46,79 +46,74 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.6"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.6"
+
 ################################################################################
 
-#import sys
-#import os
-#import gzip
+# import sys
+# import os
+# import gzip
 
 import re
 import glob
 import optparse
+
 
 ################################################################################
 # suffix が dot 付きだったときは dot を削除してから *.suffix を探す
 # 複数見つけた時および見つけなかった時は None を返す
 #
 def find_datfile(suffix):
-
-    suffix0 = re.sub('^\.','',suffix)
-    filelist = glob.glob("*."+suffix0)
+    suffix0 = re.sub('^\.', '', suffix)
+    filelist = glob.glob("*." + suffix0)
     datname = None
     if len(filelist) == 1:
-        datname = re.sub('.'+suffix0,'',filelist[0])
+        datname = re.sub('.' + suffix0, '', filelist[0])
 
     return datname
+
 
 ################################################################################
 # suffix に対しての事後処理をせずに *suffix を探す
 #
 def find_datfile1(tail):
-
-    filelist = glob.glob("*"+tail)
+    filelist = glob.glob("*" + tail)
     datname = None
     if len(filelist) == 1:
         datname = filelist[0]
 
     return datname
 
+
 ################################################################################
 #  *.suffix を探す（複数ファイルを返す)
 #
 def find_datfiles(suffix):
-
-    filelist = glob.glob("*."+str(suffix))
+    filelist = glob.glob("*." + str(suffix))
     datnames = None
     datnames = []
     for i in filelist:
-        datnames.append(re.sub('.'+str(suffix),'',i))
+        datnames.append(re.sub('.' + str(suffix), '', i))
 
     return datnames
+
 
 ################################################################################
 if __name__ == '__main__':
 
     suffix = 'dat'
     parser = optparse.OptionParser()
-    parser.add_option( '-s','--suffix',)
+    parser.add_option('-s', '--suffix', )
     options, args = parser.parse_args()
 
     if options.suffix: suffix = options.suffix
-    if len(args) >0: suffix = args[0]
+    if len(args) > 0: suffix = args[0]
 
     try:
         datname = find_datfile(suffix)
         print("%s" % str(datname))
     except:
         pass
-

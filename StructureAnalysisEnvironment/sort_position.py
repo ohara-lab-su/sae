@@ -13,29 +13,25 @@
 #  startup
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import numpy as np
-#import copy
-#import collections
 
-def sort_position(sort_index_r,position):
 
+# import copy
+# import collections
+
+def sort_position(sort_index_r, position):
     natom = len(position)
 
-    position_s = np.zeros((natom,3))
+    position_s = np.zeros((natom, 3))
     for original in range(natom):
         sort = sort_index_r[original]
-        position_s[sort,:] = position[original,:]
+        position_s[sort, :] = position[original, :]
 
     return position_s
-

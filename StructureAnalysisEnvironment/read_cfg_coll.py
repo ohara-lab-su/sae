@@ -33,15 +33,11 @@
 #   ion_site[i] を追加 (read_cfg.py と互換機能および互換引数化)
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -51,83 +47,82 @@ from numpy import *
 
 
 ################################################################################
-def read_cfg_coll(cname,nloop,t,natom,nion,atoms,ion_site,position_loop):
-
+def read_cfg_coll(cname, nloop, t, natom, nion, atoms, ion_site, position_loop):
     try:
-        tmp = open(cname+'.cfg')
+        tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg_coll.py): "+cname+".cfg not open")
+        sys.exit("Error(read_cfg_coll.py): " + cname + ".cfg not open")
 
     datfile = tmp.read()
     tmp.close()
     datlines = datfile.split('\n')
 
-    num = len(datlines) -1
+    num = len(datlines) - 1
 
-    lines=0
+    lines = 0
 
     for loop in range(nloop):
 
         header = datlines[lines]
-        comment = datlines[lines+1]
-        moves = datlines[lines+4]
-        saved = datlines[lines+5]
+        comment = datlines[lines + 1]
+        moves = datlines[lines + 4]
+        saved = datlines[lines + 5]
 
         # 全原子数
-        tmp = datlines[lines+7].split()
+        tmp = datlines[lines + 7].split()
         natom0 = int(tmp[0])
         if natom0 != natom:
             sys.exit("NATOM is inconsistent (read_cfg_coll.py)")
 
         # 原子の種類の数
-        tmp = datlines[lines+8].split()
+        tmp = datlines[lines + 8].split()
         nion0 = int(tmp[0])
         if nion0 != nion:
             sys.exit("NION is inconsistent (read_cfg_coll.py)")
 
-        nmoles = datlines[lines+9]
-        angles = datlines[lines+10]
+        nmoles = datlines[lines + 9]
+        angles = datlines[lines + 10]
 
         # 基本並進ベクトル(box size vector)
-        t1 = datlines[lines+14].split()
+        t1 = datlines[lines + 14].split()
         t1_x = float(t1[0])  # lattice constant/2
         t1_y = float(t1[1])
         t1_z = float(t1[2])
 
-        t2 = datlines[lines+15].split()
+        t2 = datlines[lines + 15].split()
         t2_x = float(t2[0])
         t2_y = float(t2[1])
         t2_z = float(t2[2])
 
-        t3 = datlines[lines+16].split()
+        t3 = datlines[lines + 16].split()
         t3_x = float(t3[0])
         t3_y = float(t3[1])
         t3_z = float(t3[2])
 
-        t[0,0] = t1_x
-        t[1,0] = t1_y
-        t[2,0] = t1_z
+        t[0, 0] = t1_x
+        t[1, 0] = t1_y
+        t[2, 0] = t1_z
 
-        t[0,1] = t2_x
-        t[1,1] = t2_y
-        t[2,1] = t2_z
+        t[0, 1] = t2_x
+        t[1, 1] = t2_y
+        t[2, 1] = t2_z
 
-        t[0,2] = t3_x
-        t[1,2] = t3_y
-        t[2,2] = t3_z
+        t[0, 2] = t3_x
+        t[1, 2] = t3_y
+        t[2, 2] = t3_z
 
         ###############################################
         ## 原子の種類ごとの読み込み
         ##
-        lines = lines+18
-       #atoms = zeros((nion),dtype=int)
+        lines = lines + 18
+        # atoms = zeros((nion),dtype=int)
         for i in range(nion):
             tmp = datlines[lines].split()
             atoms[i] = int(tmp[0])
-           #print atoms[i],
+            # print atoms[i],
             lines = lines + 4
-       #print ""
+        # print ""
 
         ###############################################
         ## 原子種の (仮) Index を作成する
@@ -135,44 +130,43 @@ def read_cfg_coll(cname,nloop,t,natom,nion,atoms,ion_site,position_loop):
         index = 0
         for j in range(nion):
             for k in range(int(atoms[j])):
-                ion_site[index] = j # イオン種別の通し番号を与えておく
-               #print ion_site[index],index
+                ion_site[index] = j  # イオン種別の通し番号を与えておく
+                # print ion_site[index],index
                 index += 1
 
         ###############################################
         ## Read Internal Coordinate (Direct)
         ##
-       #position = zeros((natom,3))
+        # position = zeros((natom,3))
         for i in range(natom):
             xyz = datlines[lines].split()
-            position_loop[loop,i,0] = xyz[0]
-            position_loop[loop,i,1] = xyz[1]
-            position_loop[loop,i,2] = xyz[2]
+            position_loop[loop, i, 0] = xyz[0]
+            position_loop[loop, i, 1] = xyz[1]
+            position_loop[loop, i, 2] = xyz[2]
             lines += 1
-           #print " %19.15f %19.15f %19.15f" %(position_loop[loop,i,0], \
-           #                                   position_loop[loop,i,1], \
-           #                                   position_loop[loop,i,2])
+        # print " %19.15f %19.15f %19.15f" %(position_loop[loop,i,0], \
+        #                                   position_loop[loop,i,1], \
+        #                                   position_loop[loop,i,2])
 
         # 空白行のスキップ
         lines = lines + 1
 
-#   t[1,0] = t1_y
-#   t[2,0] = t1_z
+    #   t[1,0] = t1_y
+    #   t[2,0] = t1_z
 
-#   t[0,1] = t2_x
-#   t[1,1] = t2_y
-#   t[2,1] = t2_z
+    #   t[0,1] = t2_x
+    #   t[1,1] = t2_y
+    #   t[2,1] = t2_z
 
-#   t[0,2] = t3_x
-#   t[1,2] = t3_y
-#   t[2,2] = t3_z
-#
-#   print datlines[lines]
+    #   t[0,2] = t3_x
+    #   t[1,2] = t3_y
+    #   t[2,2] = t3_z
+    #
+    #   print datlines[lines]
 
     scale = 1.0
     direct = True
 
-    return [header,comment,scale,direct]
+    return [header, comment, scale, direct]
 
 ################################################################################
-

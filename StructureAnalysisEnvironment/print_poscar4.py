@@ -38,16 +38,11 @@
 #
 ##################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ###################################################################################
 
 import sys
@@ -56,23 +51,22 @@ import re
 from numpy import *
 
 
-def print_poscar4(cname,STD,title,scale,natom,nion,direct,PV5FLAG,t,atoms,dummy,position):
-
+def print_poscar4(cname, STD, title, scale, natom, nion, direct, PV5FLAG, t, atoms, dummy, position):
     ## open poscar file
     ##
     if STD:
         out = sys.stdout
     else:
-        out = open(cname+'.vasp','w')
+        out = open(cname + '.vasp', 'w')
 
     print(str(title), file=out)
-    print(" ",scale, file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
+    print(" ", scale, file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2]), file=out)
 
     if PV5FLAG:
-        print(" ",dummy, file=out)
+        print(" ", dummy, file=out)
 
     for i in range(int(nion)):
         print(int(atoms[i]), file=out, end="")
@@ -84,9 +78,8 @@ def print_poscar4(cname,STD,title,scale,natom,nion,direct,PV5FLAG,t,atoms,dummy,
         print("Cartesian", file=out)
 
     for i in range(int(natom)):
-#       print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), file=out)
-        print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), file=out)
+        #       print(" %13.9f %13.9f %13.9f" %(position[i,0],position[i,1],position[i,2]), file=out)
+        print(" %13.9f %13.9f %13.9f" % (position[i, 0], position[i, 1], position[i, 2]), file=out)
         print("")
 
     out.close()
-

@@ -21,6 +21,7 @@
 #
 ###############################################################################
 from __future__ import print_function
+
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -31,17 +32,24 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ###############################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
 import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ###############################################################################
 
@@ -50,7 +58,7 @@ class ReadFdmBav(object):
 
     def __init__(self, cname, suffix='_bav.txt'):
 
-        self.datlines, self.num = SAE.read_dataline(cname + suffix)
+        self.datlines, self.num = SAEnv.read_dataline(cname + suffix)
 
         ngroup_reg = re.compile('.*ngroup =.*')
         excited_atom_reg = re.compile('.*Excited atom.*')
@@ -66,7 +74,7 @@ class ReadFdmBav(object):
         nspin_reg = re.compile('.*Magnetic calculation')
 
         self.t = np.zeros((3, 3))
-#       self.position = []
+        #       self.position = []
 
         self.nspin = 1  # default nonmag
         self.SCF = False
@@ -95,7 +103,7 @@ class ReadFdmBav(object):
             if bool(ngroup_reg.match(self.datlines[i])):
                 if self.datlines[i].split()[0] == 'ngroup':
                     self.ngroup = \
-                            int(self.datlines[i].split()[2].replace(',', ''))
+                        int(self.datlines[i].split()[2].replace(',', ''))
                 else:
                     sys.exit("STOP(ReadFdmBav): ngroup tag not found.")
 
@@ -104,11 +112,11 @@ class ReadFdmBav(object):
                 j = 2
                 l = 0
                 while 1:
-                    _l = self.datlines[i+j].split()[1]
+                    _l = self.datlines[i + j].split()[1]
                     if l < _l:
                         l = _l
                     j += 1
-                    if bool(atom_type_reg.match(self.datlines[i+j+1])):
+                    if bool(atom_type_reg.match(self.datlines[i + j + 1])):
                         break
                 self.lmax = l
 
@@ -155,7 +163,7 @@ class ReadFdmBav(object):
                 j = 0
                 while 1:
                     zz = int(self.datlines[2 + i + j].split()[0])
-                    self.atoms_index_j.append(SAE.get_atomic_symbol0(zz))
+                    self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
                     px = float(self.datlines[2 + i + j].split()[1])
                     py = float(self.datlines[2 + i + j].split()[2])
                     pz = float(self.datlines[2 + i + j].split()[3])
@@ -197,21 +205,21 @@ class ReadFdmBav(object):
     def get_atoms_index_j(self):
         return self.atoms_index_j
 
+
 ###############################################################################
 
 
 def options():
-
     #   name = 'POSCAR.txt'
     name = 'Cu'
     suffix = '_bav.txt'
 
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
     if not os.path.exists(name + suffix):
-        name0 = SAE.find_datfile1(suffix)
+        name0 = SAEnv.find_datfile1(suffix)
         name = name0.replace(suffix, '')
 
     if options.INPUT:
@@ -220,6 +228,7 @@ def options():
         name = args[0]
 
     return name, suffix
+
 
 ###############################################################################
 if __name__ == '__main__':

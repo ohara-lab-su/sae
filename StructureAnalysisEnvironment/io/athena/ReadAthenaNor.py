@@ -23,6 +23,7 @@
 #
 ###############################################################################
 from __future__ import print_function
+
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -33,18 +34,25 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ###############################################################################
 
-#import sys
+import sys
 import os
 import re
-#import gzip
+# import gzip
 import numpy as np
 
-#import optparse
+# import optparse
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+
+
+# import SpaceGroupEnvironment as SGE
 
 ###############################################################################
 
@@ -53,7 +61,7 @@ class ReadAthenaNor(object):
 
     def __init__(self, name='case.txt.nor'):
 
-        self.datlines, self.num = SAE.read_dataline(name)
+        self.datlines, self.num = SAEnv.read_dataline(name)
         comment_reg = re.compile('^#.*')
         E0_reg = re.compile('^#.*E0.*')
 
@@ -88,11 +96,11 @@ class ReadAthenaNor(object):
     def get_e0(self):
         return self.e0
 
+
 ###############################################################################
 
 
 def plot_athena_nor(eng, nor):
-
     import matplotlib.pyplot as plt
 
     plt.rcParams['font.family'] = 'Times New Roman'
@@ -114,7 +122,7 @@ def plot_athena_nor(eng, nor):
 
     plt.xlabel("E")
     plt.ylabel(" chi mu (E)")
-#   plt.axvline(x=0,color='black',linewidth=1)
+    #   plt.axvline(x=0,color='black',linewidth=1)
 
     leg = plt.legend(fontsize=12, loc='lower right')
     leg.get_frame().set_alpha(0.5)
@@ -126,6 +134,7 @@ def plot_athena_nor(eng, nor):
     plt.show()
 
     plt.close('all')
+
 
 ###############################################################################
 
@@ -140,7 +149,7 @@ def options():
     options, args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAE.find_datfile1('.txt.nor')
+        name0 = SAEnv.find_datfile1('.txt.nor')
         if name0 is None:
             name0 = name
     name = name0
@@ -155,7 +164,6 @@ def options():
 
 ###############################################################################
 if __name__ == '__main__':
-
     name = options()
 
     spec = ReadAthenaNor(name)
@@ -164,4 +172,3 @@ if __name__ == '__main__':
 
 #   for i in range(ndata):
 #       print eng[i],nor[i]
-

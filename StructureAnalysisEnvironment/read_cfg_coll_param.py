@@ -14,15 +14,11 @@
 # [return] nion   : 原子の種類
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -33,35 +29,34 @@ from numpy import *
 
 ################################################################################
 def read_cfg_coll_param(cname):
-
     try:
-        tmp = open(cname+'.cfg')
+        tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg_coll_param.py): "+cname+" not open")
+        sys.exit("Error(read_cfg_coll_param.py): " + cname + " not open")
 
     datfile = tmp.read()
     tmp.close()
     datlines = datfile.split('\n')
 
-    num = len(datlines) -1
+    num = len(datlines) - 1
 
     # 読み込みスタート行
-    lines=0
+    lines = 0
 
     # 全原子数
-    t = datlines[lines+7].split()
+    t = datlines[lines + 7].split()
     natom = int(t[0])
 
     # 原子の種類の数
-    t = datlines[lines+8].split()
+    t = datlines[lines + 8].split()
     nion = int(t[0])
 
     # ヘッダー部分(固定行)のまとめてスキップ
-    lines = lines+18
+    lines = lines + 18
 
     # 原子種ごとの読み込み行
-    lines = lines + (nion*4)
+    lines = lines + (nion * 4)
 
     # 内部座標(ループごとの原子数)
     lines = lines + (natom)
@@ -69,17 +64,16 @@ def read_cfg_coll_param(cname):
     # ファイルの最後の空白行
     lines = lines + 1
 
-    max_lines = lines            # 一つのループ毎の*.cfg行数
-    nloop      =  num/max_lines  # ループ数
+    max_lines = lines  # 一つのループ毎の*.cfg行数
+    nloop = num / max_lines  # ループ数
 
-#   print "MAX_LINES      : ", num
-#   print "MAX_LINES/LOOP : ", max_lines
-#   print "NUM. OF LOOP   : ", nloop
+    #   print "MAX_LINES      : ", num
+    #   print "MAX_LINES/LOOP : ", max_lines
+    #   print "NUM. OF LOOP   : ", nloop
 
-#   次のループの先頭
-#   print datlines[lines]
+    #   次のループの先頭
+    #   print datlines[lines]
 
-    return nloop,natom,nion,
+    return nloop, natom, nion,
 
 ################################################################################
-

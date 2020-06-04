@@ -21,16 +21,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 #
 # 2015.02.16
@@ -39,66 +34,67 @@ __version__    = "0.0.1"
 #
 ################################################################################
 
-#import sys
-#import os
-#import re
+# import sys
+# import os
+# import re
 import numpy as np
 
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 ####################################################
 ## distanceでatom1とatom2がボンドしている数を返す
 ## ゾーンバウンダリーを超えない
 ##
-def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
-
+def get_bond_info_param(atom1, atom2, distance, nion, atoms, position):
     # 入力原子 atom1 の原子種を確認
-#   atom1   = 1
-#   atom2   = 4
+    #   atom1   = 1
+    #   atom2   = 4
 
     # 入力した原子種の通し番号の下限と上限を返す
     # 入力する原子種の種別番号は 1 からスタート
-    start1,end1 = SAE.get_atom_start(atom1,nion,atoms)
+    start1, end1 = SAE.get_atom_start(atom1, nion, atoms)
     if atom1 != atom2:
-        start2,end2 = SAE.get_atom_start(atom2,nion,atoms)
+        start2, end2 = SAE.get_atom_start(atom2, nion, atoms)
 
     # 入力した原子のサイト内ループを通し番号で記述
-    atom1_0 = atom1 -1
-   #for i in range(int(atoms[atom1_0])):
-       #print i
+    atom1_0 = atom1 - 1
+    # for i in range(int(atoms[atom1_0])):
+    # print i
 
     num = 0
     if atom1 != atom2:
-        for i in range(start1,end1+1,1):
-            x1 = position[i,0]
-            y1 = position[i,1]
-            z1 = position[i,2]
-            for j in range(start2,end2+1,1):
+        for i in range(start1, end1 + 1, 1):
+            x1 = position[i, 0]
+            y1 = position[i, 1]
+            z1 = position[i, 2]
+            for j in range(start2, end2 + 1, 1):
                 if j != i:
-                  x2 = position[j,0]
-                  y2 = position[j,1]
-                  z2 = position[j,2]
+                    x2 = position[j, 0]
+                    y2 = position[j, 1]
+                    z2 = position[j, 2]
 
-                  r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                  r1 = np.sqrt(r0)
-                  if r1 < distance:
-                      num += 1
+                    r0 = np.fabs((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
+                    r1 = np.sqrt(r0)
+                    if r1 < distance:
+                        num += 1
     else:
-        for i in range(start1,end1+1,1):
-            x1 = position[i,0]
-            y1 = position[i,1]
-            z1 = position[i,2]
-            for j in range(i,end1+1,1):
+        for i in range(start1, end1 + 1, 1):
+            x1 = position[i, 0]
+            y1 = position[i, 1]
+            z1 = position[i, 2]
+            for j in range(i, end1 + 1, 1):
                 if j != i:
-                  x2 = position[j,0]
-                  y2 = position[j,1]
-                  z2 = position[j,2]
+                    x2 = position[j, 0]
+                    y2 = position[j, 1]
+                    z2 = position[j, 2]
 
-                  r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                  r1 = np.sqrt(r0)
-                  if r1 < distance:
-                      num += 1
+                    r0 = np.fabs((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
+                    r1 = np.sqrt(r0)
+                    if r1 < distance:
+                        num += 1
 
     return num
 
@@ -110,44 +106,43 @@ def get_bond_info_param(atom1,atom2,distance,nion,atoms,position):
 ## 注意) 引数の ion はデバッグ用(print用)
 ##       それ以外ではルーチンの中では使わないので基本は省いておく
 ##
-def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bond1,bond2):
-#def get_bond_info(atom1,atom2,distance,nion,ion,atoms,atoms_index,position,bondr,bond1,bond2):
+def get_bond_info(atom1, atom2, distance, nion, atoms, atoms_index, position, bondr, bond1, bond2):
+    # def get_bond_info(atom1,atom2,distance,nion,ion,atoms,atoms_index,position,bondr,bond1,bond2):
 
     # 入力原子 atom1 の原子種を確認
-#   atom1   = 1
-#   atom2   = 4
+    #   atom1   = 1
+    #   atom2   = 4
 
     # 入力した原子種の通し番号の下限と上限を返す
     # 入力する原子種の種別番号は 1 からスタート
-    start1,end1 = SAE.get_atom_start(atom1,nion,atoms)
+    start1, end1 = SAE.get_atom_start(atom1, nion, atoms)
     if atom1 != atom2:
-        start2,end2 = SAE.get_atom_start(atom2,nion,atoms)
-
+        start2, end2 = SAE.get_atom_start(atom2, nion, atoms)
 
     # 入力した原子のサイト内ループを通し番号で記述
-    atom1_0 = atom1 -1
-   #for i in range(int(atoms[atom1_0])):
-       #print i
+    atom1_0 = atom1 - 1
+    # for i in range(int(atoms[atom1_0])):
+    # print i
 
     num = 0
     if atom1 != atom2:
-        for i in range(start1,end1+1,1):
-            x1 = position[i,0]
-            y1 = position[i,1]
-            z1 = position[i,2]
-            for j in range(start2,end2+1,1):
+        for i in range(start1, end1 + 1, 1):
+            x1 = position[i, 0]
+            y1 = position[i, 1]
+            z1 = position[i, 2]
+            for j in range(start2, end2 + 1, 1):
                 if j != i:
-                    x2 = position[j,0]
-                    y2 = position[j,1]
-                    z2 = position[j,2]
+                    x2 = position[j, 0]
+                    y2 = position[j, 1]
+                    z2 = position[j, 2]
 
-                    r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
+                    r0 = np.fabs((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
                     r1 = np.sqrt(r0)
                     if r1 < distance:
-                       #print num, i,"("+str(atoms_index[ion[i]])+") -",\
-                       #           j,"("+str(atoms_index[ion[j]])+")"  ,\
-                       #           " %8.5f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
-                       #           % ( r1, x1,y1,z1, x2,y2,z2)
+                        # print num, i,"("+str(atoms_index[ion[i]])+") -",\
+                        #           j,"("+str(atoms_index[ion[j]])+")"  ,\
+                        #           " %8.5f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
+                        #           % ( r1, x1,y1,z1, x2,y2,z2)
                         bondr[num] = r1
                         bond1[num] = i
                         bond2[num] = j
@@ -155,26 +150,24 @@ def get_bond_info(atom1,atom2,distance,nion,atoms,atoms_index,position,bondr,bon
 
     # atom1 = atom2
     else:
-         for i in range(start1,end1+1,1):
-            x1 = position[i,0]
-            y1 = position[i,1]
-            z1 = position[i,2]
-            for j in range(i,end1+1,1):
-               if j != i:
-                   x2 = position[j,0]
-                   y2 = position[j,1]
-                   z2 = position[j,2]
+        for i in range(start1, end1 + 1, 1):
+            x1 = position[i, 0]
+            y1 = position[i, 1]
+            z1 = position[i, 2]
+            for j in range(i, end1 + 1, 1):
+                if j != i:
+                    x2 = position[j, 0]
+                    y2 = position[j, 1]
+                    z2 = position[j, 2]
 
-                   r0 = np.fabs( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) )
-                   r1 = np.sqrt(r0)
-                   if r1 < distance:
-                      #print num, i,"("+str(atoms_index[ion[i]])+") -",\
-                      #           j,"("+str(atoms_index[ion[j]])+")"  ,\
-                      #           " %8.5f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
-                      #           % ( r1, x1,y1,z1, x2,y2,z2)
-                       bondr[num] = r1
-                       bond1[num] = i
-                       bond2[num] = j
-                       num += 1
-
-
+                    r0 = np.fabs((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1))
+                    r1 = np.sqrt(r0)
+                    if r1 < distance:
+                        # print num, i,"("+str(atoms_index[ion[i]])+") -",\
+                        #           j,"("+str(atoms_index[ion[j]])+")"  ,\
+                        #           " %8.5f   %11.8f %11.8f %11.8f   %11.8f %11.8f %11.8f" \
+                        #           % ( r1, x1,y1,z1, x2,y2,z2)
+                        bondr[num] = r1
+                        bond1[num] = i
+                        bond2[num] = j
+                        num += 1

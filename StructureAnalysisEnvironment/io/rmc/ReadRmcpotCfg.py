@@ -42,22 +42,22 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
-#import sys
-#import os
+import sys
+# import os
 import numpy as np
-import StructureAnalysisEnvironment as SAEnv
+
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
 
 
 ################################################################################
@@ -65,12 +65,14 @@ class ReadRmcpotCfg(SAEnv.Method):
     """
     for RMC version 3 format
     """
-    def __init__(self,cname='POSCAR.cfg',suffix='.cfg',sort=False,atoms_index=None):
 
-      # if suffix is not None: cname = cname+suffix
+    def __init__(self, cname='POSCAR.cfg', suffix='.cfg', sort=False, atoms_index=None):
+
+        # if suffix is not None: cname = cname+suffix
         self.datlines, self.num = SAEnv.read_dataline(cname)
 
         print("cfg name = %s" % cname)
+        print("atoms_index = %s" % atoms_index)
 
         ###############################################
         # Read Parameter
@@ -78,23 +80,23 @@ class ReadRmcpotCfg(SAEnv.Method):
         self.comment = str(self.datlines[1])
         self.title = self.comment
         self.system = self.title
-        self.moves = self.datlines[4] # RMC
-        self.saved = self.datlines[5] # RMC
+        self.moves = self.datlines[4]  # RMC
+        self.saved = self.datlines[5]  # RMC
         self.natom = int(self.datlines[7].split()[0])
         self.nion = int(self.datlines[8].split()[0])
-        self.nmoles = self.datlines[9] # RMC
-        self.angles = self.datlines[10] # RMC
+        self.nmoles = self.datlines[9]  # RMC
+        self.angles = self.datlines[10]  # RMC
 
         # dummy parameter
         self.vasp_version = 5
-        self.direct = True # cfg は in/out 共に direct を想定
+        self.direct = True  # cfg は in/out 共に direct を想定
         self.selective = False
-        self.scale = 1.0   # cfg は scale 1.0 を想定
+        self.scale = 1.0  # cfg は scale 1.0 を想定
 
         ###############################################
-        ## Read Lattice Vector
-        ##
-        t1_x = float(self.datlines[14].split()[0]) # lattice constant/2
+        # Read Lattice Vector
+        #
+        t1_x = float(self.datlines[14].split()[0])  # lattice constant/2
         t1_y = float(self.datlines[14].split()[1])
         t1_z = float(self.datlines[14].split()[2])
 
@@ -106,40 +108,40 @@ class ReadRmcpotCfg(SAEnv.Method):
         t3_y = float(self.datlines[16].split()[1])
         t3_z = float(self.datlines[16].split()[2])
 
-        self.t = np.zeros((3,3))
-        self.t[0,0] = float(t1_x)
-        self.t[1,0] = float(t1_y)
-        self.t[2,0] = float(t1_z)
+        self.t = np.zeros((3, 3))
+        self.t[0, 0] = float(t1_x)
+        self.t[1, 0] = float(t1_y)
+        self.t[2, 0] = float(t1_z)
 
-        self.t[0,1] = float(t2_x)
-        self.t[1,1] = float(t2_y)
-        self.t[2,1] = float(t2_z)
+        self.t[0, 1] = float(t2_x)
+        self.t[1, 1] = float(t2_y)
+        self.t[2, 1] = float(t2_z)
 
-        self.t[0,2] = float(t3_x)
-        self.t[1,2] = float(t3_y)
-        self.t[2,2] = float(t3_z)
+        self.t[0, 2] = float(t3_x)
+        self.t[1, 2] = float(t3_y)
+        self.t[2, 2] = float(t3_z)
 
-        print("t1_x = %s" % self.t[0,0])
-        print("t1_y = %s" % self.t[1,0])
-        print("t1_z = %s" % self.t[2,0])
+        print("t1_x = %s" % self.t[0, 0])
+        print("t1_y = %s" % self.t[1, 0])
+        print("t1_z = %s" % self.t[2, 0])
         print("")
-        print("t2_x = %s" % self.t[0,1])
-        print("t2_y = %s" % self.t[1,1])
-        print("t2_z = %s" % self.t[2,1])
+        print("t2_x = %s" % self.t[0, 1])
+        print("t2_y = %s" % self.t[1, 1])
+        print("t2_z = %s" % self.t[2, 1])
         print("")
-        print("t3_x = %s" % self.t[0,2])
-        print("t3_y = %s" % self.t[1,2])
-        print("t3_z = %s" % self.t[2,2])
+        print("t3_x = %s" % self.t[0, 2])
+        print("t3_y = %s" % self.t[1, 2])
+        print("t3_z = %s" % self.t[2, 2])
         print("")
 
         ###############################################
-        ## 原子の種類ごとの読み込み
-        ##
-        lines=17
-        self.atoms = np.zeros(self.nion,dtype=int)
+        # 原子の種類ごとの読み込み
+        #
+        lines = 17
+        self.atoms = np.zeros(self.nion, dtype=int)
         for i in range(self.nion):
             lines += 1
-            self.atoms[i] =  int(self.datlines[lines].split()[0])
+            self.atoms[i] = int(self.datlines[lines].split()[0])
             print(self.atoms[i])
             lines += 1
             tmp = self.datlines[lines]
@@ -149,21 +151,24 @@ class ReadRmcpotCfg(SAEnv.Method):
             tmp = self.datlines[lines]
 
         ###############################################
-        ## 原子種の (仮) Index を作成する
-        ##
+        # 原子種の (仮) Index を作成する
+        #
+        if atoms_index is None:
+            # dummy parameter
+            atoms_index = ['N', 'O', 'Ca', 'K']
+            # atoms_index = ['Fe','Ni','Co']
+            # atoms_index = ['N','O','Co', 'K']
+            # atoms_index = ['Ba','O','Ti']
+
         print("nion = %s" % self.nion)
         print("dummy atoms_index = %s" % atoms_index)
-        #atoms_index = ['Fe','Ni','Co']
-        #atoms_index = ['N','O','Co', 'K']
-        #atoms_index = ['Ba','O','Ti']
-        atoms_index = ['N','O','Ca', 'K']
 
         index = 0
-        self.atoms_j = np.zeros(self.natom,dtype=int)
+        self.atoms_j = np.zeros(self.natom, dtype=int)
         for j in range(self.nion):
             for k in range(self.atoms[j]):
-                self.atoms_j[index] = j # イオン種別の通し番号を与えておく
-               #print atoms_j[index],index
+                self.atoms_j[index] = j  # イオン種別の通し番号を与えておく
+                # print atoms_j[index],index
                 index += 1
 
         print("END of atoms index (1)")
@@ -182,7 +187,7 @@ class ReadRmcpotCfg(SAEnv.Method):
                     self.atoms_index_j.append(str(self.atoms_index[k]))
 
             # 入力原子情報に基づいて atoms_number を作成する
-            self.atoms_number = np.zeros(self.nion,dtype=int)
+            self.atoms_number = np.zeros(self.nion, dtype=int)
             for i in range(self.nion):
                 self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
@@ -193,25 +198,26 @@ class ReadRmcpotCfg(SAEnv.Method):
                     num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
                     self.atoms_number_j.append(num0)
 
-            ## ion_local[j] & ion[j]
-            self.ion = np.zeros(self.natom,dtype=int)
-            self.ion_local = np.zeros(self.natom,dtype=int)
+            # ion_local[j] & ion[j]
+            self.ion = np.zeros(self.natom, dtype=int)
+            self.ion_local = np.zeros(self.natom, dtype=int)
             tmp = -1
             for j in range(self.nion):
                 local = -1
                 for k in range(int(self.atoms[j])):
                     tmp += 1
                     local += 1
-                    self.ion[tmp]= int(j)
+                    self.ion[tmp] = int(j)
                     self.ion_local[tmp] = int(local)
 
-           ### natom までの通し番号で原子の種類番号を返す
-           #self.atoms_j = np.zeros(self.natom,dtype=int)
-           #j = 0
-           #for ion in range(self.nion):
-           #    for atom in range(self.atoms[ion]):
-           #        self.atoms_j[j] = int(ion)
-           #        j += 1
+        ##########
+        # natom までの通し番号で原子の種類番号を返す
+        #   self.atoms_j = np.zeros(self.natom,dtype=int)
+        #   j = 0
+        #   for ion in range(self.nion):
+        #      for atom in range(self.atoms[ion]):
+        #          self.atoms_j[j] = int(ion)
+        #          j += 1
 
         else:
             self.vasp_version = 4
@@ -222,30 +228,28 @@ class ReadRmcpotCfg(SAEnv.Method):
             self.ion = []
             self.ion_local = []
 
-
         print("END of atoms index (2)")
         ###############################################
-        ## Read Internal Coordinate
-        ##
-        self.position = np.zeros((self.natom,3))
+        # Read Internal Coordinate
+        #
+        self.position = np.zeros((self.natom, 3))
         for i in range(self.natom):
             lines += 1
-            self.position[i,0] = float(self.datlines[lines].split()[0])
-            self.position[i,1] = float(self.datlines[lines].split()[1])
-            self.position[i,2] = float(self.datlines[lines].split()[2])
-           #print position[i,0], position[i,1], position[i,2]
-
+            self.position[i, 0] = float(self.datlines[lines].split()[0])
+            self.position[i, 1] = float(self.datlines[lines].split()[1])
+            self.position[i, 2] = float(self.datlines[lines].split()[2])
+        # print position[i,0], position[i,1], position[i,2]
 
         # dummy parameter
         self.fix = ['T'] * self.natom
 
         # conver to VASP 形式(VASP形式を標準フォーマットとする)
-        self.scale, self.direct = SAEnv.conv_cfg2vaspa(\
-                self.scale,\
-                self.t,\
-                self.natom,\
-                self.direct,\
-                self.position)
+        self.scale, self.direct = SAEnv.conv_cfg2vaspa(
+            self.scale,
+            self.t,
+            self.natom,
+            self.direct,
+            self.position)
 
     ############################################################################
 
@@ -253,11 +257,13 @@ class ReadRmcpotCfg(SAEnv.Method):
         return self.comment
 
     def conv_cfg2vasp(self):
-        self.scale, self.direct = SAEnv.conv_cfg2vasp(self.t,\
-                self.natom,\
-                self.direct,\
-                self.position)
-        return self.scale,self.direct
+        self.scale, self.direct = SAEnv.conv_cfg2vaspa(
+            self.scale,
+            self.t,
+            self.natom,
+            self.direct,
+            self.position)
+        return self.scale, self.direct
 
     ############################################################################
     #
@@ -275,6 +281,8 @@ class ReadRmcpotCfg(SAEnv.Method):
     # [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
     #
     ############################################################################
+
+
 #   def conv_cfg2vasp(self):
 
 #       if not self.direct:
@@ -334,34 +342,32 @@ class ReadRmcpotCfg(SAEnv.Method):
 
 ################################################################################
 if __name__ == '__main__':
-
-    #import optparse
+    # import optparse
     # Default & OptionParser
     cname = 'igzo'
 
-    #atoms_index = ['In','Ga','Zn','O']
-    atoms_index = ['N','O','Ca','K']
-    cfg = SAEnv.ReadRmcpotCfg(cname+'.cfg',atoms_index=atoms_index)
-#   print cfg.title
-#   print cfg.atoms
+    # atoms_index = ['In','Ga','Zn','O']
+    atoms_index = ['N', 'O', 'Ca', 'K']
+    cfg = SAEnv.io.ReadRmcpotCfg(cname + '.cfg', atoms_index=atoms_index)
+    #   print cfg.title
+    #   print cfg.atoms
 
-#   cfg.conv_cfg2vasp()
-#   cfg.scale,cfg.direct = SAEnv.conv_cfg2vasp(cfg.scale,\
-#           cfg.t,\
-#           cfg.natom,\
-#           cfg.direct,\
-#           cfg.position)
+    #   cfg.conv_cfg2vasp()
+    #   cfg.scale,cfg.direct = SAEnv.conv_cfg2vasp(cfg.scale,\
+    #           cfg.t,\
+    #           cfg.natom,\
+    #           cfg.direct,\
+    #           cfg.position)
 
     # 擬似VASP5 設定
-    #dummy   = "In Ga Zn O"
-    #dummy   = "N O Ca K"
-    dummy   = "Ba O Ti"
+    # dummy   = "In Ga Zn O"
+    # dummy   = "N O Ca K"
+    dummy = "Ba O Ti"
     PV5FLAG = True  # 擬似VASP5 出力
 
     # VASP4+擬似VASP5 出力
-   #print ""
-    STD=False
-   #STD=True
-    SAEnv.print_poscar4(cname,STD,cfg.title,cfg.scale,cfg.natom,cfg.nion,\
-                      cfg.direct,PV5FLAG,cfg.t,cfg.atoms,dummy,cfg.position)
-
+    # print ""
+    STD = False
+    # STD=True
+    SAEnv.print_poscar4(cname, STD, cfg.title, cfg.scale, cfg.natom, cfg.nion,
+                        cfg.direct, PV5FLAG, cfg.t, cfg.atoms, dummy, cfg.position)

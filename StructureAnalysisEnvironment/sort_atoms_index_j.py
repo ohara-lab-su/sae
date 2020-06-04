@@ -21,21 +21,17 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import numpy as np
-#import copy
+# import copy
 import collections
+
 
 ################################################################################
 # 無秩序に並んだ atoms_index_j とそれに対応する position があるとき
@@ -43,18 +39,17 @@ import collections
 # するための汎用ルーチンの作成
 #
 def sort_atom_index_j(atoms_index_j):
-
-#   # atoms_index_j のソート (この方式は使わない、お蔵行き)
-#   atoms_index_j = copy.copy(atoms_index_j)
-#   atoms_index_js = copy.copy(atoms_index_j)
-#   atoms_index_js.sort(key=lambda x:x[0])
+    #   # atoms_index_j のソート (この方式は使わない、お蔵行き)
+    #   atoms_index_j = copy.copy(atoms_index_j)
+    #   atoms_index_js = copy.copy(atoms_index_j)
+    #   atoms_index_js.sort(key=lambda x:x[0])
 
     natom = len(atoms_index_j)
 
     # ION 数および atoms, atoms_index の作成
     counter = collections.Counter(atoms_index_j)
     nion = len(counter)
-    atoms = np.zeros(nion,dtype=int)
+    atoms = np.zeros(nion, dtype=int)
     atoms_index = []
     i = 0
     for atom, cnt in counter.most_common():
@@ -63,31 +58,30 @@ def sort_atom_index_j(atoms_index_j):
         i += 1
 
     # ソート用のindexの作成
-    sort_index = np.zeros(natom,dtype=int)   # sort_index --> original_index
-    sort_index_r = np.zeros(natom,dtype=int) # original_index --> sort_index
+    sort_index = np.zeros(natom, dtype=int)  # sort_index --> original_index
+    sort_index_r = np.zeros(natom, dtype=int)  # original_index --> sort_index
     for i in range(natom):
-        index = 0 # sort+index
+        index = 0  # sort+index
         for k in range(nion):
-            for j in range(natom): # original_index
+            for j in range(natom):  # original_index
                 if atoms_index[k] == atoms_index_j[j]:
                     sort_index[index] = j
                     sort_index_r[j] = index
-                    index +=1
+                    index += 1
 
-#   print sort_index
-#   print sort_index_r
+    #   print sort_index
+    #   print sort_index_r
 
-#   position_s = np.zeros((natom,3))
-#   for original in range(natom):
-#       sort = sort_index_r[original]
-#       position_s[sort,:] = position[original,:]
+    #   position_s = np.zeros((natom,3))
+    #   for original in range(natom):
+    #       sort = sort_index_r[original]
+    #       position_s[sort,:] = position[original,:]
 
     atoms_index_js = [''] * natom
     for original in range(natom):
         sort = sort_index_r[original]
         atoms_index_js[sort] = atoms_index_j[original]
 
-#   print atoms_index_js
+    #   print atoms_index_js
 
-    return sort_index,sort_index_r,atoms,atoms_index,atoms_index_js
-
+    return sort_index, sort_index_r, atoms, atoms_index, atoms_index_js

@@ -49,45 +49,42 @@
 # 2014.10.30 1st
 #
 ################################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.2"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.2"
+
 ################################################################################
 
 import sys
 import os
 import re
 import gzip
-#from numpy import *
 
-def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
 
+# from numpy import *
+
+def read_poscar(POSCAR, VASP, t, atoms, atoms_index, ion, ion_local, position, fix):
     ###############################################
     ## Open POSCAR file
     ##
     if os.path.exists(POSCAR):
-        GZIP=False
-    elif os.path.exists(POSCAR+".gz"):
-        GZIP=True
+        GZIP = False
+    elif os.path.exists(POSCAR + ".gz"):
+        GZIP = True
     else:
-        sys.exit("STOP: "+POSCAR+" or "+POSCAR+".gz file not found")
+        sys.exit("STOP: " + POSCAR + " or " + POSCAR + ".gz file not found")
 
     try:
         if GZIP:
-            tmp = gzip.open(POSCAR+".gz")
+            tmp = gzip.open(POSCAR + ".gz")
         else:
             tmp = open(POSCAR)
 
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: "+POSCAR+" does'nt open")
+        sys.exit("STOP: " + POSCAR + " does'nt open")
     finally:
         tmp.close()
 
@@ -121,24 +118,23 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     t3_y = float(v[1])
     t3_z = float(v[2])
 
-   #t = zeros((3,3))
-    t[0,0] = t1_x
-    t[1,0] = t1_y
-    t[2,0] = t1_z
+    # t = zeros((3,3))
+    t[0, 0] = t1_x
+    t[1, 0] = t1_y
+    t[2, 0] = t1_z
 
-    t[0,1] = t2_x
-    t[1,1] = t2_y
-    t[2,1] = t2_z
+    t[0, 1] = t2_x
+    t[1, 1] = t2_y
+    t[2, 1] = t2_z
 
-    t[0,2] = t3_x
-    t[1,2] = t3_y
-    t[2,2] = t3_z
-
+    t[0, 2] = t3_x
+    t[1, 2] = t3_y
+    t[2, 2] = t3_z
 
     ###############################################
     ## get VASP version, atoms and index
     ##
-    i=5
+    i = 5
     if VASP == 4:
         atoms.extend(datlines[i].split())
     elif VASP == 5:
@@ -148,23 +144,21 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
     else:
         sys.exit("Error: unknown VASP format")
 
-
     ###############################################
     ## get number of atoms
     ##
-    nion=int(len(atoms))
+    nion = int(len(atoms))
     natom = 0
     for j in range(nion):
         sum = int(atoms[j])
         natom = natom + sum
-    #print "natom= ",natom
-
+    # print "natom= ",natom
 
     ###############################################
     ## makes index
     ##
-   #ion_local = zeros(natom)
-   #ion = zeros(natom)
+    # ion_local = zeros(natom)
+    # ion = zeros(natom)
     tmp = -1
     for j in range(nion):
         local = -1
@@ -173,17 +167,15 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
             local += 1
             ion[tmp] = int(j)
             ion_local[tmp] = int(local)
-           #print tmp, int(ion[tmp]), int(ion_local[tmp])
-
+        # print tmp, int(ion[tmp]), int(ion_local[tmp])
 
     ###############################################
     ## makes re rule
     ##
     num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
-    selective_reg = re.compile('^S.*',re.IGNORECASE)
-    direct_reg = re.compile('^D.*',re.IGNORECASE)
-    car_reg = re.compile('^C.*',re.IGNORECASE)
-
+    selective_reg = re.compile('^S.*', re.IGNORECASE)
+    direct_reg = re.compile('^D.*', re.IGNORECASE)
+    car_reg = re.compile('^C.*', re.IGNORECASE)
 
     ###############################################
     ## get atomc coordinate mode
@@ -195,43 +187,40 @@ def read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix):
         sys.exit("Format Error")
     else:
         if bool(selective_reg.match(tmp[0])):
-           #print "selective True"
+            # print "selective True"
             i += 1
             tmp = datlines[i].split()
             selective = True
         else:
-           #print "selective False"
+            # print "selective False"
             selective = False
 
         if bool(num_reg.match(tmp[0])):
             print("%s" % str(tmp[0]))
             sys.exit("Format Error")
         if bool(direct_reg.match(tmp[0])):
-           #print "Direct Mode"
+            # print "Direct Mode"
             direct = True
         elif bool(car_reg.match(tmp[0])):
-           #print "Cartesian Mode"
+            # print "Cartesian Mode"
             direct = False
-
 
     ###############################################
     ## get atomic coordinate position
     ##
-   #position = zeros((int(natom),3))
+    # position = zeros((int(natom),3))
     i += 1
     for j in range(natom):
-        xyz = datlines[i+j].split()
-        position[j,0] = xyz[0]
-        position[j,1] = xyz[1]
-        position[j,2] = xyz[2]
+        xyz = datlines[i + j].split()
+        position[j, 0] = xyz[0]
+        position[j, 1] = xyz[1]
+        position[j, 2] = xyz[2]
         if selective:
-            fix[j,0] = str(xyz[3])
-            fix[j,1] = str(xyz[4])
-            fix[j,2] = str(xyz[5])
-       #print j,
-       #print " %16.12f %16.12f %16.12f" %(position[j,0],position[j,1],position[j,2]),
-       #print fix[j,0],fix[j,1],fix[j,2]
+            fix[j, 0] = str(xyz[3])
+            fix[j, 1] = str(xyz[4])
+            fix[j, 2] = str(xyz[5])
+    # print j,
+    # print " %16.12f %16.12f %16.12f" %(position[j,0],position[j,1],position[j,2]),
+    # print fix[j,0],fix[j,1],fix[j,2]
 
-    return [title,scale,selective,direct]
-
-
+    return [title, scale, selective, direct]

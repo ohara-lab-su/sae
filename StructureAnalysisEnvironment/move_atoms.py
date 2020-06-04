@@ -31,16 +31,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+from copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -52,45 +47,40 @@ from numpy import *
 ## スケールファクターでリスケールしている
 ## [カーテシアン＋スケールファクター有り]の場合実座標化
 ##
-def move_atoms1(scale,t,direct,position,nlist,list_atoms):
-
+def move_atoms1(scale, t, direct, position, nlist, list_atoms):
     if direct:
         sys.exit("STOP: direct mode")
 
     for i in range(nlist):
-
         # 実座標系 list_atom を内部座標系 new_{x,y,z} に直すために 1/scale を掛ける
-        atom  = int(list_atoms[i,0]) - 1
-        new_x =     list_atoms[i,1]/scale
-        new_y =     list_atoms[i,2]/scale
-        new_z =     list_atoms[i,3]/scale
+        atom = int(list_atoms[i, 0]) - 1
+        new_x = list_atoms[i, 1] / scale
+        new_y = list_atoms[i, 2] / scale
+        new_z = list_atoms[i, 3] / scale
 
         # 内部座標系 position + 内部座標系 new_{x,y,z}
-        position[atom,0] = position[atom,0] + new_x
-        position[atom,1] = position[atom,1] + new_y
-        position[atom,2] = position[atom,2] + new_z
+        position[atom, 0] = position[atom, 0] + new_x
+        position[atom, 1] = position[atom, 1] + new_y
+        position[atom, 2] = position[atom, 2] + new_z
 
     return scale
 
 
 ## リスケールなし (そのまま)
-def move_atoms0(scale,t,direct,position,nlist,list_atoms):
-
+def move_atoms0(scale, t, direct, position, nlist, list_atoms):
     if direct:
         sys.exit("STOP: direct mode")
 
     for i in range(nlist):
-
         # 実座標系 list_atom を内部座標系 new_{x,y,z} に直すために 1/scale を掛ける
-        atom  = int(list_atoms[i,0]) - 1
-        new_x =     list_atoms[i,1]
-        new_y =     list_atoms[i,2]
-        new_z =     list_atoms[i,3]
+        atom = int(list_atoms[i, 0]) - 1
+        new_x = list_atoms[i, 1]
+        new_y = list_atoms[i, 2]
+        new_z = list_atoms[i, 3]
 
         # 内部座標系 position + 内部座標系 new_{x,y,z}
-        position[atom,0] = position[atom,0] + new_x
-        position[atom,1] = position[atom,1] + new_y
-        position[atom,2] = position[atom,2] + new_z
+        position[atom, 0] = position[atom, 0] + new_x
+        position[atom, 1] = position[atom, 1] + new_y
+        position[atom, 2] = position[atom, 2] + new_z
 
     return scale
-
