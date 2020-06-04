@@ -7,7 +7,10 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+try:
+    from copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 ################################################################################
 
 import numpy as np

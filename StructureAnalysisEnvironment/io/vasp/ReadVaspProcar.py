@@ -50,16 +50,15 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
@@ -69,32 +68,33 @@ import re
 import optparse
 import numpy as np
 
-#from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+# from copy import deepcopy
+
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadProcar(object):
 
-    def __init__(self,name):
+    def __init__(self, name):
 
         if os.path.exists(name):
-            GZIP=False
-        elif os.path.exists(name+".gz"):
-            GZIP=True
+            GZIP = False
+        elif os.path.exists(name + ".gz"):
+            GZIP = True
         else:
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+            sys.exit("STOP: " + name + " or " + name + ".gz file not found")
 
         try:
             if GZIP:
-                tmp = gzip.open(name+".gz")
+                tmp = gzip.open(name + ".gz")
             else:
                 tmp = open(name)
             datfile = tmp.read()
         except:
             tmp.close()
-            sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+            sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
         finally:
             tmp.close()
 
@@ -107,7 +107,7 @@ class ReadProcar(object):
         band_reg = re.compile('^band')
         for i in range(self.num):
             if bool(band_reg.match(self.datlines[i])):
-                if 'occ.' ==self.datlines[i].split()[6]:
+                if 'occ.' == self.datlines[i].split()[6]:
                     occ = float(self.datlines[i].split()[7])
                     if occ > 1.0:
                         self.ISPIN = 1
@@ -160,103 +160,102 @@ class ReadProcar(object):
         if LORBIT > 10:
             LMMAX = 9
         else:
-            LMMAX= 3
+            LMMAX = 3
 
-        kp = np.zeros((NKPTS,4))
-        eig = np.zeros((NBANDS,NKPTS,NSPIN))
-        occ = np.zeros((NBANDS,NKPTS,NSPIN))
+        kp = np.zeros((NKPTS, 4))
+        eig = np.zeros((NBANDS, NKPTS, NSPIN))
+        occ = np.zeros((NBANDS, NKPTS, NSPIN))
         if NATOM > 1:
-            pro = np.zeros((LMMAX+1,NATOM+1,NBANDS,NKPTS,NSPIN))
-            pro_ratio = np.zeros((LMMAX+1,NATOM+1,NBANDS,NKPTS,NSPIN))
+            pro = np.zeros((LMMAX + 1, NATOM + 1, NBANDS, NKPTS, NSPIN))
+            pro_ratio = np.zeros((LMMAX + 1, NATOM + 1, NBANDS, NKPTS, NSPIN))
         else:
-            pro = np.zeros((LMMAX+1,NATOM,NBANDS,NKPTS,NSPIN))
-            pro_ratio = np.zeros((LMMAX+1,NATOM,NBANDS,NKPTS,NSPIN))
+            pro = np.zeros((LMMAX + 1, NATOM, NBANDS, NKPTS, NSPIN))
+            pro_ratio = np.zeros((LMMAX + 1, NATOM, NBANDS, NKPTS, NSPIN))
 
-        j=2
+        j = 2
         for s in range(NSPIN):
             if s == 1:
                 j += 1
             for k in range(NKPTS):
                 j += 1
-               #print j+1,"  :",self.datlines[j]  # K-point
-               #kp[k,0] = float(self.datlines[j].split()[3])  # kx
-               #kp[k,1] = float(self.datlines[j].split()[4])  # ky
-               #kp[k,2] = float(self.datlines[j].split()[5])  # kx
-               #kp[k,3] = float(self.datlines[j].split()[8])  # w
-                kp[k,0] = float(self.datlines[j][18:29]) # kx
-                kp[k,1] = float(self.datlines[j][29:40]) # ky
-                kp[k,2] = float(self.datlines[j][40:51]) # kz
-                kp[k,3] = float(self.datlines[j][64:75]) # kz
+                # print j+1,"  :",self.datlines[j]  # K-point
+                # kp[k,0] = float(self.datlines[j].split()[3])  # kx
+                # kp[k,1] = float(self.datlines[j].split()[4])  # ky
+                # kp[k,2] = float(self.datlines[j].split()[5])  # kx
+                # kp[k,3] = float(self.datlines[j].split()[8])  # w
+                kp[k, 0] = float(self.datlines[j][18:29])  # kx
+                kp[k, 1] = float(self.datlines[j][29:40])  # ky
+                kp[k, 2] = float(self.datlines[j][40:51])  # kz
+                kp[k, 3] = float(self.datlines[j][64:75])  # kz
                 j += 1
                 for i in range(NBANDS):
                     j += 1
-                   #print j+1,"  :",self.datlines[j]  # band_energy
-                    eig[i,k,s] = float(self.datlines[j].split()[4]) # eig
-                    occ[i,k,s] = float(self.datlines[j].split()[7]) # occ
+                    # print j+1,"  :",self.datlines[j]  # band_energy
+                    eig[i, k, s] = float(self.datlines[j].split()[4])  # eig
+                    occ[i, k, s] = float(self.datlines[j].split()[7])  # occ
                     j += 2
                     for a in range(NATOM):
-                        j +=1
-                       #print j+1,"  :",self.datlines[j]
+                        j += 1
+                        # print j+1,"  :",self.datlines[j]
                         if LORBIT > 10:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # py
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[3]) # pz
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[4]) # px
-                            pro[4,a,i,k,s] = float(self.datlines[j].split()[5]) # dxy
-                            pro[5,a,i,k,s] = float(self.datlines[j].split()[6]) # dyz
-                            pro[6,a,i,k,s] = float(self.datlines[j].split()[7]) # dz2
-                            pro[7,a,i,k,s] = float(self.datlines[j].split()[8]) # dxz
-                            pro[8,a,i,k,s] = float(self.datlines[j].split()[9]) # dx2
-                            pro[9,a,i,k,s] = float(self.datlines[j].split()[10]) # tot
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])  # s
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2])  # py
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[3])  # pz
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[4])  # px
+                            pro[4, a, i, k, s] = float(self.datlines[j].split()[5])  # dxy
+                            pro[5, a, i, k, s] = float(self.datlines[j].split()[6])  # dyz
+                            pro[6, a, i, k, s] = float(self.datlines[j].split()[7])  # dz2
+                            pro[7, a, i, k, s] = float(self.datlines[j].split()[8])  # dxz
+                            pro[8, a, i, k, s] = float(self.datlines[j].split()[9])  # dx2
+                            pro[9, a, i, k, s] = float(self.datlines[j].split()[10])  # tot
 
                         else:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # p
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[3]) # d
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[4]) # tot
-                       ##################
-                       #den = 0.0
-                       #for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
-                       #    den = pro[m,a,i,k,s] + den
-                       #   #print s,i,a,m,den
-                       #for m in range(LMMAX):
-                       #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
-                       ##################
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])  # s
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2])  # p
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[3])  # d
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[4])  # tot
+                    ##################
+                    # den = 0.0
+                    # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                    #    den = pro[m,a,i,k,s] + den
+                    #   #print s,i,a,m,den
+                    # for m in range(LMMAX):
+                    #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                    ##################
 
-                    if NATOM > 1: # total
+                    if NATOM > 1:  # total
                         j += 1
                         a += 1
-                       #print j+1,"  :",self.datlines[j]
+                        # print j+1,"  :",self.datlines[j]
                         if LORBIT > 10:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # py
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[3]) # pz
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[4]) # px
-                            pro[4,a,i,k,s] = float(self.datlines[j].split()[5]) # dxy
-                            pro[5,a,i,k,s] = float(self.datlines[j].split()[6]) # dyz
-                            pro[6,a,i,k,s] = float(self.datlines[j].split()[7]) # dz2
-                            pro[7,a,i,k,s] = float(self.datlines[j].split()[8]) # dxz
-                            pro[8,a,i,k,s] = float(self.datlines[j].split()[9]) # dx2
-                            pro[9,a,i,k,s] = float(self.datlines[j].split()[10]) # tot
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])  # s
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2])  # py
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[3])  # pz
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[4])  # px
+                            pro[4, a, i, k, s] = float(self.datlines[j].split()[5])  # dxy
+                            pro[5, a, i, k, s] = float(self.datlines[j].split()[6])  # dyz
+                            pro[6, a, i, k, s] = float(self.datlines[j].split()[7])  # dz2
+                            pro[7, a, i, k, s] = float(self.datlines[j].split()[8])  # dxz
+                            pro[8, a, i, k, s] = float(self.datlines[j].split()[9])  # dx2
+                            pro[9, a, i, k, s] = float(self.datlines[j].split()[10])  # tot
                         else:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # p
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[3]) # d
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[4]) # tot
-                       ##################
-                       #den = 0.0
-                       #for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
-                       #    den = pro[m,a,i,k,s] + den
-                       #   #print s,i,a,m,den
-                       #for m in range(LMMAX):
-                       #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
-                       ##################
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])  # s
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2])  # p
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[3])  # d
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[4])  # tot
+                    ##################
+                    # den = 0.0
+                    # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                    #    den = pro[m,a,i,k,s] + den
+                    #   #print s,i,a,m,den
+                    # for m in range(LMMAX):
+                    #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                    ##################
 
                     j += 1
                 j += 1
 
-        return [kp,eig,occ,pro,pro_ratio]
-
+        return [kp, eig, occ, pro, pro_ratio]
 
     ############################################################################
     # PROCAR の情報をまるごと配列で返す
@@ -269,96 +268,96 @@ class ReadProcar(object):
         NATOM = self.get_natom()
         LORBIT = self.get_lorbit()
 
-        LMMAX= 3
+        LMMAX = 3
 
-        kp = np.zeros((NKPTS,4))
-        eig = np.zeros((NBANDS,NKPTS,NSPIN))
-        occ = np.zeros((NBANDS,NKPTS,NSPIN))
+        kp = np.zeros((NKPTS, 4))
+        eig = np.zeros((NBANDS, NKPTS, NSPIN))
+        occ = np.zeros((NBANDS, NKPTS, NSPIN))
         if NATOM > 1:
-            pro = np.zeros((LMMAX+1,NATOM+1,NBANDS,NKPTS,NSPIN))
-            pro_ratio = np.zeros((LMMAX+1,NATOM+1,NBANDS,NKPTS,NSPIN))
+            pro = np.zeros((LMMAX + 1, NATOM + 1, NBANDS, NKPTS, NSPIN))
+            pro_ratio = np.zeros((LMMAX + 1, NATOM + 1, NBANDS, NKPTS, NSPIN))
         else:
-            pro = np.zeros((LMMAX+1,NATOM,NBANDS,NKPTS,NSPIN))
-            pro_ratio = np.zeros((LMMAX+1,NATOM,NBANDS,NKPTS,NSPIN))
+            pro = np.zeros((LMMAX + 1, NATOM, NBANDS, NKPTS, NSPIN))
+            pro_ratio = np.zeros((LMMAX + 1, NATOM, NBANDS, NKPTS, NSPIN))
 
-        j=2
+        j = 2
         for s in range(NSPIN):
             if s == 1:
                 j += 1
             for k in range(NKPTS):
                 j += 1
-               #print j+1,"  :",self.datlines[j]  # K-point
-                kp[k,0] = float(self.datlines[j][18:29]) # kx
-                kp[k,1] = float(self.datlines[j][29:40]) # ky
-                kp[k,2] = float(self.datlines[j][40:51]) # kz
-                kp[k,3] = float(self.datlines[j][64:75]) # kz
+                # print j+1,"  :",self.datlines[j]  # K-point
+                kp[k, 0] = float(self.datlines[j][18:29])  # kx
+                kp[k, 1] = float(self.datlines[j][29:40])  # ky
+                kp[k, 2] = float(self.datlines[j][40:51])  # kz
+                kp[k, 3] = float(self.datlines[j][64:75])  # kz
                 j += 1
                 for i in range(NBANDS):
                     j += 1
-                   #print j+1,"  :",self.datlines[j]  # band_energy
-                    eig[i,k,s] = float(self.datlines[j].split()[4]) # eig
-                    occ[i,k,s] = float(self.datlines[j].split()[7]) # occ
+                    # print j+1,"  :",self.datlines[j]  # band_energy
+                    eig[i, k, s] = float(self.datlines[j].split()[4])  # eig
+                    occ[i, k, s] = float(self.datlines[j].split()[7])  # occ
                     j += 2
                     for a in range(NATOM):
-                        j +=1
-                       #print j+1,"  :",self.datlines[j]
+                        j += 1
+                        # print j+1,"  :",self.datlines[j]
                         if LORBIT > 10:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1])
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2])+\
-                                            +float(self.datlines[j].split()[3])+\
-                                            +float(self.datlines[j].split()[4])
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[5])+\
-                                            +float(self.datlines[j].split()[6])+\
-                                            +float(self.datlines[j].split()[7])+\
-                                            +float(self.datlines[j].split()[8])+\
-                                            +float(self.datlines[j].split()[9])
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[10]) # tot
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2]) + \
+                                                 +float(self.datlines[j].split()[3]) + \
+                                                 +float(self.datlines[j].split()[4])
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[5]) + \
+                                                 +float(self.datlines[j].split()[6]) + \
+                                                 +float(self.datlines[j].split()[7]) + \
+                                                 +float(self.datlines[j].split()[8]) + \
+                                                 +float(self.datlines[j].split()[9])
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[10])  # tot
                         else:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # p
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[3]) # d
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[4]) # tot
-                       ##################
-                       #den = 0.0
-                       #for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
-                       #    den = pro[m,a,i,k,s] + den
-                       #   #print s,i,a,m,den
-                       #for m in range(LMMAX):
-                       #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
-                       ##################
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])  # s
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2])  # p
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[3])  # d
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[4])  # tot
+                    ##################
+                    # den = 0.0
+                    # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                    #    den = pro[m,a,i,k,s] + den
+                    #   #print s,i,a,m,den
+                    # for m in range(LMMAX):
+                    #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                    ##################
 
-                    if NATOM > 1: # total
+                    if NATOM > 1:  # total
                         j += 1
                         a += 1
-                       #print j+1,"  :",self.datlines[j]
+                        # print j+1,"  :",self.datlines[j]
                         if LORBIT > 10:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1])
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2])+\
-                                            +float(self.datlines[j].split()[3])+\
-                                            +float(self.datlines[j].split()[4])
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[5])+\
-                                            +float(self.datlines[j].split()[6])+\
-                                            +float(self.datlines[j].split()[7])+\
-                                            +float(self.datlines[j].split()[8])+\
-                                            +float(self.datlines[j].split()[9])
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[10])
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2]) + \
+                                                 +float(self.datlines[j].split()[3]) + \
+                                                 +float(self.datlines[j].split()[4])
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[5]) + \
+                                                 +float(self.datlines[j].split()[6]) + \
+                                                 +float(self.datlines[j].split()[7]) + \
+                                                 +float(self.datlines[j].split()[8]) + \
+                                                 +float(self.datlines[j].split()[9])
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[10])
                         else:
-                            pro[0,a,i,k,s] = float(self.datlines[j].split()[1]) # s
-                            pro[1,a,i,k,s] = float(self.datlines[j].split()[2]) # p
-                            pro[2,a,i,k,s] = float(self.datlines[j].split()[3]) # d
-                            pro[3,a,i,k,s] = float(self.datlines[j].split()[4]) # tot
-                       ##################
-                       #den = 0.0
-                       #for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
-                       #    den = pro[m,a,i,k,s] + den
-                       #   #print s,i,a,m,den
-                       #for m in range(LMMAX):
-                       #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
-                       ##################
+                            pro[0, a, i, k, s] = float(self.datlines[j].split()[1])  # s
+                            pro[1, a, i, k, s] = float(self.datlines[j].split()[2])  # p
+                            pro[2, a, i, k, s] = float(self.datlines[j].split()[3])  # d
+                            pro[3, a, i, k, s] = float(self.datlines[j].split()[4])  # tot
+                    ##################
+                    # den = 0.0
+                    # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                    #    den = pro[m,a,i,k,s] + den
+                    #   #print s,i,a,m,den
+                    # for m in range(LMMAX):
+                    #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                    ##################
                     j += 1
                 j += 1
 
-        return [kp,eig,occ,pro,pro_ratio]
+        return [kp, eig, occ, pro, pro_ratio]
 
     # 全バンドの中から最大の固有値と最小を探す
     def get_max_eigenval(self):
@@ -366,19 +365,20 @@ class ReadProcar(object):
         NBANDS = self.get_nbands()
         NKPTS = self.get_nkpts()
 
-        kp,eig,occ,pro,pro_ratio = self.get_pro_all() ## ReadEigenval 版と異なる部分
-        all_eigen_list = np.zeros((NSPIN*NBANDS*NKPTS))
+        kp, eig, occ, pro, pro_ratio = self.get_pro_all()  ## ReadEigenval 版と異なる部分
+        all_eigen_list = np.zeros((NSPIN * NBANDS * NKPTS))
         i = 0
         for ispin in range(NSPIN):
             for j in range(NBANDS):
                 for k in range(NKPTS):
-                    all_eigen_list[i] = eig[j,k,ispin]
+                    all_eigen_list[i] = eig[j, k, ispin]
                     i += 1
 
         eigen_max = max(all_eigen_list)
         eigen_min = min(all_eigen_list)
 
-        return [eigen_min,eigen_max]
+        return [eigen_min, eigen_max]
+
 
 ################################################################################
 if __name__ == '__main__':
@@ -386,11 +386,11 @@ if __name__ == '__main__':
     name = 'PROCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     procar = ReadProcar(name)
     NSPIN = procar.get_ispin()
@@ -398,7 +398,7 @@ if __name__ == '__main__':
     NBANDS = procar.get_nbands()
     NATOM = procar.get_natom()
     LORBIT = procar.get_lorbit()
-    if LORBIT > 10 :
+    if LORBIT > 10:
         lmmax = 9
     else:
         lmmax = 3
@@ -410,27 +410,25 @@ if __name__ == '__main__':
     print("LORBIT:%s" % str(LORBIT))
 
     pro_all = procar.get_pro_all()
-    kp,eig,occ,pro,pro_ratio = pro_all
+    kp, eig, occ, pro, pro_ratio = pro_all
 
     for spin in range(NSPIN):
         for k in range(NKPTS):
             print("k-point %d   %12.8f %12.8f %12.8f  w= %12.8f"
-                    % ( k+1, kp[k,0], kp[k,1], kp[k,2], kp[k,3]))
+                  % (k + 1, kp[k, 0], kp[k, 1], kp[k, 2], kp[k, 3]))
             for i in range(NBANDS):
-                print("band %d  %12.8f" % ( i+1, eig[i,k,spin] ))
+                print("band %d  %12.8f" % (i + 1, eig[i, k, spin]))
                 for atom in range(NATOM):
-                    for lm in range(lmmax+1):
-                        print(" %5.3f" % ( pro[lm,atom,i,k,spin] ), end="")
-                       #print " %5.3f" % ( pro_ratio[lm,atom,i,k,spin] ),
+                    for lm in range(lmmax + 1):
+                        print(" %5.3f" % (pro[lm, atom, i, k, spin]), end="")
+                    # print " %5.3f" % ( pro_ratio[lm,atom,i,k,spin] ),
                     print("")
                 if NATOM > 1:
-                    for lm in range(lmmax+1):
-                        print(" %5.3f" % ( pro[lm,NATOM,i,k,spin] ), end="")
-                       #print " %5.3f" % ( pro_ratio[lm,NATOM,i,k,spin] ),
+                    for lm in range(lmmax + 1):
+                        print(" %5.3f" % (pro[lm, NATOM, i, k, spin]), end="")
+                    # print " %5.3f" % ( pro_ratio[lm,NATOM,i,k,spin] ),
                     print("")
 
     print("")
-    eigen_max,eigen_min = procar.get_max_eigenval()
-    print("%s" % str(eigen_max,eigen_min))
-
-
+    eigen_max, eigen_min = procar.get_max_eigenval()
+    print("%s" % str(eigen_max, eigen_min))

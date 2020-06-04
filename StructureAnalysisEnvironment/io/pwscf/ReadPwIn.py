@@ -40,14 +40,11 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
 __status__     = "alpha"
 __version__    = "0.1.1"
 ################################################################################
@@ -59,11 +56,18 @@ import re
 import optparse
 import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
+
 
 ################################################################################
-class ReadPwIn(SAEnv.Method):
+class ReadPwIn(Method):
 
     def __init__(self,cname,suffix='.in',sort=False,atoms_index=None):
 

@@ -29,15 +29,11 @@
 #
 ################################################################################
 from __future__ import print_function
+try:
+    from copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
-###############################################################################
-__author__ = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@gmail.com"
-__copyright__ = "Copyright 2014, Kengo NAKADA"
-__license__ = "MIT"
-#
 __status__ = "alpha"
 __version__ = "0.0.1"
 

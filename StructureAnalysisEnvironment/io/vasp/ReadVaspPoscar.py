@@ -111,32 +111,42 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014,2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.5"
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.5"
+
 ################################################################################
 
 import sys
-#import os
+# import os
 import re
-#import gzip
+# import gzip
 import numpy as np
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+
+# import SpaceGroup
+# Environment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.Method import Method
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.Method import Method
+
 
 ################################################################################
-class ReadVaspPoscar(SAEnv.Method):
+class ReadVaspPoscar(Method):
 
     ###############################################
-    ## init and Read POSCAR
-    def __init__(self,POSCAR='POSCAR',suffix='.vasp',sort=False,atoms_index=None):
+    # init and Read POSCAR
+    def __init__(self, POSCAR='POSCAR', suffix='.vasp', sort=False, atoms_index=None):
 
         self.datlines, self.num = SAEnv.read_dataline(POSCAR)
 
@@ -145,12 +155,12 @@ class ReadVaspPoscar(SAEnv.Method):
         self.scale = float(self.datlines[1])
 
         ###############################################
-        ## Read Translation Vector
-        ##         x   y   z
-        ##   t1 = t11 t21 t31
-        ##   t2 = t12 t22 t32
-        ##   t3 = t13 t23 t33
-        ##
+        # Read Translation Vector
+        #         x   y   z
+        #   t1 = t11 t21 t31
+        #   t2 = t12 t22 t32
+        #   t3 = t13 t23 t33
+        #
         t1_x = float(self.datlines[2].split()[0])
         t1_y = float(self.datlines[2].split()[1])
         t1_z = float(self.datlines[2].split()[2])
@@ -163,23 +173,23 @@ class ReadVaspPoscar(SAEnv.Method):
         t3_y = float(self.datlines[4].split()[1])
         t3_z = float(self.datlines[4].split()[2])
 
-        self.t = np.zeros((3,3))
-        self.t[0,0] = t1_x
-        self.t[1,0] = t1_y
-        self.t[2,0] = t1_z
+        self.t = np.zeros((3, 3))
+        self.t[0, 0] = t1_x
+        self.t[1, 0] = t1_y
+        self.t[2, 0] = t1_z
 
-        self.t[0,1] = t2_x
-        self.t[1,1] = t2_y
-        self.t[2,1] = t2_z
+        self.t[0, 1] = t2_x
+        self.t[1, 1] = t2_y
+        self.t[2, 1] = t2_z
 
-        self.t[0,2] = t3_x
-        self.t[1,2] = t3_y
-        self.t[2,2] = t3_z
+        self.t[0, 2] = t3_x
+        self.t[1, 2] = t3_y
+        self.t[2, 2] = t3_z
 
         ###############################################
-        ## VASP のバージョン番号確認(記号があるか否か)
-        ##
-        i=5
+        # VASP のバージョン番号確認(記号があるか否か)
+        #
+        i = 5
         atoms = self.datlines[i].split()
         if atoms[0].isdigit():
             self.vasp_version = 4
@@ -189,34 +199,34 @@ class ReadVaspPoscar(SAEnv.Method):
 
         print("vasp version = %s" % self.vasp_version)
         ###############################################
-        ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
-        ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
-        ##
-        i=5
+        # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+        # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+        #
+        i = 5
         self.atoms_index = []
         self.atoms = []
         if self.vasp_version == 4:
             self.atoms.extend(self.datlines[i].split())
         elif self.vasp_version == 5:
             self.atoms_index.extend(self.datlines[i].split())
-            self.atoms.extend(self.datlines[i+1].split())
+            self.atoms.extend(self.datlines[i + 1].split())
         else:
             sys.exit("Error: unknown VASP format")
 
-        self.atoms = np.array(self.atoms,dtype=int)
+        self.atoms = np.array(self.atoms, dtype=int)
         self.nion = len(self.atoms)
 
         ###############################################
-        ## atoms_number[i]
-        ##   atoms_index の原子番号版
-        self.atoms_number = np.zeros(self.nion,dtype=int)
+        # atoms_number[i]
+        #   atoms_index の原子番号版
+        self.atoms_number = np.zeros(self.nion, dtype=int)
         for i in range(self.nion):
-           #print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
+            # print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
             self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
         ###############################################
-        ## atoms_index の通し番号版
-        ##    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+        # atoms_index の通し番号版
+        #    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
         self.atoms_index_j = []
         if self.vasp_version == 5:
             for k in range(self.nion):
@@ -224,7 +234,7 @@ class ReadVaspPoscar(SAEnv.Method):
                     self.atoms_index_j.append(str(self.atoms_index[k]))
 
         ###############################################
-        ## atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
+        # atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
         self.atoms_number_j = []
         if self.vasp_version == 5:
             for k in range(self.nion):
@@ -243,7 +253,7 @@ class ReadVaspPoscar(SAEnv.Method):
         ## get ion (makes index)
         ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
         ##
-        self.ion = np.zeros(self.natom,dtype=int)
+        self.ion = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
             local = -1
@@ -251,12 +261,12 @@ class ReadVaspPoscar(SAEnv.Method):
                 tmp += 1
                 local += 1
                 self.ion[tmp] = int(j)
-               #print tmp, int(ion[tmp])
+            # print tmp, int(ion[tmp])
 
         ###############################################
-        ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
-        ##
-        self.ion_local = np.zeros(self.natom,dtype=int)
+        # ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+        #
+        self.ion_local = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
             local = -1
@@ -264,14 +274,13 @@ class ReadVaspPoscar(SAEnv.Method):
                 tmp += 1
                 local += 1
                 self.ion_local[tmp] = int(local)
-               #print tmp, int(ion[tmp]), int(ion_local[tmp])
-
+            # print tmp, int(ion[tmp]), int(ion_local[tmp])
 
         ###############################################
-        ## natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
-        ##                               <---> atoms_index_j() は元素記号を返す
-        ## ReadOutcar.py, ReadMxDatMethod.py 互換
-        self.atoms_j = np.zeros(self.natom,dtype=int)
+        # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
+        #                               <---> atoms_index_j() は元素記号を返す
+        # ReadOutcar.py, ReadMxDatMethod.py 互換
+        self.atoms_j = np.zeros(self.natom, dtype=int)
         j = 0
         for ion in range(self.nion):
             for atom in range(self.atoms[ion]):
@@ -279,15 +288,15 @@ class ReadVaspPoscar(SAEnv.Method):
                 j += 1
 
         ###############################################
-        ## get atomc coordinate mode
-        ##
+        # get atomc coordinate mode
+        #
         if self.vasp_version == 4:
-            i = 5+1
+            i = 5 + 1
         else:
-            i = 6+1
+            i = 6 + 1
 
         num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
-        selective_reg = re.compile('^S.*',re.IGNORECASE)
+        selective_reg = re.compile('^S.*', re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
             print("%s" % str(self.datlines[i].split()[0]))
@@ -299,16 +308,16 @@ class ReadVaspPoscar(SAEnv.Method):
                 self.selective = False
 
         ###############################################
-        ## 内部座標のモードを取得
-        ##
+        # 内部座標のモードを取得
+        #
         if self.vasp_version == 4:
-            i = 5+1
+            i = 5 + 1
         else:
-            i = 6+1
-        if self.selective: i +=1
+            i = 6 + 1
+        if self.selective: i += 1
 
-        direct_reg = re.compile('^D.*',re.IGNORECASE)
-        car_reg = re.compile('^C.*',re.IGNORECASE)
+        direct_reg = re.compile('^D.*', re.IGNORECASE)
+        car_reg = re.compile('^C.*', re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
             print("%s" % str(self.datlines[i].split()[0]))
@@ -318,139 +327,137 @@ class ReadVaspPoscar(SAEnv.Method):
         elif bool(car_reg.match(self.datlines[i].split()[0])):
             self.direct = False
 
-
         ###############################################
-        ## get atomic coordinate position
-        ##
+        # get atomic coordinate position
+        #
         if self.vasp_version == 4:
             i = 5
         else:
             i = 6
         if self.selective: i += 1
 
-        self.position = np.zeros((int(self.natom),3))
-        self.fix= np.zeros((int(self.natom),3),dtype='S')
+        self.position = np.zeros((int(self.natom), 3))
+        self.fix = np.zeros((int(self.natom), 3), dtype='S')
 
         i += 2
         for j in range(self.natom):
-            self.position[j,0] = float(self.datlines[i+j].split()[0])
-            self.position[j,1] = float(self.datlines[i+j].split()[1])
-            self.position[j,2] = float(self.datlines[i+j].split()[2])
+            self.position[j, 0] = float(self.datlines[i + j].split()[0])
+            self.position[j, 1] = float(self.datlines[i + j].split()[1])
+            self.position[j, 2] = float(self.datlines[i + j].split()[2])
             if self.selective:
-                if len(self.datlines[i+j].split()) < 6:
+                if len(self.datlines[i + j].split()) < 6:
                     sys.exit("STOP: corrdinate line Format Error")
-                self.fix[j,0] = str(self.datlines[i+j].split()[3])
-                self.fix[j,1] = str(self.datlines[i+j].split()[4])
-                self.fix[j,2] = str(self.datlines[i+j].split()[5])
-           #print j,
-           #print " %16.12f %16.12f %16.12f" \
-           #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
-           #print ""
-
+                self.fix[j, 0] = str(self.datlines[i + j].split()[3])
+                self.fix[j, 1] = str(self.datlines[i + j].split()[4])
+                self.fix[j, 2] = str(self.datlines[i + j].split()[5])
+        # print j,
+        # print " %16.12f %16.12f %16.12f" \
+        #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
+        # print ""
 
     ############################################################################
     # 基本並進ベクトルを、alpha, beta, gamma で回す
     # VASP 表記とは転置した形で t ベクトルに入っているの注意
     # 注意) むしろ VASP 表記が転置している
     # ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
-    def conv_rot_euler(self,alpha,beta,gamma):
+    def conv_rot_euler(self, alpha, beta, gamma):
 
-        R = SAEnv.rotate_euler(alpha,beta,gamma)
+        R = SAEnv.rotate_euler(alpha, beta, gamma)
 
         # 基本並進ベクトルの変換
         t = self.get_t()
 
-       #print "t"
-       #print t
-       #print ""
+        # print "t"
+        # print t
+        # print ""
 
-       #t1 = np.matrix( [ t[0,0],t[1,0],t[2,0] ] )
-        t1 = np.matrix( [ t[0,0],t[0,1],t[0,2] ] )
+        # t1 = np.matrix( [ t[0,0],t[1,0],t[2,0] ] )
+        t1 = np.matrix([t[0, 0], t[0, 1], t[0, 2]])
         t1r = t1 * R
-       #print " t1r = %14.8f %14.8f %14.8f" % (t1r[0,0],t1r[0,1],t1r[0,2])
+        # print " t1r = %14.8f %14.8f %14.8f" % (t1r[0,0],t1r[0,1],t1r[0,2])
 
-       #t2 = np.matrix( [ t[0,1],t[1,1],t[2,1] ] )
-        t2 = np.matrix( [ t[1,0],t[1,1],t[1,2] ] )
+        # t2 = np.matrix( [ t[0,1],t[1,1],t[2,1] ] )
+        t2 = np.matrix([t[1, 0], t[1, 1], t[1, 2]])
         t2r = t2 * R
-       #print " t2r = %14.8f %14.8f %14.8f" % (t2r[0,0],t2r[0,1],t2r[0,2])
+        # print " t2r = %14.8f %14.8f %14.8f" % (t2r[0,0],t2r[0,1],t2r[0,2])
 
-       #t3 = np.matrix( [ t[0,2],t[1,2],t[2,2] ] )
-        t3 = np.matrix( [ t[2,0],t[2,1],t[2,2] ] )
+        # t3 = np.matrix( [ t[0,2],t[1,2],t[2,2] ] )
+        t3 = np.matrix([t[2, 0], t[2, 1], t[2, 2]])
         t3r = t3 * R
-       #print " t3r = %14.8f %14.8f %14.8f" % (t3r[0,0],t3r[0,1],t3r[0,2])
+        # print " t3r = %14.8f %14.8f %14.8f" % (t3r[0,0],t3r[0,1],t3r[0,2])
 
-       #print ""
+        # print ""
 
         # オイラー角で基本並進ベクトルを回したときの基本並進ベクトル
-#       R_t = np.matrix([
-#               [ t1r[0,0],t2r[0,0],t3r[0,0] ],
-#               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
-#               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
-#               ])
+        #       R_t = np.matrix([
+        #               [ t1r[0,0],t2r[0,0],t3r[0,0] ],
+        #               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
+        #               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
+        #               ])
         R_t = np.matrix([
-                [ t1r[0,0],t1r[0,1],t1r[0,2] ],
-                [ t2r[0,0],t2r[0,1],t2r[0,2] ],
-                [ t3r[0,0],t3r[0,1],t3r[0,2] ]
-                ])
+            [t1r[0, 0], t1r[0, 1], t1r[0, 2]],
+            [t2r[0, 0], t2r[0, 1], t2r[0, 2]],
+            [t3r[0, 0], t3r[0, 1], t3r[0, 2]]
+        ])
 
-       #print "R_t"
-       #print R_t
+        # print "R_t"
+        # print R_t
 
         # 内部座標の変換
         position = self.get_position()
         natom = self.get_natom()
-        R_position = np.zeros((natom,3))
+        R_position = np.zeros((natom, 3))
         for j in range(natom):
-            p  = np.matrix( [position[j,0],position[j,1],position[j,2]] )
+            p = np.matrix([position[j, 0], position[j, 1], position[j, 2]])
             pr = p * R
-            R_position[j,0] =pr[0,0]
-            R_position[j,1] =pr[0,1]
-            R_position[j,2] =pr[0,2]
+            R_position[j, 0] = pr[0, 0]
+            R_position[j, 1] = pr[0, 1]
+            R_position[j, 2] = pr[0, 2]
 
-        return R_t,R_position
+        return R_t, R_position
 
     ############################################################################
     # direct to cartesian method
     def conv_direct2car(self, ABS=None):
 
         if ABS is not None:
-            ABS=False
+            ABS = False
         else:
-            if isinstance( ABS, str ):
+            if isinstance(ABS, str):
                 if ABS == 'vasp' or ABS == 'VASP':
-                    ABS=True
+                    ABS = True
 
-        self.scale, self.direct = SAEnv.conv_direct2cara(\
-                ABS,\
-                self.scale,\
-                self.t,\
-                self.natom,\
-                self.direct,\
-                self.position)
+        self.scale, self.direct = SAEnv.conv_direct2cara(
+            ABS,
+            self.scale,
+            self.t,
+            self.natom,
+            self.direct,
+            self.position)
 
     ############################################################################
     # print POSCAR
-    def print_poscar(self, outname='POSCAR', STD=True ):
+    def print_poscar(self, outname='POSCAR', STD=True):
 
-        SAEnv.print_poscar(\
-                outname,STD,\
-                self.title,\
-                self.scale,\
-                self.natom,\
-                self.nion,\
-                self.selective,\
-                self.direct,\
-                self.vasp_version,\
-                self.t,\
-                self.atoms,\
-                self.atoms_index,\
-                self.position,\
-                self.fix)
+        SAEnv.print_poscar(
+            outname, STD,
+            self.title,
+            self.scale,
+            self.natom,
+            self.nion,
+            self.selective,
+            self.direct,
+            self.vasp_version,
+            self.t,
+            self.atoms,
+            self.atoms_index,
+            self.position,
+            self.fix)
 
     ############################################################################
     # スーパーセル作成 Method
     # 関数版を持ってきただけのやっつけ対応
-    def conv_supercell(self,times=(1,1,1)):
+    def conv_supercell(self, times=(1, 1, 1)):
 
         super_x = int(times[0])
         super_y = int(times[1])
@@ -458,79 +465,81 @@ class ReadVaspPoscar(SAEnv.Method):
 
         # direct --> cartesian
         if self.direct:
-            ABS=True
-            self.scale,self.direct = SAEnv.conv_direct2cara(
-                    ABS,\
-                    self.scale,\
-                    self.t,\
-                    self.natom,\
-                    self.direct,\
-                    self.position)
+            ABS = True
+            self.scale, self.direct = SAEnv.conv_direct2cara(
+                ABS,
+                self.scale,
+                self.t,
+                self.natom,
+                self.direct,
+                self.position)
 
         # super 用の配列
-        supers = super_x*super_y*super_x
-        sv = np.zeros((supers,3))                          # (super) t
-        sp = np.zeros((self.natom*supers,3))               # (super) position
-        ion_sp = np.zeros(self.natom*supers)               # (super) ion
-        ion_local_sp = np.zeros(self.natom*supers)         # (super) ion_local
-        fix_sp = np.zeros((self.natom*supers,3),dtype='S') # (super) fix
-        sp_j  = np.zeros(self.natom*supers)                # super cell と orijinal cell の対応
+        supers = super_x * super_y * super_x
+        sv = np.zeros((supers, 3))  # (super) t
+        sp = np.zeros((self.natom * supers, 3))  # (super) position
+        ion_sp = np.zeros(self.natom * supers)  # (super) ion
+        ion_local_sp = np.zeros(self.natom * supers)  # (super) ion_local
+        fix_sp = np.zeros((self.natom * supers, 3), dtype='S')  # (super) fix
+        sp_j = np.zeros(self.natom * supers)  # super cell と orijinal cell の対応
 
         # super 用の内部座標作成
         SAEnv.make_supercell1(
-                super_x,\
-                super_y,\
-                super_z,\
-                self.t,\
-                self.natom,\
-                self.nion,\
-                self.atoms,\
-                self.ion,\
-                self.ion_local,\
-                self.position,\
-                sv,\
-                ion_sp,\
-                ion_local_sp,\
-                sp_j,\
-                sp,\
-                self.fix,\
-                fix_sp)
+            super_x,
+            super_y,
+            super_z,
+            self.t,
+            self.natom,
+            self.nion,
+            self.atoms,
+            self.ion,
+            self.ion_local,
+            self.position,
+            sv,
+            ion_sp,
+            ion_local_sp,
+            sp_j,
+            sp,
+            self.fix,
+            fix_sp)
 
         # super 用の基本並進ベクトル/原子種数を作る
-        SAEnv.make_supercell_param(\
-                super_x,super_y,super_z,\
-                self.nion,\
-                self.atoms,\
-                self.t)
+        SAEnv.make_supercell_param(
+            super_x, super_y, super_z,
+            self.nion,
+            self.atoms,
+            self.t)
 
-        self.natom = self.natom*supers
+        self.natom = self.natom * supers
 
         # cartesian --> direct
         if not self.direct:
-            self.scale, self.direct = SAEnv.conv_car2direct(\
-                    self.scale,\
-                    self.t,\
-                    self.natom,\
-                    self.direct,\
-                    sp)
+            self.scale, self.direct = SAEnv.conv_car2direct(
+                self.scale,
+                self.t,
+                self.natom,
+                self.direct,
+                sp)
 
         self.ion = ion_sp
         self.ion_local = ion_local_sp
         self.position = sp
         self.fix = fix_sp
         self.sp_j = sp_j  # super cell と orijinal cell の対応
-                          # super の通し番号を与えると元cellの通し番号を与える)
+        # super の通し番号を与えると元cellの通し番号を与える)
+
 
 ################################################################################
 if __name__ == '__main__':
 
     import optparse
+
     name = 'POSCAR'
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input',
-                        dest='INPUT',
-                        default=name,
-                        )
+    parser.add_option('-i', '--input',
+                      dest='INPUT',
+                      default=name,
+                      )
     options, args = parser.parse_args()
     name = options.INPUT
 
@@ -553,17 +562,17 @@ if __name__ == '__main__':
     ion_local = poscar.get_ion_local()
     atoms_index_j = poscar.get_atoms_index_j()
 
-#   for i in range(natom):
-#       print i, atoms_index_j[i]
+    #   for i in range(natom):
+    #       print i, atoms_index_j[i]
 
     ############################################################################
     out = sys.stdout
 
     print("%s" % str(title), file=out)
     print(" %s" % str(scale), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
-    print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 0], t[1, 0], t[2, 0]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 1], t[1, 1], t[2, 1]), file=out)
+    print("  %13.9f %13.9f %13.9f" % (t[0, 2], t[1, 2], t[2, 2]), file=out)
 
     if vasp >= 5:
         print(" ", file=out, end="")
@@ -585,13 +594,12 @@ if __name__ == '__main__':
 
     for j in range(natom):
         print(" %13.9f %13.9f %13.9f"
-                %(position[j,0], position[j,1], position[j,2]), file=out, end="")
+              % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
         if selective:
             print("", file=out, end="")
-            print("%s %s %s" % (str(fix[j,0]), str(fix[i,1]), str(fix[i,2])), file=out, end="")
+            print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
         print("", file=out)
     ############################################################################
 
 #   print ion
 #   print ion_local
-

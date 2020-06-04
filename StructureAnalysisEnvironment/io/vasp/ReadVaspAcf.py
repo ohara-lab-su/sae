@@ -14,7 +14,11 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.5"
@@ -28,10 +32,12 @@ import numpy as np
 
 import optparse
 
-import StructureAnalysisEnvironment as SAE
-
-
 # import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
 
 ################################################################################
 class ReadVaspAcf(object):

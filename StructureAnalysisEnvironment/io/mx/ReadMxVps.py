@@ -15,29 +15,29 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
 import os
 import re
-#import optparse
-#import numpy as np
 
-#import re
-#from copy import deepcopy
 
-#import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+# import optparse
+# import numpy as np
+
+# import re
+# from copy import deepcopy
+
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 #
@@ -50,24 +50,24 @@ import re
 ################################################################################
 class ReadMxVps(object):
 
-#   def __init__(self,opts):
-    def __init__(self,fullname):
+    #   def __init__(self,opts):
+    def __init__(self, fullname):
 
-#       data,\
-#       atom,\
-#       pot,\
-#       ver,\
-#       name = opts
-#       fullname = data+'/VPS/'+name+'.vps'
+        #       data,\
+        #       atom,\
+        #       pot,\
+        #       ver,\
+        #       name = opts
+        #       fullname = data+'/VPS/'+name+'.vps'
 
         if not os.path.exists(fullname):
-            sys.exit(fullname+' file not found')
+            sys.exit(fullname + ' file not found')
 
         try:
             tmp = open(fullname)
             datfile = tmp.read()
         except:
-            sys.exit("STOP: "+fullname+" does'nt open")
+            sys.exit("STOP: " + fullname + " does'nt open")
         finally:
             tmp.close()
 
@@ -76,26 +76,25 @@ class ReadMxVps(object):
 
     # valence.electron を返す
     def get_valence_electron(self):
-        valence_reg = re.compile('^.*valence.electron.*',re.IGNORECASE)
+        valence_reg = re.compile('^.*valence.electron.*', re.IGNORECASE)
         for i in range(self.num):
             if bool(valence_reg.match(self.datlines[i])):
-                   electron = float(self.datlines[i].split()[1])
-                   break
+                electron = float(self.datlines[i].split()[1])
+                break
 
-        return  electron
+        return electron
 
 
 ################################################################################
 if __name__ == '__main__':
-
     data = '../DFT_DATA13'
     atom = 'C'
-    pot  = 'PBE'
-    ver  = '13'
+    pot = 'PBE'
+    ver = '13'
 
-    name = atom+'_'+pot+ver
-    fullname = data+'/VPS/'+name+'.vps'
-#   opts = data, atom, pot, ver, name
+    name = atom + '_' + pot + ver
+    fullname = data + '/VPS/' + name + '.vps'
+    #   opts = data, atom, pot, ver, name
 
     vps = ReadMxVps(fullname)
     electron = vps.get_valence_electron()
@@ -103,4 +102,3 @@ if __name__ == '__main__':
     print(electron)
 
 ################################################################################
-

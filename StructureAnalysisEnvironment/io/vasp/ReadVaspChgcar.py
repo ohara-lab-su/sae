@@ -74,7 +74,11 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.0"
@@ -86,14 +90,21 @@ import re
 # import gzip
 import math
 import numpy as np
-import StructureAnalysisEnvironment as SAEnv
+
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import Method
 # import SpaceGroupEnvironment as SGE
 
 from numba import jit
 
 
 ################################################################################
-class ReadVaspChgcar(SAEnv.Method):
+class ReadVaspChgcar(Method):
 
     ###############################################
     ## init and Read CHGCAR

@@ -85,41 +85,47 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.1.4"
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.1.4"
+
 ################################################################################
 
 import sys
 import os
-#import gzip
+# import gzip
 import re
 import glob
 import optparse
 import numpy as np
 
-#from copy import deepcopy
+# from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+# import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.io.mx.ReadMxDosMethod import ReadMxDosMethod
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.io.mx.ReadMxDosMethod import ReadMxDosMethod
 
 
 ################################################################################
-class ReadMxPdos(SAE.ReadMxDosMethod):
+class ReadMxPdos(ReadMxDosMethod):
 
     ###################################
     # 0) コンストラクタで複数ファイルからまるごとデータ構造を配列に読み込む)
     # 1) 計算していない原子も含めてすべての原子の配列を用意
     # 2) LDOS までコンストラクタで作ってしまう
     #
-    def __init__(self,name,suffix):
+    def __init__(self, name, suffix):
 
         # 物質名
         self.name = name
@@ -131,10 +137,10 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
         # 読み込むPDOSファイルの確認(1)
         # 実際にPDOSを計算したatomの番号を抽出する
-        dosname = name+suffix
-        pdos_list = glob.glob(dosname+'.atom*')
+        dosname = name + suffix
+        pdos_list = glob.glob(dosname + '.atom*')
         if len(pdos_list) < 1:
-            sys.exit("STOP: "+dosname+".atom* file not found")
+            sys.exit("STOP: " + dosname + ".atom* file not found")
 
         # NEDOS の算出
         NEDOS = sum(1 for line in open(pdos_list[0]))
@@ -147,10 +153,10 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         ls = []
         for i in range(len(pdos_list)):
             pdos_name = pdos_list[i]
-            subtract_name0 = dosname+'.atom'
+            subtract_name0 = dosname + '.atom'
             subtract_name1 = '\..*'
-            dst = re.sub(subtract_name0,'',pdos_name)
-            dst = int(re.sub(subtract_name1,'',dst))
+            dst = re.sub(subtract_name0, '', pdos_name)
+            dst = int(re.sub(subtract_name1, '', dst))
             ls.append(dst)
 
         # リストの重複項目を削除
@@ -161,164 +167,164 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         ###################################
         # ADOS 収納に使う配列
         # *.PDOS.Tetrahedron.atom? ファイルからのデータ抽出
-        self.ados = np.zeros((NEDOS,NATOM,NSPIN))
-        self.intados = np.zeros((NEDOS,NATOM,NSPIN))
+        self.ados = np.zeros((NEDOS, NATOM, NSPIN))
+        self.intados = np.zeros((NEDOS, NATOM, NSPIN))
         for atom in atom_list:
-            data,nline = SAE.read_dataline(dosname+'.atom'+str(atom))
+            data, nline = SAEnv.read_dataline(dosname + '.atom' + str(atom))
             if nline != NEDOS:
                 sys.exit("STOP: Contradiction Number of Data Line")
             for ispin in range(NSPIN):
                 for j in range(nline):
-                    self.ados[i,atom-1,ispin] = float(data[i].split()[1+ispin])
-                    self.intados[i,atom-1,ispin] = float(data[i].split()[2+ispin])
+                    self.ados[i, atom - 1, ispin] = float(data[i].split()[1 + ispin])
+                    self.intados[i, atom - 1, ispin] = float(data[i].split()[2 + ispin])
 
         ###################################
         # TDOS_spd 収納に使う配列(原子種ごとの情報を潰すのであまり意味は無い)
-        l_max = 4 #s,p,d,f
-        self.tdos_spd = np.zeros((NEDOS,l_max,NSPIN))
-        self.inttdos_spd = np.zeros((NEDOS,l_max,NSPIN))
+        l_max = 4  # s,p,d,f
+        self.tdos_spd = np.zeros((NEDOS, l_max, NSPIN))
+        self.inttdos_spd = np.zeros((NEDOS, l_max, NSPIN))
 
         ###################################
         # LDOS 収納に使う配列(原子種ごと)
-        l_max = 4 #s,p,d,f
-        self.ldos = np.zeros((NEDOS,l_max,NATOM,NSPIN))
-        self.intldos = np.zeros((NEDOS,l_max,NATOM,NSPIN))
+        l_max = 4  # s,p,d,f
+        self.ldos = np.zeros((NEDOS, l_max, NATOM, NSPIN))
+        self.intldos = np.zeros((NEDOS, l_max, NATOM, NSPIN))
 
         ###################################
         # PDOS 収納に使う配列(原子種,軌道ごと)
         # *.PDOS.Tetrahedron.atom?.* ファイルの検索,suffix抽出
-        lm_max = 1+3+5+7 # s+p+d+f
-        self.pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
-        self.intpdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
-        self.eng  = np.zeros((NEDOS,NATOM))
+        lm_max = 1 + 3 + 5 + 7  # s+p+d+f
+        self.pdos = np.zeros((NEDOS, lm_max, NATOM, NSPIN))
+        self.intpdos = np.zeros((NEDOS, lm_max, NATOM, NSPIN))
+        self.eng = np.zeros((NEDOS, NATOM))
 
         # 原子種のループ
         for atom in atom_list:
-            base = dosname+'.atom'+str(atom)
+            base = dosname + '.atom' + str(atom)
 
             # s-orbital (1)
-            orbit='s'
-            orbit_list = glob.glob(base+'.'+orbit+'*')
+            orbit = 's'
+            orbit_list = glob.glob(base + '.' + orbit + '*')
             if len(orbit_list) > 0:
                 for i in range(len(orbit_list)):
-                    data,nline = SAE.read_dataline(orbit_list[i])
+                    data, nline = SAEnv.read_dataline(orbit_list[i])
                     if nline != NEDOS:
                         sys.exit("STOP: Contradiction Number of Data Line")
                     for ispin in range(NSPIN):
                         for j in range(nline):
                             self.eng[j] = float(data[j].split()[0])
 
-                            self.pdos[j,0,atom-1,ispin] =\
-                                  abs(float(data[j].split()[1+ispin]))
-                            self.intpdos[j,0,atom-1,ispin] =\
-                                    float(data[j].split()[2+ispin])
+                            self.pdos[j, 0, atom - 1, ispin] = \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intpdos[j, 0, atom - 1, ispin] = \
+                                float(data[j].split()[2 + ispin])
 
-                            self.ldos[j,0,atom-1,ispin] = \
-                                    self.ldos[j,0,atom-1,ispin] +\
-                                 abs(float(data[j].split()[1+ispin]))
-                            self.intpdos[j,0,atom-1,ispin] = \
-                                    self.intpdos[j,0,atom-1,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.ldos[j, 0, atom - 1, ispin] = \
+                                self.ldos[j, 0, atom - 1, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intpdos[j, 0, atom - 1, ispin] = \
+                                self.intpdos[j, 0, atom - 1, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
-                            self.tdos_spd[j,0,ispin] = \
-                                    self.tdos_spd[j,0,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.inttdos_spd[j,0,ispin] = \
-                                    self.inttdos_spd[j,0,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.tdos_spd[j, 0, ispin] = \
+                                self.tdos_spd[j, 0, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.inttdos_spd[j, 0, ispin] = \
+                                self.inttdos_spd[j, 0, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
             # p-orbital (3)
-            orbit='p'
-            orbit_list = glob.glob(base+'.'+orbit+'*')
+            orbit = 'p'
+            orbit_list = glob.glob(base + '.' + orbit + '*')
             if len(orbit_list) > 0:
                 for i in range(len(orbit_list)):
-                    data,nline = SAE.read_dataline(orbit_list[i])
+                    data, nline = SAEnv.read_dataline(orbit_list[i])
                     if nline != NEDOS:
                         sys.exit("STOP: Contradiction Number of Data Line")
                     for ispin in range(NSPIN):
                         for j in range(nline):
                             self.eng[j] = float(data[j].split()[0])
 
-                            self.pdos[j,1+i,atom-1,ispin] =\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.intpdos[j,1+i,atom-1,ispin] =\
-                                    float(data[j].split()[2+ispin])
+                            self.pdos[j, 1 + i, atom - 1, ispin] = \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intpdos[j, 1 + i, atom - 1, ispin] = \
+                                float(data[j].split()[2 + ispin])
 
-                            self.ldos[j,1,atom-1,ispin] = \
-                                    self.ldos[j,1,atom-1,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.intldos[j,1,atom-1,ispin] = \
-                                    self.intldos[j,1,atom-1,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.ldos[j, 1, atom - 1, ispin] = \
+                                self.ldos[j, 1, atom - 1, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intldos[j, 1, atom - 1, ispin] = \
+                                self.intldos[j, 1, atom - 1, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
-                            self.tdos_spd[j,1,ispin] = \
-                                    self.tdos_spd[j,1,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.inttdos_spd[j,1,ispin] =\
-                                    self.inttdos_spd[j,1,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.tdos_spd[j, 1, ispin] = \
+                                self.tdos_spd[j, 1, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.inttdos_spd[j, 1, ispin] = \
+                                self.inttdos_spd[j, 1, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
             # d-orbital (5)
-            orbit='d'
-            orbit_list = glob.glob(base+'.'+orbit+'*')
+            orbit = 'd'
+            orbit_list = glob.glob(base + '.' + orbit + '*')
             if len(orbit_list) > 0:
                 for i in range(len(orbit_list)):
-                    data,nline = SAE.read_dataline(orbit_list[i])
+                    data, nline = SAEnv.read_dataline(orbit_list[i])
                     if nline != NEDOS:
                         sys.exit("STOP: Contradiction Number of Data Line")
                     for ispin in range(NSPIN):
                         for j in range(nline):
                             self.eng[i] = float(data[j].split()[0])
 
-                            self.pdos[j,4+i,atom-1,ispin] =\
-                                 abs(float(data[j].split()[1+ispin]))
-                            self.intpdos[j,4+i,atom-1,ispin] =\
-                                    float(data[j].split()[2+ispin])
+                            self.pdos[j, 4 + i, atom - 1, ispin] = \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intpdos[j, 4 + i, atom - 1, ispin] = \
+                                float(data[j].split()[2 + ispin])
 
-                            self.ldos[j,2,atom-1,ispin] = \
-                                    self.ldos[j,2,atom-1,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.intldos[j,2,atom-1,ispin] = \
-                                    self.intldos[j,2,atom-1,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.ldos[j, 2, atom - 1, ispin] = \
+                                self.ldos[j, 2, atom - 1, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intldos[j, 2, atom - 1, ispin] = \
+                                self.intldos[j, 2, atom - 1, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
-                            self.tdos_spd[j,2,ispin] = \
-                                    self.tdos_spd[j,2,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.inttdos_spd[j,2,ispin] = \
-                                    self.inttdos_spd[j,2,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.tdos_spd[j, 2, ispin] = \
+                                self.tdos_spd[j, 2, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.inttdos_spd[j, 2, ispin] = \
+                                self.inttdos_spd[j, 2, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
             # f-orbital (7)
-            orbit='f'
-            orbit_list = glob.glob(base+'.'+orbit+'*')
+            orbit = 'f'
+            orbit_list = glob.glob(base + '.' + orbit + '*')
             if len(orbit_list) > 0:
                 for i in range(len(orbit_list)):
-                    data,nline = SAE.read_dataline(orbit_list[i])
+                    data, nline = SAEnv.read_dataline(orbit_list[i])
                     if nline != NEDOS:
                         sys.exit("STOP: Contradiction Number of Data Line")
                     for ispin in range(NSPIN):
                         for j in range(nline):
                             self.eng[i] = float(data[j].split()[0])
 
-                            self.pdos[i,9+i,atom-1,ispin] =\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.intpdos[i,9+i,atom-1,ispin] =\
-                                    float(data[j].split()[2+ispin])
+                            self.pdos[i, 9 + i, atom - 1, ispin] = \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intpdos[i, 9 + i, atom - 1, ispin] = \
+                                float(data[j].split()[2 + ispin])
 
-                            self.ldos[j,3,atom-1,ispin] = \
-                                    self.ldos[j,3,atom-1,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.intldos[j,3,atom-1,ispin] = \
-                                    self.intldos[j,3,atom-1,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.ldos[j, 3, atom - 1, ispin] = \
+                                self.ldos[j, 3, atom - 1, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.intldos[j, 3, atom - 1, ispin] = \
+                                self.intldos[j, 3, atom - 1, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
-                            self.tdos_spd[j,3,ispin] = \
-                                    self.tdos_spd[j,3,ispin] +\
-                                abs(float(data[j].split()[1+ispin]))
-                            self.inttdos_spd[j,3,ispin] =\
-                                    self.inttdos_spd[j,3,ispin] +\
-                                    float(data[j].split()[2+ispin])
+                            self.tdos_spd[j, 3, ispin] = \
+                                self.tdos_spd[j, 3, ispin] + \
+                                abs(float(data[j].split()[1 + ispin]))
+                            self.inttdos_spd[j, 3, ispin] = \
+                                self.inttdos_spd[j, 3, ispin] + \
+                                float(data[j].split()[2 + ispin])
 
         ########################## orbital (for VASP)
         # 0: eng
@@ -359,28 +365,28 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         #
         ##########################
         # ex) self.pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
-        self.pdos[:,1,:,:] = self.pdos[:,2,:,:]
-        self.pdos[:,2,:,:] = self.pdos[:,3,:,:]
-        self.pdos[:,3,:,:] = self.pdos[:,1,:,:]
-        self.pdos[:,4,:,:] = self.pdos[:,6,:,:]
-        self.pdos[:,5,:,:] = self.pdos[:,8,:,:]
-        self.pdos[:,6,:,:] = self.pdos[:,4,:,:]
-        self.pdos[:,7,:,:] = self.pdos[:,7,:,:]
-        self.pdos[:,8,:,:] = self.pdos[:,5,:,:]
+        self.pdos[:, 1, :, :] = self.pdos[:, 2, :, :]
+        self.pdos[:, 2, :, :] = self.pdos[:, 3, :, :]
+        self.pdos[:, 3, :, :] = self.pdos[:, 1, :, :]
+        self.pdos[:, 4, :, :] = self.pdos[:, 6, :, :]
+        self.pdos[:, 5, :, :] = self.pdos[:, 8, :, :]
+        self.pdos[:, 6, :, :] = self.pdos[:, 4, :, :]
+        self.pdos[:, 7, :, :] = self.pdos[:, 7, :, :]
+        self.pdos[:, 8, :, :] = self.pdos[:, 5, :, :]
 
-        self.intpdos[:,1,:,:] = self.intpdos[:,2,:,:]
-        self.intpdos[:,2,:,:] = self.intpdos[:,3,:,:]
-        self.intpdos[:,3,:,:] = self.intpdos[:,1,:,:]
-        self.intpdos[:,4,:,:] = self.intpdos[:,6,:,:]
-        self.intpdos[:,5,:,:] = self.intpdos[:,8,:,:]
-        self.intpdos[:,6,:,:] = self.intpdos[:,4,:,:]
-        self.intpdos[:,7,:,:] = self.intpdos[:,7,:,:]
-        self.intpdos[:,8,:,:] = self.intpdos[:,5,:,:]
+        self.intpdos[:, 1, :, :] = self.intpdos[:, 2, :, :]
+        self.intpdos[:, 2, :, :] = self.intpdos[:, 3, :, :]
+        self.intpdos[:, 3, :, :] = self.intpdos[:, 1, :, :]
+        self.intpdos[:, 4, :, :] = self.intpdos[:, 6, :, :]
+        self.intpdos[:, 5, :, :] = self.intpdos[:, 8, :, :]
+        self.intpdos[:, 6, :, :] = self.intpdos[:, 4, :, :]
+        self.intpdos[:, 7, :, :] = self.intpdos[:, 7, :, :]
+        self.intpdos[:, 8, :, :] = self.intpdos[:, 5, :, :]
 
     ###################################
     # PDOS (lm,atom,spin 指定)
-    def get_pdos(self,lm=0,atom=0,spin=0):
-        self.pdos0 = self.pdos[:,lm,atom,spin]
+    def get_pdos(self, lm=0, atom=0, spin=0):
+        self.pdos0 = self.pdos[:, lm, atom, spin]
         return self.pdos0
 
     ###################################
@@ -390,8 +396,8 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
     ###################################
     # LDOS (l,atom,spin 指定)
-    def get_ldos(self,l=0,atom=0,spin=0):
-        self.ldos0 = self.ldos[:,l,atom,spin]
+    def get_ldos(self, l=0, atom=0, spin=0):
+        self.ldos0 = self.ldos[:, l, atom, spin]
         return self.ldos0
 
     ###################################
@@ -401,14 +407,14 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
 
     ###################################
     # (TDOS_SPD) PDOS の spd 合計(原子情報でsum)
-    def get_tdos_spd(self,l=0,spin=0):
-        self.tdos_spd0 = self.tdos_spd[:,l,spin]
+    def get_tdos_spd(self, l=0, spin=0):
+        self.tdos_spd0 = self.tdos_spd[:, l, spin]
         return self.tdos_spd0
 
     ###################################
     # LDOS_ion (サイトごとのLDOSを取る), ReadDoscar.get_ldos_ion() 互換
     # *.out or *.dat から atom の ion 情報を読み取るのは必須
-    def get_ldos_ion(self,l=0,ion=0,spin=0):
+    def get_ldos_ion(self, l=0, ion=0, spin=0):
 
         NATOM = self.NATOM
         NSPIN = self.NSPIN
@@ -417,30 +423,30 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
         atoms_j = self.get_atoms_j()
 
         l_max = 4
-        ldos_ion = np.zeros((NEDOS,l_max,NION,NSPIN))
+        ldos_ion = np.zeros((NEDOS, l_max, NION, NSPIN))
 
         for spin in range(NSPIN):
             for atom in range(NATOM):
                 ion1 = atoms_j[atom]
                 for i in range(NEDOS):
-                    for lm in range(0,1):  # 0:s
-                        ldos_ion[i,0,ion1,spin] = \
-                                ldos_ion[i,0,ion,spin] + \
-                                self.pdos[i,lm,atom,spin]
-                    for lm in range(1,4):  # 3:p
-                        ldos_ion[i,1,ion1,spin] = \
-                                ldos_ion[i,1,ion,spin] + \
-                                self.pdos[i,lm,atom,spin]
-                    for lm in range(4,9):  # 5:d
-                        ldos_ion[i,2,ion1,spin] = \
-                                ldos_ion[i,2,ion,spin] + \
-                                self.pdos[i,lm,atom,spin]
-                    for lm in range(9,16): # 7:d
-                        ldos_ion[i,3,ion1,spin] = \
-                                ldos_ion[i,3,ion,spin] + \
-                                self.pdos[i,lm,atom,spin]
+                    for lm in range(0, 1):  # 0:s
+                        ldos_ion[i, 0, ion1, spin] = \
+                            ldos_ion[i, 0, ion, spin] + \
+                            self.pdos[i, lm, atom, spin]
+                    for lm in range(1, 4):  # 3:p
+                        ldos_ion[i, 1, ion1, spin] = \
+                            ldos_ion[i, 1, ion, spin] + \
+                            self.pdos[i, lm, atom, spin]
+                    for lm in range(4, 9):  # 5:d
+                        ldos_ion[i, 2, ion1, spin] = \
+                            ldos_ion[i, 2, ion, spin] + \
+                            self.pdos[i, lm, atom, spin]
+                    for lm in range(9, 16):  # 7:d
+                        ldos_ion[i, 3, ion1, spin] = \
+                            ldos_ion[i, 3, ion, spin] + \
+                            self.pdos[i, lm, atom, spin]
 
-        self.LDOS_ION = ldos_ion[:,l,ion,spin]
+        self.LDOS_ION = ldos_ion[:, l, ion, spin]
         return self.LDOS_ION
 
     def get_ldos_ion_all(self):
@@ -449,50 +455,51 @@ class ReadMxPdos(SAE.ReadMxDosMethod):
     # ReadMxTdos
     # 固有値の最大(DOSのXレンジ)
     def get_emax(self):
-        suffix_tdos='.DOS.Tetrahedron'
-        if os.path.exists(self.name+suffix_tdos) or \
-                os.path.exists(self.name+suffix_tdos+'.gz'):
-            dos = SAE.ReadMxTdos(name,suffix_tdos)
+        suffix_tdos = '.DOS.Tetrahedron'
+        if os.path.exists(self.name + suffix_tdos) or \
+                os.path.exists(self.name + suffix_tdos + '.gz'):
+            dos = SAEnv.ReadMxTdos(name, suffix_tdos)
             self.EMAX = dos.get_emax()
         return self.EMAX
 
     # ReadMxTdos
     # 固有値の最小(DOSのXレンジ)
     def get_emin(self):
-        suffix_tdos='.DOS.Tetrahedron'
-        if os.path.exists(self.name+suffix_tdos) or \
-                os.path.exists(self.name+suffix_tdos+'.gz'):
-            dos = SAE.ReadMxTdos(name,suffix_tdos)
+        suffix_tdos = '.DOS.Tetrahedron'
+        if os.path.exists(self.name + suffix_tdos) or \
+                os.path.exists(self.name + suffix_tdos + '.gz'):
+            dos = SAEnv.ReadMxTdos(name, suffix_tdos)
             self.EMIN = dos.get_emin()
         return self.EMIN
 
     # ReadMxTdos
     # 固有値の(DOSのX軸)
     def get_eng(self):
-        suffix_tdos='.DOS.Tetrahedron'
-        if os.path.exists(self.name+suffix_tdos) or \
-                os.path.exists(self.name+suffix_tdos+'.gz'):
-            dos = SAE.ReadMxTdos(name,suffix_tdos)
+        suffix_tdos = '.DOS.Tetrahedron'
+        if os.path.exists(self.name + suffix_tdos) or \
+                os.path.exists(self.name + suffix_tdos + '.gz'):
+            dos = SAEnv.ReadMxTdos(name, suffix_tdos)
             self.ENG = dos.get_eng()
         return self.ENG
 
     # ReadMxTdos
-    def get_tdos(self,spin=0):
-        suffix_tdos='.DOS.Tetrahedron'
-        if os.path.exists(self.name+suffix_tdos) or \
-                os.path.exists(self.name+suffix_tdos+'.gz'):
-            dos = SAE.ReadMxTdos(name,suffix_tdos)
+    def get_tdos(self, spin=0):
+        suffix_tdos = '.DOS.Tetrahedron'
+        if os.path.exists(self.name + suffix_tdos) or \
+                os.path.exists(self.name + suffix_tdos + '.gz'):
+            dos = SAEnv.ReadMxTdos(name, suffix_tdos)
             self.TDOS = dos.get_tdos(spin)
         return self.TDOS
 
     # ReadMxTdos
-    def get_inttdos(self,spin=0):
-        suffix_tdos='.DOS.Tetrahedron'
-        if os.path.exists(self.name+suffix_tdos) or \
-                os.path.exists(self.name+suffix_tdos+'.gz'):
-            dos = SAE.ReadMxTdos(name,suffix_tdos)
+    def get_inttdos(self, spin=0):
+        suffix_tdos = '.DOS.Tetrahedron'
+        if os.path.exists(self.name + suffix_tdos) or \
+                os.path.exists(self.name + suffix_tdos + '.gz'):
+            dos = SAEnv.ReadMxTdos(name, suffix_tdos)
             self.INTTDOS = dos.get_inttdos(spin)
         return self.INTTDOS
+
 
 ################################################################################
 if __name__ == '__main__':
@@ -501,29 +508,29 @@ if __name__ == '__main__':
     suffix = '.PDOS.Tetrahedron'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    options, args = parser.parse_args()
 
     # 'openmx' より最適なデフォルトファイル名の推定ルーチン
-    if not os.path.exists(name+'.out') or not os.path.exists(name+'.out.gz'):
+    if not os.path.exists(name + '.out') or not os.path.exists(name + '.out.gz'):
         try:
-            options.INPUT = SAE.find_datfile('out')
+            options.INPUT = SAEnv.find_datfile('out')
         except:
             pass
-    elif not os.path.exists(name+'.dat') or not os.path.exists(name+'.dat'):
+    elif not os.path.exists(name + '.dat') or not os.path.exists(name + '.dat'):
         try:
-            options.INPUT = SAE.find_datfile('dat')
+            options.INPUT = SAEnv.find_datfile('dat')
         except:
             pass
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
-    pdos = ReadMxPdos(name,suffix)
+    pdos = ReadMxPdos(name, suffix)
 
     NSPIN = pdos.get_ispin()
     NATOM = pdos.get_natom()
-    NION  = pdos.get_nion()
+    NION = pdos.get_nion()
     NEDOS = pdos.get_nedos()
     title = pdos.get_title()
     atoms_j = pdos.get_atoms_j()
@@ -531,19 +538,19 @@ if __name__ == '__main__':
 
     print("NSPIN %s" % str(NSPIN))
 
-#   for spin in range(NSPIN):
-#       print '-------------------------- spin=',spin
-#       for ion in  range(NION):
-#           print '-------------------------- ion=',ion
-#           for l in range(3): # s,p,d
-#               print '------------------------------ l=',l
-#               ldos_ion = pdos.get_ldos_ion(l,ion,spin)
-#               for i in range(NEDOS):
-#                   print " %14.11f %14.11f" %(ENG[i],ldos_ion[i])
+    #   for spin in range(NSPIN):
+    #       print '-------------------------- spin=',spin
+    #       for ion in  range(NION):
+    #           print '-------------------------- ion=',ion
+    #           for l in range(3): # s,p,d
+    #               print '------------------------------ l=',l
+    #               ldos_ion = pdos.get_ldos_ion(l,ion,spin)
+    #               for i in range(NEDOS):
+    #                   print " %14.11f %14.11f" %(ENG[i],ldos_ion[i])
 
-#   print ispin
-#   print natom
-#   print title
+    #   print ispin
+    #   print natom
+    #   print title
 
     for spin in range(NSPIN):
         tdos = pdos.get_tdos(spin)

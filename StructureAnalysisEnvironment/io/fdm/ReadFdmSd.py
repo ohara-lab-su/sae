@@ -55,6 +55,7 @@
 #
 ###############################################################################
 from __future__ import print_function
+
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -65,17 +66,20 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ###############################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
 import re
 import optparse
 import numpy as np
 
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 ###############################################################################
 
@@ -87,7 +91,7 @@ class ReadFdmSd(object):
                  suffix='_sd0.txt',
                  inpname=None,
                  bavname=None,
-                 absorber=None,              ### absorber=[] :matrix
+                 absorber=None,  ### absorber=[] :matrix
                  weight=None):
 
         if bavname is None:
@@ -101,7 +105,7 @@ class ReadFdmSd(object):
                 inpname = 'read_pdb.inp'
 
         inpfile = inpname
-        inpdir =  os.path.dirname(sdname)
+        inpdir = os.path.dirname(sdname)
         if inpdir:
             inpname = inpdir + '/' + inpfile
         else:
@@ -115,11 +119,11 @@ class ReadFdmSd(object):
 
             print("---- ReadFdmSd ----")
             print("sdname + suffix = %s" % sdname + suffix)
-#           print("bavname_bav.txt = %s" % bavname+'_bav.txt')
+            #           print("bavname_bav.txt = %s" % bavname+'_bav.txt')
             print("inpname         = %s" % inpname)
             print("-------------------")
             self.datlines, self.num = SAEnv.read_dataline(sdname + suffix)
-            self.header =  self.datlines[0]
+            self.header = self.datlines[0]
 
             # weight で各要素を割る
             if weight is not None:
@@ -133,14 +137,14 @@ class ReadFdmSd(object):
 
                 numdata = np.zeros((num, row))
 
-                for j in range(1,num): # 一行目は除く
-                    for r in range(1,row): # Energy は除く
-                        numdata[j,r] = \
-                              float(self.datlines[j].split()[r])/float(weight)
+                for j in range(1, num):  # 一行目は除く
+                    for r in range(1, row):  # Energy は除く
+                        numdata[j, r] = \
+                            float(self.datlines[j].split()[r]) / float(weight)
 
                 # Energy 行追加
-                for i in range(1,num):
-                    numdata[i,0] = float(self.datlines[i].split()[0])
+                for i in range(1, num):
+                    numdata[i, 0] = float(self.datlines[i].split()[0])
 
                 # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
                 listdata = list(numdata)
@@ -148,10 +152,10 @@ class ReadFdmSd(object):
                 self.datlines.append('')  # dummy '1st-line'
                 for i in range(1, num):
                     self.datlines.append(''.
-                            join(str(listdata[i])).
-                            replace('\n', '').
-                            replace('[', '').
-                            replace(']', ''))
+                                         join(str(listdata[i])).
+                                         replace('\n', '').
+                                         replace('[', '').
+                                         replace(']', ''))
 
                 # 最後に header を追加
                 self.datlines[0] = self.header
@@ -182,23 +186,23 @@ class ReadFdmSd(object):
                 datatmp, num0 = SAEnv.read_dataline(sdname)
 
                 if i == 0:
-                    self.header =  datatmp[0]
+                    self.header = datatmp[0]
 
                 # 間違い？を発見、明らかに間違いっぽいが念のため取っておく(15.09.08)
-               #for i in range(1, num):     # 一行目は除く
-               #    for r in range(1, row):  # Energy は除く
-               #        dtmp[i, r] = datatmp[i].split()[r]
-               #dsum = dtmp + dsum
+                # for i in range(1, num):     # 一行目は除く
+                #    for r in range(1, row):  # Energy は除く
+                #        dtmp[i, r] = datatmp[i].split()[r]
+                # dsum = dtmp + dsum
 
-                for j in range(1, num):     # 一行目は除く
+                for j in range(1, num):  # 一行目は除く
                     for r in range(1, row):  # Energy は除く
                         dtmp[j, r] = datatmp[j].split()[r]
                 dsum = dtmp + dsum
 
             numdata = dsum / n_site  # 平均値を出す
 
-            for i in range(1,num):
-                numdata[i,0] = datatmp[i].split()[0] # Energy行
+            for i in range(1, num):
+                numdata[i, 0] = datatmp[i].split()[0]  # Energy行
 
             # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
             listdata = list(numdata)
@@ -206,10 +210,10 @@ class ReadFdmSd(object):
             self.datlines.append('')  # dummy '1st-line'
             for i in range(1, num):
                 self.datlines.append(''.
-                        join(str(listdata[i])).
-                        replace('\n', '').
-                        replace('[', '').
-                        replace(']', ''))
+                                     join(str(listdata[i])).
+                                     replace('\n', '').
+                                     replace('[', '').
+                                     replace(']', ''))
 
             # 最後に header を追加
             self.datlines[0] = self.header
@@ -221,22 +225,22 @@ class ReadFdmSd(object):
         self.sd = self.datlines
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
-#       bav = SAEnv.ReadFdmBav(bavname)
+        #       bav = SAEnv.ReadFdmBav(bavname)
         inp = SAEnv.ReadFdmInp(inpname)
 
         # get lmax
         # _sd*.txt で実際に出力されている lmax の最大値をゲットする
         # ヘッダの一番最後のrawをゲットして加工する
         nl = len(self.header.split())
-        tmp = self.header.split()[nl-1]
+        tmp = self.header.split()[nl - 1]
         tmp = re.sub('.*\(', '', tmp)
         try:
-            self.lmax = int(re.sub('\).*', '', tmp)) # nonmag 版
+            self.lmax = int(re.sub('\).*', '', tmp))  # nonmag 版
         except:
             self.lmax = int(re.sub(',.*\).*', '', tmp))  # spin 版
 
-#      # _bav.txt ファイルから吸収原子の lmax を抽出する
-#       self.lmax = int(bav.get_lmax())
+        #      # _bav.txt ファイルから吸収原子の lmax を抽出する
+        #       self.lmax = int(bav.get_lmax())
 
         self.ispin = int(inp.get_ispin())
         self.mmax = int(2 * self.lmax + 1)
@@ -258,15 +262,15 @@ class ReadFdmSd(object):
                 print("mmax %s" % str(self.mmax))
                 print("total_row %s" % str(total_row))
                 print("-----------")
-               #print len(self.datlines[0].split()), "= ", self.datlines[0]
+                # print len(self.datlines[0].split()), "= ", self.datlines[0]
                 print("%s = %s" % (str(len(self.datlines[0].split())), str(self.datlines[0])))
                 sys.exit("STOP: unknown type " + sdname + suffix)
 
         # すべての row 成分の情報を配列に叩きこむ
         self.ylm = \
-                np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
+            np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
         self.intylm = \
-                np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
+            np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
         self.ldos_all = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
         self.tdos_all = np.zeros((self.num - 1, self.ispin))
         self.intldos_all = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
@@ -297,16 +301,16 @@ class ReadFdmSd(object):
                     m0 += 1
                 for s in range(self.ispin):  # l軌道のsum n_l(0,0),,,
                     self.ldos_all[i - 1, ll, s] = \
-                            float(self.datlines[i].split()[row])
+                        float(self.datlines[i].split()[row])
                     self.tdos_all[i - 1, s] = \
-                            float(self.datlines[i].split()[row]) + \
-                            self.tdos_all[i - 1, s]
+                        float(self.datlines[i].split()[row]) + \
+                        self.tdos_all[i - 1, s]
                     row += 1
                     self.intldos_all[i - 1, ll, s] = \
-                            float(self.datlines[i].split()[row])
+                        float(self.datlines[i].split()[row])
                     self.inttdos_all[i - 1, s] = \
-                            float(self.datlines[i].split()[row]) + \
-                            self.inttdos_all[i -1, s]
+                        float(self.datlines[i].split()[row]) + \
+                        self.inttdos_all[i - 1, s]
                     row += 1
 
         self.emax = max(self.eng)
@@ -331,7 +335,7 @@ class ReadFdmSd(object):
     #
     def get_pdos(self, l=0, m=0, lm=None, spin=0):
 
-#       pdos = np.zeros((self.nedos, self.lmax, self.mmax, self.nspin))
+        #       pdos = np.zeros((self.nedos, self.lmax, self.mmax, self.nspin))
 
         if lm != None and isinstance(lm, str):
 
@@ -339,20 +343,20 @@ class ReadFdmSd(object):
             lml = lm.lower()
             if lml == 's':
                 orbit_name = 's'
-                l=0
-                m=0
+                l = 0
+                m = 0
             if lml == 'py' or lml == 'p_y':
                 orbit_name = 'p_y'
-                l=1
-                m=-1
+                l = 1
+                m = -1
             if lml == 'pz' or lml == 'p_z':
                 orbit_name = 'p_z'
-                l=1
-                m=0
+                l = 1
+                m = 0
             if lml == 'px' or lml == 'p_x':
                 orbit_name = 'p_x'
-                l=1
-                m=1
+                l = 1
+                m = 1
             if lml == 'dxy' or \
                     lml == 'd_xy' or \
                     lml == 'xy' or \
@@ -360,8 +364,8 @@ class ReadFdmSd(object):
                     lml == 'dyx' or \
                     lml == 'd_yx':
                 orbit_name = 'd_xy'
-                l=2
-                m=-2
+                l = 2
+                m = -2
             if lml == 'dyz' or \
                     lml == 'd_yz' or \
                     lml == 'yz' or \
@@ -369,8 +373,8 @@ class ReadFdmSd(object):
                     lml == 'dzy' or \
                     lml == 'd_zy':
                 orbit_name = 'd_yz'
-                l=2
-                m=-1
+                l = 2
+                m = -1
             if lml == 'dz2' or \
                     lml == 'd_z^2' or \
                     lml == 'd_z2' or \
@@ -391,8 +395,8 @@ class ReadFdmSd(object):
                     lml == 'd_3z2-r2' or \
                     lml == 'd_3z^2-r^2':
                 orbit_name = 'd_z^2'
-                l=2
-                m=0
+                l = 2
+                m = 0
             if lml == 'dxz' or \
                     lml == 'd_xz' or \
                     lml == 'xz' or \
@@ -400,8 +404,8 @@ class ReadFdmSd(object):
                     lml == 'zx' or \
                     lml == 'd_zx':
                 orbit_name = 'd_xz'
-                l=2
-                m=1
+                l = 2
+                m = 1
             if lml == 'x^2-y^2' or \
                     lml == 'd_x^2-y^2' or \
                     lml == 'd_x2-y2' or \
@@ -415,14 +419,15 @@ class ReadFdmSd(object):
                     lml == 'y^2' or \
                     lml == 'dy^2':
                 orbit_name = 'd_x^2-y^2'
-                l=2
-                m=2
+                l = 2
+                m = 2
 
-        self.pdos =  self.ylm[:,l,m,spin]
+        self.pdos = self.ylm[:, l, m, spin]
         self.ymax = max(self.pdos)
 
         return self.pdos
-#       return self.ylm[:,l,m,spin]
+
+    #       return self.ylm[:,l,m,spin]
 
     ####################################################
     # LDOS(NEDOS,L,SPIN)
@@ -520,15 +525,15 @@ class ReadFdmSd(object):
     def get_lmax(self):
         return self.lmax
 
+
 ###############################################################################
 def options():
-
     name = 'Cu'
-#   name = 'Fe'
+    #   name = 'Fe'
     suffix = '_sd0.txt'
 
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
     if options.INPUT:
@@ -538,9 +543,9 @@ def options():
 
     return name, suffix
 
+
 ###############################################################################
 if __name__ == '__main__':
-
     name, suffix = options()
     sd = ReadFdmSd(name, suffix)
 

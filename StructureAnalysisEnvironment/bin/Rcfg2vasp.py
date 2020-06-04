@@ -47,10 +47,8 @@ import optparse
 try:
     sys.path.append('../../')
     import StructureAnalysisEnvironment as SAEnv
-    import StructureAnalysisEnvironment.io as io
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv
-    import StructureAnalysisEnvironment.io as io
 
 #import StructureAnalysisEnvironment as SAEnv
 # import SpaceGroupEnvironment as SGE
@@ -81,11 +79,23 @@ def options():
 
 ################################################################################
 if __name__ == '__main__':
-    cname,atoms_index = options()
+    cname, atoms_index0 = options()
     filename = cname + ".cfg"
     outname = cname
 
     #atoms_index = ['In', 'Ga', 'Zn', 'O']
 
+    #
+    # Usage:
+    #  Rcfg2vasp.py <name> --atoms_index=A,B,C,Da
+    #
+
+    atoms_index = []
+    for i in atoms_index0.split(','):
+        print(i)
+        atoms_index.append(i)
+    print(atoms_index)
+
     cell = SAEnv.io.Read(filename=filename, code='RMC', atoms_index=atoms_index)
     cell.write(outname=outname, code='VASP')
+

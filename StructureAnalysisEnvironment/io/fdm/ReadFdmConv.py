@@ -52,6 +52,7 @@ try:
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv
 
+
 # import SpaceGroupEnvironment as SGE
 
 ###############################################################################

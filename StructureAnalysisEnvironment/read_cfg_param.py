@@ -14,7 +14,10 @@
 # 2014.10.30 1st
 #
 ################################################################################
-from copyright import *
+try:
+    from copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.1"

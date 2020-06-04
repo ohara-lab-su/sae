@@ -23,6 +23,7 @@
 #
 ###############################################################################
 from __future__ import print_function
+
 ###############################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -33,6 +34,7 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.1.4"
+
 ###############################################################################
 # import sys
 # import os
@@ -40,6 +42,7 @@ __version__ = "0.1.4"
 # import gzip
 
 import numpy as np
+
 
 # import optparse
 

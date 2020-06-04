@@ -18,38 +18,45 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015 Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.0"
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.0"
+
 ################################################################################
 
-#import sys
+import sys
 import os
 import re
-#import gzip
-#import numpy as np
+# import gzip
+# import numpy as np
 
 import optparse
 
-import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+try:
+    sys.path.append('../../')
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import *
+except ImportError:
+    import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.Method import *
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadVaspIncar(object):
 
     ###############################################
     ## init and Read INCAR
-    def __init__(self,INCAR='INCAR'):
+    def __init__(self, INCAR='INCAR'):
 
         # read INCAR
-        self.datlines,self.num = SAE.read_dataline1(INCAR)
+        self.datlines, self.num = SAEnv.read_dataline1(INCAR)
 
         # set TAG rule
         title_reg = re.compile('.*SYSTEM', re.IGNORECASE)
@@ -85,7 +92,7 @@ class ReadVaspIncar(object):
         self.ngzf = None
         self.nbands = None
         self.ediff = 1.0e-4
-        self.ediffg = self.ediff*10.0
+        self.ediffg = self.ediff * 10.0
         self.alog = 'Normal'
         self.nedos = 301
         self.lreal = False
@@ -103,87 +110,87 @@ class ReadVaspIncar(object):
 
             # ISTART
             if bool(istart_reg.match(self.datlines[i])):
-                self.istart = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.istart = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # ICHARG
             if bool(icharg_reg.match(self.datlines[i])):
-                self.icharg = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.icharg = int(re.sub('.*=', '', self.datlines[i]).split()[0])
                 print("self.icharg %s" % str(self.icharg))
 
             # SYSTEM
             if bool(title_reg.match(self.datlines[i])):
-                self.title = str(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.title = str(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # GGA
             if bool(gga_reg.match(self.datlines[i])):
-                self.gga = str(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.gga = str(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # NSW
             if bool(nsw_reg.match(self.datlines[i])):
-                self.nsw = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.nsw = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # SIGMA
             if bool(sigma_reg.match(self.datlines[i])):
-                self.sigma = float(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.sigma = float(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # ISMEAR
             if bool(ismear_reg.match(self.datlines[i])):
-                self.ismear = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ismear = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # EDIFF
             if bool(ediff_reg.match(self.datlines[i])) and not bool(ediffg_reg.match(self.datlines[i])):
-                self.ediff = float(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ediff = float(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # EDIFFG
             if bool(ediffg_reg.match(self.datlines[i])):
-                self.ediffg = float(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ediffg = float(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # NBANDS
             if bool(nbands_reg.match(self.datlines[i])):
-                self.nbands = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.nbands = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # ISYM
             if bool(isym_reg.match(self.datlines[i])):
-                self.isym = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.isym = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # ISPIN
             if bool(ispin_reg.match(self.datlines[i])):
-                self.ispin = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ispin = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # NELM
             if bool(nelm_reg.match(self.datlines[i])):
-                self.nelm = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.nelm = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # SMASS
             if bool(smass_reg.match(self.datlines[i])):
-                self.smass = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.smass = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # IBRION
             if bool(ibrion_reg.match(self.datlines[i])):
-                self.ibrion = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ibrion = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # LAECHG
             if bool(laechg_reg.match(self.datlines[i])):
-                if bool(re.compile('^.*=.*T',re.IGNORECASE).match(self.datlines[i])):
+                if bool(re.compile('^.*=.*T', re.IGNORECASE).match(self.datlines[i])):
                     self.laechg = True
-                elif bool(re.compile('^.*=.*F',re.IGNORECASE).match(self.datlines[i])):
+                elif bool(re.compile('^.*=.*F', re.IGNORECASE).match(self.datlines[i])):
                     self.laechg = False
 
             # NGXF
             if bool(ngxf_reg.match(self.datlines[i])):
-                self.ngxf = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ngxf = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # NGYF
             if bool(ngyf_reg.match(self.datlines[i])):
-                self.ngyf = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ngyf = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # NGZF
             if bool(ngzf_reg.match(self.datlines[i])):
-                self.ngzf = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.ngzf = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
             # NPAR
             if bool(npar_reg.match(self.datlines[i])):
-                self.npar = int(re.sub('.*=','',self.datlines[i]).split()[0])
+                self.npar = int(re.sub('.*=', '', self.datlines[i]).split()[0])
 
         # check ISTART and ICHARG
         try:
@@ -195,7 +202,7 @@ class ReadVaspIncar(object):
                 self.icharg = 0
 
     def get_title(self):
-        self.title = self.title if hasattr(self.__class__.__name__,'title') else 'unknown system'
+        self.title = self.title if hasattr(self.__class__.__name__, 'title') else 'unknown system'
         return self.title
 
     def get_istart(self):
@@ -229,7 +236,7 @@ class ReadVaspIncar(object):
             self.ediffg = self.ediffg
         except:
             ediff = self.get_ediff()
-            self.ediffg = ediff*10.0
+            self.ediffg = ediff * 10.0
         return self.ediffg
 
     def get_nbands(self):
@@ -279,12 +286,13 @@ class ReadVaspIncar(object):
         self.ngzf = self.ngzf if hasattr(self, 'ngzf') else None
         return self.ngzf
 
+
 ################################################################################
 if __name__ == '__main__':
 
     name = 'INCAR'
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input', dest='INPUT',)
+    parser.add_option('-i', '--input', dest='INPUT', )
     options, args = parser.parse_args()
 
     if options.INPUT:
@@ -309,7 +317,7 @@ if __name__ == '__main__':
     ISTART = incar.get_istart()
     ICHARG = incar.get_icharg()
 
-#   print "TITLE  :", TITLE
+    #   print "TITLE  :", TITLE
     print("SYSTEM :%s" % str(SYSTEM))
     print("NSW    :%s" % str(NSW))
     print("IBRION :%s" % str(IBRION))

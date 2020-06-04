@@ -42,7 +42,11 @@
 #
 ################################################################################
 from __future__ import print_function
-from copyright import *
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
 __version__ = "0.0.1"
@@ -56,12 +60,16 @@ import numpy as np
 try:
     sys.path.append('../../')
     import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.Method import Method
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv
+    from StructureAnalysisEnvironment.io import *
+    from StructureAnalysisEnvironment.Method import Method
 
 
 ################################################################################
-class ReadRmcpotCfg(SAEnv.Method):
+class ReadRmcpotCfg(Method):
     """
     for RMC version 3 format
     """

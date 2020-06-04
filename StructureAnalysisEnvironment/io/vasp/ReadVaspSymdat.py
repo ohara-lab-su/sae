@@ -25,55 +25,55 @@
 #
 ################################################################################
 from __future__ import print_function
-###############################################################################
-__author__     = "Kengo NAKADA"
-__maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
-#
-__status__     = "alpha"
-__version__    = "0.0.1"
+
+try:
+    from ...copyright import *
+except Exception:
+    from StructureAnalysisEnvironment.copyright import *
+
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
 import os
 import gzip
-#import re
-#import numpy as np
 
-#from copy import deepcopy
+# import re
+# import numpy as np
 
-#import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+# from copy import deepcopy
+
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 class ReadVaspSymdat(object):
 
-    def __init__(self,name):
+    def __init__(self, name):
 
         if os.path.exists(name):
-            GZIP=False
-        elif os.path.exists(name+".gz"):
-            GZIP=True
+            GZIP = False
+        elif os.path.exists(name + ".gz"):
+            GZIP = True
         else:
-            sys.exit("STOP: "+name+" or "+name+".gz file not found")
+            sys.exit("STOP: " + name + " or " + name + ".gz file not found")
 
         try:
             if GZIP:
-                tmp = gzip.open(name+".gz")
+                tmp = gzip.open(name + ".gz")
             else:
                 tmp = open(name)
             datfile = tmp.read()
         except:
             tmp.close()
-            sys.exit("STOP: "+name+" or "+name+".gz does'nt open")
+            sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
         finally:
             tmp.close()
 
         self.datlines = datfile.split('\n')
-        self.num = len(self.datlines) -1
+        self.num = len(self.datlines) - 1
 
     # sym.dat 読み込み
     def get_symlines(self):
@@ -86,26 +86,27 @@ class ReadVaspSymdat(object):
     def get_num_symlines(self):
         return self.num
 
+
 ################################################################################
 if __name__ == '__main__':
 
     import optparse
+
     name = 'sym.dat'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    options, args = parser.parse_args()
 
-    if options.INPUT: name=options.INPUT
-    if len(args) > 0: name=args[0]
+    if options.INPUT: name = options.INPUT
+    if len(args) > 0: name = args[0]
 
     sym = ReadVaspSymdat(name)
 
     num_symlines = sym.get_num_symlines()
     symlines = sym.get_symlines()
 
-    for i  in range(num_symlines):
+    for i in range(num_symlines):
         print("%s" % str(symlines[i]))
 
 ################################################################################
-
