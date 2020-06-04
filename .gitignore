@@ -10,7 +10,7 @@
 
 # for Python
 *.pyc
-_*.py
+#_*.py
 
 # for Binary
 *.tar.gz
