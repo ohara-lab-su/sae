@@ -155,7 +155,8 @@ class ReadRmcpotCfg(SAEnv.Method):
         print("dummy atoms_index = %s" % atoms_index)
         #atoms_index = ['Fe','Ni','Co']
         #atoms_index = ['N','O','Co', 'K']
-        atoms_index = ['Ba','O','Ti']
+        #atoms_index = ['Ba','O','Ti']
+        atoms_index = ['N','O','Ca', 'K']
 
         index = 0
         self.atoms_j = np.zeros(self.natom,dtype=int)
