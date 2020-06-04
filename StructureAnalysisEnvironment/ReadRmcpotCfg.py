@@ -59,13 +59,18 @@ __version__    = "0.0.1"
 import numpy as np
 import StructureAnalysisEnvironment as SAEnv
 
+
 ################################################################################
 class ReadRmcpotCfg(SAEnv.Method):
-
+    """
+    for RMC version 3 format
+    """
     def __init__(self,cname='POSCAR.cfg',suffix='.cfg',sort=False,atoms_index=None):
 
-#       if suffix is not None: cname = cname+suffix
+      # if suffix is not None: cname = cname+suffix
         self.datlines, self.num = SAEnv.read_dataline(cname)
+
+        print("cfg name = %s" % cname)
 
         ###############################################
         # Read Parameter
