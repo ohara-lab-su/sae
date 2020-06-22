@@ -20,7 +20,13 @@
 try:
     from .io import *
 except ImportError:
-    from StructureAnalysisEnvironment.io import *
+    try:
+        from io import *
+    except ImportError:
+        try:
+            from StructureAnalysisEnvironment.io import *
+        except ImportError:
+            pass
 
 try:
     from .Method import *
