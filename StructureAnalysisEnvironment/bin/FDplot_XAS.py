@@ -178,7 +178,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAE.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.fdm.ReadFdmFdmfile()
             inpname = fdmfiletxt.get_filout()
         else:
             inpname = 'read_pdb.inp'
@@ -202,6 +202,7 @@ def options():
             options.absorber, options.weight, options.dosweight,
             options.up, options.dn, options.spin,
             options.pdf, options.nw]
+
 
 ###############################################################################
 if __name__ == '__main__':
@@ -276,21 +277,21 @@ if __name__ == '__main__':
         print("--- average mode ---")
         print("text base name (.txt)")
         print("------======-------------> ",filout+'_'+str(AV[0]))
-        txt = SAE.ReadFdmTxt(filout+'_'+str(AV[0]), suffix='.txt', edge=edge)
+        txt = SAE.io.fdm.ReadFdmTxt(filout+'_'+str(AV[0]), suffix='.txt', edge=edge)
 
         print("convolution base name (_conv.txt)")
         print("-----------======--------> ",filout+'_'+str(AV[0]))
-        conv = SAE.ReadFdmConv(filout+'_'+str(AV[0]), suffix='_conv.txt')
+        conv = SAE.io.fdm.ReadFdmConv(filout+'_'+str(AV[0]), suffix='_conv.txt')
     else:
         if textname is None: textname = filout
         if convolname is None: convolname = filout
         print("text base name  (.txt)")
         print("-------------------------> ",textname)
-        txt = SAE.ReadFdmTxt(textname, suffix='.txt', edge=edge)  # Read Edge and Efermi
+        txt = SAE.io.fdm.ReadFdmTxt(textname, suffix='.txt', edge=edge)  # Read Edge and Efermi
 
         print("convolution base name (_conv.txt)")
         print("-------------------------> ",convolname)
-        conv = SAE.ReadFdmConv(convolname, '_conv.txt')
+        conv = SAE.io.fdm.ReadFdmConv(convolname, '_conv.txt')
 
     ##########################################################################
     # txt
@@ -326,19 +327,19 @@ if __name__ == '__main__':
             print("-------------------------> ",sdname)
             print("")
             if WEDOS:
-                sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
+                sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
                                    bavname=filbav,
                                    inpname=inpname,
                                    absorber=AV,
                                    weight=WEDOS)
             elif WE:
-                sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
+                sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
                                    bavname=filbav,
                                    inpname=inpname,
                                    absorber=AV,
                                    weight=WE)
             else:
-                sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
+                sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
                                    bavname=filbav,
                                    inpname=inpname,
                                    absorber=AV)
@@ -350,7 +351,7 @@ if __name__ == '__main__':
             print("Sdname base name (_sd0.txt)")
             print("-------------------------> ",sdname)
             print("")
-            sd = SAE.ReadFdmSd(sdname, suffix='_sd0.txt',
+            sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
                                bavname=filbav,
                                inpname=inpname)
 
