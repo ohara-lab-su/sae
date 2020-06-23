@@ -40,16 +40,16 @@ packages = [
     package_src_dir + '.gui',
     package_src_dir + '.io',
     package_src_dir + '.io',
-    package_src_dir + '.athena',
-    package_src_dir + '.fdm',
-    package_src_dir + '.hilapw',
-    package_src_dir + '.lob',
-    package_src_dir + '.mx',
-    package_src_dir + '.pf',
-    package_src_dir + '.pwscf',
-    package_src_dir + '.rmc',
-    package_src_dir + '.vasp',
-    package_src_dir + '.wien2k'
+    package_src_dir + '.io.athena',
+    package_src_dir + '.io.fdm',
+    package_src_dir + '.io.hilapw',
+    package_src_dir + '.io.lob',
+    package_src_dir + '.io.mx',
+    package_src_dir + '.io.pf',
+    package_src_dir + '.io.pwscf',
+    package_src_dir + '.io.rmc',
+    package_src_dir + '.io.vasp',
+    package_src_dir + '.io.wien2k'
 ]
 print(packages)
 print('*****************************************')
