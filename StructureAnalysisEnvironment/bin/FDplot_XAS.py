@@ -116,6 +116,8 @@ import os
 import argparse
 #import numpy as np
 
+import StructureAnalysisEnvironment.io
+import StructureAnalysisEnvironment.io.fdm
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
