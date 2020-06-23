@@ -20,17 +20,35 @@
 try:
     from .io import *
 except ImportError:
-    from StructureAnalysisEnvironment.io import *
+    try:
+        from io import *
+    except ImportError:
+        try:
+            from StructureAnalysisEnvironment.io import *
+        except ImportError:
+            pass
 
 try:
     from .Method import *
 except ImportError:
-    from StructureAnalysisEnvironment.Method import *
+    try:
+        from Method import *
+    except ImportError:
+        try:
+            from StructureAnalysisEnvironment.Method import *
+        except ImportError:
+            pass
 
 try:
     from .copyright import *
 except ImportError:
-    from StructureAnalysisEnvironment.copyright import *
+    try:
+        from copyright import *
+    except ImportError:
+        try:
+            from StructureAnalysisEnvironment.copyright import *
+        except ImportError:
+            pass
 
 #################################################################################
 #### function

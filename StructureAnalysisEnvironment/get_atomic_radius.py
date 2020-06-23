@@ -41,18 +41,32 @@ import StructureAnalysisEnvironment as SAE
 # import SpaceGroupEnvironment as SGE
 
 
-### 原子番号から原子半径を返す
 def get_atomic_radius0(num):
-    name = 'atomic_radius.list'
+    """
+    原子番号から原子半径を返す
+    :param num:
+    :return:
+    """
+    base = 'atomic_radius.list'
+    base_py = 'atomic_radius.list.py'
 
     ldir = os.path.dirname(SAE.__file__)
+    name = ldir + '/' + base
+
     if not os.path.exists(name):
-        if os.path.exists(ldir + '/' + name):
-            name = ldir + '/' + name
-        else:
-            name = 'atomic_radius.list.py'
-            if not os.path.exists(name):
-                sys.exit("STOP: " + name + " file not found")
+        name = ldir + '/' + base_py
+        if not os.path.exists(name):
+            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+
+    # commented out 2020.06.23
+    # ldir = os.path.dirname(SAE.__file__)
+    # if not os.path.exists(name):
+    #     if os.path.exists(ldir + '/' + name):
+    #         name = ldir + '/' + name
+    #     else:
+    #         name = 'atomic_radius.list.py'
+    #         if not os.path.exists(name):
+    #             sys.exit("STOP: " + name + " file not found")
 
     nlist = SAE.read_list_param(name)  # pre read
 
@@ -66,21 +80,35 @@ def get_atomic_radius0(num):
     return radius
 
 
-### 元素記号(str)から原子半径(float)を返す
 def get_atomic_radius1(atom):
-    name = 'atomic_radius.list'
+    """
+    元素記号(str)から原子半径(float)を返す
+    :param atom:
+    :return:
+    """
+    base = 'atomic_radius.list'
+    base_py = 'atomic_radius.list.py'
 
     ldir = os.path.dirname(SAE.__file__)
+    name = ldir + '/' + base
+
     if not os.path.exists(name):
-        if os.path.exists(ldir + '/' + name):
-            name = ldir + '/' + name
-        else:
-            name = 'atomic_radius.list.py'
-            if not os.path.exists(name):
-                if os.path.exists(ldir + '/' + name):
-                    name = ldir + '/' + name
-                else:
-                    sys.exit("STOP: " + name + " file not found")
+        name = ldir + '/' + base_py
+        if not os.path.exists(name):
+            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+
+    # commented out 2020.06.23
+    # ldir = os.path.dirname(SAE.__file__)
+    # if not os.path.exists(name):
+    #     if os.path.exists(ldir + '/' + name):
+    #         name = ldir + '/' + name
+    #     else:
+    #         name = 'atomic_radius.list.py'
+    #         if not os.path.exists(name):
+    #             if os.path.exists(ldir + '/' + name):
+    #                 name = ldir + '/' + name
+    #             else:
+    #                 sys.exit("STOP: " + name + " file not found")
 
     nlist = SAE.read_list_param(name)  # pre read
 
@@ -99,21 +127,35 @@ def get_atomic_radius1(atom):
     return radius
 
 
-### 元素記号(str)から原子番号(float)を返す
 def get_atomic_number1(atom):
-    name = 'atomic_radius.list'
+    """
+    元素記号(str)から原子番号(float)を返す
+    :param atom:
+    :return:
+    """
+    base = 'atomic_radius.list'
+    base_py = 'atomic_radius.list.py'
 
     ldir = os.path.dirname(SAE.__file__)
+    name = ldir + '/' + base
+
     if not os.path.exists(name):
-        if os.path.exists(ldir + '/' + name):
-            name = ldir + '/' + name
-        else:
-            name = 'atomic_radius.list.py'
-            if not os.path.exists(name):
-                if os.path.exists(ldir + '/' + name):
-                    name = ldir + '/' + name
-                else:
-                    sys.exit("STOP: " + name + " file not found")
+        name = ldir + '/' + base_py
+        if not os.path.exists(name):
+            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+
+    # commented out 2020.06.23
+    # ldir = os.path.dirname(SAE.__file__)
+    # if not os.path.exists(name):
+    #     if os.path.exists(ldir + '/' + name):
+    #         name = ldir + '/' + name
+    #     else:
+    #         name = 'atomic_radius.list.py'
+    #         if not os.path.exists(name):
+    #             if os.path.exists(ldir + '/' + name):
+    #                 name = ldir + '/' + name
+    #             else:
+    #                 sys.exit("STOP: " + name + " file not found")
 
     # ファイルの全行数を確保
     nlist = SAE.read_list_param(name)  # pre read
@@ -130,32 +172,48 @@ def get_atomic_number1(atom):
         if atom == atom_name:
             num = float(radius_list[i, 0])
 
+        # modified 2020.06.23
+        # try:
+        #     if atom.decode() == atom_name:
+        #         num = float(radius_list[i, 0])
+        # except:
+        #     if atom == atom_name:
+        #         num = float(radius_list[i, 0])
+
     return num
 
 
-### 原子番号から元素記号を返す
 def get_atomic_symbol0(num):
-    name = 'atomic_radius.list'
+    """
+    原子番号から元素記号を返す
+    :param num:
+    :return:
+    """
+    # new out 2020.06.23
+    base = 'atomic_radius.list'
+    base_py = 'atomic_radius.list.py'
 
     ldir = os.path.dirname(SAE.__file__)
+    name = ldir + '/' + base
+
     if not os.path.exists(name):
-        if os.path.exists(ldir + '/' + name):
-            name = ldir + '/' + name
-        else:
-            name = 'atomic_radius.list.py'
-            if not os.path.exists(name):
-                if os.path.exists(ldir + '/' + name):
-                    name = ldir + '/' + name
-                else:
-                    sys.exit("STOP: " + name + " file not found")
+        name = ldir + '/' + base_py
+        if not os.path.exists(name):
+            sys.exit("STOP: %s or %s file not found." % (base, base_py))
 
     nlist = SAE.read_list_param(name)  # pre read
 
     radius_list = np.zeros((nlist, 3), dtype='S4')
     nlist = SAE.read_list3(name, radius_list)
 
+    symbol = ''
     for i in range(nlist):
         if num == int(radius_list[i, 0]):
-            symbol = str(radius_list[i, 1])
+            # new routine (with decode) 2020.06.23
+            # symbol = str(radius_list[i, 1])
+            try:
+                symbol = radius_list[i, 1].decode('ascii')
+            except:
+                symbol = radius_list[i, 1]
 
     return symbol
