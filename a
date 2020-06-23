@@ -1,0 +1,952 @@
+*****************************************
+['StructureAnalysisEnvironment/atomic_radius.list', 'StructureAnalysisEnvironment/atomic_weight.list', 'StructureAnalysisEnvironment/atomic_color.list', 'StructureAnalysisEnvironment/openmx_defaults_vpsdata.list']
+*****************************************
+running install
+running bdist_egg
+running egg_info
+writing StructureAnalysisEnvironment.egg-info/PKG-INFO
+writing dependency_links to StructureAnalysisEnvironment.egg-info/dependency_links.txt
+writing requirements to StructureAnalysisEnvironment.egg-info/requires.txt
+writing top-level names to StructureAnalysisEnvironment.egg-info/top_level.txt
+reading manifest file 'StructureAnalysisEnvironment.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+writing manifest file 'StructureAnalysisEnvironment.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/version.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_poscar4.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui
+copying build/lib/StructureAnalysisEnvironment/gui/CrystalMaker.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui
+copying build/lib/StructureAnalysisEnvironment/gui/crystal_make_unit.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui
+copying build/lib/StructureAnalysisEnvironment/gui/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui
+copying build/lib/StructureAnalysisEnvironment/conv_car2direct.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/copyright.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/make_supercell_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_dataline.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/del_commentout.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_vasp2cfg.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/make_supercell1.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_md_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_vasp_orbital_info.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_rmcpot_cfg.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_rmcpot_cfg_raw.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/extract_struct0.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/z.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_poscar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_fdmnes.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/plot_xas.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_outcar_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/extract_struct1.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_sets_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_vasprun0.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_cfg.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_cellparam.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_cfg2vasp.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_outcar_position.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/sort_atoms_number_j.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_car2carABS.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_list.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_sets.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_pwscf_scf.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_vasprun1.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_bond_info.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_vasprun.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/extract_struct_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_scale21.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_atomic_weight.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/func_rotate.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxVpsList.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxDatMethod.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxTdos.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxDat.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMd.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxVps.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxOut.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxPdos.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxDftscf.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+copying build/lib/StructureAnalysisEnvironment/io/mx/ReadMxDosMethod.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspKpoints.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspXdat.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspAcf.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspDoscar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspChgcar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspSymdat.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspEigenval.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspPotcar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspIncar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspProcar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspPoscar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspOutcar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspVasprun.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+copying build/lib/StructureAnalysisEnvironment/io/vasp/ReadVaspOszicar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/rmc
+copying build/lib/StructureAnalysisEnvironment/io/rmc/ReadRmcpotCfg.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/rmc
+copying build/lib/StructureAnalysisEnvironment/io/rmc/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/rmc
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/pwscf/ReadPwXanes.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/pwscf/ReadPwIn.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/pwscf/ReadPwTdos.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/pwscf/ReadPwOut.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/pwscf/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/pwscf/ReadPwPdos.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf
+copying build/lib/StructureAnalysisEnvironment/io/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pf
+copying build/lib/StructureAnalysisEnvironment/io/pf/ReadPfformat.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pf
+copying build/lib/StructureAnalysisEnvironment/io/pf/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pf
+copying build/lib/StructureAnalysisEnvironment/io/Read.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/hilapw
+copying build/lib/StructureAnalysisEnvironment/io/hilapw/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/hilapw
+copying build/lib/StructureAnalysisEnvironment/io/hilapw/ReadHiSets.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/hilapw
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/ReadFdmSd.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/ReadFdmBav.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/ReadFdmInp.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/ReadFdmFdmfile.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/ReadFdmTxt.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+copying build/lib/StructureAnalysisEnvironment/io/fdm/ReadFdmConv.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob
+copying build/lib/StructureAnalysisEnvironment/io/lob/ReadLobOut.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob
+copying build/lib/StructureAnalysisEnvironment/io/lob/ReadLobDos.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob
+copying build/lib/StructureAnalysisEnvironment/io/lob/ReadLobCohp.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob
+copying build/lib/StructureAnalysisEnvironment/io/lob/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/ReadWienOutputt.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/ReadWienTxspec.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/ReadWienDos.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/ReadWienScf.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/ReadWienOutput0.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+copying build/lib/StructureAnalysisEnvironment/io/wien2k/ReadWienXspec.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/athena
+copying build/lib/StructureAnalysisEnvironment/io/athena/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/athena
+copying build/lib/StructureAnalysisEnvironment/io/athena/ReadAthenaNor.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/athena
+copying build/lib/StructureAnalysisEnvironment/print_sets.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_max_md.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_cfg_coll_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_list_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_atomic_radius.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_vasprun2.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_mx_dat.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_fdmnes_inp.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/print_poscar.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_row.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/plot_sum_xas.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/write.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/find_datfile.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/sort_atoms_index_j.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_atom_start.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+creating build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/Method
+copying build/lib/StructureAnalysisEnvironment/Method/__init__.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/Method
+copying build/lib/StructureAnalysisEnvironment/Method/Method.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/Method
+copying build/lib/StructureAnalysisEnvironment/sort_fix.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_md.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_dat.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/get_calinfo.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/move_atoms.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_cfg_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/make_supercell_zb.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/chk_pdb_cryst1.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/find_suffix.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_poscar_param.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/sphere_integral_of_elf.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/sort_position.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/change_density.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/read_cfg_coll.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/make_supercell0.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_direct2car.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying build/lib/StructureAnalysisEnvironment/conv_direct2carABS.py -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/version.py to version.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_poscar4.py to print_poscar4.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui/CrystalMaker.py to CrystalMaker.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui/crystal_make_unit.py to crystal_make_unit.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/gui/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_car2direct.py to conv_car2direct.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/copyright.py to copyright.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/make_supercell_param.py to make_supercell_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_dataline.py to read_dataline.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/del_commentout.py to del_commentout.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_vasp2cfg.py to conv_vasp2cfg.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/make_supercell1.py to make_supercell1.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_md_param.py to read_md_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_vasp_orbital_info.py to get_vasp_orbital_info.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_rmcpot_cfg.py to print_rmcpot_cfg.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_rmcpot_cfg_raw.py to print_rmcpot_cfg_raw.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/extract_struct0.py to extract_struct0.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/z.py to z.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_poscar.py to read_poscar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_fdmnes.py to print_fdmnes.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/plot_xas.py to plot_xas.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_outcar_param.py to read_outcar_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/extract_struct1.py to extract_struct1.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_sets_param.py to read_sets_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_vasprun0.py to read_vasprun0.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_cfg.py to read_cfg.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_cellparam.py to conv_cellparam.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_cfg2vasp.py to conv_cfg2vasp.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_outcar_position.py to read_outcar_position.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/sort_atoms_number_j.py to sort_atoms_number_j.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_car2carABS.py to conv_car2carABS.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_list.py to read_list.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_sets.py to read_sets.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_pwscf_scf.py to print_pwscf_scf.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_vasprun1.py to read_vasprun1.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_bond_info.py to get_bond_info.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_vasprun.py to print_vasprun.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/extract_struct_param.py to extract_struct_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_scale21.py to conv_scale21.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_atomic_weight.py to get_atomic_weight.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/func_rotate.py to func_rotate.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxVpsList.py to ReadMxVpsList.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxDatMethod.py to ReadMxDatMethod.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxTdos.py to ReadMxTdos.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxDat.py to ReadMxDat.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMd.py to ReadMd.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxVps.py to ReadMxVps.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxOut.py to ReadMxOut.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxPdos.py to ReadMxPdos.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxDftscf.py to ReadMxDftscf.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/mx/ReadMxDosMethod.py to ReadMxDosMethod.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspKpoints.py to ReadVaspKpoints.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspXdat.py to ReadVaspXdat.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspAcf.py to ReadVaspAcf.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspDoscar.py to ReadVaspDoscar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspChgcar.py to ReadVaspChgcar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspSymdat.py to ReadVaspSymdat.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspEigenval.py to ReadVaspEigenval.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspPotcar.py to ReadVaspPotcar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspIncar.py to ReadVaspIncar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspProcar.py to ReadVaspProcar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspPoscar.py to ReadVaspPoscar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspOutcar.py to ReadVaspOutcar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspVasprun.py to ReadVaspVasprun.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/vasp/ReadVaspOszicar.py to ReadVaspOszicar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/rmc/ReadRmcpotCfg.py to ReadRmcpotCfg.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/rmc/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf/ReadPwXanes.py to ReadPwXanes.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf/ReadPwIn.py to ReadPwIn.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf/ReadPwTdos.py to ReadPwTdos.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf/ReadPwOut.py to ReadPwOut.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pwscf/ReadPwPdos.py to ReadPwPdos.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pf/ReadPfformat.py to ReadPfformat.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/pf/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/Read.py to Read.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/hilapw/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/hilapw/ReadHiSets.py to ReadHiSets.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/ReadFdmSd.py to ReadFdmSd.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/ReadFdmBav.py to ReadFdmBav.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/ReadFdmInp.py to ReadFdmInp.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/ReadFdmFdmfile.py to ReadFdmFdmfile.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/ReadFdmTxt.py to ReadFdmTxt.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/fdm/ReadFdmConv.py to ReadFdmConv.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob/ReadLobOut.py to ReadLobOut.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob/ReadLobDos.py to ReadLobDos.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob/ReadLobCohp.py to ReadLobCohp.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/lob/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/ReadWienOutputt.py to ReadWienOutputt.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/ReadWienTxspec.py to ReadWienTxspec.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/ReadWienDos.py to ReadWienDos.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/ReadWienScf.py to ReadWienScf.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/ReadWienOutput0.py to ReadWienOutput0.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/wien2k/ReadWienXspec.py to ReadWienXspec.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/athena/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/io/athena/ReadAthenaNor.py to ReadAthenaNor.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_sets.py to print_sets.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_max_md.py to get_max_md.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_cfg_coll_param.py to read_cfg_coll_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_list_param.py to read_list_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_atomic_radius.py to get_atomic_radius.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_vasprun2.py to read_vasprun2.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_mx_dat.py to print_mx_dat.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_fdmnes_inp.py to print_fdmnes_inp.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/print_poscar.py to print_poscar.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_row.py to read_row.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/plot_sum_xas.py to plot_sum_xas.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/write.py to write.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/find_datfile.py to find_datfile.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/sort_atoms_index_j.py to sort_atoms_index_j.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_atom_start.py to get_atom_start.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/Method/__init__.py to __init__.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/Method/Method.py to Method.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/sort_fix.py to sort_fix.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_md.py to read_md.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_dat.py to read_dat.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/get_calinfo.py to get_calinfo.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/move_atoms.py to move_atoms.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_cfg_param.py to read_cfg_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/make_supercell_zb.py to make_supercell_zb.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/chk_pdb_cryst1.py to chk_pdb_cryst1.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/find_suffix.py to find_suffix.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_poscar_param.py to read_poscar_param.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/sphere_integral_of_elf.py to sphere_integral_of_elf.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/sort_position.py to sort_position.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/change_density.py to change_density.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/read_cfg_coll.py to read_cfg_coll.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/make_supercell0.py to make_supercell0.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_direct2car.py to conv_direct2car.cpython-36.pyc
+byte-compiling build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment/conv_direct2carABS.py to conv_direct2carABS.cpython-36.pyc
+installing package data to build/bdist.linux-x86_64/egg
+running install_data
+copying StructureAnalysisEnvironment/atomic_radius.list -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying StructureAnalysisEnvironment/atomic_weight.list -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying StructureAnalysisEnvironment/atomic_color.list -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+copying StructureAnalysisEnvironment/openmx_defaults_vpsdata.list -> build/bdist.linux-x86_64/egg/StructureAnalysisEnvironment
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+installing scripts to build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+running install_scripts
+running build_scripts
+copying and adjusting StructureAnalysisEnvironment/bin/FDplot_XAS.py -> build/scripts-3.6
+creating build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDfdm2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_psq_IGZO_Ga.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_fit.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDplot_XASs.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXdosall.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_COHP.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWplot_XAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vcar2direct.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDplot_XAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/AScif2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_LDOSm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/vLDOSs.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_VEE.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vvasp2xyz.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wgeteph.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_TDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/RcollSplit_nonSplit.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_ppcf.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASpdb2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDxyz2fdm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDbav2xyz.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/RcollSplit.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXvasp2mx.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2pdb.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2supercell.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdExp_comp_XAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_VEI.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wconv_intdos2gnuplotdata.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vforce.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_TDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_psq_IGZO_In.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/LAspg.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wLDOSm_4d.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXfindPAO.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/readMD.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_ADOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_PDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_ADOS_portrait.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdLDOS0_specified.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/AScif2surface111.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_COHP_yoko.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_psq_IGZO_Zn.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXjoinxyz.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rmove1.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vldos.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wconv_gnuplot_number.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDmakeCconvAllsite.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/LAread.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_com.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDpbd2fdm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdLDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vvasp2sets.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_ppcf_IGZO.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wLDOS_core.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vxdat2MD.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rvasp2cfg.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_CrystalAnimeMD.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VrotPOSCAR.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vldos_COHP.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VgetCOHPinfo.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/dd.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/WchkEparm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDplot_LDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2surface111.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vxml2MD.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vxmlread.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/md2vasprun.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDmove.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdLDOSmulti.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vread.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdPDOS_XAS_av.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_COHP_PDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_Crystal.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/makexml_GUI_simple.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWin2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_CrystalAnimePOSCAR.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDvasp2fdm_BUG.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vxml2CONTCAR_ALL.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vforce2md.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_LDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/makexml_GUI.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vband.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdLDOS_color.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_ADOS_portrait.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXreadMD.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/makexml.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_ADOS_portrait.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_ADOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vxml2POSCAR.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VfindBond.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_VDEI.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXfindDAT.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_CrystalAnimeCFG.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASstruct2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_LDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWgetfermi.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_temperature.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWplot_TDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wstruct2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDplot_PDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_ppcf2.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_ADOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PFformat.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXtemp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/RchangeDensity.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VfindNN1_library1.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/_RcollSplit_nonLIB.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWout2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/makepfheader.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_psq.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_COHP_tate.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_LDOS_portrait.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_ppcf3.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDvasp2fdm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2fdm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDconv_e2photoe.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/vLDOSmulti.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rmove.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdMulti_2_XAS+LDOS+EXP.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wXAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rplot_Crystal0.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDplot_XAS_LDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_temperature.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VmodifyAtomPosition.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_Crystal.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/pwPDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wfch_XAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2xyz.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/pwTDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWvasp2in.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VfindNN0.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2struct.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdXAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vextract0.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_XAS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/RgetDensity.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDvasp2fdm_NEW_20151125_BUGversion.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_COHP_LDOSm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vados.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/vLDOSm_3d.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vacf.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wgetepl.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASvasp2cif.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDcif2fdm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXmd2vasprun.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_band.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDgetfermi.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vbader.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdXAS_specified.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wvasp2struct.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vtemp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rcfg2vasp_nonLIB.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/vLDOSm_4d.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXEI.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/mxDOS1.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vtdos.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vvasp2sets_nonLIB.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_LDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWout2vasprun.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/dd_simple.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/fdMulti_3.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_LDOSm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wgeteparm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXEE.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXdat2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vdirect2car.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wLDOSm_3d.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VfindNN1_nonLIB.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/ASchangeVacuum_ALL.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/FDclean.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wLCOS_core.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_PDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VmakeSuperCell2.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vplot_Bader.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VchangeLattice.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Rcfg2vasp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Vpdos.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/PWmakePPinp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_MXEI.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/LAread0.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wldos.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/wconv_dos2gnuplotdata.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXgetvalence.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/CPfindINP.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/CPvasp2inp.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXplot_TDOS+.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VchangeVacumm.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/Wplot_TDOS.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VfindNN1_library0.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/MXdat2xyz.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+copying build/scripts-3.6/VfindNN2FNC.py -> build/bdist.linux-x86_64/egg/EGG-INFO/scripts
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDfdm2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_psq_IGZO_Ga.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_fit.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDplot_XASs.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXdosall.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_COHP.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWplot_XAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vcar2direct.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDplot_XAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/AScif2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_LDOSm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/vLDOSs.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_VEE.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vvasp2xyz.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wgeteph.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_TDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/RcollSplit_nonSplit.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_ppcf.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASpdb2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDxyz2fdm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDbav2xyz.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/RcollSplit.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXvasp2mx.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2pdb.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2supercell.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdExp_comp_XAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_VEI.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wconv_intdos2gnuplotdata.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vforce.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_TDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_psq_IGZO_In.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/LAspg.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wLDOSm_4d.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXfindPAO.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/readMD.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_ADOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_PDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_ADOS_portrait.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdLDOS0_specified.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/AScif2surface111.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_COHP_yoko.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_psq_IGZO_Zn.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXjoinxyz.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rmove1.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vldos.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wconv_gnuplot_number.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDmakeCconvAllsite.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/LAread.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_com.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDpbd2fdm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdLDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vvasp2sets.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_ppcf_IGZO.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wLDOS_core.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vxdat2MD.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rvasp2cfg.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_CrystalAnimeMD.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VrotPOSCAR.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vldos_COHP.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VgetCOHPinfo.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/dd.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/WchkEparm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDplot_LDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2surface111.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vxml2MD.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vxmlread.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/md2vasprun.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDmove.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdLDOSmulti.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vread.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdPDOS_XAS_av.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_COHP_PDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_Crystal.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/makexml_GUI_simple.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWin2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_CrystalAnimePOSCAR.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDvasp2fdm_BUG.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vxml2CONTCAR_ALL.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vforce2md.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_LDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/makexml_GUI.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vband.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdLDOS_color.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_ADOS_portrait.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXreadMD.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/makexml.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_ADOS_portrait.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_ADOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vxml2POSCAR.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VfindBond.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_VDEI.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXfindDAT.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_CrystalAnimeCFG.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASstruct2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_LDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWgetfermi.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_temperature.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWplot_TDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wstruct2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDplot_PDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_ppcf2.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_ADOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PFformat.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXtemp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/RchangeDensity.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VfindNN1_library1.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/_RcollSplit_nonLIB.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWout2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/makepfheader.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_psq.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_COHP_tate.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_LDOS_portrait.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_ppcf3.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDvasp2fdm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2fdm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDconv_e2photoe.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/vLDOSmulti.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rmove.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdMulti_2_XAS+LDOS+EXP.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wXAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rplot_Crystal0.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDplot_XAS_LDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_temperature.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VmodifyAtomPosition.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_Crystal.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/pwPDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wfch_XAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2xyz.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/pwTDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWvasp2in.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VfindNN0.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2struct.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdXAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vextract0.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_XAS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/RgetDensity.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDvasp2fdm_NEW_20151125_BUGversion.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_COHP_LDOSm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vados.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/vLDOSm_3d.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vacf.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wgetepl.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASvasp2cif.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDcif2fdm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXmd2vasprun.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_band.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDgetfermi.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vbader.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdXAS_specified.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wvasp2struct.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vtemp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rcfg2vasp_nonLIB.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/vLDOSm_4d.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXEI.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/mxDOS1.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vtdos.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vvasp2sets_nonLIB.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_LDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWout2vasprun.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/dd_simple.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/fdMulti_3.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_LDOSm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wgeteparm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXEE.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXdat2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vdirect2car.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wLDOSm_3d.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VfindNN1_nonLIB.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/ASchangeVacuum_ALL.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/FDclean.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wLCOS_core.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_PDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VmakeSuperCell2.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vplot_Bader.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VchangeLattice.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Rcfg2vasp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Vpdos.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/PWmakePPinp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_MXEI.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/LAread0.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wldos.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/wconv_dos2gnuplotdata.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXgetvalence.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/CPfindINP.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/CPvasp2inp.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXplot_TDOS+.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VchangeVacumm.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/Wplot_TDOS.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VfindNN1_library0.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/MXdat2xyz.py to 775
+changing mode of build/bdist.linux-x86_64/egg/EGG-INFO/scripts/VfindNN2FNC.py to 775
+copying StructureAnalysisEnvironment.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying StructureAnalysisEnvironment.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying StructureAnalysisEnvironment.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying StructureAnalysisEnvironment.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying StructureAnalysisEnvironment.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+creating 'dist/StructureAnalysisEnvironment-0.0.9-py3.6.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing StructureAnalysisEnvironment-0.0.9-py3.6.egg
+removing '/home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages/StructureAnalysisEnvironment-0.0.9-py3.6.egg' (and everything under it)
+creating /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages/StructureAnalysisEnvironment-0.0.9-py3.6.egg
+Extracting StructureAnalysisEnvironment-0.0.9-py3.6.egg to /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+StructureAnalysisEnvironment 0.0.9 is already the active version in easy-install.pth
+Installing FDfdm2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_psq_IGZO_Ga.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_fit.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDplot_XASs.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXdosall.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_COHP.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWplot_XAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vcar2direct.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDplot_XAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing AScif2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_LDOSm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing vLDOSs.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_VEE.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vvasp2xyz.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wgeteph.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_TDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing RcollSplit_nonSplit.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_ppcf.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASpdb2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDxyz2fdm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDbav2xyz.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing RcollSplit.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXvasp2mx.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2pdb.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2supercell.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdExp_comp_XAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_VEI.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wconv_intdos2gnuplotdata.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vforce.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_TDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_psq_IGZO_In.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing LAspg.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wLDOSm_4d.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXfindPAO.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing readMD.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_ADOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_PDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_ADOS_portrait.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdLDOS0_specified.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing AScif2surface111.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_COHP_yoko.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_psq_IGZO_Zn.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXjoinxyz.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rmove1.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vldos.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wconv_gnuplot_number.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDmakeCconvAllsite.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing LAread.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_com.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDpbd2fdm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdLDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vvasp2sets.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_ppcf_IGZO.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wLDOS_core.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vxdat2MD.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rvasp2cfg.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_CrystalAnimeMD.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VrotPOSCAR.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vldos_COHP.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VgetCOHPinfo.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing dd.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing WchkEparm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDplot_LDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2surface111.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vxml2MD.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vxmlread.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing md2vasprun.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDmove.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdLDOSmulti.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vread.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdPDOS_XAS_av.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_COHP_PDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_Crystal.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing makexml_GUI_simple.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWin2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_CrystalAnimePOSCAR.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDvasp2fdm_BUG.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vxml2CONTCAR_ALL.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vforce2md.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_LDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing makexml_GUI.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vband.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdLDOS_color.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_ADOS_portrait.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXreadMD.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing makexml.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_ADOS_portrait.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_ADOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vxml2POSCAR.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VfindBond.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_VDEI.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXfindDAT.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_CrystalAnimeCFG.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASstruct2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_LDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWgetfermi.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_temperature.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWplot_TDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wstruct2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDplot_PDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_ppcf2.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_ADOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PFformat.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXtemp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing RchangeDensity.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VfindNN1_library1.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing _RcollSplit_nonLIB.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWout2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing makepfheader.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_psq.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_COHP_tate.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_LDOS_portrait.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_ppcf3.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDvasp2fdm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2fdm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDconv_e2photoe.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing vLDOSmulti.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rmove.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdMulti_2_XAS+LDOS+EXP.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wXAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rplot_Crystal0.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDplot_XAS_LDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_temperature.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VmodifyAtomPosition.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_Crystal.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing pwPDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wfch_XAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2xyz.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing pwTDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWvasp2in.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VfindNN0.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2struct.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdXAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vextract0.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_XAS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing RgetDensity.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDvasp2fdm_NEW_20151125_BUGversion.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_COHP_LDOSm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vados.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing vLDOSm_3d.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vacf.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wgetepl.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASvasp2cif.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDcif2fdm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXmd2vasprun.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_band.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDgetfermi.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vbader.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdXAS_specified.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wvasp2struct.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vtemp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rcfg2vasp_nonLIB.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing vLDOSm_4d.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXEI.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing mxDOS1.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vtdos.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vvasp2sets_nonLIB.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_LDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWout2vasprun.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing dd_simple.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing fdMulti_3.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_LDOSm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wgeteparm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXEE.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXdat2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vdirect2car.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wLDOSm_3d.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VfindNN1_nonLIB.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing ASchangeVacuum_ALL.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing FDclean.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wLCOS_core.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_PDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VmakeSuperCell2.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vplot_Bader.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VchangeLattice.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Rcfg2vasp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Vpdos.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing PWmakePPinp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_MXEI.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing LAread0.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wldos.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing wconv_dos2gnuplotdata.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXgetvalence.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing CPfindINP.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing CPvasp2inp.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXplot_TDOS+.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VchangeVacumm.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing Wplot_TDOS.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VfindNN1_library0.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing MXdat2xyz.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing VfindNN2FNC.py script to /home/nakada/.pyenv/versions/3.6.9/bin
+
+Installed /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages/StructureAnalysisEnvironment-0.0.9-py3.6.egg
+Processing dependencies for StructureAnalysisEnvironment==0.0.9
+Searching for matplotlib==3.1.1
+Best match: matplotlib 3.1.1
+Adding matplotlib 3.1.1 to easy-install.pth file
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Searching for numpy==1.17.3
+Best match: numpy 1.17.3
+Adding numpy 1.17.3 to easy-install.pth file
+Installing f2py script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing f2py3 script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing f2py3.6 script to /home/nakada/.pyenv/versions/3.6.9/bin
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Searching for python-dateutil==2.8.1
+Best match: python-dateutil 2.8.1
+Adding python-dateutil 2.8.1 to easy-install.pth file
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Searching for cycler==0.10.0
+Best match: cycler 0.10.0
+Adding cycler 0.10.0 to easy-install.pth file
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Searching for pyparsing==2.4.4
+Best match: pyparsing 2.4.4
+Adding pyparsing 2.4.4 to easy-install.pth file
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Searching for kiwisolver==1.1.0
+Best match: kiwisolver 1.1.0
+Adding kiwisolver 1.1.0 to easy-install.pth file
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Searching for six==1.13.0
+Best match: six 1.13.0
+Adding six 1.13.0 to easy-install.pth file
+
+Using /home/nakada/.local/lib/python3.6/site-packages
+Searching for setuptools==47.1.1
+Best match: setuptools 47.1.1
+Adding setuptools 47.1.1 to easy-install.pth file
+Installing easy_install script to /home/nakada/.pyenv/versions/3.6.9/bin
+Installing easy_install-3.8 script to /home/nakada/.pyenv/versions/3.6.9/bin
+
+Using /home/nakada/.pyenv/versions/3.6.9/lib/python3.6/site-packages
+Finished processing dependencies for StructureAnalysisEnvironment==0.0.9

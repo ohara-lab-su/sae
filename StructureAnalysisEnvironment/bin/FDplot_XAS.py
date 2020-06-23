@@ -237,7 +237,7 @@ if __name__ == '__main__':
     #    ベースとなる情報のinputfile名
     print("inpname")
     print("-------------------------> ",inpname)
-    inp = SAE.ReadFdmInp(inpname)
+    inp = SAE.io.fdm.ReadFdmInp(inpname)
     print("filout name")
     print("-------------------------> ",inp.filout)
 

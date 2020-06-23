@@ -103,7 +103,11 @@ class ReadFdmInp(Method):
         #       filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
         filout_reg = re.compile('.*Fil.*out.*', re.IGNORECASE)
         atom_reg = re.compile('^\S*Atom', re.IGNORECASE)
-        crystal_reg = re.compile('.*crystal .*', re.IGNORECASE)  # include space
+
+        ## 2020.06.23 修正
+        #crystal_reg = re.compile('.*crystal .*', re.IGNORECASE)  # include space
+        crystal_reg = re.compile('.*crystal.*', re.IGNORECASE)  # include space
+
         crystal_p_reg = re.compile('.*crystal_p.*', re.IGNORECASE)  # include space
         mole_reg = re.compile('.*molecule.*', re.IGNORECASE)
         char_reg = re.compile('\D', re.IGNORECASE)
@@ -124,9 +128,14 @@ class ReadFdmInp(Method):
 
         for i in range(self.num):
 
+            # print RAW DATA for debug
+            print("%s" % (self.datlines[i]))
+
+            # Noexe
             if bool(nonexec_reg.match(self.datlines[i])):
                 self.nonexc = True
 
+            # PhotoEnergy
             if bool(energygpho_reg.match(self.datlines[i])):
                 self.energygpho = True
 
@@ -173,10 +182,11 @@ class ReadFdmInp(Method):
                 else:
                     self.absorber = int(self.datlines[i + 1].strip())
 
-            ############################################### START Crystal #####
+            #
+            # START Crystal
+            #
             # Crystal 行を検索 (position の スペース行コメント行も対応)
-            if bool(crystal_reg.match(self.datlines[i])) \
-                    and not bool(comment_reg.match(self.datlines[i])):
+            if bool(crystal_reg.match(self.datlines[i])) and not bool(comment_reg.match(self.datlines[i])):
 
                 # crystal 行を見つけたらそれは molecule モードではない
                 self.MOL = False
@@ -184,8 +194,7 @@ class ReadFdmInp(Method):
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i + 1].split()) >= 6:
                     print(self.datlines[i + 1].split())
-                    sys.exit("STOP(ReadFdmInp): \
-                            a,b,c,alpha,beta,gamma INPUT LINE error")
+                    sys.exit("STOP(ReadFdmInp): a,b,c,alpha,beta,gamma INPUT LINE error")
 
                 i += 1
 
@@ -197,8 +206,7 @@ class ReadFdmInp(Method):
                 beta = float(self.datlines[i].split()[4])
                 gamma = float(self.datlines[i].split()[5])
 
-                self.cellparam = \
-                    [lattice_a, lattice_b, lattice_c, alpha, beta, gamma]
+                self.cellparam = [lattice_a, lattice_b, lattice_c, alpha, beta, gamma]
                 self.t = coorsys(self.cellparam)
 
                 self.atoms_index_j = []
@@ -214,7 +222,12 @@ class ReadFdmInp(Method):
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
 
-                        self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
+                        # for TEST
+                        # print("%s %f %f %f" % (zz, x, y, z))
+
+                        # 原子番号から元素名を取り出す
+                        symbol_ = SAEnv.get_atomic_symbol0(zz)
+                        self.atoms_index_j.append(symbol_)
                         self.position.append([x, y, z])
 
                     if i == self.num:
@@ -244,8 +257,7 @@ class ReadFdmInp(Method):
                 beta = float(self.datlines[i].split()[4])
                 gamma = float(self.datlines[i].split()[5])
 
-                self.cellparam = \
-                    [lattice_a, lattice_b, lattice_c, alpha, beta, gamma]
+                self.cellparam = [lattice_a, lattice_b, lattice_c, alpha, beta, gamma]
                 self.t = coorsys(self.cellparam)
 
                 self.atoms_index_j = []
@@ -262,12 +274,13 @@ class ReadFdmInp(Method):
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
 
-                        self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
+                        symbol_ = SAEnv.get_atomic_symbol0(zz)
+                        self.atoms_index_j.append(symbol_)
                         self.position.append([x, y, z])
 
                     if i == self.num:
                         break
-
+                    print(self.atoms_index_j)
             else:
                 ########
                 # 2019.03.14 2019.03.14 commented out
@@ -282,6 +295,17 @@ class ReadFdmInp(Method):
             if bool(crystal_p_reg.match(self.datlines[i])):
                 self.position = []
                 self.atoms_index_j = []
+
+        print("END of READ INP")
+        print("")
+        print("Fileout      = %s" % self.filout)
+        print("ISPIN        = %s" % self.ispin)
+        print("Allist       = %s" % self.allsite)
+        print("Energypho    = %s" % self.energygpho)
+        print("Convolutaion = %s" % self.convolution)
+        print("Center_abs   = %s" % self.center_abs)
+        print("Noexc        = %s" % self.nonexc)
+        print(self.atoms_index_j)
 
         # convolution などで filout 項目がないときは
         # filout に calculation 名を渡す
