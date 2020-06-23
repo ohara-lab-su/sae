@@ -1,15 +1,8 @@
 # ChangeLog
 
-## ver_0.0.8, 2020.06.05, 08:28 〜 2020.06.23 10:26 release
+## Ver_0.0.9, 2020.06.23 10:33
 
-修正(主に、ネームスペース変更の影響)
-
-- パッケージの構造修正
-- cfg to vasp script修正(atoms_index をきちんと引けるようにした)
-- import エラー修正
-- copyright の修正
-
-XAFS周りに注力して修正
+XAFS周りに注力して修正(ネームスペース修正,Python3に伴う修正)
 
  - StructureAnalysisEnvironment/get_atomic_radius.py:
     - 原子番号、元素名変換データーベースへのパス関係の修正
@@ -26,6 +19,16 @@ XAFS周りに注力して修正(バグ修正)
     実はpackage化せずに直接 install すると MANIFEST.in 記述が無視されて
     *.list ファイルが登録されない問題があった。
     setup.py 中に直接 packages にファイルを apped することで解決
+
+## ver_0.0.8, 2020.06.05
+
+修正(主に、ネームスペース変更の影響)
+
+- パッケージの構造修正
+- cfg to vasp script修正(atoms_index をきちんと引けるようにした)
+- import エラー修正
+- copyright の修正
+
 
 ## ver_0.0.8, 2020.06.04 alpha
 
