@@ -1,0 +1,2 @@
+include *.md *.txt *.list
+recursive-include StructureAnalysisEnvironment *.list
