@@ -121,6 +121,10 @@ import StructureAnalysisEnvironment.io.fdm
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
+import matplotlib
+matplotlib.use('TkAgg')
+# matplotlib.use('Agg')  # default
+
 #from matplotlib.ticker import FuncFormatter
 import matplotlib.pyplot as plt
 #import matplotlib.ticker as ptick
