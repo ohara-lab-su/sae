@@ -121,9 +121,33 @@ import StructureAnalysisEnvironment.io.fdm
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
-import matplotlib
-matplotlib.use('TkAgg')
-# matplotlib.use('Agg')  # default
+#####################
+# UserWarning: Matplotlib is currently using agg,
+# which is a non-GUI backend, so cannot show the figure.
+#
+# にて画面表示が出来なかったときは Agg を止めて TkAgg へ
+# さらに Tinkter を入れる必要がある。
+#
+# (正確には、Agg は 非GUI用で、Matplotlib は、自動で TkAgg 利用される
+#  Tinker が導入されていないので、TkAgg が使えずに失敗したので、
+#  上記エラーメッセージでは、代わりに Agg を利用している)
+#
+# これに対処するには
+#
+#  yum install tk-devel   (for Python2?)
+#  yum install python3-tkinter
+#
+#  上記で入れると system に入るので pyenv 環境にモジュールが入らない
+#  結構困るのだが、実は python 導入時に tinker が導入されているか？が味噌
+#  つまり、 一度 pyenv 環境の python を uninstall をしてもう一度入れるとOK
+#     pyenv uninstall 3.6.10
+#     pyenv install 3.6.10
+#
+# import matplotlib
+# matplotlib.use('TkAgg')
+# 上記設定(Tkinterインスール&Python利用)が出来ているならば
+# TkAgg は自動でチョイスされるので設定は必要ない
+#####################
 
 #from matplotlib.ticker import FuncFormatter
 import matplotlib.pyplot as plt
