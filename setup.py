@@ -36,8 +36,8 @@ print('*****************************************')
 
 setup(
     name='StructureAnalysisEnvironment',
-    packages=find_packages(),
-    #       packages = find_packages(package_src_dir),
+    # packages=find_packages(),
+    packages = find_packages(package_src_dir),
     #       package_dir  = {'':'StructureAnalysisEnvironment'},
     #       include_package_data=True,
     #       package_data = { '': ['LICENSE.txt', 'README.md']},
