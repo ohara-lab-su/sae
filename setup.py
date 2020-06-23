@@ -33,24 +33,24 @@ files = glob.glob(package_src_dir + '/*.list')
 print('*****************************************')
 print(files)
 print('*****************************************')
-#packages = find_packages()
-packages = [
-    package_src_dir,
-    package_src_dir + '.Method',
-    package_src_dir + '.gui',
-    package_src_dir + '.io',
-    package_src_dir + '.io',
-    package_src_dir + '.io.athena',
-    package_src_dir + '.io.fdm',
-    package_src_dir + '.io.hilapw',
-    package_src_dir + '.io.lob',
-    package_src_dir + '.io.mx',
-    package_src_dir + '.io.pf',
-    package_src_dir + '.io.pwscf',
-    package_src_dir + '.io.rmc',
-    package_src_dir + '.io.vasp',
-    package_src_dir + '.io.wien2k'
-]
+packages = find_packages()
+# packages = [
+#     package_src_dir,
+#     package_src_dir + '.Method',
+#     package_src_dir + '.gui',
+#     package_src_dir + '.io',
+#     package_src_dir + '.io',
+#     package_src_dir + '.io.athena',
+#     package_src_dir + '.io.fdm',
+#     package_src_dir + '.io.hilapw',
+#     package_src_dir + '.io.lob',
+#     package_src_dir + '.io.mx',
+#     package_src_dir + '.io.pf',
+#     package_src_dir + '.io.pwscf',
+#     package_src_dir + '.io.rmc',
+#     package_src_dir + '.io.vasp',
+#     package_src_dir + '.io.wien2k'
+# ]
 print(packages)
 print('*****************************************')
 
