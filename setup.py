@@ -33,11 +33,14 @@ files = glob.glob(package_src_dir + '/*.list')
 print('*****************************************')
 print(files)
 print('*****************************************')
+packages = find_packages()
+print(packages)
+print('*****************************************')
 
 setup(
     name='StructureAnalysisEnvironment',
     # packages=find_packages(),
-    packages = find_packages(package_src_dir),
+    packages=packages,
     #       package_dir  = {'':'StructureAnalysisEnvironment'},
     #       include_package_data=True,
     #       package_data = { '': ['LICENSE.txt', 'README.md']},
