@@ -1,5 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.11, 2020.07.17
+
+FDMNES のバージョンによる切り替えの準備
+
+- ReadFdmBav.py
+- ReadFdmBav2016.py
+- ReadFdmBav2020.py
+- ReadFdmSd.py
+- ReadFdmSd2016.py
+- ReadFdmSd2020.py
+
 ## Ver_0.0.10, 2020.06.24 07:51
 
 - setup.py がアホ(環境によってはパッケージのサブフォルダが入らない):
