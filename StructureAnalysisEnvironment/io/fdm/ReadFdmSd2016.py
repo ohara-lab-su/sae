@@ -132,7 +132,7 @@ class ReadFdmSd2016(object):
         :param absorber: absorber=[] :matrix (複数の吸収端の同時読み込みに対応する)
         :param weight:
         """
-
+        print('===== sd2016 =====')
         if bavname is None:
             bavname = sdname
 
@@ -157,17 +157,19 @@ class ReadFdmSd2016(object):
         # 複数の sd ファイルを読んで平均化する
         # sum
         if absorber is None:
-            #### absoer が None --> 読み込んだファイルが一つだけの時
+            #
+            # absoer が None --> 読み込んだファイルが一つだけの時
+            #
             print('')
             print("---- ReadFdmSd ----")
             print("sdname + suffix = %s" % sdname + suffix)
-            #           print("bavname_bav.txt = %s" % bavname+'_bav.txt')
+            print("bavname_bav.txt = %s" % bavname+'_bav.txt')
             print("inpname         = %s" % inpname)
             print("-------------------")
             self.datlines, self.num = SAEnv.read_dataline(sdname + suffix)
             self.header = self.datlines[0]
 
-            # weight で各要素を割る
+            # weight で各要素を割る(datlinesに詰め直す)
             if weight is not None:
 
                 print("--- ReadFdmSd ------")
@@ -176,10 +178,13 @@ class ReadFdmSd2016(object):
 
                 sdname0 = sdname + suffix
                 row, num = SAEnv.read_row(sdname0, column=1)
+                print(" num = %s" % num)
+                print(" row = %s" % row)
 
                 numdata = np.zeros((num, row))
 
-                for j in range(1, num):  # 一行目は除く
+                # 全要素の数値データーを配列に入れる
+                for j in range(1, num):  # 一行目は除く(ヘッダなので)
                     for r in range(1, row):  # Energy は除く
                         numdata[j, r] = float(self.datlines[j].split()[r]) / float(weight)
 
@@ -202,7 +207,9 @@ class ReadFdmSd2016(object):
                 self.datlines[0] = self.header
 
         else:
-            #### absoer not None --> 読み込んだファイルが複数の時
+            #
+            # absoer not None --> 読み込んだファイルが複数の時
+            #
 
             print("--- ReadFdmSd ------")
             print("--- average mode ---")
@@ -262,6 +269,7 @@ class ReadFdmSd2016(object):
             self.num = num
         ############################## self.datlines ##########################
 
+        print('START GET LDOS/DOS')
         # 合計した sd ファイルを丸ごと保存
         self.sd = self.datlines
 
@@ -269,9 +277,12 @@ class ReadFdmSd2016(object):
         #       bav = SAEnv.ReadFdmBav(bavname)
         inp = SAEnv.io.fdm.ReadFdmInp(inpname)
 
+        #################
+        #
         # get lmax
         # _sd*.txt で実際に出力されている lmax の最大値をゲットする
         # ヘッダの一番最後のrawをゲットして加工する
+        #
         nl = len(self.header.split())
         tmp = self.header.split()[nl - 1]
         tmp = re.sub('.*\(', '', tmp)
@@ -280,8 +291,10 @@ class ReadFdmSd2016(object):
         except:
             self.lmax = int(re.sub(',.*\).*', '', tmp))  # spin 版
 
-        #      # _bav.txt ファイルから吸収原子の lmax を抽出する
-        #       self.lmax = int(bav.get_lmax())
+        print('lmax       = %s' % self.lmax)
+        # print('lmax (bav) = %s' % int(bav.get_lmax()))
+        #  _bav.txt ファイルから吸収原子の lmax を抽出する
+        # self.lmax = int(bav.get_lmax())
 
         self.ispin = int(inp.get_ispin())
         self.mmax = int(2 * self.lmax + 1)
@@ -308,10 +321,8 @@ class ReadFdmSd2016(object):
                 sys.exit("STOP: unknown type " + sdname + suffix)
 
         # すべての row 成分の情報を配列に叩きこむ
-        self.ylm = \
-            np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
-        self.intylm = \
-            np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
+        self.ylm = np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
+        self.intylm = np.zeros((self.num - 1, self.lmax + 1, self.mmax, self.ispin))
         self.ldos_all = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
         self.tdos_all = np.zeros((self.num - 1, self.ispin))
         self.intldos_all = np.zeros((self.num - 1, self.lmax + 1, self.ispin))
@@ -333,30 +344,25 @@ class ReadFdmSd2016(object):
                 m0 = 0
                 for m in range(-ll, ll + 1):  # m,spin成分分解 n(0,0),,,
                     for s in range(self.ispin):
-                        self.ylm[i - 1, ll, m0, s] = \
-                            float(self.datlines[i].split()[row])
+                        self.ylm[i - 1, ll, m0, s] = float(self.datlines[i].split()[row])
                         row += 1
-                        self.intylm[i - 1, ll, m0, s] = \
-                            float(self.datlines[i].split()[row])
+                        self.intylm[i - 1, ll, m0, s] = float(self.datlines[i].split()[row])
                         row += 1
                     m0 += 1
                 for s in range(self.ispin):  # l軌道のsum n_l(0,0),,,
-                    self.ldos_all[i - 1, ll, s] = \
-                        float(self.datlines[i].split()[row])
-                    self.tdos_all[i - 1, s] = \
-                        float(self.datlines[i].split()[row]) + \
-                        self.tdos_all[i - 1, s]
+                    self.ldos_all[i - 1, ll, s] = float(self.datlines[i].split()[row])
+                    self.tdos_all[i - 1, s] = float(self.datlines[i].split()[row]) + \
+                                              self.tdos_all[i - 1, s]
                     row += 1
-                    self.intldos_all[i - 1, ll, s] = \
-                        float(self.datlines[i].split()[row])
-                    self.inttdos_all[i - 1, s] = \
-                        float(self.datlines[i].split()[row]) + \
-                        self.inttdos_all[i - 1, s]
+                    self.intldos_all[i - 1, ll, s] = float(self.datlines[i].split()[row])
+                    self.inttdos_all[i - 1, s] = float(self.datlines[i].split()[row]) + \
+                                                 self.inttdos_all[i - 1, s]
                     row += 1
 
         self.emax = max(self.eng)
         self.emin = min(self.eng)
         self.ymax = 0.0
+        # END OF __init__()
 
     ####################################################
     # lm の順番は -1,0,1, -2,-1,0,2,,,,,
@@ -374,10 +380,18 @@ class ReadFdmSd2016(object):
     #  m= 1: d_xz
     #  m= 2: d_x2-y2
     #
+    ####################################################
+
     def get_pdos(self, l=0, m=0, lm=None, spin=0):
+        """
+        pdos = np.zeros((self.nedos, self.lmax, self.mmax, self.nspin))
 
-        #       pdos = np.zeros((self.nedos, self.lmax, self.mmax, self.nspin))
-
+        :param l:
+        :param m:
+        :param lm:
+        :param spin:
+        :return:
+        """
         if lm != None and isinstance(lm, str):
 
             orbit_name = lm
@@ -470,9 +484,8 @@ class ReadFdmSd2016(object):
 
     #       return self.ylm[:,l,m,spin]
 
-    ####################################################
-    # LDOS(NEDOS,L,SPIN)
     def get_ldos(self, l=0, spin=0):
+        """ LDOS(NEDOS,L,SPIN)"""
 
         if isinstance(l, str):
             if l == 's' and self.lmax >= 0:
@@ -499,9 +512,8 @@ class ReadFdmSd2016(object):
         self.ldos = self.ldos_all[:, l, spin]
         return self.ldos
 
-    ####################################################
-    # INTLDOS(NEDOS,L,SPIN)
     def get_intldos(self, l=0, spin=0):
+        """ INTLDOS(NEDOS,L,SPIN) """
 
         if isinstance(l, str):
             if l == 's' and self.lmax >= 0:
@@ -528,17 +540,14 @@ class ReadFdmSd2016(object):
         self.intldos = self.intldos_all[:, l, spin]
         return self.intldos
 
-    ####################################################
-    # TDOS(NEDOS,SPIN)
     def get_tdos(self, spin=0):
+        """ TODS(NEDOS,SPIN)"""
         return self.tdos_all[:, spin]
 
-    ####################################################
-    # INTTDOS(NEDOS,SPIN)
     def get_inttdos(self, spin=0):
+        """ INTDOS(NEDOS,SPIN)"""
         return self.inttdos_all[:, spin]
 
-    ####################################################
     def get_eng(self):
         return self.eng
 
@@ -589,6 +598,8 @@ def options():
 if __name__ == '__main__':
     name, suffix = options()
     sd = SAEnv.ReadFdmSd2016(name, suffix)
+    #tmp = sd.get_pdos(l=0,lm='s', spin=0)
+    #print(tmp)
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
