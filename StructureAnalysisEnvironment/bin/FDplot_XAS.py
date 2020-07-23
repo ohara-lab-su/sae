@@ -96,6 +96,7 @@
 #
 ##########################################################################
 from __future__ import print_function
+
 ################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
@@ -106,20 +107,21 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.0.1"
+
 ##########################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
-#import re
-#import optparse
+# import re
+# import optparse
 import argparse
-#import numpy as np
+# import numpy as np
 
 import StructureAnalysisEnvironment.io
 import StructureAnalysisEnvironment.io.fdm
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+# import SpaceGroupEnvironment as SGE
 
 #####################
 # UserWarning: Matplotlib is currently using agg,
@@ -149,46 +151,47 @@ import StructureAnalysisEnvironment as SAE
 # TkAgg は自動でチョイスされるので設定は必要ない
 #####################
 
-#from matplotlib.ticker import FuncFormatter
+# from matplotlib.ticker import FuncFormatter
 import matplotlib.pyplot as plt
-#import matplotlib.ticker as ptick
+
+
+# import matplotlib.ticker as ptick
 
 
 ##########################################################################
 def options():
-
-#   parser = optparse.OptionParser()
+    #   parser = optparse.OptionParser()
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-i', '--inp', '--inpname', dest='INPUT',)
+    parser.add_argument('-i', '--inp', '--inpname', dest='INPUT', )
     parser.add_argument('-f', '--filout', '--filoutname', dest='filout')
     parser.add_argument('-c', '--conv', '--convolution', dest='convname')
-    parser.add_argument('-t', '--txt', '--textname',dest='txtname')
+    parser.add_argument('-t', '--txt', '--textname', dest='txtname')
     parser.add_argument('-s', '--sd', '--sdname', dest='sdname')
     parser.add_argument('--filbav', '--bavname', dest='bavname')
     # name: conv, txt, sd ファイル名を一括する
-    parser.add_argument('--name',)
+    parser.add_argument('--name', )
     # output: output するファイル名を指定する
-    parser.add_argument('--output',)
-    parser.add_argument('--emax',)
-    parser.add_argument('--emin',)
-    parser.add_argument('--ymax',)
-    parser.add_argument('--dmax',)
+    parser.add_argument('--output', )
+    parser.add_argument('--emax', )
+    parser.add_argument('--emin', )
+    parser.add_argument('--ymax', )
+    parser.add_argument('--dmax', )
     # 複数エッジ(L23)のときのプロットするエッジの指定(L23モードののみ対応)
-    parser.add_argument('--l2', action='store_true', default=False,)
-    parser.add_argument('--l3', action='store_true', default=False,)
-    parser.add_argument('--l23', action='store_true', default=False,)
+    parser.add_argument('--l2', action='store_true', default=False, )
+    parser.add_argument('--l3', action='store_true', default=False, )
+    parser.add_argument('--l23', action='store_true', default=False, )
     # fermi level をゼロにする( default は photon energy に変換する)
-    parser.add_argument('--fermi', action='store_true', default=False,)
+    parser.add_argument('--fermi', action='store_true', default=False, )
     # fermi level の変換を完全になくす
-    parser.add_argument('-n', '--nonsubtract', action='store_true', default=False,)
+    parser.add_argument('-n', '--nonsubtract', action='store_true', default=False, )
     # broad: XAS with broad のみを描く( FDplot_LDOS の brad option と逆 )
-    parser.add_argument('-b', '--broad', action='store_true', default=False,)
+    parser.add_argument('-b', '--broad', action='store_true', default=False, )
     # xas: XAS non broad のみを描く
-    parser.add_argument('--xas', action='store_true', default=False,)
+    parser.add_argument('--xas', action='store_true', default=False, )
     # dos: _sd0.txt を用いて LDOS をプロット (XASとの違いに注意)
-    parser.add_argument('-d', '--dos', action='store_true', default=False,)
-#   parser.add_argument('-o', '--obs', action='store_true', default=False,)
+    parser.add_argument('-d', '--dos', action='store_true', default=False, )
+    #   parser.add_argument('-o', '--obs', action='store_true', default=False,)
     parser.add_argument('-o', '--obs')
     # absorber: 指定した absorber 原子を平均化してプロット
     parser.add_argument('-a', '--absorber', nargs='*')
@@ -200,7 +203,7 @@ def options():
     # 逆のスイッチ:pdf のみ出力を diable にする ( default は pdf )
     parser.add_argument('--pdf', action='store_true', default=False)
     parser.add_argument('--nw', action='store_true', default=False)
-#   options, args = parser.parse_args()
+    #   options, args = parser.parse_args()
     options = parser.parse_args()
 
     ###### default inpname 取得
@@ -214,7 +217,7 @@ def options():
             inpname = 'read_pdb.inp'
 
     if not os.path.exists(inpname) or inpname is None:
-        sys.exit(inpname+' file not fount')
+        sys.exit(inpname + ' file not fount')
 
     if options.name:
         options.convname = options.name
@@ -237,16 +240,16 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
 
-    outputname,\
-        inpname, \
-        convolname, textname, filoutname, bavname, \
-        sdname, allname, \
-        OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
-        FLAG_L2, FLAG_L3, FLAG_L23, \
-        FLAG_fermi, FLAG_subt,\
-        FLAG_B, FLAG_XAS, FLAG_DOS, OPT_OBS, AV, WE, WEDOS,\
-        FLAG_UP, FLAG_DN, FLAG_SPIN, \
-        FLAG_PDF, FLAG_NW = options()
+    outputname, \
+    inpname, \
+    convolname, textname, filoutname, bavname, \
+    sdname, allname, \
+    OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX, \
+    FLAG_L2, FLAG_L3, FLAG_L23, \
+    FLAG_fermi, FLAG_subt, \
+    FLAG_B, FLAG_XAS, FLAG_DOS, OPT_OBS, AV, WE, WEDOS, \
+    FLAG_UP, FLAG_DN, FLAG_SPIN, \
+    FLAG_PDF, FLAG_NW = options()
 
     if FLAG_L2 or FLAG_L3:
         print("2-edge mode (L23-mode)")
@@ -260,16 +263,16 @@ if __name__ == '__main__':
         edge = 'K'
 
     if (FLAG_L2 and FLAG_L3) or FLAG_L23:
-            print("L2,L3-edge mode")
+        print("L2,L3-edge mode")
 
     ##########################################################################
     # inpname
     #    ベースとなる情報のinputfile名
     print("inpname")
-    print("-------------------------> ",inpname)
+    print("-------------------------> ", inpname)
     inp = SAE.io.fdm.ReadFdmInp(inpname)
     print("filout name")
-    print("-------------------------> ",inp.filout)
+    print("-------------------------> ", inp.filout)
 
     if not filoutname:
         calculation = inp.get_calculation()
@@ -282,12 +285,12 @@ if __name__ == '__main__':
 
     if AV:
         print("--- average mode ---")
-        print("Absorber =",AV)
+        print("Absorber =", AV)
 
     if WE:
-        print("XANES Weight =",WE)
+        print("XANES Weight =", WE)
     if WEDOS:
-        print("DOS Weight   =",WEDOS)
+        print("DOS Weight   =", WEDOS)
 
     if AV:
         print("")
@@ -306,21 +309,21 @@ if __name__ == '__main__':
         print("")
         print("--- average mode ---")
         print("text base name (.txt)")
-        print("------======-------------> ",filout+'_'+str(AV[0]))
-        txt = SAE.io.fdm.ReadFdmTxt(filout+'_'+str(AV[0]), suffix='.txt', edge=edge)
+        print("------======-------------> ", filout + '_' + str(AV[0]))
+        txt = SAE.io.fdm.ReadFdmTxt(filout + '_' + str(AV[0]), suffix='.txt', edge=edge)
 
         print("convolution base name (_conv.txt)")
-        print("-----------======--------> ",filout+'_'+str(AV[0]))
-        conv = SAE.io.fdm.ReadFdmConv(filout+'_'+str(AV[0]), suffix='_conv.txt')
+        print("-----------======--------> ", filout + '_' + str(AV[0]))
+        conv = SAE.io.fdm.ReadFdmConv(filout + '_' + str(AV[0]), suffix='_conv.txt')
     else:
         if textname is None: textname = filout
         if convolname is None: convolname = filout
         print("text base name  (.txt)")
-        print("-------------------------> ",textname)
+        print("-------------------------> ", textname)
         txt = SAE.io.fdm.ReadFdmTxt(textname, suffix='.txt', edge=edge)  # Read Edge and Efermi
 
         print("convolution base name (_conv.txt)")
-        print("-------------------------> ",convolname)
+        print("-------------------------> ", convolname)
         conv = SAE.io.fdm.ReadFdmConv(convolname, '_conv.txt')
 
     ##########################################################################
@@ -345,45 +348,45 @@ if __name__ == '__main__':
     if FLAG_DOS:
 
         if bavname:
-           filbav = bavname
+            filbav = bavname
         else:
-           filbav = filout
+            filbav = filout
         print("Bav base name (_bav.txt)")
-        print("-------------------------> ",filbav)
+        print("-------------------------> ", filbav)
 
         if AV:
             sdname = filout
             print("Sdname base (_sd0.txt)")
-            print("-------------------------> ",sdname)
+            print("-------------------------> ", sdname)
             print("")
             if WEDOS:
                 sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
-                                   bavname=filbav,
-                                   inpname=inpname,
-                                   absorber=AV,
-                                   weight=WEDOS)
+                                          bavname=filbav,
+                                          inpname=inpname,
+                                          absorber=AV,
+                                          weight=WEDOS)
             elif WE:
                 sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
-                                   bavname=filbav,
-                                   inpname=inpname,
-                                   absorber=AV,
-                                   weight=WE)
+                                          bavname=filbav,
+                                          inpname=inpname,
+                                          absorber=AV,
+                                          weight=WE)
             else:
                 sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
-                                   bavname=filbav,
-                                   inpname=inpname,
-                                   absorber=AV)
+                                          bavname=filbav,
+                                          inpname=inpname,
+                                          absorber=AV)
         else:
             if sdname:
                 sdname = sdname
             else:
                 sdname = filout
             print("Sdname base name (_sd0.txt)")
-            print("-------------------------> ",sdname)
+            print("-------------------------> ", sdname)
             print("")
             sd = SAE.io.fdm.ReadFdmSd(sdname, suffix='_sd0.txt',
-                               bavname=filbav,
-                               inpname=inpname)
+                                      bavname=filbav,
+                                      inpname=inpname)
 
         print("")
 
@@ -398,32 +401,32 @@ if __name__ == '__main__':
             print("  %14.8f %14.8f" % (conv.eng[i], conv.xas[i]), file=outav)
         outav.close()
 
-        print("WRITE: ",filout+'_0_conv.txt', file=outav)
+        print("WRITE: ", filout + '_0_conv.txt', file=outav)
 
     ##########################################################################
     # *_0.txt ファイルへ結果出力
     if AV:
 
         outtxt = open(filout + '_0.txt', 'w')
-        print("%s" %( txt.header ), file=outtxt)
+        print("%s" % (txt.header), file=outtxt)
         print("    Energy    <xanes>  ", file=outtxt)
         for i in range(len(txt.eng)):
             print("  %14.3f %14.8f" % (txt.eng[i], txt.xas[i]), file=outtxt)
         outtxt.close()
 
-        print("WRITE: ",filout+'_0.txt', file=outtxt)
+        print("WRITE: ", filout + '_0.txt', file=outtxt)
 
     ##########################################################################
     # *_0_sd0.txt へ平均化の結果出力
     if FLAG_DOS and AV:
 
         outsd = open(filout + '_0_sd0.txt', 'w')
-        print("%s" %(sd.header), file=outsd)
-        for i in range(1,sd.num):
+        print("%s" % (sd.header), file=outsd)
+        for i in range(1, sd.num):
             print("%s" % (sd.sd[i]), file=outsd)
         outsd.close()
 
-        print("WRITE: ",filout+'_0_sd0.txt', file=outsd)
+        print("WRITE: ", filout + '_0_sd0.txt', file=outsd)
 
     if AV:
         print("")
@@ -452,20 +455,20 @@ if __name__ == '__main__':
         print("Weight for LDOS  =", WEDOS)
 
     ##########################################################################
-#   plt.rcParams['font.family'] = 'Times New Roman'
+    #   plt.rcParams['font.family'] = 'Times New Roman'
     plt.rcParams['font.size'] = 16  # ラベル等のフォントサイズ
     plt.rcParams['legend.fontsize'] = 14  # レジェンドのフォントサイズ
     plt.rcParams['axes.linewidth'] = 1.5  # 軸の太さを設定。目盛りは変わらない
 
-#   plt.figure(figsize=(7.00, 9.89))  # for portrait
+    #   plt.figure(figsize=(7.00, 9.89))  # for portrait
     plt.figure(figsize=(8.10, 9.89))  # for portrait
 
-#   orgx = 0.170
-#   orgy = 0.080
-#   off = 0.010
-#   xsize = 0.75
-#   ysize = 0.83/2.
-#   plt.axes([orgx,orgy,xsize,ysize])
+    #   orgx = 0.170
+    #   orgy = 0.080
+    #   off = 0.010
+    #   xsize = 0.75
+    #   ysize = 0.83/2.
+    #   plt.axes([orgx,orgy,xsize,ysize])
 
     ##########################################################################
     # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
@@ -517,12 +520,12 @@ if __name__ == '__main__':
         plt.plot(conv.eng, conv.xas, color='red', linewidth=3, label='XAS broad')
 
     plt.ticklabel_format(axis='x', useOffset=False)
-#   plt.ticklabel_format(axis='x',style='plain')
+    #   plt.ticklabel_format(axis='x',style='plain')
 
-#   if FLAG_fermi:
-#       plt.xlabel("Energy above Fermi [eV]")
-#   else:
-#       plt.xlabel("Photon Energy [eV]")
+    #   if FLAG_fermi:
+    #       plt.xlabel("Energy above Fermi [eV]")
+    #   else:
+    #       plt.xlabel("Photon Energy [eV]")
     plt.ylabel("Absorption [arb. unit]")
 
     EF0 = txt.E_edge + txt.E_fermi
@@ -532,8 +535,7 @@ if __name__ == '__main__':
         else:
             plt.axvline(x=EF0, color='black', linewidth=1)
 
-
-#   leg = plt.legend(fontsize=12,loc='lower right')
+    #   leg = plt.legend(fontsize=12,loc='lower right')
     leg = plt.legend(loc='lower right')
     leg.get_frame().set_alpha(0.5)
 
@@ -572,7 +574,7 @@ if __name__ == '__main__':
             else:
                 plt.axvline(x=EF0, color='black', linewidth=1)
 
-    #   leg = plt.legend(fontsize=12,loc='lower right')
+        #   leg = plt.legend(fontsize=12,loc='lower right')
         leg = plt.legend(loc='upper right')
         leg.get_frame().set_alpha(0.5)
 
@@ -605,8 +607,8 @@ if __name__ == '__main__':
         plt.xlim([xas_xmin, xas_xmax])
         plt.ticklabel_format(axis='x', useOffset=False)
 
-    #   leg = plt.legend(fontsize=12,loc='lower right')
-    #   leg = plt.legend(loc='upper right')
+        #   leg = plt.legend(fontsize=12,loc='lower right')
+        #   leg = plt.legend(loc='upper right')
         leg = plt.legend(loc='lower right')
         leg.get_frame().set_alpha(0.5)
 
@@ -615,7 +617,7 @@ if __name__ == '__main__':
     plt.ylim(ymin=0.0)
 
     if outputname:
-        _head = outputname+'_'
+        _head = outputname + '_'
         print("output header = ", outputname)
     else:
         _head = 'XAS'

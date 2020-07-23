@@ -3,7 +3,8 @@
 ###############################################################################
 # K.NAKADA, kengo.nakada@gmail.com
 # FDMNES 2020.06.16-2 を解析できるように修正したバージョン
-#  〜 2016.01.08 までのバージョンとそれ以降では大きく変わるので注意
+# それ以前特に 2016.01.08 などとは大きく異なるので注意
+# データ読み込み整理に Pandas を使って大幅に簡略化
 #
 # FDMNES
 #   *_sd*.txt ファイル( pw.x 入力ファイル 読み込み)
@@ -132,6 +133,7 @@ class ReadFdmSd2020(object):
         if bavname is None:
             bavname = sdname
 
+        # input に書かれている情報を取得する
         if inpname is None:
             if os.path.exists('fdmfile.txt'):
                 fdmfiletxt = SAEnv.io.fdm.ReadFdmFdmfile()
@@ -149,35 +151,69 @@ class ReadFdmSd2020(object):
         else:
             inpname = inpfile
 
+        print('')
         print('******************************')
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
         # bav = SAEnv.ReadFdmBav(bavname)
         inp = SAEnv.io.fdm.ReadFdmInp(inpname)
 
-        # pandas を用いてデーター構造を取り込む
-        _name = sdname + suffix
-        df = pd.read_table(_name, header=0, sep='\s+', skipinitialspace=True)
-        # 一行目をヘッダ情報とする
-        # スペース区切り
-        # 先頭のスペースを無視する
 
-        # for TEST
-        #print(df)
-        self.__header = df.columns.values
-        print(self.__header)
-        print(df.index.values)
-        #print(df.values)
-        #print(df['Energy'])   # 列指定
-        # print(df['s'])   # 列指定
-        # print(df[['s', 'Energy']])   # 列指定
-        # a = df[['s', 'Energy']].values
-        # print(a)
+        # 複数の sd ファイルを読んで平均化する
+        #   --> weight があるときは各要素を割る
+        if absorber is None:
+            #
+            # Absorbet が None のときは、読み込んだファイルが一つだけの時
+            #
+            print('')
+            print("---- ReadFdmSd ----")
+            print("sdname + suffix = %s" % sdname + suffix)
+            print("bavname_bav.txt = %s" % bavname+'_bav.txt')
+            print("inpname         = %s" % inpname)
+            print("-------------------")
+
+            # sd ファイルを読み込んで dataFrame にする
+            print("--- ReadFdmSd ------")
+            df = self.__read_sd_file(sdname + suffix)
+
+            if weight is not None:
+                print(" weight = %s" % str(weight))
+                df = df/float(weight)
+
+        # Absorber 指定があるときは指定の sd ファイルを読み込む
+        # absoer not None --> 読み込んだファイルが複数の時
+        else:
+            print("--- ReadFdmSd ------")
+            print("--- average mode ---")
+
+            if weight is None:
+                n_site = float(len(absorber))
+            else:
+                print("    weight = %s" % str(weight))
+                n_site = float(weight)
+
+            # read sd0
+            sdname = bavname + "_" + str(absorber[0]) + suffix
+            print("sum : %s" % str(sdname))
+            df = self.__read_sd_file(sdname)
+            dfsum = df.copy
+
+            # read from sd1 to absorber
+            for i in range(1, len(absorber)):
+
+                sdname = bavname + "_" + str(absorber[i]) + suffix
+                print("sum : %s" % str(sdname))
+                df = self.__read_sd_file(sdname)
+                dfsum += df
+
+            # 平均値を出す
+            df = dfsum / n_site
 
         # 2016版と比べるとこちらの num はヘッダ無しの value値になるので
         # num の数は2016版と比べると常に -1 がかかったものになる
         self.__num = len(df.values)
 
+        print('START GET LDOS/DOS')
         ################################################
         #
         # lmax
@@ -223,24 +259,6 @@ class ReadFdmSd2020(object):
         print("total_row %s" % str(total_row))
         print("-----------")
         print("")
-
-        #  Energy
-        #  s
-        #  Int(s)
-        #  px
-        #  py
-        #  pz
-        #  p
-        #  Int(p)
-        #  dx2-y2
-        #  dz2
-        #  dyz
-        #  dxz
-        #  dxy
-        #  d
-        #  Int(d)
-        #  total
-        #  Int(total)
 
         print("index num = %d" % self.__num)
 
@@ -311,6 +329,30 @@ class ReadFdmSd2020(object):
 
         ############################## self.datlines ##########################
         # END OF __init__()_
+
+    def __read_sd_file(self, name):
+        """
+        :param name:  sdname + suffix
+        :return: dataFrame
+        """
+
+        # pandas を用いてデーター構造を取り込む
+        # 一行目をヘッダ情報とする, スペース区切り,先頭のスペースを無視する
+        df = pd.read_table(name, header=0, sep='\s+', skipinitialspace=True)
+
+        # for TEST
+        # print(df)
+        self.__header = df.columns.values
+        print(self.__header)
+        print(df.index.values)
+        # print(df.values)
+        # print(df['Energy'])   # 列指定
+        # print(df['s'])   # 列指定
+        # print(df[['s', 'Energy']])   # 列指定
+        # a = df[['s', 'Energy']].values
+        # print(a)
+
+        return df
 
     def get_pdos(self, l=0, m=0, lm=None, spin=0):
         """
@@ -482,6 +524,10 @@ class ReadFdmSd2020(object):
         self.intldos = self.intldos_all[:, l, spin]
         return self.intldos
 
+    #
+    # get/set attribute (2)
+    #
+
     def get_tdos(self, spin=0):
         """ TODS(NEDOS,SPIN)"""
         return self.tdos_all[:, spin]
@@ -492,6 +538,10 @@ class ReadFdmSd2020(object):
 
     def get_eng(self):
         return self.eng
+
+    #
+    # property
+    #
 
     def get_emin(self):
         return self.__emin
@@ -548,7 +598,13 @@ class ReadFdmSd2020(object):
     def mmax(self):
         return self.__mmax
 
-    # ispin (nmaxのこと)
+    def get_ispin(self):
+        return self.__ispin
+
+    @property
+    def ispin(self):
+        return self.__ispin
+
 
 def options():
     name = 'Cu'
@@ -571,6 +627,8 @@ def options():
 if __name__ == '__main__':
     name, suffix = options()
     sd = SAEnv.ReadFdmSd2020(name, suffix)
+    #tmp = sd.get_pdos(l=0,lm='s', spin=0)
+    #print(tmp)
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()

@@ -66,16 +66,19 @@ class ReadFdmBav(object):
         :param cname:  入力の bav ファイル(FDMNESの全ログ情報)
         :param suffix:
         """
-        self.datlines, self.num = SAEnv.read_dataline(cname + suffix)
+        self.__datlines, self.__num = SAEnv.read_dataline(cname + suffix)
 
         fdmnes_ver_reg = re.compile('.*FDMNES.*program,.*')
 
-        for i in range(self.num):
+        # for default
+        fdm_version = 2020
+
+        for i in range(self.__num):
             # Version チェック
-            if bool(fdmnes_ver_reg.match(self.datlines[i])):
+            if bool(fdmnes_ver_reg.match(self.__datlines[i])):
                 print('')
                 print("get fdmnes version")
-                self.__fdmnes_ver = re.sub('.*,', '', self.datlines[i]).strip()
+                self.__fdmnes_ver = re.sub('.*,', '', self.__datlines[i]).strip()
                 fdm_version = self.__fdmnes_ver.strip('')
                 print("version = %s" % fdm_version)
                 break
@@ -97,12 +100,12 @@ class ReadFdmBav(object):
             # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
             print('load NEW format: sd2020')
             print('')
-            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.datlines, num=self.num)
+            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
         else:
             #  〜2016.01.08
             print('load OLD format: ~sd2016.01.08')
             print('')
-            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.datlines, num=self.num)
+            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
 
     def set_n_scf_loop(self, _val):
         self.__bav.n_scf_loop = _val
