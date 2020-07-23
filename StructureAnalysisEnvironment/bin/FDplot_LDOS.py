@@ -23,27 +23,29 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ################################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
-#import re
+# import re
 import optparse
-#import numpy as np
+# import numpy as np
 
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+# import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -51,10 +53,9 @@ import matplotlib.cm as cm
 
 ################################################################################
 def options():
-
     parser = optparse.OptionParser()
 
-    parser.add_option('-i','--inpname', dest='INPUT',)
+    parser.add_option('-i', '--inpname', dest='INPUT', )
     parser.add_option('-f', '--filout', '--filoutname', dest='filoutname')
     parser.add_option('-c', '--conv', '--convname', dest='convname')
     parser.add_option('-t', '--txt', '--txtname', dest='txtname')
@@ -64,7 +65,7 @@ def options():
     parser.add_option('--name')
     # output: output するファイル名を指定する
     parser.add_option('--output', '--head', dest='output')
-    parser.add_option('-a','--atom',) # DOS のサイト指定 ( _sd*.txt )
+    parser.add_option('-a', '--atom', )  # DOS のサイト指定 ( _sd*.txt )
     parser.add_option('--emax')
     parser.add_option('--emin')
     parser.add_option('--ymax')  # XAS の ymax
@@ -75,7 +76,7 @@ def options():
     parser.add_option('--dmax_f')  # DOS-f max
     parser.add_option('--label')
     parser.add_option('--outsuffix')
-    parser.add_option('--weight')     # for XAS (xasとtxt weightの同時設定)
+    parser.add_option('--weight')  # for XAS (xasとtxt weightの同時設定)
     parser.add_option('--xasweight')  # for XAS with convolution
     parser.add_option('--txtweight')  # for XAS without convolution
     parser.add_option('--dosweight')  # for LDOS
@@ -100,7 +101,7 @@ def options():
     # 逆のスイッチ: pdf のみ出力を disable にする (デフォルトは pdf のみ出力)
     parser.add_option('--pdf', action='store_true', default=False)
     parser.add_option('--nw', action='store_true', default=False)
-    options,args = parser.parse_args()
+    options, args = parser.parse_args()
 
     ########## default inpname 取得
     if options.INPUT:
@@ -113,7 +114,7 @@ def options():
             inpname = 'read_pdb.inp'
 
     if not os.path.exists(inpname) or inpname is None:
-        sys.exit(inpname+' file not fount')
+        sys.exit(inpname + ' file not fount')
 
     if len(args) > 0: inpname = args[0]
 
@@ -127,7 +128,7 @@ def options():
             options.convname, options.txtname,
             options.filoutname, options.bavname, options.sdname,
             options.name,
-            options.atom,  options.label,
+            options.atom, options.label,
             options.emax, options.emin, options.ymax, options.dmax,
             options.dmax_s, options.dmax_p, options.dmax_d, options.dmax_f,
             options.broad, options.fermi, options.xas,
@@ -137,28 +138,29 @@ def options():
             options.dosweight, options.xasweight, options.txtweight,
             options.total, options.intdos, options.pdf, options.nw]
 
+
 ################################################################################
 if __name__ == '__main__':
 
-    outputname, OUTSUFFIX,\
-            inpname,\
-            convname, txtname, filout, bavname, sdname, allname,\
-            atom, LABEL,\
-            OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
-            OPT_DMAX_S, OPT_DMAX_P, OPT_DMAX_D, OPT_DMAX_F,\
-            FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
-            FLAG_UP, FLAG_DN, FLAG_SPIN,\
-            FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, FLAG_SPDF,\
-            WE,\
-            WEDOS, WEXAS, WETXT,\
-            FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
+    outputname, OUTSUFFIX, \
+    inpname, \
+    convname, txtname, filout, bavname, sdname, allname, \
+    atom, LABEL, \
+    OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX, \
+    OPT_DMAX_S, OPT_DMAX_P, OPT_DMAX_D, OPT_DMAX_F, \
+    FLAG_BROAD, FLAG_FERMI, FLAG_XAS, \
+    FLAG_UP, FLAG_DN, FLAG_SPIN, \
+    FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, FLAG_SPDF, \
+    WE, \
+    WEDOS, WEXAS, WETXT, \
+    FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
 
     ###########################################################################
 
-    plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 15  # ラベル等のフォントサイズ
+    plt.rcParams['font.family'] = 'Times New Roman'
+    plt.rcParams['font.size'] = 15  # ラベル等のフォントサイズ
     plt.rcParams['legend.fontsize'] = 10  # レジェンドのフォントサイズ
-    plt.rcParams['axes.linewidth']  = 1.5 # 軸の太さを設定。目盛りは変わらない
+    plt.rcParams['axes.linewidth'] = 1.5  # 軸の太さを設定。目盛りは変わらない
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
 
@@ -166,7 +168,7 @@ if __name__ == '__main__':
     orgy = 0.080
     off = 0.015
     xsize = 0.72
-#   ysize0 = 0.83
+    #   ysize0 = 0.83
     ysize0 = 0.75
 
     ###########################################################################
@@ -214,7 +216,7 @@ if __name__ == '__main__':
     if not atom and inp.nonexc:
         atom = 1
 
-    suffix_sd = '_sd'+str(atom)+'.txt'
+    suffix_sd = '_sd' + str(atom) + '.txt'
     suffix_conv = '_conv.txt'
 
     if allname:
@@ -236,14 +238,14 @@ if __name__ == '__main__':
     print("bavname    (log file)              =", bavname)
     print("")
 
-#   bav = SAE.ReadFdmBav(name0)
-    txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
+    #   bav = SAE.ReadFdmBav(name0)
+    txt = SAEnv.ReadFdmTxt(txtname, '.txt', weight=WETXT)
     conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
-#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
+    #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
-    if ispin >=2:
+    if ispin >= 2:
         print("")
         print("Current calculation is Magnetic: SPIN MODE")
         print("")
@@ -262,13 +264,13 @@ if __name__ == '__main__':
     if lmax == 0:
         orbit_list = ['s']
     elif lmax == 1:
-        orbit_list = ['s','p']
+        orbit_list = ['s', 'p']
     elif lmax == 2:
-        orbit_list = ['s','p','d']
+        orbit_list = ['s', 'p', 'd']
     elif lmax == 3:
-        orbit_list = ['s','p','d','f']
+        orbit_list = ['s', 'p', 'd', 'f']
     else:
-        orbit_list = ['s','p','d']
+        orbit_list = ['s', 'p', 'd']
 
     # optional
     if FLAG_S:
@@ -276,11 +278,11 @@ if __name__ == '__main__':
     if FLAG_P:
         orbit_list = ['p']
     if FLAG_SP:
-        orbit_list = ['s','p']
+        orbit_list = ['s', 'p']
     if FLAG_SPD:
-        orbit_list = ['s','p','d']
+        orbit_list = ['s', 'p', 'd']
     if FLAG_SPDF:
-        orbit_list = ['s','p','d','f']
+        orbit_list = ['s', 'p', 'd', 'f']
 
     norbit = len(orbit_list)
 
@@ -292,17 +294,17 @@ if __name__ == '__main__':
     if FLAG_UP:
         nspin = 1
         spin_list = [0]
-        spin_suffix = ['_up','']
+        spin_suffix = ['_up', '']
         spin_out = '_up'
     elif FLAG_DN:
         nspin = 1
         spin_list = [1]
-        spin_suffix = ['','_dn']
+        spin_suffix = ['', '_dn']
         spin_out = '_dn'
-    elif FLAG_SPIN or ispin >=2:
+    elif FLAG_SPIN or ispin >= 2:
         FLAG_SPIN = True
         nspin = 2
-        spin_list = [1,0]
+        spin_list = [1, 0]
         spin_suffix = ['_up', '_dn']
         spin_out = '_spin'
         norbit = norbit * 2
@@ -313,9 +315,9 @@ if __name__ == '__main__':
 
     # XANES プロットを追加するときはさらに調整
     if FLAG_XAS:
-        ysize = ysize0/(norbit+1)
+        ysize = ysize0 / (norbit + 1)
     else:
-        ysize = ysize0/(norbit)
+        ysize = ysize0 / (norbit)
 
     ###########################################################################
 
@@ -325,7 +327,7 @@ if __name__ == '__main__':
         print("Current mode is Fermi")
         print("---> convert to PhotoEnergy")
         print("     + E_edge")
-        eng_off =  txt.E_edge
+        eng_off = txt.E_edge
 
     # E_fermi を引く(A) : A=B
     if not inp.get_energygpho() and FLAG_FERMI:
@@ -380,11 +382,10 @@ if __name__ == '__main__':
 
             eng_p = txt.eng + eng_off
             for spin in spin_list:
-
                 xas_r = txt.get_xas(spin=spin)
                 num += 1
-                color = cm.prism((num)*10)
-                label = 'XAS'+spin_suffix[spin]
+                color = cm.prism((num) * 10)
+                label = 'XAS' + spin_suffix[spin]
 
                 plt.plot(eng_p, xas_r, linewidth=1, color=color, label=label)
                 plt.ylim(ymax=ymax_XAS)
@@ -432,9 +433,9 @@ if __name__ == '__main__':
                 plt.xticks([])
 
             # makes color
-            color = cm.prism((num+1)*10)
-            label = 'total'+spin_suffix[spin]
-            labelt = 'INT'+spin_suffix[spin]
+            color = cm.prism((num + 1) * 10)
+            label = 'total' + spin_suffix[spin]
+            labelt = 'INT' + spin_suffix[spin]
 
             # !!!!! plot TDOS !!!!!!
             plt.plot(eng, tdos, linewidth=2, color=color, label=label)
@@ -443,7 +444,7 @@ if __name__ == '__main__':
             # down spin 反転
             if FLAG_SPIN and spin == 1:
                 xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
-                plt.ylim([ymax_dn,0])
+                plt.ylim([ymax_dn, 0])
 
             # !!!!! plot INT TDOS !!!!!!
             if FLAG_INTDOS:
@@ -454,7 +455,7 @@ if __name__ == '__main__':
             # INTDOS: down spin 反転
             if FLAG_INTDOS and FLAG_SPIN and spin == 1:
                 xmin_idn, xmax_idn, ymin_idn, ymax_idn = plt.axis()
-                plt.ylim([ymax_idn,0])
+                plt.ylim([ymax_idn, 0])
 
             if not OPT_EMAX: plt.xlim(xmax=emax)
             if not OPT_EMIN: plt.xlim(xmin=emin)
@@ -493,12 +494,12 @@ if __name__ == '__main__':
 
             # makes label & color
             if LABEL:
-                label = LABEL+'-'+orbit
+                label = LABEL + '-' + orbit
             else:
-                label = str(atom)+'-'+orbit
-            color = cm.prism((num+1)*10)
-            label = label+spin_suffix[spin]
-            labelt = 'INT'+label
+                label = str(atom) + '-' + orbit
+            color = cm.prism((num + 1) * 10)
+            label = label + spin_suffix[spin]
+            labelt = 'INT' + label
 
             # !!!!! plot LDOS !!!!!!
             plt.plot(eng, ldos, linewidth=2, color=color, label=label)
@@ -507,7 +508,7 @@ if __name__ == '__main__':
             # DOS: down spin 反転
             if FLAG_SPIN and spin == 1:
                 xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
-                plt.ylim([ymax_dn,0])
+                plt.ylim([ymax_dn, 0])
 
             # !!!!! plot INT LDOS !!!!!!
             if FLAG_INTDOS:
@@ -518,7 +519,7 @@ if __name__ == '__main__':
             # INTDOS: down spin 反転
             if FLAG_INTDOS and FLAG_SPIN and spin == 1:
                 xmin_idn, xmax_idn, ymin_idn, ymax_idn = plt.axis()
-                plt.ylim([ymax_idn,0])
+                plt.ylim([ymax_idn, 0])
 
             if not OPT_EMAX: plt.xlim(xmax=emax)
             if not OPT_EMIN: plt.xlim(xmin=emin)
@@ -541,12 +542,12 @@ if __name__ == '__main__':
     #########################################
 
     if FLAG_FERMI:
-        fermi='_fermi'
+        fermi = '_fermi'
     else:
-        fermi=''
+        fermi = ''
 
     if outputname:
-        _head = outputname+"_"
+        _head = outputname + "_"
         print("output header =", outputname)
     else:
         _head = 'LDOS'
@@ -556,10 +557,10 @@ if __name__ == '__main__':
     else:
         _outsuffix = ''
 
-    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".pdf")
+    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi + ".pdf")
     if FLAG_PDF:
-        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
-        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi + ".eps")
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi + ".png")
 
     if not FLAG_NW:
         plt.show()
@@ -567,5 +568,3 @@ if __name__ == '__main__':
     plt.close('all')
 
 #   print "NAME",name
-
-

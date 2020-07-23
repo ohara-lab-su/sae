@@ -33,27 +33,29 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ################################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
-#import re
+# import re
 import optparse
-#import numpy as np
+# import numpy as np
 
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+# import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -61,7 +63,6 @@ import matplotlib.cm as cm
 
 ################################################################################
 def options():
-
     parser = optparse.OptionParser()
 
     parser.add_option('-i', '--inp', '--inpname', dest='INPUT')
@@ -79,7 +80,7 @@ def options():
     parser.add_option('--dmax')  # DOS の ymax共通
     parser.add_option('--label')
     parser.add_option('--outsuffix')
-    parser.add_option('--weight')     # 同時設定
+    parser.add_option('--weight')  # 同時設定
     parser.add_option('--xasweight')  # for XAS with convolution
     parser.add_option('--txtweight')  # for XAS without convolution
     parser.add_option('--dosweight')  # for LDOS
@@ -99,7 +100,7 @@ def options():
     parser.add_option('--pdf', action='store_true', default=False)
     parser.add_option('--nw', action='store_true', default=False)
 
-    options,args = parser.parse_args()
+    options, args = parser.parse_args()
 
     ########## default inpname 取得
     if options.INPUT:
@@ -112,9 +113,9 @@ def options():
             inpname = 'read_pdb.inp'
 
     if not os.path.exists(inpname) or inpname is None:
-        sys.exit(inpname+' file not fount')
+        sys.exit(inpname + ' file not fount')
 
-    if len(args) > 0: inpname=args[0]
+    if len(args) > 0: inpname = args[0]
 
     if options.name:
         options.convname = options.name
@@ -135,29 +136,30 @@ def options():
             options.dosweight, options.xasweight, options.txtweight,
             options.total, options.intdos, options.pdf, options.nw]
 
+
 ################################################################################
 if __name__ == '__main__':
 
-    outputname, OUTSUFFIX,\
-            inpname, \
-            convname, txtname, \
-            filout, bavname, sdname, \
-            allname,\
-            atom, LABEL,\
-            OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX,\
-            FLAG_BROAD, FLAG_FERMI, FLAG_XAS,\
-            FLAG_UP, FLAG_DN, FLAG_SPIN,\
-            FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, \
-            WE,\
-            WEDOS, WEXAS, WETXT, \
-            FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
+    outputname, OUTSUFFIX, \
+    inpname, \
+    convname, txtname, \
+    filout, bavname, sdname, \
+    allname, \
+    atom, LABEL, \
+    OPT_EMAX, OPT_EMIN, OPT_YMAX, OPT_DMAX, \
+    FLAG_BROAD, FLAG_FERMI, FLAG_XAS, \
+    FLAG_UP, FLAG_DN, FLAG_SPIN, \
+    FLAG_S, FLAG_P, FLAG_SP, FLAG_SPD, \
+    WE, \
+    WEDOS, WEXAS, WETXT, \
+    FLAG_TOTAL, FLAG_INTDOS, FLAG_PDF, FLAG_NW = options()
 
     ###########################################################################
 
-    plt.rcParams['font.family']     = 'Times New Roman'
-    plt.rcParams['font.size']       = 15  # ラベル等のフォントサイズ
+    plt.rcParams['font.family'] = 'Times New Roman'
+    plt.rcParams['font.size'] = 15  # ラベル等のフォントサイズ
     plt.rcParams['legend.fontsize'] = 10  # レジェンドのフォントサイズ
-    plt.rcParams['axes.linewidth']  = 1.4 # 軸の太さを設定。目盛りは変わらない
+    plt.rcParams['axes.linewidth'] = 1.4  # 軸の太さを設定。目盛りは変わらない
 
     plt.figure(figsize=(7.00, 9.89))  # for portrait
 
@@ -170,15 +172,15 @@ if __name__ == '__main__':
     ###########################################################################
 
     # for default
-    list1_1=['s']
-    list1_2=['p_y','p_z','p_x']
-    list1_3=['d_xy','d_yz','d_3z2-r2','d_xz','d_x2-y2']
+    list1_1 = ['s']
+    list1_2 = ['p_y', 'p_z', 'p_x']
+    list1_3 = ['d_xy', 'd_yz', 'd_3z2-r2', 'd_xz', 'd_x2-y2']
     list1 = [list1_1, list1_2, list1_3]
 
     # for hexagonal (s-orbital and p-orbital MODE)
-    list4_1=['s']
-    list4_2=['p_z']
-    list4_3=['p_y','p_x']
+    list4_1 = ['s']
+    list4_2 = ['p_z']
+    list4_3 = ['p_y', 'p_x']
     list4 = [list4_1, list4_2, list4_3]
 
     ###########################################################################
@@ -223,7 +225,7 @@ if __name__ == '__main__':
     if not atom and inp.nonexc:
         atom = 1
 
-    suffix_sd = '_sd'+str(atom)+'.txt'
+    suffix_sd = '_sd' + str(atom) + '.txt'
     suffix_conv = '_conv.txt'
 
     if allname:
@@ -245,14 +247,14 @@ if __name__ == '__main__':
     print("bavname    (log file)              =", bavname)
     print("")
 
-#   bav = SAE.ReadFdmBav(bavname)
-    txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
+    #   bav = SAE.ReadFdmBav(bavname)
+    txt = SAEnv.ReadFdmTxt(txtname, '.txt', weight=WETXT)
     conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
-#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
+    #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
     sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
-    if ispin >=2:
+    if ispin >= 2:
         print("")
         print("Current calculation is Magnetic: SPIN MODE")
         print("")
@@ -285,24 +287,24 @@ if __name__ == '__main__':
     if FLAG_UP:
         nspin = 1
         spin_list = [0]
-        spin_suffix = ['_up','']
+        spin_suffix = ['_up', '']
         spin_out = '_up'
     elif FLAG_DN:
         nspin = 1
-        spin_suffix = ['','_dn']
+        spin_suffix = ['', '_dn']
         spin_list = [1]
         spin_out = '_dn'
-    elif FLAG_SPIN or ispin >=2:
+    elif FLAG_SPIN or ispin >= 2:
         FLAG_SPIN = True
         nspin = 2
-        spin_list = [1,0]
-        spin_suffix = ['_up','_dn']
+        spin_list = [1, 0]
+        spin_suffix = ['_up', '_dn']
         spin_out = '_spin'
 
     if FLAG_XAS:
-        ysize = ysize0/(nblock*nspin+1)
+        ysize = ysize0 / (nblock * nspin + 1)
     else:
-        ysize = ysize0/(nblock*nspin)
+        ysize = ysize0 / (nblock * nspin)
 
     ###########################################################################
 
@@ -312,7 +314,7 @@ if __name__ == '__main__':
         print("current mode is Fermi")
         print("---> convert to PhotoEnergy")
         print("     + E_edge")
-        eng_off =  txt.E_edge
+        eng_off = txt.E_edge
 
     # E_fermi を引く(A) : A=B
     if not inp.get_energygpho() and FLAG_FERMI:
@@ -337,11 +339,11 @@ if __name__ == '__main__':
 
     if OPT_EMAX is None:
         emax = sd.emax + EF0
-        print("EMAX = ",emax)
+        print("EMAX = ", emax)
 
     if OPT_EMIN is None:
         emin = sd.emin + EF0
-        print("EMIN = ",emin)
+        print("EMIN = ", emin)
 
     ######################################### plot XAS
     num = 0
@@ -374,11 +376,10 @@ if __name__ == '__main__':
 
             eng_p = txt.eng + eng_off
             for spin in spin_list:
-
                 xas_r = txt.get_xas(spin=spin)
                 num += 1
-                color = cm.prism((num)*10)
-                label = 'XAS'+spin_suffix[spin]
+                color = cm.prism((num) * 10)
+                label = 'XAS' + spin_suffix[spin]
 
                 plt.plot(eng_p, xas_r, linewidth=1, color=color, label=label)
                 plt.ylim(ymax=ymax_XAS)
@@ -402,11 +403,11 @@ if __name__ == '__main__':
 
         orgy = orgy + ysize + off
 
-#   print "XTICKS", XTICKS_FLAG
+    #   print "XTICKS", XTICKS_FLAG
     ######################################### plot PDOS
     #
     eng = sd.eng + eng_off
-    for blk in range(nblock-1,-1,-1):
+    for blk in range(nblock - 1, -1, -1):
 
         lm_list = block_list[blk]
 
@@ -417,20 +418,19 @@ if __name__ == '__main__':
             dmax0 = 0.0
             for orbit in lm_list:
 
-                dos = sd.get_pdos(lm=orbit,spin=spin)
+                dos = sd.get_pdos(lm=orbit, spin=spin)
 
                 dmax = sd.ymax
                 if dmax0 < dmax:
                     dmax0 = dmax
 
-
                 # makes label & color
                 num += 1
                 if not LABEL:
-                    label = str(atom)+'-'+orbit+spin_suffix[spin]
+                    label = str(atom) + '-' + orbit + spin_suffix[spin]
                 else:
-                    label = str(LABEL)+'-'+orbit+spin_suffix[spin]
-                color = cm.prism((num+1)*10)
+                    label = str(LABEL) + '-' + orbit + spin_suffix[spin]
+                color = cm.prism((num + 1) * 10)
 
                 # !!!!! plot PDOS !!!!!
                 plt.plot(eng, dos, linewidth=2, color=color, label=label)
@@ -444,14 +444,14 @@ if __name__ == '__main__':
                 # DOS: down spin 反転
                 if FLAG_SPIN and spin == 1:
                     xmin_dn, xmax_dn, ymin_dn, ymax_dn = plt.axis()
-                    plt.ylim([ymax_dn,0])
+                    plt.ylim([ymax_dn, 0])
 
                 if not OPT_EMAX: plt.xlim(xmax=emax)
                 if not OPT_EMIN: plt.xlim(xmin=emin)
                 if OPT_EMAX: plt.xlim(xmax=float(OPT_EMAX))
                 if OPT_EMIN: plt.xlim(xmin=float(OPT_EMIN))
                 xmin0, xmax0, ymin0, ymax0 = plt.axis()
-               #print orbit,": ymax =",dmax0,ymax0
+                # print orbit,": ymax =",dmax0,ymax0
 
                 if FLAG_XAS:
                     plt.xticks([])
@@ -465,16 +465,15 @@ if __name__ == '__main__':
                 # makes label
                 if not XTICKS_FLAG:
                     plt.xlabel(label_fermi)
-                    XTICKS_FLAG  = True
+                    XTICKS_FLAG = True
 
                 leg = plt.legend(loc='upper right')
                 leg.get_frame().set_alpha(0.5)
 
-
             orgy = orgy + ysize
 
         if blk == 1: plt.ylabel("DOS [state/eV]")
-#       if blk == 2 and FLAG_XAS: plt.xticks([])
+        #       if blk == 2 and FLAG_XAS: plt.xticks([])
 
         orgy = orgy + off
 
@@ -486,7 +485,7 @@ if __name__ == '__main__':
         fermi = ''
 
     if outputname:
-        _head = outputname+"_"
+        _head = outputname + "_"
         print("output header =", outputname)
     else:
         _head = "PDOS"
@@ -496,10 +495,10 @@ if __name__ == '__main__':
     else:
         _outsuffix = ''
 
-    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".pdf")
+    plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi + ".pdf")
     if FLAG_PDF:
-        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".eps")
-        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi +".png")
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi + ".eps")
+        plt.savefig(_head + str(atom) + _outsuffix + spin_out + fermi + ".png")
 
     if not FLAG_NW:
         plt.show()
@@ -507,5 +506,3 @@ if __name__ == '__main__':
     plt.close('all')
 
 #   print "NAME",name
-
-

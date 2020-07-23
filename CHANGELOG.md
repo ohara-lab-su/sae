@@ -1,5 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.11, 2020.07.17-23 14:54
+
+FDMNES のバージョンによる切り替えの準備
+
+- ReadFdmBav.py
+- ReadFdmBav2016.py
+- ReadFdmBav2020.py
+- ReadFdmSd.py
+- ReadFdmSd2016.py
+- ReadFdmSd2020.py
+
 ## Ver_0.0.10, 2020.06.24 07:51
 
 - setup.py がアホ(環境によってはパッケージのサブフォルダが入らない):
@@ -8,7 +19,7 @@
 - matplotlib の画面が表示できない問題:
   (これも環境の問題で, yum で tkinter を導入に pyenv で python を導入する必要)
 - 細かい調整
-  
+
 ## Ver_0.0.9, 2020.06.23 10:33
 
 XAFS周りに注力して修正(ネームスペース修正,Python3に伴う修正)

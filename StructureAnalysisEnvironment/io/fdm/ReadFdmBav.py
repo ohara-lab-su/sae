@@ -8,6 +8,12 @@
 #
 ###############################################################################
 #
+# 2020.07.17
+#  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
+#  - バージョンチェック(ReadFdmBav.py) のための改修
+#  - バージョン切り替えのために ReadFdmBav2016()
+#  - バージョン切り替えのために ReadFdmBav2020() 切り替え
+#
 # 2018.08.15
 #  Python2/3 両対応
 #
@@ -21,6 +27,7 @@
 #
 ###############################################################################
 from __future__ import print_function
+
 try:
     from ...copyright import *
 except ImportError:
@@ -54,157 +61,102 @@ except ImportError:
 class ReadFdmBav(object):
 
     def __init__(self, cname, suffix='_bav.txt'):
+        """
 
-        self.datlines, self.num = SAEnv.read_dataline(cname + suffix)
+        :param cname:  入力の bav ファイル(FDMNESの全ログ情報)
+        :param suffix:
+        """
+        self.__datlines, self.__num = SAEnv.read_dataline(cname + suffix)
 
-        ngroup_reg = re.compile('.*ngroup =.*')
-        excited_atom_reg = re.compile('.*Excited atom.*')
-        atom_type_reg = re.compile('.*Atom type.*')
-        threshold_reg = re.compile('.*Threshold:.*')
-        r2_reg = re.compile('.*Transformation Crystal Bases.*Bases R2.*')
-        positions_reg = re.compile('.*Cluster: atom positions in order.*')
-        scf_flag_reg = re.compile('.*Self consistent calculation')
-        scf_max_reg = re.compile('.*Maximum number of iteration')
-        scf_end_reg = re.compile('.*Begining of cycle.*')
-        scf_toten_reg = re.compile('.*Unit cell energy.*')
+        fdmnes_ver_reg = re.compile('.*FDMNES.*program,.*')
 
-        nspin_reg = re.compile('.*Magnetic calculation')
+        # for default
+        fdm_version = 2020
 
-        self.t = np.zeros((3, 3))
-        #       self.position = []
+        for i in range(self.__num):
+            # Version チェック
+            if bool(fdmnes_ver_reg.match(self.__datlines[i])):
+                print('')
+                print("get fdmnes version")
+                self.__fdmnes_ver = re.sub('.*,', '', self.__datlines[i]).strip()
+                fdm_version = self.__fdmnes_ver.strip('')
+                print("version = %s" % fdm_version)
+                break
 
-        self.nspin = 1  # default nonmag
-        self.SCF = False
-        self.n_scf_loop = 0
-        self.scf_toten = []
+        # FDMNES のバージョン取得
+        try:
+            year = int(fdm_version.split(' ')[-1])
+            print(year)
+        except:
+            print("*** fail *** get fdmnes version")
+            new = True
+        else:
+            if year > 2016:
+                new = True
+            else:
+                new = False
 
-        for i in range(self.num):
+        if new:
+            # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
+            print('load NEW format: sd2020')
+            print('')
+            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
+        else:
+            #  〜2016.01.08
+            print('load OLD format: ~sd2016.01.08')
+            print('')
+            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
 
-            # SCF 計算のチェック
-            if bool(scf_flag_reg.match(self.datlines[i])):
-                self.SCF = True
+    def set_n_scf_loop(self, _val):
+        self.__bav.n_scf_loop = _val
 
-            # scf ループの最大値
-            if bool(scf_max_reg.match(self.datlines[i])):
-                self.nsw = int(self.datlines[i].split()[5])
+    def get_n_scf_loop(self):
+        return self.__bav.n_scf_loop
 
-            # scf ループ数のカウント
-            if bool(scf_end_reg.match(self.datlines[i])):
-                self.n_scf_loop = int(self.datlines[i].split()[3])
+    n_scf_loop = property(get_n_scf_loop, set_n_scf_loop)
 
-            # scf ループ毎の unit cell の全エネルギー
-            if bool(scf_toten_reg.match(self.datlines[i])):
-                self.scf_toten.append(self.datlines[i])
+    def get_scf_toten(self):
+        return self.__bav.scf_toten
 
-            # 全原子数の検索
-            if bool(ngroup_reg.match(self.datlines[i])):
-                if self.datlines[i].split()[0] == 'ngroup':
-                    self.ngroup = \
-                        int(self.datlines[i].split()[2].replace(',', ''))
-                else:
-                    sys.exit("STOP(ReadFdmBav): ngroup tag not found.")
+    def set_scf_toten(self, _val):
+        self.__bav.scf_toten = _val
 
-            # 吸収原子の最大のlを探す
-            if bool(excited_atom_reg.match(self.datlines[i])):
-                j = 2
-                l = 0
-                while 1:
-                    _l = self.datlines[i + j].split()[1]
-                    if l < _l:
-                        l = _l
-                    j += 1
-                    if bool(atom_type_reg.match(self.datlines[i + j + 1])):
-                        break
-                self.lmax = l
+    scf_toten = property(get_scf_toten, set_scf_toten)
 
-            # Magnetic? or Nonmag
-            if bool(nspin_reg.match(self.datlines[i])):
-                self.nspin = 2
-
-            # 吸収端
-            if bool(threshold_reg.match(self.datlines[i])):
-                self.edge = self.datlines[i].split()[2]
-
-            # absorber を原点とした時の基本並進ベクトル
-            if bool(r2_reg.match(self.datlines[i])):
-                t1_x = float(self.datlines[i + 1].split()[0])
-                t1_y = float(self.datlines[i + 1].split()[1])
-                t1_z = float(self.datlines[i + 1].split()[2])
-
-                t2_x = float(self.datlines[i + 2].split()[0])
-                t2_y = float(self.datlines[i + 2].split()[1])
-                t2_z = float(self.datlines[i + 2].split()[2])
-
-                t3_x = float(self.datlines[i + 3].split()[0])
-                t3_y = float(self.datlines[i + 3].split()[1])
-                t3_z = float(self.datlines[i + 3].split()[2])
-
-                self.t[0, 0] = t1_x
-                self.t[1, 0] = t1_y
-                self.t[2, 0] = t1_z
-
-                self.t[0, 1] = t2_x
-                self.t[1, 1] = t2_y
-                self.t[2, 1] = t2_z
-
-                self.t[0, 2] = t3_x
-                self.t[1, 2] = t3_y
-                self.t[2, 2] = t3_z
-
-            # positon (絶対座標系)
-            if bool(positions_reg.match(self.datlines[i])):
-
-                self.position = []
-                self.atoms_index_j = []
-
-                j = 0
-                while 1:
-                    zz = int(self.datlines[2 + i + j].split()[0])
-                    self.atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
-                    px = float(self.datlines[2 + i + j].split()[1])
-                    py = float(self.datlines[2 + i + j].split()[2])
-                    pz = float(self.datlines[2 + i + j].split()[3])
-                    self.position.append([px, py, pz])
-                    j += 1
-                    if len(self.datlines[2 + i + j].split()) <= 0:
-                        break
-                self.natom = j
-                self.position = np.array(self.position)
-
-        self.ispin = self.nspin
-        self.scf_toten = np.array(self.scf_toten)
+    #
+    # get attribute
+    #
 
     def get_nspin(self):
-        return self.nspin
+        return self.__bav.nspin
 
     def get_natom(self):
-        self.natom = self.natom if hasattr(self, 'natom') else 0
-        return self.natom
+        return self.__bav.natom
 
     def get_ngroup(self):
-        self.ngroup = self.ngroup if hasattr(self, 'ngroup') else 0
-        return self.ngroup
+        return self.__bav.ngroup
 
     def get_t(self):
-        return self.t
+        return self.__bav.t
 
     def get_edge(self):
-        self.edge = self.edge if hasattr(self, 'edge') else None
-        return self.edge
+        return self.__bav.edge
 
     def get_lmax(self):
-        self.lmax = self.lmax if hasattr(self, 'lmax') else None
-        return self.lmax
+        return self.__bav.lmax
 
     def get_position(self):
-        return self.position
+        return self.__bav.position
 
     def get_atoms_index_j(self):
-        return self.atoms_index_j
+        return self.__bav.atoms_index_j
 
+    def get_fdmnes_ver(self):
+        return self.__fdmnes_ver
 
-###############################################################################
-
+    @property
+    def fdmnes_ver(self):
+        return self.__fdmnes_ver
 
 def options():
     #   name = 'POSCAR.txt'
@@ -231,7 +183,8 @@ def options():
 if __name__ == '__main__':
 
     name, suffix = options()
-    bav = ReadFdmBav(name, suffix)
+    bav = SAEnv.ReadFdmBav(name, suffix)
+    print('')
 
     natom = bav.get_natom()
     lmax = bav.get_lmax()
