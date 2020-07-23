@@ -67,6 +67,8 @@ class ReadFdmBav2016(object):
         :param cname:  入力の bav ファイル(FDMNESの全ログ情報)
         :param suffix:
         """
+        print('===== bav2016 =====')
+
         if datline is None or num is None:
             self.datlines, self.num = SAEnv.read_dataline(cname + suffix)
         else:
@@ -201,7 +203,6 @@ class ReadFdmBav2016(object):
                 self.natom = j
                 self.position = np.array(self.position)
 
-        # ispin は現在値で nspin はトータル
         self.ispin = self.nspin
         self.__scf_toten = np.array(self.scf_toten)
 

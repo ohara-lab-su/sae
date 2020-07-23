@@ -135,6 +135,10 @@ class ReadFdmSd(object):
             print('')
             self.__sd = SAEnv.ReadFdmSd2016(sdname, suffix, inpname, bavname, absorber, weight)
 
+    #
+    # Method
+    #
+
     def get_pdos(self, l=0, m=0, lm=None, spin=0):
         return self.__sd.get_pdos(l, m, lm, spin)
 
@@ -145,6 +149,10 @@ class ReadFdmSd(object):
     def get_intldos(self, l=0, spin=0):
         """ INTLDOS(NEDOS,L,SPIN) """
         return self.__sd.get_intldos(l, spin)
+
+    #
+    # get/set attribute (2)
+    #
 
     def get_tdos(self, spin=0):
         """ TDOS(NEDOS, SPIN) """
@@ -157,20 +165,44 @@ class ReadFdmSd(object):
     def get_eng(self):
         return self.__sd.eng
 
+    #
+    # property
+    #
+
     def get_emin(self):
+        return self.__sd.emin
+
+    @property
+    def emin(self):
         return self.__sd.emin
 
     def get_emax(self):
         return self.__sd.emax
 
+    @property
+    def emax(self):
+        return self.__sd.emax
+
     def get_ymax(self):
+        return self.__sd.ymax
+
+    @property
+    def ymax(self):
         return self.__sd.ymax
 
     def get_header(self):
         return self.__sd.header
 
+    @property
+    def header(self):
+        return self.__sd.header
+
     def get_num(self):
         """ 読み込んだ sd ファイルの行数"""
+        return self.__sd.num
+
+    @property
+    def num(self):
         return self.__sd.num
 
     def get_sd(self):
@@ -180,6 +212,24 @@ class ReadFdmSd(object):
     def get_lmax(self):
         """ 読み込んだ sd ファイルに基づいて lmax を抽出 """
         return self.__sd.lmax
+
+    @property
+    def lmax(self):
+        return self.__sd.lmax
+
+    def get_mmax(self):
+        return self.__sd.mmax
+
+    @property
+    def mmax(self):
+        return self.__sd.mmax
+
+    def get_ispin(self):
+        return self.__sd.ispin
+
+    @property
+    def ispin(self):
+        return self.__sd.ispin
 
 
 def options():
