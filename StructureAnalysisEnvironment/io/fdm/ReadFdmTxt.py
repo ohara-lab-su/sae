@@ -34,9 +34,11 @@
 #
 ###############################################################################
 from __future__ import print_function
+
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
 try:
     from ...copyright import *
-except ImportError:
+except Exception:
     from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"

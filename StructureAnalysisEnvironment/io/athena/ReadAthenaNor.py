@@ -6,8 +6,11 @@
 # Read Athena Normalize Data ( *.txt.nor )
 #
 # コメントアウトを除いて energy, XANES 形式に並んだだけのファイル
+# Athena の Normlized Data の読み込みプロット
 #
 ###############################################################################
+#
+# 2020.08.10: カプセル化
 #
 # 2018.08.15
 #  Python2/3 両対応
@@ -44,9 +47,9 @@ import numpy as np
 try:
     # sys.path.append('../..')
     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 
 
 # import SpaceGroupEnvironment as SGE
@@ -58,41 +61,71 @@ class ReadAthenaNor(object):
 
     def __init__(self, name='case.txt.nor'):
 
-        self.datlines, self.num = SAEnv.read_dataline(name)
+        self.datlines, self.num = SAE.read_dataline(name)
         comment_reg = re.compile('^#.*')
         E0_reg = re.compile('^#.*E0.*')
 
-        self.eng = []
-        self.nor = []
-        self.ndata = 0
+        self.__eng = []
+        self.__nor = []
+        self.__ndata = 0
         for i in range(self.num):
             line = self.datlines[i]
 
             if bool(E0_reg.match(line)):
-                self.e0 = float(re.sub('E0=', '', line.split()[2]))
+                self.__e0 = float(re.sub('E0=', '', line.split()[2]))
 
             # コメントアウトを除いて x,y 形式に並んだだけのファイル
             if not bool(comment_reg.match(line)):
-                self.eng.append(float(line.split()[0]))
-                self.nor.append(float(line.split()[1]))
-                self.ndata += 1
+                self.__eng.append(float(line.split()[0]))
+                self.__nor.append(float(line.split()[1]))
+                self.__ndata += 1
 
-        self.nor = np.array(self.nor)
-        self.eng = np.array(self.eng)
-        self.xas = self.nor
+        self.__nor = np.array(self.__nor)
+        self.__eng = np.array(self.__eng)
+        self.__xas = self.__nor
+
+    def open(self, name=None):
+        pass
+
+    def set_nor(self, _val):
+        self.__nor = _val
+        self.__xas = _val
 
     def get_nor(self):
-        return self.nor
+        return self.__nor
+
+    nor = property(get_nor, set_nor)
+
+    def set_xas(self, _val):
+        self.__xas = _val
+        self.__nor = _val
+
+    def get_xas(self):
+        return self.__xas
+
+    xas = property(get_xas, set_xas)
+
+    def set_eng(self, _val):
+        self.__eng = _val
 
     def get_eng(self):
         return self.eng
 
+    eng = property(get_eng, set_eng)
+
     def get_ndata(self):
-        return self.ndata
+        return self.__ndata
+
+    @property
+    def ndata(self):
+        return self.__ndata
 
     def get_e0(self):
-        return self.e0
+        return self.__e0
 
+    @property
+    def e0(self):
+        return self.__e0
 
 ###############################################################################
 
@@ -146,7 +179,7 @@ def options():
     options, args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAEnv.find_datfile1('.txt.nor')
+        name0 = SAE.find_datfile1('.txt.nor')
         if name0 is None:
             name0 = name
     name = name0

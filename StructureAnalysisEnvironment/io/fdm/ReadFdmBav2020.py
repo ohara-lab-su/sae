@@ -8,6 +8,8 @@
 #
 ###############################################################################
 #
+# 2020.08.11: lmax 関係の 2020対応が場合寄っては機能しなかったのを修正
+#
 # 2020.07.17
 #  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
 #  - バージョンチェック(ReadFdmBav.py) のための改修
@@ -28,9 +30,10 @@
 ###############################################################################
 from __future__ import print_function
 
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
 try:
     from ...copyright import *
-except ImportError:
+except Exception:
     from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
@@ -48,9 +51,9 @@ import numpy as np
 try:
     # sys.path.append('../..')
     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 
 
 # import SpaceGroupEnvironment as SGE
@@ -70,15 +73,24 @@ class ReadFdmBav2020(object):
         print('===== bav2020 =====')
 
         if datline is None or num is None:
-            self.__datlines, self.__num = SAEnv.read_dataline(cname + suffix)
+            self.__datlines, self.__num = SAE.read_dataline(cname + suffix)
         else:
             self.__datlines = datline
             self.__num = num
 
         fdmnes_ver_reg = re.compile('.*FDMNES.*program,.*')
         ngroup_reg = re.compile('.*ngroup =.*')
-        excited_atom_reg = re.compile('.*Excited atom.*')
-        atom_type_reg = re.compile('.*Atom type.*')
+
+        # 2016 では Excited atom は一つだけしか出ないが
+        # 2020 では複数出るので注意
+        #excited_atom_reg = re.compile('.*Excited atom.*')
+        excited_atom_reg = re.compile('.*Excited atom,.*')
+
+        # excited atom の lmax 検索を止めるフラグ
+        # 2016 と 2020 では異なる
+        # atom_type_reg = re.compile('.*Atom type.*')  # for 2016
+        excited_atom_stop_reg = re.compile('.*Excited atom total energy.*')
+
         threshold_reg = re.compile('.*Threshold:.*')
         r2_reg = re.compile('.*Transformation Crystal Bases.*Bases R2.*')
         positions_reg = re.compile('.*Cluster: atom positions in order.*')
@@ -133,14 +145,17 @@ class ReadFdmBav2020(object):
 
             # 吸収原子の最大のlを探す
             if bool(excited_atom_reg.match(self.__datlines[i])):
+                print('check: .*Excited atom,.*')
                 j = 2
                 l = 0
-                while 1:
+                while True:
                     _l = int(self.__datlines[i + j].split()[1])
+                    # print(_l)
                     if l < _l:
                         l = _l
                     j += 1
-                    if bool(atom_type_reg.match(self.__datlines[i + j + 1])):
+                    # if bool(atom_type_reg.match(self.__datlines[i + j + 1])):
+                    if bool(excited_atom_stop_reg.match(self.__datlines[i + j + 1])):
                         break
                 self.__lmax = l
                 print("l max = %s" % self.__lmax)
@@ -151,11 +166,12 @@ class ReadFdmBav2020(object):
 
             # 吸収端
             if bool(threshold_reg.match(self.__datlines[i])):
-                self.edge = self.__datlines[i].split()[2]
-                print("Edge = %s" % self.edge)
+                self.__edge = self.__datlines[i].split()[2]
+                print("Edge = %s" % self.__edge)
 
             # absorber を原点とした時の基本並進ベクトル
             if bool(r2_reg.match(self.__datlines[i])):
+                print('Transformation Crystal Bases')
                 t1_x = float(self.__datlines[i + 1].split()[0])
                 t1_y = float(self.__datlines[i + 1].split()[1])
                 t1_z = float(self.__datlines[i + 1].split()[2])
@@ -192,7 +208,7 @@ class ReadFdmBav2020(object):
                 j = 0
                 while 1:
                     zz = int(self.__datlines[2 + i + j].split()[0])
-                    self.__atoms_index_j.append(SAEnv.get_atomic_symbol0(zz))
+                    self.__atoms_index_j.append(SAE.get_atomic_symbol0(zz))
                     px = float(self.__datlines[2 + i + j].split()[1])
                     py = float(self.__datlines[2 + i + j].split()[2])
                     pz = float(self.__datlines[2 + i + j].split()[3])
@@ -265,8 +281,12 @@ class ReadFdmBav2020(object):
         return self.ngroup
 
     def get_edge(self):
-        self.edge = self.edge if hasattr(self, 'edge') else None
-        return self.edge
+        self.__edge = self.__edge if hasattr(self, 'edge') else None
+        return self.__edge
+
+    @property
+    def edge(self):
+        return self.__edge
 
     def get_lmax(self):
         self.__lmax = self.__lmax if hasattr(self, 'lmax') else None
@@ -304,7 +324,7 @@ def options():
     options, args = parser.parse_args()
 
     if not os.path.exists(name + suffix):
-        name0 = SAEnv.find_datfile1(suffix)
+        name0 = SAE.find_datfile1(suffix)
         name = name0.replace(suffix, '')
 
     if options.INPUT:
@@ -319,7 +339,7 @@ def options():
 if __name__ == '__main__':
 
     name, suffix = options()
-    bav = SAEnv.ReadFdmBav2020(name, suffix)
+    bav = SAE.ReadFdmBav2020(name, suffix)
     print('')
 
     natom = bav.get_natom()

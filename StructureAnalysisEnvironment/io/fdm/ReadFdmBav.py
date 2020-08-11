@@ -8,6 +8,8 @@
 #
 ###############################################################################
 #
+# 2020.08.11: バージョン切り替えのバグフィックス
+#
 # 2020.07.17
 #  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
 #  - バージョンチェック(ReadFdmBav.py) のための改修
@@ -28,9 +30,10 @@
 ###############################################################################
 from __future__ import print_function
 
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
 try:
     from ...copyright import *
-except ImportError:
+except Exception:
     from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"
@@ -46,12 +49,16 @@ import optparse
 import numpy as np
 
 try:
-    # sys.path.append('../..')
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-    import StructureAnalysisEnvironment as SAEnv
+    sys.path.append('../..')
+    import StructureAnalysisEnvironment as SAE
 except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
-
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    import StructureAnalysisEnvironment as SAE
+    try:
+        import StructureAnalysisEnvironment as SAE
+    except ImportError:
+        print("import Error")
+        sys.exit(-1)
 
 # import SpaceGroupEnvironment as SGE
 
@@ -66,7 +73,7 @@ class ReadFdmBav(object):
         :param cname:  入力の bav ファイル(FDMNESの全ログ情報)
         :param suffix:
         """
-        self.__datlines, self.__num = SAEnv.read_dataline(cname + suffix)
+        self.__datlines, self.__num = SAE.read_dataline(cname + suffix)
 
         fdmnes_ver_reg = re.compile('.*FDMNES.*program,.*')
 
@@ -100,12 +107,12 @@ class ReadFdmBav(object):
             # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
             print('load NEW format: sd2020')
             print('')
-            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
+            self.__bav = SAE.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
         else:
             #  〜2016.01.08
-            print('load OLD format: ~sd2016.01.08')
+            print('load OLD format: befor sd2016.01.08')
             print('')
-            self.__bav = SAEnv.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
+            self.__bav = SAE.ReadFdmBav2016(cname, suffix, datline=self.__datlines, num=self.__num)
 
     def set_n_scf_loop(self, _val):
         self.__bav.n_scf_loop = _val
@@ -139,10 +146,22 @@ class ReadFdmBav(object):
     def get_t(self):
         return self.__bav.t
 
+    @property
+    def t(self):
+        return self.__bav.t
+
     def get_edge(self):
         return self.__bav.edge
 
+    @property
+    def edge(self):
+        return self.__bav.edge
+
     def get_lmax(self):
+        return self.__bav.lmax
+
+    @property
+    def lmax(self):
         return self.__bav.lmax
 
     def get_position(self):
@@ -168,7 +187,7 @@ def options():
     options, args = parser.parse_args()
 
     if not os.path.exists(name + suffix):
-        name0 = SAEnv.find_datfile1(suffix)
+        name0 = SAE.find_datfile1(suffix)
         name = name0.replace(suffix, '')
 
     if options.INPUT:
@@ -183,7 +202,7 @@ def options():
 if __name__ == '__main__':
 
     name, suffix = options()
-    bav = SAEnv.ReadFdmBav(name, suffix)
+    bav = SAE.ReadFdmBav(name, suffix)
     print('')
 
     natom = bav.get_natom()

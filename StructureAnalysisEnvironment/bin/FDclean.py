@@ -9,6 +9,8 @@
 #
 ################################################################################
 #
+# 2020.08.11: filout 処理でのセーフティーを導入
+#
 # 2018.08.17
 #  Python2/3 両対応
 #
@@ -67,7 +69,7 @@ def options():
 
     return inpname
 
-################################################################################
+
 if __name__ == '__main__':
 
     name = options()
@@ -75,6 +77,10 @@ if __name__ == '__main__':
 
     filout = out.get_filout()
     print('fileout :',filout)
+
+    if filout == '':
+        print('fileout is None')
+        sys.exit(-1)
 
 #   filelist = glob.glob(filout+'*.txt')
     filelist = ['fdmnes_error.txt',
