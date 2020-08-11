@@ -157,6 +157,13 @@ class ReadFdmBav(object):
     def edge(self):
         return self.__bav.edge
 
+    def get_e_edge(self):
+        return self.__bav.e_edge
+
+    @property
+    def e_edge(self):
+        return self.__bav.e_edge
+
     def get_lmax(self):
         return self.__bav.lmax
 
@@ -176,6 +183,7 @@ class ReadFdmBav(object):
     @property
     def fdmnes_ver(self):
         return self.__fdmnes_ver
+
 
 def options():
     #   name = 'POSCAR.txt'
@@ -208,6 +216,7 @@ if __name__ == '__main__':
     natom = bav.get_natom()
     lmax = bav.get_lmax()
     edge = bav.get_edge()
+    e_edge = bav.get_e_edge()
     t = bav.get_t()
     position = bav.get_position()
     atoms_index_j = bav.get_atoms_index_j()
@@ -219,6 +228,7 @@ if __name__ == '__main__':
     print("natom = %s" % str(natom))
     print("lmax  = %s" % str(lmax))
     print("edge  = %s" % str(edge))
+    print("e_edge= %s[eV]" % str(e_edge))
     print("t     = %s" % str(t))
 
 #   for i in range(natom):

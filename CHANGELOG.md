@@ -1,6 +1,18 @@
 # ChangeLog
 
-## Ver_0.0.12
+## Ver_0.0.13, 2020.08.11 10:21
+
+- bugfix:
+    - ReadAthenaNor.py
+
+- 吸収端のエネルギー取得の 2020版
+    - ReadFdmBav.py
+    - ReadFdmBav2020.py
+
+- カプセル化推進(I/F互換のため)
+    - ReadFdmBav2016.py
+    
+## Ver_0.0.12, 2020.08.11 09:11
 
 - ReadAthenaNor.py
     - カプセル化推進
