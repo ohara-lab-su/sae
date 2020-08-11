@@ -109,7 +109,7 @@ class ReadAthenaNor(object):
         self.__eng = _val
 
     def get_eng(self):
-        return self.eng
+        return self.__eng
 
     eng = property(get_eng, set_eng)
 

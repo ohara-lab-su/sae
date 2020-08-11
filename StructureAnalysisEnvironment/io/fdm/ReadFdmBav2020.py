@@ -91,6 +91,9 @@ class ReadFdmBav2020(object):
         # atom_type_reg = re.compile('.*Atom type.*')  # for 2016
         excited_atom_stop_reg = re.compile('.*Excited atom total energy.*')
 
+        # 吸収端のエネルギー
+        e_edge_reg = re.compile('.*E_edge.*')
+
         threshold_reg = re.compile('.*Threshold:.*')
         r2_reg = re.compile('.*Transformation Crystal Bases.*Bases R2.*')
         positions_reg = re.compile('.*Cluster: atom positions in order.*')
@@ -106,7 +109,7 @@ class ReadFdmBav2020(object):
 
         self.__nspin = 1  # default nonmag
         self.SCF = False
-        self.n_scf_loop = 0
+        self.__n_scf_loop = 0
         self.scf_toten = []
 
         # ログファイル読み込みのアホなループ
@@ -129,8 +132,8 @@ class ReadFdmBav2020(object):
 
             # scf ループ数のカウント
             if bool(scf_end_reg.match(self.__datlines[i])):
-                self.n_scf_loop = int(self.__datlines[i].split()[3])
-                print("num. scf loop = %s" % self.n_scf_loop)
+                self.__n_scf_loop = int(self.__datlines[i].split()[3])
+                print("num. scf loop = %s" % self.__n_scf_loop)
 
             # scf ループ毎の unit cell の全エネルギー
             if bool(scf_toten_reg.match(self.__datlines[i])):
@@ -164,10 +167,15 @@ class ReadFdmBav2020(object):
             if bool(nspin_reg.match(self.__datlines[i])):
                 self.__nspin = 2
 
-            # 吸収端
+            # 吸収端(K,,,)
             if bool(threshold_reg.match(self.__datlines[i])):
                 self.__edge = self.__datlines[i].split()[2]
                 print("Edge = %s" % self.__edge)
+
+            # 吸収端のエネルギー(Kによる固定値)
+            if bool(e_edge_reg.match(self.__datlines[i])) :
+                self.__e_edge = self.__datlines[i].split()[2]
+                print("E_Edge = %s [eV]" % self.__e_edge)
 
             # absorber を原点とした時の基本並進ベクトル
             if bool(r2_reg.match(self.__datlines[i])):
@@ -281,12 +289,20 @@ class ReadFdmBav2020(object):
         return self.ngroup
 
     def get_edge(self):
+        """ K,,, 吸収端（文字) """
         self.__edge = self.__edge if hasattr(self, 'edge') else None
         return self.__edge
 
     @property
     def edge(self):
         return self.__edge
+
+    def get_e_edge(self):
+        return float(self.__e_edge)
+
+    @property
+    def e_edge(self):
+        return float(self.__e_edge)
 
     def get_lmax(self):
         self.__lmax = self.__lmax if hasattr(self, 'lmax') else None
