@@ -157,7 +157,7 @@ from __future__ import print_function
 
 try:
     from ...copyright import *
-except ImportError:
+except Exception:
     from StructureAnalysisEnvironment.copyright import *
 
 __status__ = "alpha"

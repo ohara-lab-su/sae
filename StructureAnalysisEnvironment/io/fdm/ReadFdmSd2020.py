@@ -159,7 +159,6 @@ class ReadFdmSd2020(object):
         # bav = SAEnv.ReadFdmBav(bavname)
         inp = SAEnv.io.fdm.ReadFdmInp(inpname)
 
-
         # 複数の sd ファイルを読んで平均化する
         #   --> weight があるときは各要素を割る
         if absorber is None:
@@ -264,7 +263,7 @@ class ReadFdmSd2020(object):
         print("index num = %d" % self.__num)
 
         # 定義
-        self.eng = np.zeros(self.__num)  # 意味が無い定義(標識をあわせるためだけ)
+        self.__eng = np.zeros(self.__num)  # 意味が無い定義(標識をあわせるためだけ)
         self.ylm = np.zeros((self.__num, self.__lmax + 1, self.__mmax, self.__ispin))
         self.ldos_all = np.zeros((self.__num, self.__lmax + 1, self.__ispin))
         self.tdos_all = np.zeros((self.__num, self.__ispin))
@@ -319,13 +318,13 @@ class ReadFdmSd2020(object):
         self.inttdos_all[:, 0] = df['Int(total)'].values
 
         # エネルギー
-        self.eng = df['Energy'].values
+        self.__eng = df['Energy'].values
 
         # DataFrame の保存 ( header を含む )
         self.sd = df
 
-        self.__emax = max(self.eng)
-        self.__emin = min(self.eng)
+        self.__emax = max(self.__eng)
+        self.__emin = min(self.__eng)
         self.__ymax = 0.0
 
         ############################## self.datlines ##########################
@@ -538,7 +537,11 @@ class ReadFdmSd2020(object):
         return self.inttdos_all[:, spin]
 
     def get_eng(self):
-        return self.eng
+        return self.__eng
+
+    @property
+    def eng(self):
+        return self.__eng
 
     #
     # property

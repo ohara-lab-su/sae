@@ -8,6 +8,8 @@
 #
 ###############################################################################
 #
+# 2020.08.12: カプセル化推進
+#
 # 2019.01.08
 #  新しい FDMNES における
 #  Cu.txt などのログから E_Fermi が消えたことによる対応
@@ -68,6 +70,14 @@ except ImportError:
 class ReadFdmTxt(object):
 
     def __init__(self, cname, suffix='.txt', edge='K', weight=None):
+        """
+        注意) convolution した 横軸（エネルギー）は生データ(txt)と異なるので、
+             生データXAS をプロットするときは、 生データ(eng) を横軸にすること
+        :param cname:
+        :param suffix:
+        :param edge:
+        :param weight:
+        """
 
         name = cname.replace(suffix, '')
         suffix0 = cname.replace(name, '')
@@ -76,10 +86,10 @@ class ReadFdmTxt(object):
             cname = name + suffix
 
         self.suffix = suffix
-        self.datlines, self.num = SAEnv.read_dataline(cname)
-        self.header = self.datlines[0]
+        self.__datlines, self.num = SAEnv.read_dataline(cname)
+        self.__header = self.__datlines[0]
 
-        self.eng = np.zeros(self.num - 2)
+        self.__eng = np.zeros(self.num - 2)
 
         if weight is None:
             weight = 1.0
@@ -89,7 +99,7 @@ class ReadFdmTxt(object):
 
         # 一行目のイコールで結ばれたところまでの変数の数のカウント
         count = 0
-        for i in self.datlines[0].split():
+        for i in self.__datlines[0].split():
             count += 1
             if i == '=':
                 break
@@ -99,10 +109,9 @@ class ReadFdmTxt(object):
         # var = str(self.datlines[0].split()[i].strip()).replace(',','')
         # value = float(self.datlines[0].split()[i-count])
 
-        for i in range(count, len(self.datlines[0].replace(',', ' ').split())):
-            var = str(self.datlines[0].replace(',', ' ').split()[i].strip())
-            value = \
-                float(self.datlines[0].replace(',', ' ').split()[i - count])
+        for i in range(count, len(self.__datlines[0].replace(',', ' ').split())):
+            var = str(self.__datlines[0].replace(',', ' ').split()[i].strip())
+            value = float(self.__datlines[0].replace(',', ' ').split()[i - count])
             self.__dict__[var] = value
 
         # スピン計算の有無を類推 & XANES の複数エッジの処理
@@ -118,51 +127,67 @@ class ReadFdmTxt(object):
                 edge = 1
 
         # エッジの把握
-        if len(self.datlines[1].split()) == 3:
-            if bool(re.match('.*\<xanes\>_L', self.datlines[1].split()[1])):
-                self.nspin = 1
+        if len(self.__datlines[1].split()) == 3:
+            if bool(re.match('.*\<xanes\>_L', self.__datlines[1].split()[1])):
+                self.__nspin = 1
             else:
-                self.nspin = 2
+                self.__nspin = 2
 
         # 複数エッジ with spin
-        elif len(self.datlines[1].split()) >= 4:
-            self.nspin = 2
+        elif len(self.__datlines[1].split()) >= 4:
+            self.__nspin = 2
         else:
-            self.nspin = 1
+            self.__nspin = 1
 
         # XANES スペクトル(生データを読み込み)
-        self.xas_all = np.zeros((self.num - 2, self.nspin))
+        self.__xas_all = np.zeros((self.num - 2, self.__nspin))
 
         for i in range(2, self.num):
-            self.eng[i - 2] = float(self.datlines[i].split()[0])
+            self.__eng[i - 2] = float(self.__datlines[i].split()[0])
 
             # 複数エッジ未対応
-            for spin in range(self.nspin):
-                self.xas_all[i - 2, spin] = \
-                    float(self.datlines[i].split()[1 + spin + edge]) / weight
+            for spin in range(self.__nspin):
+                self.__xas_all[i - 2, spin] = \
+                    float(self.__datlines[i].split()[1 + spin + edge]) / weight
 
         # self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
-        self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
-        self.E_Fermi = self.E_fermi
-        self.ispin = self.nspin
-        self.xas = self.xas_all[:, 0]
-
-    ###########################################################################
+        self.__E_fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        self.__E_Fermi = self.__E_fermi
+        self.__ispin = self.__nspin
+        self.__xas = self.__xas_all[:, 0]
 
     # ヘッダー項目
     def get_eedge(self):
-        self.E_edge = self.E_edge if hasattr(self, 'E_edge') else None
-        return self.E_edge
+        self.__E_edge = self.__E_edge if hasattr(self, 'E_edge') else None
+        return self.__E_edge
+
+    @property
+    def eedge(self):
+        return self.__E_edge
+
+    @property
+    def e_edge(self):
+        return self.__E_edge
 
     # ヘッダー項目
     def get_efermi(self):
         # self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
-        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
-        return self.E_Fermi
+        self.__E_Fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        return self.__E_Fermi
+
+    @property
+    def efermi(self):
+        self.__E_Fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        return self.__E_Fermi
 
     # ヘッダー項目
     def get_e_fermi(self):
         # self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
+        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        return self.E_Fermi
+
+    @property
+    def e_fermi(self):
         self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
         return self.E_Fermi
 
@@ -173,35 +198,72 @@ class ReadFdmTxt(object):
 
     # ヘッダー項目
     def get_eng(self):
-        return self.eng
+        return self.__eng
+
+    @property
+    def eng(self):
+        return self.__eng
 
     def get_xas_all(self):
-        return self.xas_all
+        return self.__xas_all
+
+    @property
+    def xas_all(self):
+        return self.__xas_all
 
     def get_xas(self, spin=0):
-        return self.xas_all[:, spin]
+        return self.__xas_all[:, spin]
+
+    @property
+    def xas(self):
+        return self.__xas
 
     def get_header(self):
-        return self.header
+        return self.__header
 
-    ###########################################################################
-    # allsite のときの複数の *.txt の平均を取る
-    # filout = Pd のとき allsite ならばとして結果を出力したとする
-    # Pd_1.txt
-    # Pd_2.txt
-    # Pd_3.txt
-    # このとき、average_txt(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
-    # 平均を self.xas に返す
-    #
-    # non-spin
+    @property
+    def header(self):
+        return self.__header
+
+    def get_nspin(self):
+        return self.__nspin
+
+    @property
+    def nspin(self):
+        return self.__nspin
+
+    def get_ispin(self):
+        return self.__ispin
+
+    @property
+    def ispin(self):
+        return self.__ispin
+
     def average(self, name, absorber, spin=0, weight=None):
+        """
+        allsite のときの複数の *.txt の平均を取る
+        filout = Pd のとき allsite ならばとして結果を出力したとする
+        Pd_1.txt
+        Pd_2.txt
+        Pd_3.txt
+        このとき、average_txt(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
+        平均を self.xas に返す
+
+        non-spin
+
+        :param name:
+        :param absorber:
+        :param spin:
+        :param weight:
+        :return:
+        """
         if weight is None:
             n_site = float(len(absorber))
         else:
             print("weight : %s" % str(weight))
             n_site = float(weight)
 
-        s_xas = np.zeros((self.num - 2, self.nspin))
+        s_xas = np.zeros((self.num - 2, self.__nspin))
         for site in absorber:
 
             txtname = name + "_" + str(site) + self.suffix
@@ -211,11 +273,8 @@ class ReadFdmTxt(object):
             for i in range(2, self.num):
                 s_xas[i - 2, spin] = float(datlines[i].split()[1 + spin - 1]) \
                                      + s_xas[i - 2, spin]
-        self.xas = s_xas / n_site
-        return self.xas
-
-
-###############################################################################
+        self.__xas = s_xas / n_site
+        return self.__xas
 
 
 def plot_fdm_xas(eng, xas):
@@ -254,9 +313,6 @@ def plot_fdm_xas(eng, xas):
     plt.close('all')
 
 
-###############################################################################
-
-
 def options():
     #   name = 'POSCAR.txt'
     name = 'Cu'
@@ -278,7 +334,6 @@ def options():
     return name, suffix
 
 
-###############################################################################
 if __name__ == '__main__':
     name, suffix = options()
     conv = ReadFdmTxt(name, suffix)

@@ -166,6 +166,10 @@ class ReadFdmSd(object):
     def get_eng(self):
         return self.__sd.eng
 
+    @property
+    def eng(self):
+        return self.__sd.eng
+
     #
     # property
     #
