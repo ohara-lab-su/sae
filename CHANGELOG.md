@@ -1,5 +1,19 @@
 # ChangeLog
 
+## Ver_0.0.14, 2020.08.12 09:50
+
+- 旧来の互換propertyが一部未実装なのを修正
+    - ReadFdmSd.py
+    - ReadFdmSd2016.py
+    - ReadFdmSd2020.py
+
+- カプセル化推進(&新版調整)
+    - ReadFdmText.py
+
+- 微調整
+    - bin/FDplot_LDOS.py
+    - bin/fdLDOSmulti.py
+    
 ## Ver_0.0.13, 2020.08.11 10:21
 
 - bugfix:
