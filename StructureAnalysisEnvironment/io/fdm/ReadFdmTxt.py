@@ -104,15 +104,25 @@ class ReadFdmTxt(object):
             if i == '=':
                 break
 
+        ###########################
         # 一行目のイコールで結ばれた値=変数名を、動的に変数＝値としてセット
+        #
         # for i in range(count,len(self.datlines[0].split())):
         # var = str(self.datlines[0].split()[i].strip()).replace(',','')
         # value = float(self.datlines[0].split()[i-count])
-
+        #
+        self.__param = {}
         for i in range(count, len(self.__datlines[0].replace(',', ' ').split())):
-            var = str(self.__datlines[0].replace(',', ' ').split()[i].strip())
+            key = str(self.__datlines[0].replace(',', ' ').split()[i].strip())
             value = float(self.__datlines[0].replace(',', ' ').split()[i - count])
-            self.__dict__[var] = value
+            # self.__dict__[key] = value  # インスタンス変数に直接作る
+            self.__param[key] = value
+
+        # 2020/2016 互換で、E_Fermi がないとき(2020)は互換値として 0.0 を入れる
+        try:
+            self.__param['E_Fermi']
+        except:
+            self.__param['E_Fermi'] = 0.0
 
         # スピン計算の有無を類推 & XANES の複数エッジの処理
         #  L23 mode の spin ありには未対応(2015.11.12)
@@ -151,14 +161,17 @@ class ReadFdmTxt(object):
                     float(self.__datlines[i].split()[1 + spin + edge]) / weight
 
         # self.E_fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
-        self.__E_fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
-        self.__E_Fermi = self.__E_fermi
+        # self.__E_fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        self.__E_Fermi = self.__param['E_Fermi']
+        self.__E_edge = self.__param['E_edge']
+        self.__Z = self.__param['Z']
+
         self.__ispin = self.__nspin
         self.__xas = self.__xas_all[:, 0]
 
     # ヘッダー項目
     def get_eedge(self):
-        self.__E_edge = self.__E_edge if hasattr(self, 'E_edge') else None
+        # self.__E_edge = self.__E_edge if hasattr(self, 'E_edge') else None
         return self.__E_edge
 
     @property
@@ -169,32 +182,44 @@ class ReadFdmTxt(object):
     def e_edge(self):
         return self.__E_edge
 
+    @property
+    def E_edge(self):
+        return self.__E_edge
+
     # ヘッダー項目
     def get_efermi(self):
         # self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
-        self.__E_Fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        # self.__E_Fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
         return self.__E_Fermi
 
     @property
     def efermi(self):
-        self.__E_Fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        # self.__E_Fermi = self.__E_Fermi if hasattr(self, 'E_Fermi') else 0.0
         return self.__E_Fermi
 
     # ヘッダー項目
     def get_e_fermi(self):
         # self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else None
-        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
-        return self.E_Fermi
+        # self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        return self.__E_Fermi
 
     @property
     def e_fermi(self):
-        self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
-        return self.E_Fermi
+        # self.E_Fermi = self.E_Fermi if hasattr(self, 'E_Fermi') else 0.0
+        return self.__E_Fermi
+
+    @property
+    def E_Fermi(self):
+        return self.__E_Fermi
+
+    @property
+    def E_fermi(self):
+        return self.__E_Fermi
 
     # ヘッダー項目
     def get_z(self):
-        self.Z = self.Z if hasattr(self, 'Z') else None
-        return self.Z
+        # self.Z = self.Z if hasattr(self, 'Z') else None
+        return self.__Z
 
     # ヘッダー項目
     def get_eng(self):

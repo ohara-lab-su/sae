@@ -86,9 +86,9 @@ import numpy as np
 try:
     # sys.path.append('../..')
     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 
 
 # import SpaceGroupEnvironment as SGE
@@ -104,13 +104,24 @@ class ReadFdmSd(object):
                  inpname=None,
                  bavname=None,
                  absorber=None,  ### absorber=[] :matrix
-                 weight=None):
+                 weight=None,
+                 bav=None):
+        """
+
+        :param sdname:
+        :param suffix:
+        :param inpname:
+        :param bavname:
+        :param absorber:
+        :param weight:
+        :param bav:
+        """
 
         # FDMNES のバージョン取得
         print('')
         print("get fdmnes version")
         try:
-            bav = SAEnv.ReadFdmBav(sdname, '_bav.txt')
+            bav = SAE.ReadFdmBav(sdname, '_bav.txt')
             fdm_version = bav.get_fdmnes_ver().strip('')
             print('')
             print("version = %s" % fdm_version)
@@ -129,12 +140,12 @@ class ReadFdmSd(object):
             # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
             print('load NEW format: sd2020')
             print('')
-            self.__sd = SAEnv.ReadFdmSd2020(sdname, suffix, inpname, bavname, absorber, weight)
+            self.__sd = SAE.ReadFdmSd2020(sdname, suffix, inpname, bavname, absorber, weight)
         else:
             #  〜2016.01.08
             print('load OLD format: ~sd2016.01.08')
             print('')
-            self.__sd = SAEnv.ReadFdmSd2016(sdname, suffix, inpname, bavname, absorber, weight)
+            self.__sd = SAE.ReadFdmSd2016(sdname, suffix, inpname, bavname, absorber, weight)
 
     #
     # Method
@@ -257,7 +268,7 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
     name, suffix = options()
-    sd = SAEnv.ReadFdmSd(name, suffix)
+    sd = SAE.ReadFdmSd(name, suffix)
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()

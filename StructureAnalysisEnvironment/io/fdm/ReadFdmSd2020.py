@@ -108,9 +108,9 @@ import pandas as pd
 try:
     # sys.path.append('../..')
     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
 
 
 # import SpaceGroupEnvironment as SGE
@@ -137,7 +137,7 @@ class ReadFdmSd2020(object):
         # input に書かれている情報を取得する
         if inpname is None:
             if os.path.exists('fdmfile.txt'):
-                fdmfiletxt = SAEnv.io.fdm.ReadFdmFdmfile()
+                fdmfiletxt = SAE.io.fdm.ReadFdmFdmfile()
                 inpname = fdmfiletxt.get_filout()
             else:
                 inpname = 'read_pdb.inp'
@@ -157,7 +157,7 @@ class ReadFdmSd2020(object):
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
         # bav = SAEnv.ReadFdmBav(bavname)
-        inp = SAEnv.io.fdm.ReadFdmInp(inpname)
+        inp = SAE.io.fdm.ReadFdmInp(inpname)
 
         # 複数の sd ファイルを読んで平均化する
         #   --> weight があるときは各要素を割る
@@ -311,7 +311,7 @@ class ReadFdmSd2020(object):
             self.ylm[:, 2,  0, 0] = df['dz2'].values  # dz2 (l=2, m=0, spin=0)
             self.ylm[:, 2,  1, 0] = df['dxz'].values  # dxz (l=2, m=1, spin=0)
             self.ylm[:, 2,  2, 0] = df['dx2-y2'].values  # dx2-y2 (l=2, m=2, spin=0)
-            self.ldos_all[:, 2, 0] = df['p'].values  # d
+            self.ldos_all[:, 2, 0] = df['d'].values  # d
             self.intldos_all[:, 2, 0] = df['Int(d)'].values
 
         # 全席分状態密度(LDOS分解からの結果と思われる)
@@ -630,7 +630,7 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
     name, suffix = options()
-    sd = SAEnv.ReadFdmSd2020(name, suffix)
+    sd = SAE.ReadFdmSd2020(name, suffix)
     #tmp = sd.get_pdos(l=0,lm='s', spin=0)
     #print(tmp)
 

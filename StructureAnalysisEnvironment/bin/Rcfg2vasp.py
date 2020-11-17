@@ -71,19 +71,36 @@ def options():
         print("OUTPUT file name: %s" % cname + ".vasp")
         print("atoms_index = %s" % options.atoms_index)
 
-    if not os.path.exists(cname + ".cfg"):
-        sys.exit(cname + ".cfg file not found")
+    # if not os.path.exists(cname + ".cfg"):
+    #     sys.exit(cname + ".cfg file not found")
 
     return cname, options.atoms_index
 
 
 ################################################################################
 if __name__ == '__main__':
+    """
+    usage:
+    V と O 原子の時
+    LVOF.cfg ファイルに対するアプローチとしては
+       ./Rcfg2vasp.py --atoms_index=V,O LVOF.cf
+    """
     cname, atoms_index0 = options()
-    filename = cname + ".cfg"
-    outname = cname
 
-    #atoms_index = ['In', 'Ga', 'Zn', 'O']
+    name_, ext_ = os.path.splitext(cname)
+    print("name = %s" % name_)
+    print("ext = %s" % ext_)
+    if ext_ == "":
+        filename = cname + ".cfg"
+    else:
+        filename = cname
+    if not os.path.exists(filename):
+        sys.exit(filename + " file not found")
+
+    outname = name_
+
+    # atoms_index = ['In', 'Ga', 'Zn', 'O']
+    #atoms_index0 = 'V,O'
 
     #
     # Usage:
