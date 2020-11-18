@@ -9,29 +9,42 @@ Python フレームワークです。
 エンドユーザーは気楽にほぼ同一の手続きで計算から解析まで行うことが可能になります。
 
 ## いいわけ
+
 かなり突貫で作っておりまして、現バージョンではまだまだ企画倒れな部分も多数ありますが、
 なによりも2015 年あたりから開発が完全に停止してます。中途半端です。
 また、当時はPythonがよくわかってなかったので今見るとかなりいい加減です。
 
 ## 履歴
 
-- ver_0.0.15: 2020.11.18
-- ver_0.0.6: 2018.10.15 (マイナーfix) **Python3.0**
+- ver_0.0.18: 2020.11.18 21:11 突貫微調整, 名前空間の問題を（一部）解消
+- ver_0.0.15: 2020.11.18 突貫微調整
+- ver_0.0.6: 2018.10.15 突貫微調整 (マイナーfix) **Python3.0**
 - ver_0.0.0: 2015.02.16 Last-Release Version (開発停止版)
 
 ## ライセンスおよび免責事項
+
 [MITライセンス](http://opensource.org/licenses/mit-license.php)([日本語のMITライセンスの解説](https://ja.wikipedia.org/wiki/MIT_License))です。
 ユーザーは使用にあたってMITライセンスを順守してください。MITライセンスに基づき、作者はソフトウエアに関して何ら責任を負いません。詳しくはパッケージに同封の LICENSE.txt ファイルをご覧ください。
 
 This software is released under the MIT License, see LICENSE.txt.
 
 ## 想定する実行環境
+
 開発のメインは Mac OS X で、テスト環境のメインは Linux ですが、ある程度は Windows 7 Pro および Windows 8.1 Pro でテストを行っています。Python が導入されていればほとんど何処でも動くと思います。
 
 ## インストール
-Windows (64bit)の場合は <b>StructureAnalysisEnvironment-0.0.1.win-amd64.exe</b> を実行していただければインストーラが立ち上がり、すべてOKで推し進めれば、インストールは完了します。
-Python 2.7系のみ対応しています(2.6でもあるていど動きますが、一部制限があります)。
-ソースコードから setup.py を使ってインストールしても同じです。PyPI にはまだ登録していませんので pip での一発インストールは出来ません。
+
+~~Windows (64bit)の場合は <b>StructureAnalysisEnvironment-0.0.1.win-amd64.exe</b> を実行していただければインストーラが立ち上がり、すべてOKで推し進めれば、インストールは完了します。~~
+~~Python 2.7系のみ対応しています(2.6でもあるていど動きますが、一部制限があります)。~~
+~~ソースコードから setup.py を使ってインストールしても同じです。PyPI にはまだ登録していませんので pip での一発インストールは出来ません。~~
+
+現在、バイナリからのインストールはサポートしていません。setup.py もしくは git からの pip インストールの対応になります。解凍後
+
+```sh
+python setup.py install
+```
+
+主なテストは **python 3.6.10** にて行っています
 
 ## 実行に必要なPythonおよびモジュール
 
@@ -45,8 +58,10 @@ Python 2.7系のみ対応しています(2.6でもあるていど動きますが
 * PyCifRW
 * [VPython](http://vpython.org)
 * [wxPython](http://www.wxpython.org)
+* pandas
 
 ### Matplotlib に必要とされるモジュール
+
 Matplotlibモジュールは NumPy および SciPy を用いますが、それ以外にも以下のモジュールを用います。Matplotlibインストール時に導入されない環境の場合は明示的にそれぞれインストールしてください。
 
 * [SciPy](http://www.numpy.org): matplitlib で用います
@@ -62,7 +77,7 @@ Matplotlibモジュールは NumPy および SciPy を用いますが、それ�
 #!/usr/bin/env python
 import StructureAnalysisEnvironment as SAEnv
 
-cell = SAEnv.Read(filename='POSCAR', code='VASP')
+cell = SAEnv.io.Read(filename='POSCAR', code='VASP')
 cell.write(code='FDMNES')
 ```
 
@@ -73,7 +88,7 @@ cell.write(code='FDMNES')
 #!/usr/bin/env python
 import StructureAnalysisEnvironment as SAEnv
 
-cell = SAEnv.Read(filename='POSCAR', code='VASP')
+cell = SAEnv.io.Read(filename='POSCAR', code='VASP')
 SAEnv.write(cell, code='FDMNES')
 ```
 
