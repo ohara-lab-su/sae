@@ -23,38 +23,41 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ################################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2014, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2014, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.2"
+__status__ = "alpha"
+__version__ = "0.0.2"
+
 ################################################################################
 
 import sys
 import os
 import glob
 import optparse
-#import numpy as np
+# import numpy as np
 
-#import re
-#from copy import deepcopy
+# import re
+# from copy import deepcopy
 
 import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
-
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--input', dest='INPUT',)
-    parser.add_option( '-o','--output', dest='OUTPUT',)
-    parser.add_option( '-v','--vacuum')
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    parser.add_option('-o', '--output', dest='OUTPUT', )
+    parser.add_option('-v', '--vacuum')
+    options, args = parser.parse_args()
 
 
 ################################################################################
@@ -65,9 +68,9 @@ if __name__ == '__main__':
     if not os.path.exists('POSCAR'): sys.exit("STOP: POSCAR not found")
     if not os.path.exists('POTCAR'): sys.exit("STOP: POTCAR not found")
 
-    incar = SAEnv.ReadVaspIncar()
-    poscar = SAEnv.ReadVaspPoscar()
-    potcar = SAEnv.ReadVaspPotcar()
+    incar = SAEnv.io.ReadVaspIncar()
+    poscar = SAEnv.io.ReadVaspPoscar()
+    potcar = SAEnv.io.ReadVaspPotcar()
 
     print("ISTART = %s" % str(incar.istart))
     print("ICHARG = %s" % str(incar.icharg))
@@ -88,7 +91,6 @@ if __name__ == '__main__':
     print("NELM   = %s" % str(incar.nelm))
     print("NSW    = %s" % str(incar.nsw))
 
-
     if incar.nsw > 0:
         print("")
         print("IBRION = %s" % str(incar.ibrion))
@@ -97,9 +99,8 @@ if __name__ == '__main__':
     print("EDIFF  = %s" % str(incar.ediff))
     print("EDIFFG = %s" % str(incar.ediffg))
 
-
-    kpoints = SAEnv.ReadVaspKpoints()
-    kx,ky,kz = kpoints.get_kpoints()
+    kpoints = SAEnv.io.ReadVaspKpoints()
+    kx, ky, kz = kpoints.get_kpoints()
     if kpoints.FLAGS[5]:
         gamma_FLAG = True
         monk_FLAG = False
@@ -163,5 +164,3 @@ if __name__ == '__main__':
     for i in range(len(potcar.atoms_zval)):
         print("%s " % str(potcar.atoms_zval[i]), end="")
     print("")
-
-

@@ -16,58 +16,62 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ################################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.0.1"
+__status__ = "alpha"
+__version__ = "0.0.1"
+
 ################################################################################
 
 import sys
-#import os
-#import gzip
+# import os
+# import gzip
 import optparse
-#import numpy as np
+# import numpy as np
 
-#import re
-#from copy import deepcopy
+# import re
+# from copy import deepcopy
 
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
+
+
+# import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
-
     name = 'EIGENVAL'
     out1 = 'band1.dat'
     out2 = 'band2.dat'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
-    )
-    options,  args = parser.parse_args()
+    parser.add_option('-i', '--input',
+                      dest='INPUT',
+                      default=name,
+                      )
+    options, args = parser.parse_args()
 
     if options.INPUT:
-        name=options.INPUT
+        name = options.INPUT
 
     if len(args) > 0:
-        name=args[0]
+        name = args[0]
 
-    return [name,out1,out2]
+    return [name, out1, out2]
+
 
 ################################################################################
 if __name__ == '__main__':
 
-    name,out1,out2 = options()
+    name, out1, out2 = options()
 
-    band = SAE.ReadVaspEigenval(name)
+    band = SAE.io.ReadVaspEigenval(name)
 
     NATOM = band.get_natom()
     TITLE = band.get_title()
@@ -84,27 +88,26 @@ if __name__ == '__main__':
             outfile = out2
 
         try:
-            out = open(outfile,'w')
+            out = open(outfile, 'w')
         except:
             out.cloase()
-            sys.exit("STOP:"+outfile+" can't open")
+            sys.exit("STOP:" + outfile + " can't open")
 
         for j in range(NBANDS):
             print("", file=out)
             print("", file=out)
             print("", file=out)
-            print("## ISPIN = ",NSPIN, file=out)
-            print("## SPIN  = ",ispin, file=out)
-            print("## NBAND = ",NBANDS, file=out)
-            print("## BAND  = ",j, file=out)
+            print("## ISPIN = ", NSPIN, file=out)
+            print("## SPIN  = ", ispin, file=out)
+            print("## NBAND = ", NBANDS, file=out)
+            print("## BAND  = ", j, file=out)
             print("## EF    = ", file=out)
             print("", file=out)
             print("", file=out)
             print("", file=out)
             for k in range(NKPTS):
-                print("%5d %14.8f" %( k+1, eigenval[j,k,ispin] ), file=out)
+                print("%5d %14.8f" % (k + 1, eigenval[j, k, ispin]), file=out)
 
         out.close()
 
 ################################################################################
-

@@ -98,8 +98,8 @@ if __name__ == '__main__':
     if len(args) > 0:
         MD=args[0]
 
-    print "INPUT :",MD
-    print "OUTPUT:",OUTPUT
+    print("INPUT :%s" % MD)
+    print("OUTPUT:%s" % OUTPUT)
 
     title = MD
 

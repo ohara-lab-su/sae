@@ -17,42 +17,11 @@
 # from .Read improt * としないとほぼほぼうまく動かない
 # Python2 はどちらでも OK
 
-#try:
-#    from .io import *
-#except ImportError:
-#    try:
-#        from io import *
-#    except ImportError:
-#        try:
-#            from StructureAnalysisEnvironment.io import *
-#        except ImportError:
-#            pass
-#
-#try:
-#    from .Method import *
-#except ImportError:
-#    try:
-#        from Method import *
-#    except ImportError:
-#        try:
-#            from StructureAnalysisEnvironment.Method import *
-#        except ImportError:
-#            pass
-#
-#try:
-#    from .copyright import *
-#except ImportError:
-#    try:
-#        from copyright import *
-#    except ImportError:
-#        try:
-#            from StructureAnalysisEnvironment.copyright import *
-#        except ImportError:
-#            pass
-
 #################################################################################
 
+from .copyright import *
 from .io import __init__
+from .Method import __init__
 
 # general
 from .write import *
