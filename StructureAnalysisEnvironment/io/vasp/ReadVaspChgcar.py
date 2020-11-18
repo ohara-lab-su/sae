@@ -101,7 +101,7 @@ except ImportError:
     from StructureAnalysisEnvironment.Method import Method
 # import SpaceGroupEnvironment as SGE
 
-from numba import jit
+# from numba import jit
 
 
 ################################################################################
@@ -431,7 +431,7 @@ class ReadVaspChgcar(Method):
         #                       print("")
         print("--- END")
 
-    @jit
+    # @jit
     def init_ave_elf(self):
         """
         ELF 積算解析（ある原点を中心としたELFの球積分値の解析)用のために
