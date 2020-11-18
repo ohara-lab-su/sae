@@ -36,12 +36,13 @@ import os
 # import numpy as np
 
 # import SpaceGroupEnvironment as SGE
-try:
-    # sys.path.append('../..')
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-    import StructureAnalysisEnvironment as SAEnv
-except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+# try:
+#     # sys.path.append('../..')
+#     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+#     import StructureAnalysisEnvironment as SAEnv
+# except ImportError:
+#     import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAEnv
 
 
 ###############################################################################
@@ -55,9 +56,11 @@ class Read(object):
     def __init__(self, filename=None, suffix=None,
                  code='VASP', sort=False, atoms_index=None):
 
-        module_name = 'StructureAnalysisEnvironment'
+        # module_name = 'StructureAnalysisEnvironment'
+        module_name = 'StructureAnalysisEnvironment.io'
 
         # for Default
+        # class_name = 'ReadVaspPoscar'
         class_name = 'ReadVaspPoscar'
         suffix = '.vasp'
         if filename is None:

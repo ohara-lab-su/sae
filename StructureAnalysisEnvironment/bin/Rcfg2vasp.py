@@ -44,13 +44,13 @@ import os
 import optparse
 # import numpy as np
 
-try:
-    sys.path.append('../../')
-    import StructureAnalysisEnvironment as SAEnv
-except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+#try:
+#    sys.path.append('../../')
+#    import StructureAnalysisEnvironment as SAE
+#except ImportError:
+#    import StructureAnalysisEnvironment as SAE
 
-#import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 # import SpaceGroupEnvironment as SGE
 
 
@@ -113,6 +113,6 @@ if __name__ == '__main__':
         atoms_index.append(i)
     print(atoms_index)
 
-    cell = SAEnv.io.Read(filename=filename, code='RMC', atoms_index=atoms_index)
+    cell = SAE.io.Read(filename=filename, code='RMC', atoms_index=atoms_index)
     cell.write(outname=outname, code='VASP')
 

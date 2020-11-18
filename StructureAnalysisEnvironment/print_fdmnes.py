@@ -31,7 +31,7 @@ __version__ = "0.1.1"
 #
 # from ase.io.xyz import *
 
-from ase.io.wien2k import *  ## using cellconst
+from ase.io.wien2k import *  # using cellconst
 from ase import Atoms
 
 # import os

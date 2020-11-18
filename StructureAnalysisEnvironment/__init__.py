@@ -17,46 +17,47 @@
 # from .Read improt * としないとほぼほぼうまく動かない
 # Python2 はどちらでも OK
 
-try:
-    from .io import *
-except ImportError:
-    try:
-        from io import *
-    except ImportError:
-        try:
-            from StructureAnalysisEnvironment.io import *
-        except ImportError:
-            pass
-
-try:
-    from .Method import *
-except ImportError:
-    try:
-        from Method import *
-    except ImportError:
-        try:
-            from StructureAnalysisEnvironment.Method import *
-        except ImportError:
-            pass
-
-try:
-    from .copyright import *
-except ImportError:
-    try:
-        from copyright import *
-    except ImportError:
-        try:
-            from StructureAnalysisEnvironment.copyright import *
-        except ImportError:
-            pass
+#try:
+#    from .io import *
+#except ImportError:
+#    try:
+#        from io import *
+#    except ImportError:
+#        try:
+#            from StructureAnalysisEnvironment.io import *
+#        except ImportError:
+#            pass
+#
+#try:
+#    from .Method import *
+#except ImportError:
+#    try:
+#        from Method import *
+#    except ImportError:
+#        try:
+#            from StructureAnalysisEnvironment.Method import *
+#        except ImportError:
+#            pass
+#
+#try:
+#    from .copyright import *
+#except ImportError:
+#    try:
+#        from copyright import *
+#    except ImportError:
+#        try:
+#            from StructureAnalysisEnvironment.copyright import *
+#        except ImportError:
+#            pass
 
 #################################################################################
-#### function
 
-### general
+from .io import __init__
+
+# general
 from .write import *
 
-### general ( sort function )
+# general ( sort function )
 from .sort_atoms_index_j import *
 from .sort_atoms_number_j import *
 from .sort_fix import *
@@ -64,7 +65,7 @@ from .sort_position import *
 
 from .chk_pdb_cryst1 import *
 
-### general (print function)
+# general (print function)
 from .print_poscar import *
 from .print_poscar4 import *
 from .print_sets import *
@@ -76,7 +77,7 @@ from .print_pwscf_scf import *
 from .print_rmcpot_cfg import *
 from .print_rmcpot_cfg_raw import *
 
-### general (get function)
+# general (get function)
 from .get_atom_start import *
 from .get_atomic_radius import *
 from .get_atomic_weight import *
@@ -85,23 +86,23 @@ from .get_max_md import *
 from .get_vasp_orbital_info import *
 from .get_calinfo import *
 
-### general (find file function)
+# general (find file function)
 from .find_datfile import *
 from .find_suffix import *
 
-### general (structure converter)
+# general (structure converter)
 from .conv_car2carABS import *  # general
 from .conv_car2direct import *  # general
 from .conv_cellparam import *  # FDMNES
 
-### function for WIEN2k
+# function for WIEN2k
 from .plot_xas import *
 from .plot_sum_xas import *
 
-### delete function
+# delete function
 from .del_commentout import *
 
-#### read function
+# read function
 from .read_row import *
 from .read_dataline import *
 from .read_dat import *
@@ -110,14 +111,14 @@ from .read_list_param import *
 from .read_md import *
 from .read_md_param import *
 
-### mathematica function
+# mathematica function
 from .func_rotate import *
 
-### ELF/CHG
+# ELF/CHG
 from .sphere_integral_of_elf import *
 
 ################################################################################
-### function 2
+# function 2
 
 from .change_density import *
 
@@ -138,13 +139,13 @@ from .make_supercell_param import *
 from .make_supercell_zb import *
 from .move_atoms import *
 
-### for RMC_pot
+# for RMC_pot
 from .read_cfg import *
 from .read_cfg_coll import *
 from .read_cfg_coll_param import *
 from .read_cfg_param import *
 
-### beta version
+# beta version
 from .read_outcar_param import *
 from .read_outcar_position import *
 
