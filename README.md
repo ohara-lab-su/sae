@@ -14,7 +14,9 @@ Python フレームワークです。
 また、当時はPythonがよくわかってなかったので今見るとかなりいい加減です。
 
 ## 履歴
-- ver_0.0.6: 2018.10.15 (マイナーfix)
+
+- ver_0.0.15: 2020.11.18
+- ver_0.0.6: 2018.10.15 (マイナーfix) **Python3.0**
 - ver_0.0.0: 2015.02.16 Last-Release Version (開発停止版)
 
 ## ライセンスおよび免責事項
@@ -33,7 +35,9 @@ Python 2.7系のみ対応しています(2.6でもあるていど動きますが
 
 ## 実行に必要なPythonおよびモジュール
 
-[Python 2.7](https://www.python.org/downloads/) を想定しています。まずは、Python 2.7 をインストールしてから以下のモジュールのインストールを行ってください。
+~~[Python 2.7](https://www.python.org/downloads/) を想定しています。まずは、Python 2.7 をインストールしてから以下のモジュールのインストールを行ってください。~~
+
+**Python3.5** 以上を想定しています。
 
 * [ASE](https://wiki.fysik.dtu.dk/) (AtomicSimulationEnvironment)
 * [NumPy](http://www.numpy.org)
