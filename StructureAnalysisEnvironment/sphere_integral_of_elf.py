@@ -17,10 +17,10 @@ import numpy as np
 import math
 
 # using jit
-from numba import jit
+# from numba import jit
 
 
-@jit
+# @jit
 def sphere_integral_of_elf(chgcar, ngxc, ngyz, ngzc, rate_x, rate_y, rate_z, r_diff=1.0):
     """
     ある原点からのある半径内での ELF の平均値
