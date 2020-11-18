@@ -47,6 +47,8 @@
     
 ## Ver_0.0.12, 2020.08.11 09:11
 
+Manganese で setup install のみで動作確認
+
 - ReadAthenaNor.py
     - カプセル化推進
     - バージョン切り替えに関してのバグフィックス
