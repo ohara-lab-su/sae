@@ -71,6 +71,6 @@ if __name__ == '__main__':
 
     POSCAR,cname = options()
 
-    cell = SAEnv.Read(filename=POSCAR,code='VASP')
+    cell = SAEnv.io.Read(filename=POSCAR,code='VASP')
     cell.write(outname=cname,code='RMC_POT')
 
