@@ -104,7 +104,7 @@ if __name__ == '__main__':
     print("Vacuum SIZE        : %s" % str(str(int(vacuum))))
 
     # Read POSCAR file
-    poscar = SAE.ReadVaspPoscar(inpname)
+    poscar = SAE.io.ReadVaspPoscar(inpname)
     title = poscar.get_title()
     scale = poscar.get_scale()
     t = poscar.get_t()

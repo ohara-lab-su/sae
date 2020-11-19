@@ -80,8 +80,7 @@ if __name__ == '__main__':
     fix         = np.zeros((natom,3),dtype='S')
 
     # POSCAR の読み込み
-    title,scale,selective,direct = \
-       SAE.read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix)
+    title,scale,selective,direct = SAE.read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix)
 
     ##########################################################################
 

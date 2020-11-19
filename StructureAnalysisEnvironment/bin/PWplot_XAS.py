@@ -54,8 +54,7 @@ def options():
     if options.YMAX: options.YMAX = float(options.YMAX)
     if len(args) > 0: name=args[0]
 
-    return name,\
-            options.EMAX,options.EMIN,options.YMAX
+    return name,options.EMAX,options.EMIN,options.YMAX
 
 ################################################################################
 if __name__ == '__main__':
@@ -90,7 +89,7 @@ if __name__ == '__main__':
 
     ###########################################################################
     timesP = 1.0
-    pw = SAE.ReadPwXanes('xanes.dat')
+    pw = SAE.io.ReadPwXanes('xanes.dat')
     plt.plot(pw.eng+E_edge,pw.xas*timesP,linewidth=1,label='PWSCF fch')
     plt.axvline(x=0,color='black',linewidth=1)
 

@@ -73,7 +73,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAE.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     #   plt.axes([orgx,orgy,xsize,ysize])
 
     ############################################################################
-    inp = SAE.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
 
     calculation = inp.get_calculation()
     if calculation:
@@ -134,9 +134,9 @@ if __name__ == '__main__':
 
     ## 計算結果の読み込み
     if AV:
-        txt = SAE.ReadFdmTxt(filout + '_' + str(AV[0]), '.txt')
+        txt = SAE.io.ReadFdmTxt(filout + '_' + str(AV[0]), '.txt')
     else:
-        txt = SAE.ReadFdmTxt(filout, '.txt')
+        txt = SAE.io.ReadFdmTxt(filout, '.txt')
 
     print("E_edge   =", txt.E_edge)
     print("E_fermi  =", txt.E_Fermi)
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         if not os.path.exists(convname):
             sys.exit("STOP: " + convname + " not found")
 
-        conv = SAE.ReadFdmConv(filout, '_conv.txt')
+        conv = SAE.io.ReadFdmConv(filout, '_conv.txt')
 
         # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
         if not inp.get_energygpho() and not FLAG_fermi:
@@ -210,7 +210,7 @@ if __name__ == '__main__':
             if not os.path.exists(obs_file):
                 sys.exit("STOP: " + obs_file + " not found")
 
-            nor = SAE.ReadAthenaNor(obs_file)
+            nor = SAE.io.ReadAthenaNor(obs_file)
             plt.subplot(2, 1, 1)
 
             plt.plot(nor.eng, nor.nor, label='obs.')

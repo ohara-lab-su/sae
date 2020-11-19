@@ -56,7 +56,7 @@ if __name__ == '__main__':
     COHP_FLAG = False
 
     # 軌道情報をサイトごとに表示
-    out = SAEnv.ReadLobOut()
+    out = SAEnv.io.ReadLobOut()
     for i in range(out.nion):
         print(out.atoms_index[i], ":[" + str(len(out.orbit_index[i])) + "]", end="")
         for j in range(out.orbit[i]):
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     if V_FLAG:
         # COHP 解析をした原子のペアを表示( 0番は Average)
         if not COHP_FLAG:
-            cohp = SAEnv.ReadLobCohp()
+            cohp = SAEnv.io.ReadLobCohp()
             COHP_FLAG = True
         print("")
         for i in range(len(cohp.bond_index)):

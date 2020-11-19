@@ -64,7 +64,7 @@ if __name__ == '__main__':
     # set input file
     name = options()
 #   dos = SAEnv.ReadVaspDoscar(name)
-    dos = SAEnv.ReadLobDos(name)
+    dos = SAEnv.io.ReadLobDos(name)
 
     # set output device
     out = sys.stdout

@@ -107,7 +107,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAEnv.ReadFdmFdmfile()
+            fdmfiletxt = SAEnv.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
@@ -218,7 +218,7 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    inp = SAEnv.ReadFdmInp(inpname)
+    inp = SAEnv.io.ReadFdmInp(inpname)
 
     if not atom and not inp.nonexc:
         atom = 0
@@ -248,10 +248,10 @@ if __name__ == '__main__':
     print("")
 
     #   bav = SAE.ReadFdmBav(bavname)
-    txt = SAEnv.ReadFdmTxt(txtname, '.txt', weight=WETXT)
-    conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
-    #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
-    sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
+    txt = SAEnv.io.ReadFdmTxt(txtname, '.txt', weight=WETXT)
+    conv = SAEnv.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
+    #   sd0 = SAEnv.io.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
+    sd = SAEnv.io.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
     if ispin >= 2:

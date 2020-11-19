@@ -141,9 +141,9 @@ if __name__ == '__main__':
     #####################################
     # POSCAR/CONTCAR 読み込み
     #
-    poscar = SAE.ReadVaspPoscar(readfile)
-    potcar = SAE.ReadVaspPotcar()
-    acf = SAE.ReadVaspAcf(poscar=poscar,potcar=potcar)
+    poscar = SAE.io.ReadVaspPoscar(readfile)
+    potcar = SAE.io.ReadVaspPotcar()
+    acf = SAE.io.ReadVaspAcf(poscar=poscar,potcar=potcar)
 
 
     #####################################

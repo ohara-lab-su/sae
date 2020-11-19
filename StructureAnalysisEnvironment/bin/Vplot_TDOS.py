@@ -149,7 +149,7 @@ if __name__ == '__main__':
         print("INTTDOS mode")
 
     # makes instance ( Read DOSCAR )
-    dos = SAEnv.ReadVaspDoscar(dname)
+    dos = SAEnv.io.ReadVaspDoscar(dname)
 
 #   if os.path.exists(oname) or os.path.exists(oname+'.gz'):
 #       FLAG_outcar = True

@@ -205,7 +205,7 @@ if __name__ == '__main__':
 
     MD0,suffix,MOL = options()
     MD = MD0+'.'+suffix
-    xyz = SAE.ReadMd(MD)
+    xyz = SAE.io.ReadMd(MD)
 
     write_fdmnes(xyz)
     write_fdmnes(xyz,name=MD0,STD=False)

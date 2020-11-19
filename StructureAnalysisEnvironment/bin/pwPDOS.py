@@ -78,7 +78,7 @@ if __name__ == '__main__':
     plt.axes([orgx,orgy,xsize,ysize])
 
 
-    pw = SAE.ReadPwPdos(prefix)
+    pw = SAE.io.ReadPwPdos(prefix)
     if outname is None:
         pw.pdos = pw.get_ldos(l=0, atom = 0, spin=0)
         plt.plot(pw.eng,pw.pdos,linewidth=1,label='s')
