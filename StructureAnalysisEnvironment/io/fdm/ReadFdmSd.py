@@ -140,12 +140,12 @@ class ReadFdmSd(object):
             # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
             print('load NEW format: sd2020')
             print('')
-            self.__sd = SAE.ReadFdmSd2020(sdname, suffix, inpname, bavname, absorber, weight)
+            self.__sd = SAE.io.ReadFdmSd2020(sdname, suffix, inpname, bavname, absorber, weight)
         else:
             #  〜2016.01.08
             print('load OLD format: ~sd2016.01.08')
             print('')
-            self.__sd = SAE.ReadFdmSd2016(sdname, suffix, inpname, bavname, absorber, weight)
+            self.__sd = SAE.io.ReadFdmSd2016(sdname, suffix, inpname, bavname, absorber, weight)
 
     #
     # Method
@@ -268,7 +268,7 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
     name, suffix = options()
-    sd = SAE.ReadFdmSd(name, suffix)
+    sd = SAE.io.ReadFdmSd(name, suffix)
 
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()

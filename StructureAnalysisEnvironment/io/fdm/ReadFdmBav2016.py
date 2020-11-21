@@ -318,7 +318,7 @@ def options():
 if __name__ == '__main__':
 
     name, suffix = options()
-    bav = SAEnv.ReadFdmBav2016(name, suffix)
+    bav = SAEnv.io.ReadFdmBav2016(name, suffix)
     print('')
 
     natom = bav.get_natom()

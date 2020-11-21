@@ -342,8 +342,7 @@ class ReadVaspVasprun(object):
         natom = self.get_natom()
         ion_loop = 0
         position_loop = np.zeros((natom, 3, self.n_ion_loop))
-        for cal in self.root.findall( \
-                "calculation/structure/varray[@name='positions']"):
+        for cal in self.root.findall("calculation/structure/varray[@name='positions']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()
@@ -364,8 +363,7 @@ class ReadVaspVasprun(object):
         natom = self.get_natom()
         ion_loop = 0
         force_loop = np.zeros((natom, 3, self.n_ion_loop))
-        for cal in self.root.findall( \
-                "calculation/varray[@name='forces']"):
+        for cal in self.root.findall("calculation/varray[@name='forces']"):
             j = 0
             for e in cal:
                 tmp = e.text.split()

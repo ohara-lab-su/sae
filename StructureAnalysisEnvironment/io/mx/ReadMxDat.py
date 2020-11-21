@@ -260,15 +260,11 @@ class ReadMxDat(ReadMxDatMethod):
                     for k in range(self.nion):
                         for j in range(1, self.natom + 1):  # original_index
                             if self.atoms_index[k] == self.datlines[i + j].split()[1]:
-                                self.position_index[l] = \
-                                    int(self.datlines[i + j].split()[0]) - 1
+                                self.position_index[l] = int(self.datlines[i + j].split()[0]) - 1
                                 self.position_index_r[j - 1] = l
-                                self.position[l, 0] = \
-                                    float(self.datlines[i + j].split()[2]) * self.UNIT
-                                self.position[l, 1] = \
-                                    float(self.datlines[i + j].split()[3]) * self.UNIT
-                                self.position[l, 2] = \
-                                    float(self.datlines[i + j].split()[4]) * self.UNIT
+                                self.position[l, 0] = float(self.datlines[i + j].split()[2]) * self.UNIT
+                                self.position[l, 1] = float(self.datlines[i + j].split()[3]) * self.UNIT
+                                self.position[l, 2] = float(self.datlines[i + j].split()[4]) * self.UNIT
                                 l += 1
                     UNIT_FLAG = False
 

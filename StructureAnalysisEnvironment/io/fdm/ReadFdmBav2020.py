@@ -355,7 +355,7 @@ def options():
 if __name__ == '__main__':
 
     name, suffix = options()
-    bav = SAE.ReadFdmBav2020(name, suffix)
+    bav = SAE.io.ReadFdmBav2020(name, suffix)
     print('')
 
     natom = bav.get_natom()

@@ -151,7 +151,7 @@ if __name__ == '__main__':
 
     name = options()
 
-    poscar = SAEnv.io.vasp.ReadPoscar(name)
+    poscar = SAEnv.io.vasp.ReadVaspPoscar(name)
     potcar = SAEnv.io.vasp.ReadVaspPotcar()
     acfdat = ReadVaspAcf(poscar=poscar, potcar=potcar, acf='ACF.dat')
     acfdat.get_max_bader()
