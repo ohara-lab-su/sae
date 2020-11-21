@@ -115,8 +115,9 @@ if __name__ == '__main__':
     # RMC_POT(cfg) 形式への出力(標準出力)
     print("  OUTPUT CFG-FILE = ", outname+'.cfg')
     STD=False
-   #STD=True
-    SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
+    #STD=True
+    #SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
+    SAE.print_rmcpot_cfg(outname,STD,title,t,natom,nion,atoms,position)
 
     ############## VASP 形式の*.vasp への出力(構造確認用)
     ##

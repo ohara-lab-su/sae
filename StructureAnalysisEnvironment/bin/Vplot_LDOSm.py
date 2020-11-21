@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
     #####################################################
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadVaspDoscar(dname)
+    dos = SAE.io.ReadVaspDoscar(dname)
 
     natom = dos.natom
     efermi = dos.efermi

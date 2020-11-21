@@ -120,7 +120,7 @@ if __name__ == '__main__':
     else:
         sys.exit("STOP: output0 file not found")
 
-    output0 = SAE.ReadWienOutput0(output0_file)
+    output0 = SAE.io.ReadWienOutput0(output0_file)
     nspin = output0.get_ispin()
     FLAG_SPIN = False
     if nspin >= 2:

@@ -86,6 +86,7 @@ if __name__ == '__main__':
 
         # *.cfg 形式でファイルへ書き出し
         STD=False
-        SAE.print_cfg(name,STD,comment,t,natom,nion,atoms,position)
+        #SAE.print_cfg(name,STD,comment,t,natom,nion,atoms,position)
+        SAE.print_rmcpot_cfg(name,STD,comment,t,natom,nion,atoms,position)
 
 

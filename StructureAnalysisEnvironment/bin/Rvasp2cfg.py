@@ -37,7 +37,6 @@ import optparse
 
 import StructureAnalysisEnvironment as SAEnv
 #import SpaceGroupEnvironment as SGE
-
 #import re
 
 ################################################################################
@@ -65,6 +64,7 @@ def options():
     if cname: print("OUTPUT file name: %s" % str(cname+".cfg"))
 
     return [POSCAR,cname]
+
 
 ################################################################################
 if __name__ == '__main__':

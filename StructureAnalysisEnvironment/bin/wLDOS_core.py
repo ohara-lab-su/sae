@@ -111,7 +111,7 @@ if __name__ == '__main__':
     for i in lists1:
         print(i, end="")
     print("")
-    dos1 = SAE.ReadWienDos(lists1)
+    dos1 = SAE.io.ReadWienDos(lists1)
     eng1 = dos1.get_eng()
 
     ############################################
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     for i in lists2:
         print(i, end="")
     print("")
-    dos2 = SAE.ReadWienDos(lists2)
+    dos2 = SAE.io.ReadWienDos(lists2)
     eng2 = dos2.get_eng()
 
 

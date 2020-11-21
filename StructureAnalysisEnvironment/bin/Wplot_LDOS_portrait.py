@@ -125,7 +125,7 @@ if __name__ == '__main__':
     else:
         sys.exit("STOP: output0 file not found")
 
-    output0 = SAE.ReadWienOutput0(output0_file)
+    output0 = SAE.io.ReadWienOutput0(output0_file)
     nspin = output0.get_ispin()
     nion = output0.get_nion()
     atoms_index = output0.get_atoms_index()
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         if FLAG_SPIN and spin == 1:
             lists = dn_lists
 
-        dos = SAE.ReadWienDos(lists)
+        dos = SAE.io.ReadWienDos(lists)
 
         nion = dos.get_nion()
         nedos = dos.get_nedos()
