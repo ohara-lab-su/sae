@@ -25,8 +25,8 @@ script = glob.glob("StructureAnalysisEnvironment/bin/*.py")
 long_description = 'Structure Analysis Environment'
 import os
 
-if os.path.exists('README.md'):
-    long_description = open('README.md').read()
+#if os.path.exists('README.md'):
+#    long_description = open('README.md').read()
 
 package_src_dir = 'StructureAnalysisEnvironment'
 files = glob.glob(package_src_dir + '/*.list')
