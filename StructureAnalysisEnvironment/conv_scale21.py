@@ -68,7 +68,12 @@ __version__ = "0.0.2"
 ################################################################################
 # 引数版
 def conv_scale21a(scale0, t):
-    ##
+    """
+
+    :param scale0: 変換する元の scale ファクタ
+    :param t:  基本並進は引数で引き渡せる
+    :return: scale, 変換結果
+    """
     t1_x = t[0, 0]
     t1_y = t[1, 0]
     t1_z = t[2, 0]
@@ -82,9 +87,9 @@ def conv_scale21a(scale0, t):
     t3_z = t[2, 2]
 
     ###############################################
-    ## 基本並進ベクトルをスケールしておく
-    ## --> scale=1.0 とするため
-    ##
+    # 基本並進ベクトルをスケールしておく
+    # --> scale=1.0 とするため
+    #
     t1_x = t1_x * scale0
     t1_y = t1_y * scale0
     t1_z = t1_z * scale0
@@ -122,5 +127,5 @@ def conv_scale21(scale0, t, natom, direct, position):
     t = t * scale0
     scale = 1.0
 
-    #   poscar =  [scale,t,natom,direct,position]
+    # poscar =  [scale,t,natom,direct,position]
     return scale, t, natom, direct, position

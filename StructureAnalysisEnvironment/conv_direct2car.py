@@ -97,16 +97,26 @@ import numpy as np
 #  注意) 2015.02.27: conv_direct2car --> conv_direct2car0 名前変更
 #
 def conv_direct2cara(ABS, scale0, t, natom, direct, position):
+    """
+
+    :param ABS:
+    :param scale0:
+    :param t:
+    :param natom:
+    :param direct:
+    :param position:
+    :return:
+    """
     if not direct:
         sys.exit("STOP(conv_direct2car): current is not Direct.")
 
     ###############################################
-    ## 座標系を 1) direct --> cartesian
-    ##          2) cartesian のまま
-    ##
-    ## 変換後に scale して絶対座標にする
-    ## (入力がAngstrom 系なので A 単位になる)
-    ##
+    # 座標系を 1) direct --> cartesian
+    #          2) cartesian のまま
+    #
+    # 変換後に scale して絶対座標にする
+    # (入力がAngstrom 系なので A 単位になる)
+    #
     t1_x = t[0, 0]
     t1_y = t[1, 0]
     t1_z = t[2, 0]
@@ -126,14 +136,16 @@ def conv_direct2cara(ABS, scale0, t, natom, direct, position):
         car[j, 2] = t1_z * position[j, 0] + t2_z * position[j, 1] + t3_z * position[j, 2]
 
     ###############################################
-    ## scale0 を掛けて car の絶対座標系へなおす
-    ## ABS mode:
-    ##     scale=1.0 とするので必須作業 (絶対座標記述の場合)
-    ##
-    ## non ABS mode:
-    ##     VASP 用の POSCAR の car Mode の場合は
-    ##     scale に関係なく内部座標は再スケールはない
-    ##
+    # scale0 を掛けて car の絶対座標系へなおす
+    # ABS mode:
+    #     scale=1.0 とするので必須作業 (絶対座標記述の場合)
+    #
+    # non ABS mode:
+    #     VASP 用の POSCAR の car Mode の場合は
+    #     scale に関係なく内部座標は再スケールはない
+    #     もし、VASPで scale=1.0 としてかえれば conv_scale21() を用いて scale=1.0 としてから
+    #     direct to car を実行する
+    #
     if not ABS:
         # for VASP
         scale = scale0
@@ -148,9 +160,9 @@ def conv_direct2cara(ABS, scale0, t, natom, direct, position):
         position[j, 2] = car[j, 2] * scale0
 
     ###############################################
-    ## 基本並進ベクトルをスケールしておく
-    ## --> scale=1.0 とするため
-    ##
+    # 基本並進ベクトルをスケールしておく
+    # --> scale=1.0 とするため
+    #
     if ABS:
         t1_x = t1_x * scale0
         t1_y = t1_y * scale0
@@ -193,12 +205,12 @@ def conv_direct2car(scale0, t, natom, direct, position):
         sys.exit("STOP(conv_direct2car): current is not Direct.")
 
     ###############################################
-    ## 座標系を 1) direct --> cartesian
-    ##          2) cartesian のまま
-    ##
-    ## 変換後に scale して絶対座標にする
-    ## (入力がAngstrom 系なので A 単位になる)
-    ##
+    # 座標系を 1) direct --> cartesian
+    #          2) cartesian のまま
+    #
+    # 変換後に scale して絶対座標にする
+    # (入力がAngstrom 系なので A 単位になる)
+    #
     t1_x = t[0, 0]
     t1_y = t[1, 0]
     t1_z = t[2, 0]
@@ -218,14 +230,14 @@ def conv_direct2car(scale0, t, natom, direct, position):
         car[j, 2] = t1_z * position[j, 0] + t2_z * position[j, 1] + t3_z * position[j, 2]
 
     ###############################################
-    ## scale0 を掛けて car の絶対座標系へなおす
-    ## ABS mode:
-    ##     scale=1.0 とするので必須作業 (絶対座標記述の場合)
-    ##
-    ## non ABS mode:
-    ##     VASP 用の POSCAR の car Mode の場合は
-    ##     scale に関係なく内部座標は再スケールはない
-    ##
+    # scale0 を掛けて car の絶対座標系へなおす
+    # ABS mode:
+    #     scale=1.0 とするので必須作業 (絶対座標記述の場合)
+    #
+    # non ABS mode:
+    #     VASP 用の POSCAR の car Mode の場合は
+    #     scale に関係なく内部座標は再スケールはない
+    #
     # if not ABS:
     #    # for VASP
     #    scale  = scale0

@@ -59,6 +59,7 @@ except ImportError:
     except ImportError:
         print("import Error")
         sys.exit(-1)
+# import StructureAnalysisEnvironment as SAE
 
 # import SpaceGroupEnvironment as SGE
 
@@ -107,12 +108,12 @@ class ReadFdmBav(object):
             # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
             print('load NEW format: sd2020')
             print('')
-            self.__bav = SAE.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
+            self.__bav = SAE.io.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
         else:
             #  〜2016.01.08
             print('load OLD format: befor sd2016.01.08')
             print('')
-            self.__bav = SAE.ReadFdmBav2016(cname, suffix, datline=self.__datlines, num=self.__num)
+            self.__bav = SAE.io.ReadFdmBav2016(cname, suffix, datline=self.__datlines, num=self.__num)
 
     def set_n_scf_loop(self, _val):
         self.__bav.n_scf_loop = _val

@@ -156,7 +156,7 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadVaspDoscar(dname)
+    dos = SAE.io.ReadVaspDoscar(dname)
 
     NSPIN = dos.get_ispin()
     LORBIT = dos.get_lorbit()
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
         FLAG_OUTCAR=True
-        outcar = SAE.ReadVaspOutcar(oname)
+        outcar = SAE.io.ReadVaspOutcar(oname)
         NION = outcar.get_nion()
         atoms = outcar.get_atoms_index()
         atoms_j = outcar.get_atoms_j()

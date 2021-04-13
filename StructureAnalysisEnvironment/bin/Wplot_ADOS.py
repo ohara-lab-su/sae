@@ -87,9 +87,7 @@ def options():
     if options.INPUT:
         name = options.INPUT
 
-    return [name,unit,options.fermi,\
-            options.nw,options.atomtot,\
-            options.EMAX,options.EMIN,options.YMAX]
+    return [name,unit,options.fermi, options.nw,options.atomtot, options.EMAX,options.EMIN,options.YMAX]
 
 ################################################################################
 if __name__ == '__main__':

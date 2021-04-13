@@ -101,9 +101,8 @@ def options():
     else:
         plot_ions = [1]
 
-    return [name,unit,options.fermi,\
-            options.nw,options.atomtot,\
-            options.EMAX,options.EMIN,options.YMAX,plot_ions]
+    return [name,unit,options.fermi,
+            options.nw,options.atomtot, options.EMAX,options.EMIN,options.YMAX,plot_ions]
 
 ################################################################################
 if __name__ == '__main__':

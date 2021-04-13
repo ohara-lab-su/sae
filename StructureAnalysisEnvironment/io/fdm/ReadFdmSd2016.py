@@ -645,7 +645,7 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
     name, suffix = options()
-    sd = SAEnv.ReadFdmSd2016(name, suffix)
+    sd = SAEnv.io.ReadFdmSd2016(name, suffix)
     #tmp = sd.get_pdos(l=0,lm='s', spin=0)
     #print(tmp)
 

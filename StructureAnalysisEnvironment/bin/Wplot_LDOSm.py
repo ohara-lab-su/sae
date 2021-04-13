@@ -93,11 +93,8 @@ def options():
     if options.ALL: options.nw = True
     if len(args) > 0: atom = int(args[0])
 
-    return [name,atom,unit,\
-            options.fermi,\
-            options.nw,options.ALL,\
-            options.up,options.down,\
-            options.EMAX,options.EMIN,options.YMAX]
+    return [name,atom,unit,
+            options.fermi, options.nw,options.ALL,options.up,options.down,options.EMAX,options.EMIN,options.YMAX]
 
 ################################################################################
 if __name__ == '__main__':

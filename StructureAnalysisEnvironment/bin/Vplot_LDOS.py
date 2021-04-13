@@ -199,7 +199,7 @@ if __name__ == '__main__':
     # makes instance ( Read OUTCAR )
     if os.path.exists(oname) or os.path.exists(oname+'.gz'):
         FLAG_OUTCAR=True
-        outcar = SAE.ReadVaspOutcar(oname)
+        outcar = SAE.io.ReadVaspOutcar(oname)
         NION = outcar.get_nion()
         atoms = outcar.get_atoms_index()
         atoms_j = outcar.get_atoms_j()

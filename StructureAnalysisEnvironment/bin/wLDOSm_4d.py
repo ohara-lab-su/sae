@@ -145,7 +145,7 @@ if __name__ == '__main__':
         dname = dname+'/DOSCAR'
         print("DOSCAR: ",dname)
 
-        dos = SAE.ReadVaspDoscar(dname)
+        dos = SAE.io.ReadVaspDoscar(dname)
         eng = dos.get_eng() - dos.get_efermi()
 
         c = cm.prism(j*20/4)

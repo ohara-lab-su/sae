@@ -65,7 +65,7 @@ if __name__ == '__main__':
     if options.suffix:
         suffix = options.suffix
 
-    scf = SAE.ReadWienScf(case=case,suffix=suffix)
+    scf = SAE.io.ReadWienScf(case=case,suffix=suffix)
 
     print("CASE   = ",case)
     print("SUFFIX = ",suffix)

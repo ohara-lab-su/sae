@@ -45,15 +45,14 @@ import optparse
 import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
+
 ################################################################################
 def options():
 
     name = 'DOSCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input',
-                        dest='INPUT',
-                        default=name,
+    parser.add_option('-i','--input', dest='INPUT', default=name,
     )
     options,  args = parser.parse_args()
 
@@ -72,7 +71,7 @@ if __name__ == '__main__':
     name = options()
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadVaspDoscar(name)
+    dos = SAE.io.ReadVaspDoscar(name)
 
     # set output device
     out = sys.stdout

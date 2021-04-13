@@ -84,6 +84,6 @@ if __name__ == '__main__':
     poscarname,outbase,inpsuffix,OPT_STD = options()
     cname = outbase+inpsuffix
 
-    cell = SAEnv.Read(filename=poscarname,code='VASP')
+    cell = SAEnv.io.Read(filename=poscarname,code='VASP')
     cell.write(outname=cname,code='PWScf',STD=OPT_STD)
 

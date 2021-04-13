@@ -147,7 +147,7 @@ class ReadVaspPoscar(Method):
 
     ###############################################
     # init and Read POSCAR
-    def __init__(self, POSCAR='POSCAR', suffix='.vasp', sort=False, atoms_index=None):
+    def __init__(self, POSCAR='POSCAR', suffix='.vasp', sort=False, atoms_index=None, code=None):
 
         self.datlines, self.num = SAEnv.read_dataline(POSCAR)
 
@@ -244,16 +244,16 @@ class ReadVaspPoscar(Method):
                     self.atoms_number_j.append(num0)
 
         ###############################################
-        ## 全原子数の確認
+        ##全原子数の確認
         self.natom = 0
         for j in range(self.nion):
             sum = int(self.atoms[j])
             self.natom = self.natom + sum
 
         ###############################################
-        ## get ion (makes index)
-        ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
-        ##
+        # get ion (makes index)
+        # ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+        #
         self.ion = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
@@ -324,9 +324,11 @@ class ReadVaspPoscar(Method):
             print("%s" % str(self.datlines[i].split()[0]))
             sys.exit("Format Error")
         if bool(direct_reg.match(self.datlines[i].split()[0])):
-            self.direct = True
+            print("Direct")
+            self.__direct = True
         elif bool(car_reg.match(self.datlines[i].split()[0])):
-            self.direct = False
+            print("Cartesian")
+            self.__direct = False
 
         ###############################################
         # get atomic coordinate position
@@ -420,6 +422,16 @@ class ReadVaspPoscar(Method):
     ############################################################################
     # direct to cartesian method
     def conv_direct2car(self, ABS=None):
+        """
+        Direct 座標を cartesian 座標となる
+
+        :param ABS:  True/False
+                     VASP のときは、scale-factor で割った値が座標となる
+                     scale-factor=1.0 ならば正しい、cartesian 表記(絶対値表現)となる
+                     もし、scale-factor が 1.0 意外ならば VASP だと、実は
+                     scale-factor でスケールされている直交座標表現となる
+        :return:
+        """
 
         if ABS is not None:
             ABS = False
@@ -428,13 +440,24 @@ class ReadVaspPoscar(Method):
                 if ABS == 'vasp' or ABS == 'VASP':
                     ABS = True
 
-        self.scale, self.direct = SAEnv.conv_direct2cara(
+        self.scale, self.__direct = SAEnv.conv_direct2cara(
             ABS,
             self.scale,
             self.t,
             self.natom,
-            self.direct,
+            self.__direct,
             self.position)
+
+    def conv_scale21(self):
+        """
+        scale factor を 1 に変換する
+        :return:
+        """
+        self.scale = SAEnv.conv_scale21a(self.scale, self.t)
+
+    @property
+    def direct(self):
+        return self.__direct
 
     ############################################################################
     # print POSCAR
@@ -447,7 +470,7 @@ class ReadVaspPoscar(Method):
             self.natom,
             self.nion,
             self.selective,
-            self.direct,
+            self.__direct,
             self.vasp_version,
             self.t,
             self.atoms,
@@ -465,14 +488,14 @@ class ReadVaspPoscar(Method):
         super_z = int(times[2])
 
         # direct --> cartesian
-        if self.direct:
+        if self.__direct:
             ABS = True
-            self.scale, self.direct = SAEnv.conv_direct2cara(
+            self.scale, self.__direct = SAEnv.conv_direct2cara(
                 ABS,
                 self.scale,
                 self.t,
                 self.natom,
-                self.direct,
+                self.__direct,
                 self.position)
 
         # super 用の配列
@@ -514,12 +537,12 @@ class ReadVaspPoscar(Method):
         self.natom = self.natom * supers
 
         # cartesian --> direct
-        if not self.direct:
-            self.scale, self.direct = SAEnv.conv_car2direct(
+        if not self.__direct:
+            self.scale, self.__direct = SAEnv.conv_car2direct(
                 self.scale,
                 self.t,
                 self.natom,
-                self.direct,
+                self.__direct,
                 sp)
 
         self.ion = ion_sp

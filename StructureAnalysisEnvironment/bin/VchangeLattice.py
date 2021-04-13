@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
 
     ############ read VASP-POSCAR using SAE
-    atoms2 = SAE.Read(filename=POSCAR, code='VASP')
+    atoms2 = SAE.io.Read(filename=POSCAR, code='VASP')
 
 #   print atoms2.t
 #   t = np.zeros((3,3))

@@ -271,9 +271,9 @@ if __name__ == '__main__':
         if not direct:
             scale,direct = SAE.conv_car2directa(scale,t,natom,direct,position)
 
-    #   # POSCAR のファイル標準出力
-    #   STD=False
-    #   print_poscar(POSCAR,STD,title,scale,natom,nion,selective,direct,VASP,t,atoms,atoms_index,position,fix)
+        # # POSCAR のファイル標準出力
+        # STD=False
+        # print_poscar(POSCAR,STD,title,scale,natom,nion,selective,direct,VASP,t,atoms,atoms_index,position,fix)
 
         # RMC_POT(cfg) 形式への変換 必須:direct-Mode
         scale,direct = SAE.conv_vasp2cfg(scale,t,natom,direct,position)
@@ -282,8 +282,9 @@ if __name__ == '__main__':
 
         # RMC_POT(cfg) 形式への出力
         STD=False
-       #STD=True
-        SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
+        #STD=True
+        #SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
+        SAE.print_rmcpot_cfg(outname,STD,title,t,natom,nion,atoms,position)
 
 
         ########################################################################

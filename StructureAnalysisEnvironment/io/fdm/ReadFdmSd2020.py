@@ -630,7 +630,7 @@ def options():
 ###############################################################################
 if __name__ == '__main__':
     name, suffix = options()
-    sd = SAE.ReadFdmSd2020(name, suffix)
+    sd = SAE.io.ReadFdmSd2020(name, suffix)
     #tmp = sd.get_pdos(l=0,lm='s', spin=0)
     #print(tmp)
 

@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
     # makes instance ( Read DOSCAR )
     print("READ %s" % str(dname))
-    dos = SAE.ReadVaspDoscar(dname)
+    dos = SAE.io.ReadVaspDoscar(dname)
     print("END READ")
 
     NSPIN = dos.get_ispin()

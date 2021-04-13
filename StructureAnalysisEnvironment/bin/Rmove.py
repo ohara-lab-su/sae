@@ -50,15 +50,15 @@ import StructureAnalysisEnvironment as SAE
 def options():
 
     ###############################################
-    ## default parameter
-    ##
-#   cname  = "POSCAR" # OUTPUT BASE filename
+    # default parameter
+    #
+    # cname  = "POSCAR" # OUTPUT BASE filename
     cname  = "igzo"   # OUTPUT BASE filename
     POSCAR = "POSCAR" # INPUT (BASE) filename
 
     ###############################################
-    ## optparse
-    ##
+    # optparse
+    #
     parser = optparse.OptionParser()
 
     parser.add_option(  '-i','--input',
@@ -160,8 +160,9 @@ if __name__ == '__main__':
 
     # RMC_POT(cfg) 形式への出力(標準出力)
     STD=False
-   #STD=True
-    SAE.print_cfg(cname,STD,title,t,natom,nion,atoms,position)
+    #STD=True
+    # SAE.print_cfg(cname,STD,title,t,natom,nion,atoms,position)
+    SAE.print_rmcpot_cfg(cname,STD,title,t,natom,nion,atoms,position)
 
 
     ##########################################################################

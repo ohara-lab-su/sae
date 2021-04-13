@@ -58,7 +58,8 @@ if __name__ == '__main__':
     name_out = 'OUTCAR'
     name_osz = 'OSZICAR'
 
-    module_name = 'StructureAnalysisEnvironment'
+    #module_name = 'StructureAnalysisEnvironment'
+    module_name = 'StructureAnalysisEnvironment.io'
 
     if os.path.exists(name_osz) or os.path.exists(name_osz+".gz"):
         class_name ='ReadOszicar'

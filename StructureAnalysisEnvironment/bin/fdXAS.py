@@ -66,7 +66,7 @@ def options():
 if __name__ == '__main__':
 
     name,suffix = options()
-    conv = SAEnv.ReadFdmConv(name,suffix)
+    conv = SAEnv.io.ReadFdmConv(name,suffix)
 
     eng = conv.eng
     xas = conv.xas

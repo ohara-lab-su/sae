@@ -58,7 +58,7 @@ if __name__ == '__main__':
     dosname,outname = options()
 
     if outname is not None:
-        out = SAE.ReadPwOut(outname)
+        out = SAE.io.ReadPwOut(outname)
 
     plt.rcParams['font.family']     = 'Times New Roman'
     plt.rcParams['font.size']       = 16  # ラベル等のフォントサイズ
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     plt.axes([orgx,orgy,xsize,ysize])
 
 
-    pw = SAE.ReadPwTdos(dosname)
+    pw = SAE.io.ReadPwTdos(dosname)
     pw.dos_up = pw.get_tdos(spin=0)
     if outname is None:
         plt.plot(pw.eng,pw.dos_up,linewidth=1,label='PWSCF TDOS')

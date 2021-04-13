@@ -80,8 +80,7 @@ if __name__ == '__main__':
     fix         = np.zeros((natom,3),dtype='S')
 
     # POSCAR の読み込み
-    title,scale,selective,direct = \
-       SAE.read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix)
+    title,scale,selective,direct = SAE.read_poscar(POSCAR,VASP,t,atoms,atoms_index,ion,ion_local,position,fix)
 
     ##########################################################################
 
@@ -116,8 +115,9 @@ if __name__ == '__main__':
     # RMC_POT(cfg) 形式への出力(標準出力)
     print("  OUTPUT CFG-FILE = ", outname+'.cfg')
     STD=False
-   #STD=True
-    SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
+    #STD=True
+    #SAE.print_cfg(outname,STD,title,t,natom,nion,atoms,position)
+    SAE.print_rmcpot_cfg(outname,STD,title,t,natom,nion,atoms,position)
 
     ############## VASP 形式の*.vasp への出力(構造確認用)
     ##

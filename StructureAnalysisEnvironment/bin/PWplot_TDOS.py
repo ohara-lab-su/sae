@@ -65,14 +65,14 @@ def options():
     return dosname,outname,\
             options.EMAX,options.EMIN,options.YMAX
 
+
 ################################################################################
 if __name__ == '__main__':
 
-    dosname,outname,\
-            OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
+    dosname, outname, OPT_EMAX,OPT_EMIN,OPT_YMAX = options()
 
     if outname is not None:
-        out = SAE.ReadPwOut(outname)
+        out = SAE.io.ReadPwOut(outname)
 
     if OPT_EMAX: print("Emax=",OPT_EMAX)
     if OPT_EMIN: print("Emin=",OPT_EMIN)

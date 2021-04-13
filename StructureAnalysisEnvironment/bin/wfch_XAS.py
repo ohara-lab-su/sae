@@ -92,7 +92,7 @@ if __name__ == '__main__':
     dos1_p = np.array(dos1.get_raw_dos(atom=1,orbit='p'))
 
     print('DOS(2) = ',name2[0])
-    dos2 = SAE.ReadWienDos(name2)
+    dos2 = SAE.io.ReadWienDos(name2)
     efermi2 = dos2.get_efermi()
     eng2 = dos2.get_eng()
     eng2_emin = dos2.get_emin()
@@ -103,7 +103,7 @@ if __name__ == '__main__':
 
     ############################################
     # txspec instance ( unbroad XAS )
-    txspec = SAE.ReadWienTxspec(case=case2,suffix=txspec_suffix)
+    txspec = SAE.io.ReadWienTxspec(case=case2,suffix=txspec_suffix)
 #   eng_unbroad = txspec.get_eng()
 #   eng_unbroad_emin = txspec.get_emin()
 #   eng_unbroad_emax = txspec.get_emax()
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
     ############################################
     # xspec instance ( XAS )
-    xspec = SAE.ReadWienXspec(case=case2,suffix=xspec_suffix)
+    xspec = SAE.io.ReadWienXspec(case=case2,suffix=xspec_suffix)
     eng_xas = xspec.get_eng()
 #   eng_xas_min = xspec.get_emin()
 #   eng_xas_max = xspec.get_emax()
