@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2021.04.13, 21:14
+
+- bugfix: selective-dynamic T/F 出力が byte になる問題の解決(decodeを取り敢えず入れる)
+    - StructureAnalysisEnvironment/print_poscar.py
+    
 ## 2021.04.13, 09:18
 
 - VASP Read 関係にいくつかの基本メソッド(convet)などを追加

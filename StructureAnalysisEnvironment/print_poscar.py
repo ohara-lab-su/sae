@@ -60,11 +60,30 @@ import sys
 # from numpy import *
 
 
-def print_poscar(cname, STD, \
-                 title, scale, natom, nion, selective, direct, VASP, \
+def print_poscar(cname, STD,
+                 title, scale, natom, nion, selective, direct, VASP,
                  t, atoms, atoms_index, position, fix):
-    ## open poscar file
-    ##
+    """
+    画面出力(ファイル出力にも使う）結果の出力ルーチン
+
+    :param cname:
+    :param STD:
+    :param title:
+    :param scale:
+    :param natom:
+    :param nion:
+    :param selective:
+    :param direct:
+    :param VASP:
+    :param t:
+    :param atoms:
+    :param atoms_index:
+    :param position:
+    :param fix:
+    :return:
+    """
+    # open poscar file
+    #
     if STD:
         out = sys.stdout
     else:
@@ -103,8 +122,8 @@ def print_poscar(cname, STD, \
     for i in range(int(natom)):
         print(" %13.9f %13.9f %13.9f" % (position[i, 0], position[i, 1], position[i, 2]), file=out, end="")
         if selective:
-            print("", file=out, end="")
-            print(fix[i, 0], fix[i, 1], fix[i, 2], file=out, end="")
+            print(" ", file=out, end="")
+            print(fix[i, 0].decode('ascii'), fix[i, 1].decode('ascii'), fix[i, 2].decode('ascii'), file=out, end="")
         print("", file=out)
 
     if STD:

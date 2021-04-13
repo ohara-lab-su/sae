@@ -244,7 +244,7 @@ class ReadVaspPoscar(Method):
                     self.atoms_number_j.append(num0)
 
         ###############################################
-        ##全原子数の確認
+        # 全原子数の確認
         self.natom = 0
         for j in range(self.nion):
             sum = int(self.atoms[j])
@@ -358,13 +358,18 @@ class ReadVaspPoscar(Method):
         #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
         # print ""
 
-    ############################################################################
-    # 基本並進ベクトルを、alpha, beta, gamma で回す
-    # VASP 表記とは転置した形で t ベクトルに入っているの注意
-    # 注意) むしろ VASP 表記が転置している
-    # ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
     def conv_rot_euler(self, alpha, beta, gamma):
+        """
+        基本並進ベクトルを、alpha, beta, gamma で回す
+        VASP 表記とは転置した形で t ベクトルに入っているの注意
+        注意) むしろ VASP 表記が転置している
+        ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
 
+        :param alpha:
+        :param beta:
+        :param gamma:
+        :return:
+        """
         R = SAEnv.rotate_euler(alpha, beta, gamma)
 
         # 基本並進ベクトルの変換
@@ -421,6 +426,8 @@ class ReadVaspPoscar(Method):
 
     ############################################################################
     # direct to cartesian method
+    ############################################################################
+
     def conv_direct2car(self, ABS=None):
         """
         Direct 座標を cartesian 座標となる
