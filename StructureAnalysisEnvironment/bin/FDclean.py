@@ -18,54 +18,54 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ################################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.1.1"
+__status__ = "alpha"
+__version__ = "0.1.1"
+
 ################################################################################
 
 import sys
-#import gzip
+# import gzip
 import os
-#import re
+# import re
 import optparse
-#import numpy as np
+# import numpy as np
 import glob
 
 import StructureAnalysisEnvironment as SAE
-#import SpaceGroupEnvironment as SGE
 
 ################################################################################
 def options():
-
-#   name = 'read_pdb.inp'
-#   name = 'POSCAR.inp'
+    #   name = 'read_pdb.inp'
+    #   name = 'POSCAR.inp'
 
     parser = optparse.OptionParser()
-    parser.add_option(  '-i','--input', dest='INPUT',)
-    options,args = parser.parse_args()
+    parser.add_option('-i', '--input', dest='INPUT', )
+    options, args = parser.parse_args()
 
-    ###### default inpname �擾
+    ###### default inpname
     if options.INPUT:
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAE.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
 
     if not os.path.exists(inpname) or inpname is None:
-        sys.exit(inpname+' file not fount')
+        sys.exit(inpname + ' file not fount')
 
     if len(args) > 0:
-        inpname=args[0]
+        inpname = args[0]
 
     return inpname
 
@@ -73,27 +73,27 @@ def options():
 if __name__ == '__main__':
 
     name = options()
-    out = SAE.ReadFdmInp(name)
+    out = SAE.io.ReadFdmInp(name)
 
     filout = out.get_filout()
-    print('fileout :',filout)
+    print('fileout :', filout)
 
     if filout == '':
         print('fileout is None')
         sys.exit(-1)
 
-#   filelist = glob.glob(filout+'*.txt')
+    #   filelist = glob.glob(filout+'*.txt')
     filelist = ['fdmnes_error.txt',
-                filout+".txt",
-                filout+"_bav.txt",
-                filout+"_conv.txt"]
+                filout + ".txt",
+                filout + "_bav.txt",
+                filout + "_conv.txt"]
 
-    filelist.extend(glob.glob(filout+'_sd*.txt'))
+    filelist.extend(glob.glob(filout + '_sd*.txt'))
 
-#   print ""
+    #   print ""
     for i in filelist:
         if os.path.exists(i):
-            print("DELETE : "+i)
+            print("DELETE : " + i)
             os.remove(i)
 
     if os.path.exists('fdm.out'):
@@ -103,4 +103,3 @@ if __name__ == '__main__':
     if os.path.exists('PBS_log'):
         print("DELETE : PBS_log")
         os.remove('PBS_log')
-
