@@ -478,6 +478,7 @@ if __name__ == '__main__':
     print("E_fermi  =", txt.E_Fermi)
     print("-------------------")
     #
+    txt_eng = txt.eng
     if not FLAG_subt:
 
         # PhotoEnegy モードで計算した時と同じ結果を返す
@@ -485,7 +486,7 @@ if __name__ == '__main__':
             print("current mode is Fermi (E_edge = 0)")
             print("---> convert to PhotoEnergy")
             print("     + E_edge")
-            txt.eng = txt.eng + txt.E_edge
+            txt_eng = txt.eng + txt.E_edge
             conv.eng = conv.eng + txt.E_edge
 
         # E_fermi を引く(A) : A=B
@@ -493,7 +494,7 @@ if __name__ == '__main__':
             print("current mode is Fermi")
             print("---> subtract E_fermi")
             print("     - E_fermi")
-            txt.eng = txt.eng - txt.E_Fermi
+            txt_eng = txt.eng - txt.E_Fermi
             conv.eng = conv.eng - txt.E_Fermi
 
         # E_fermi を引く(B) : A=B
@@ -501,7 +502,7 @@ if __name__ == '__main__':
             print("current mode is PhotoEnergy")
             print("---> convert to EF0 mode")
             print("     - E_edge - E_fermi")
-            txt.eng = txt.eng - txt.E_Fermi - txt.E_edge
+            txt_eng = txt.eng - txt.E_Fermi - txt.E_edge
             conv.eng = conv.eng - txt.E_Fermi - txt.E_edge
 
     ##########################################################################
@@ -513,7 +514,7 @@ if __name__ == '__main__':
 
     # broad オプション ナシ( XAS の生スペクトルplot) or XAS オプションあり
     if not FLAG_B or FLAG_XAS:
-        plt.plot(txt.eng, txt.xas, color='green', linewidth=1, label='XAS')
+        plt.plot(txt_eng, txt.xas, color='green', linewidth=1, label='XAS')
 
     # xas オプション ナシ
     if not FLAG_XAS:
@@ -597,7 +598,7 @@ if __name__ == '__main__':
         if not os.path.exists(obs_file):
             sys.exit("STOP: " + obs_file + " not found")
 
-        nor = SAE.ReadAthenaNor(obs_file)
+        nor = SAE.io.ReadAthenaNor(obs_file)
         if FLAG_DOS:
             plt.subplot(3, 1, 1)
         else:
