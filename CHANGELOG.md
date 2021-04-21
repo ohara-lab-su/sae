@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.21, 2021.04.21, 21:07
+
+- python 3.9 環境での FDplot_XAS.py
+  - numpy = numpy + value のエラーの修正
+
 ## 2021.04.13, 21:14
 
 - bugfix: selective-dynamic T/F 出力が byte になる問題の解決(decodeを取り敢えず入れる)
