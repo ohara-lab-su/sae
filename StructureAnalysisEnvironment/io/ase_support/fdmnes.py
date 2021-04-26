@@ -161,7 +161,7 @@ def write_fdmnes_inp(name='read_pdb.inp',
     print("  %s" % fileout, file=out)
     print("", file=out)
     print(" Range                        ! Energy range of calculation (eV)", file=out)
-    print("  %s  ! %s " % (e_range, e_range_comment))
+    print("  %s  ! %s " % (e_range, e_range_comment), file=out)
     print("! -15. 0.1 50. 1. 200.        !", file=out)
     print("", file=out)
     print("!Energpho", file=out)
