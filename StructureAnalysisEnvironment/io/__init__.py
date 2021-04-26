@@ -10,6 +10,11 @@ except Exception:
 from .Read import *
 
 #
+# ASE support function/class
+#
+from .ase_support.fdmnes import *
+
+#
 # class for VASP (+alpha)
 #
 from .vasp.ReadVaspOutcar import *

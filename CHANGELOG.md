@@ -1,5 +1,19 @@
 # ChangeLog
 
+## Ver_0.0.23, 2021.04.27, 08:42
+
+- FDvasp2fdm.py: INP 生成をオプションで制御出来る項目を多数追加
+- FDvasp2fdm 中の write method を SAE 中の ASE support メソッドに追加（暫定処理）
+そのうち、本家ASE にコミット予定？
+
+### files
+
+- bin
+    - FDvasp2fdm.py
+- io
+    - ase_support
+        - fdmnes.py
+
 ## Ver_0.0.22, 2021.04.22, 08:33
 
 - FDclean.py が動かなくなっていたのを修正

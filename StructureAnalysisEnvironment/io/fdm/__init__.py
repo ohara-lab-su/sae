@@ -9,3 +9,4 @@ from .ReadFdmSd import *
 from .ReadFdmSd2016 import *
 from .ReadFdmSd2020 import *
 from .ReadFdmFdmfile import *
+from .WriteFdmInp import *

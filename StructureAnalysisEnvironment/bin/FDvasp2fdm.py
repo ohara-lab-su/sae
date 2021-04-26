@@ -25,22 +25,24 @@
 #
 ################################################################################
 from __future__ import print_function
+
 ################################################################################
-__author__     = "Kengo NAKADA"
+__author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
-__credits__    = ["Kengo NAKADA"]
-__email__      = "kengo.nakada@gmail.com"
-__copyright__  = "Copyright 2015, Kengo NAKADA"
-__license__    = "MIT"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
 #
-__status__     = "alpha"
-__version__    = "0.1.1"
+__status__ = "alpha"
+__version__ = "0.1.1"
+
 ################################################################################
 #
-from ase.io import read,write
+from ase.io import read, write
 from ase.io.vasp import *
 from ase.io.wien2k import *  ## using cellconst
-#from ase.io.xyz import *
+# from ase.io.xyz import *
 from ase import Atoms
 
 import os
@@ -49,19 +51,27 @@ import optparse
 import numpy as np
 
 
-################################################################################
-def write_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
+def write_fdmnes(name='POSCAR', atoms=None, STD=True, MOL=False):
+    """
+    FDMNES 入力形式へ POSCAR を変換する
+
+    :param name:
+    :param atoms:
+    :param STD:
+    :param MOL:
+    :return:
+    """
 
     if STD:
         out = sys.stdout
     else:
         try:
-            out = open(name+'.fdmnes','w')
+            out = open(name + '.fdmnes', 'w')
         except:
             out.close()
-            sys.exit("STOP:"+name+".fdmnes file can't open")
+            sys.exit("STOP:" + name + ".fdmnes file can't open")
 
-#   atoms = atoms2.copy()
+    #   atoms = atoms2.copy()
 
     cell = atoms.get_cell()
     metT = np.dot(cell, np.transpose(cell))
@@ -81,28 +91,49 @@ def write_fdmnes(name='POSCAR',atoms=None,STD=True,MOL=False):
     else:
         print(" Crystal", file=out)
 
-    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma ), file=out)
+    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma), file=out)
     for ii in range(nat):
         zza = atoms.get_atomic_numbers()[ii]
-       #pos = atoms.get_positions()[ii]
+        # pos = atoms.get_positions()[ii]
         pos = atoms.get_scaled_positions()[ii]
         sym = atoms.get_chemical_symbols()[ii]
-        print("   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym ), file=out)
+        print("   %2d %8.4f %8.4f %8.4f    ! %s" % (zza, pos[0], pos[1], pos[2], sym), file=out)
 
     if not STD:
         out.close()
 
 
-################################################################################
-def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
+def write_fdmnes_inp(name='read_pdb.inp',
+                     absorber=1,
+                     fileout='Cu',
+                     e_range=None,
+                     edge='K',
+                     radius=5,
+                     atoms=None,
+                     MOL=False):
+    """
+    FDMNES 形式のひな形を作る（構造はここでは作らない)
 
+    :param name: 読み込むファイル
+    :param absorber: アブソーバー番号
+    :param fileout: 出力ファイル名prefix
+    :param e_range: エネルギーレンジ
+    :param edge: 吸収端(K,L,,,)
+    :param radius: クラスター半径
+    :param atoms:  SAE のインスタンス
+    :param MOL:  分子の場合は True
+    :return:
+    """
     try:
-        out = open(name,'w')
+        out = open(name, 'w')
     except:
         out.close()
-        sys.exit("STOP:"+name+".fdmnes file can't open")
+        sys.exit("STOP:" + name + ".fdmnes file can't open")
 
-#   atoms = atoms2.copy()
+    e_range_comment = "first energy, step, intermediary energy, step ..., last energy"
+    if e_range is None:
+        e_range = "-15. 0.2  0. 0.5 10. 1. 45."
+    #   atoms = atoms2.copy()
 
     cell = atoms.get_cell()  # from ASE
     metT = np.dot(cell, np.transpose(cell))
@@ -122,20 +153,20 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
     print("!Nonexc", file=out)
     print("", file=out)
     print(" Absorber", file=out)
-    print("  1", file=out)
+    print("  %s" % absorber, file=out)
     print("! allsite", file=out)
     print("", file=out)
     print(" Filout", file=out)
-    print("  Cu", file=out)
+    print("  %s" % fileout, file=out)
     print("", file=out)
     print(" Range                        ! Energy range of calculation (eV)", file=out)
-    print("  -15. 0.2  0. 0.5 10. 1. 45. ! first energy, step, intermediary energy, step ..., last energy", file=out)
+    print("  %s  ! %s " % (e_range, e_range_comment), file=out)
     print("! -15. 0.1 50. 1. 200.        !", file=out)
     print("", file=out)
     print("!Energpho", file=out)
     print("", file=out)
     print(" Edge", file=out)
-    print("  K", file=out)
+    print("  %s" % edge, file=out)
     print("! L23", file=out)
     print("", file=out)
     print("!Quadrupole", file=out)
@@ -170,10 +201,13 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
     print("", file=out)
     print("!Green", file=out)
     print("", file=out)
+
     print(" Radius                       ! Radius of the cluster where final state calculation is performed", file=out)
-    print("   5.0                         ! For a good calculation, this radius must be increased up to 6 or 7 Angstroems", file=out)
+    radius_comment = 'For a good calculation, this radius must be increased up to 6 or 7 Angstroems'
+    print("   %s  ! %s" % (radius, radius_comment), file=out)
     print("", file=out)
-    print("!Memory_save", file=out)
+
+    print(" Memory_save", file=out)
     print("", file=out)
 
     if MOL:
@@ -181,13 +215,13 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
     else:
         print(" Crystal", file=out)
 
-    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % ( a,b,c,alpha,beta,gamma ), file=out)
+    print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma), file=out)
     for ii in range(nat):
         zza = atoms.get_atomic_numbers()[ii]
-       #pos = atoms.get_positions()[ii]
+        # pos = atoms.get_positions()[ii]
         pos = atoms.get_scaled_positions()[ii]
         sym = atoms.get_chemical_symbols()[ii]
-        print("   %2d %8.4f %8.4f %8.4f    ! %s"  % ( zza,pos[0],pos[1],pos[2],sym ), file=out)
+        print("   %2d %8.4f %8.4f %8.4f    ! %s" % (zza, pos[0], pos[1], pos[2], sym), file=out)
 
     print("", file=out)
     print("!Cif_file", file=out)
@@ -204,45 +238,44 @@ def write_fdmnes_inp(name='read_pdb.inp',atoms=None,MOL=False):
 
     out.close()
 
-################################################################################
+
 def options():
     name = 'POSCAR'
 
     parser = optparse.OptionParser()
-    parser.add_option( '-i','--ipput',dest='INPUT')
-    parser.add_option( '-m','--mol',action='store_true',default=False)
-    options,args = parser.parse_args()
+    parser.add_option('-i', '--ipput', dest='INPUT')
+    parser.add_option('-m', '--mol', action='store_true', default=False)
+    options, args = parser.parse_args()
 
     if options.INPUT: name = options.INPUT
     if len(args) > 0: name = str(args[0])
 
     if options.mol:
-        MOL=True
+        MOL = True
     else:
-        MOL=False
+        MOL = False
 
     if not os.path.exists(name):
-        if os.path.exists(name+'.vasp'):
-            name = name+'.vasp'
+        if os.path.exists(name + '.vasp'):
+            name = name + '.vasp'
         else:
-            sys.exit("STOP: "+name+" file not found")
+            sys.exit("STOP: " + name + " file not found")
 
-    return [name,MOL]
+    return [name, MOL]
+
 
 ################################################################################
 if __name__ == '__main__':
-
-    name,MOL = options()
+    name, MOL = options()
     atoms = read_vasp(name)
-    #atoms.write('POSCAR.pdb',format='pdb')
+    # atoms.write('POSCAR.pdb',format='pdb')
 
-    #print atoms.positions
-    #print ""
-    #print atoms.cell
-    #print ""
-    #print atoms.get_scaled_positions()
+    # print atoms.positions
+    # print ""
+    # print atoms.cell
+    # print ""
+    # print atoms.get_scaled_positions()
 
-    write_fdmnes(atoms=atoms,MOL=MOL)
-    write_fdmnes(name=name,atoms=atoms,STD=False,MOL=MOL)
-    write_fdmnes_inp(atoms=atoms,MOL=MOL)
-
+    write_fdmnes(atoms=atoms, MOL=MOL)
+    write_fdmnes(name=name, atoms=atoms, STD=False, MOL=MOL)
+    write_fdmnes_inp(atoms=atoms, MOL=MOL)
