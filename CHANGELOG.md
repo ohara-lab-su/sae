@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2021.04.27, 19:56
+
+- update sample script
+    - fdExp_comp_XAS.py
+    
 ## Ver_0.0.23, 2021.04.27, 08:42
 
 - FDvasp2fdm.py: INP 生成をオプションで制御出来る項目を多数追加

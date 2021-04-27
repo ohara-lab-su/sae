@@ -92,12 +92,12 @@ if __name__ == '__main__':
 #   times = 35
 #   times = 1.0
     ###########################################################################
-    conv = SAEnv.ReadFdmConv('Au', suffix='_conv.txt')
-    txt = SAEnv.ReadFdmTxt('Au', suffix='.txt')
+    conv = SAEnv.io.ReadFdmConv('Au', suffix='_conv.txt')
+    txt = SAEnv.io.ReadFdmTxt('Au', suffix='.txt')
     plt.plot(conv.eng + txt.E_edge, conv.xas, color='red', linewidth=1, label='FDM Green R3')
 
     ###########################################################################
-    nor = SAEnv.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+    nor = SAEnv.io.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
     plt.plot(nor.eng, nor.nor, color='blue', linewidth=1, label='exp.')
 #   plt.plot(nor.eng - nor.e0 ,nor.nor,color='blue',linewidth=1,label='exp.')
 
