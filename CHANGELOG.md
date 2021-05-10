@@ -1,5 +1,11 @@
 # ChangeLog
 
+## Ver_0.0.24, 2021.05.10, 17:01
+
+- VASP 5.4.x にて、OUTCAR からの ISYM 分解で、ISYM に相当する名前が別にある問題が発生した。
+そのため、正しく情報を吸い取れないので、分離用の正規表現マッチを変更した。
+  - ReadVaspOutcar.py
+
 ## 2021.04.27, 19:56
 
 - update sample script

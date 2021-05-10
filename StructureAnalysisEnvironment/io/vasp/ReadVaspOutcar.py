@@ -201,7 +201,8 @@ class ReadVaspOutcar(object):
         spin_reg = re.compile('.*ISPIN.*', re.IGNORECASE)
         orbit_reg = re.compile('.*LORBIT.*', re.IGNORECASE)
         nsw_reg = re.compile('.*NSW.*', re.IGNORECASE)
-        isym_reg = re.compile('.*ISYM', re.IGNORECASE)
+        #isym_reg = re.compile('.*ISYM', re.IGNORECASE)
+        isym_reg = re.compile('.*ISYM   =', re.IGNORECASE)
         ibrion_reg = re.compile('.*IBRION', re.IGNORECASE)
         nwrite_reg = re.compile('.*NWRITE', re.IGNORECASE)
         encut_reg = re.compile('.*ENCUT', re.IGNORECASE)
@@ -276,6 +277,7 @@ class ReadVaspOutcar(object):
 
             # isym
             if bool(isym_reg.match(self.datlines[i])):
+                # print("debug: %s" % self.datlines[i].split()[2])
                 self.isym = int(self.datlines[i].split()[2])
 
             # ibrion
@@ -605,7 +607,7 @@ class ReadVaspOutcar(object):
         for i in range(j):
             self.atoms_index.pop()
         if j != NION:
-            sys.exit("STOP(get_atoms_index): NION !=", NION)
+            sys.exit("STOP(get_atoms_index): NION !=%s" % NION)
 
         return self.atoms_index
 
