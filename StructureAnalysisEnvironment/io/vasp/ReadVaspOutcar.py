@@ -239,7 +239,7 @@ class ReadVaspOutcar(object):
             # nkpts (複数の dim. of array 項目があったときに最初のみ有効)
             if bool(nkpts_reg.match(self.datlines[i])):
                 try:
-                    self.nkpts = self.nkpbs
+                    self.nkpts
                 except:
                     self.nkpts = int(self.datlines[i].split()[3])
 
@@ -543,9 +543,12 @@ class ReadVaspOutcar(object):
     def get_atoms_index_j(self):
         return self.atoms_index_j
 
-    # OUTCAR の KPOINTS セッションから KPOINTS ファイルの内容(動作モード)の類推
-    # かなり未完成。SCF でのオートmesh と band での line-mode の区別くらい
     def get_kpoints_mode(self):
+        """
+        OUTCAR の KPOINTS セッションから KPOINTS ファイルの内容(動作モード)の類推
+        かなり未完成。SCF でのオートmesh と band での line-mode の区別くらい
+        :return:
+        """
         auto_FLAG = False
         line_FLAG = False
         hand_FLAG = False
@@ -564,10 +567,13 @@ class ReadVaspOutcar(object):
         self.FLAGS = [auto_FLAG, line_FLAG, hand_FLAG, car_FLAG, rec_FLAG]
         return self.FLAGS
 
-    # 入力された KPOINTS の座標形式をゲット(cartesian or reciprocal)
-    # もし band-mode(line-mode) でないのならば、Automatic モードならば
-    # Automatic と返す
     def get_kpoints_type(self):
+        """
+        入力された KPOINTS の座標形式をゲット(cartesian or reciprocal)
+        もし band-mode(line-mode) でないのならば、Automatic モードならば
+        Automatic と返す
+        :return:
+        """
         kpoints_reg = re.compile('.*KPOINTS:.*')
         for i in range(self.num):
             if bool(kpoints_reg.match(self.datlines[i])):
@@ -578,10 +584,13 @@ class ReadVaspOutcar(object):
                 break
         return self.kpoints_type
 
-    # atoms_index (My配列) の情報を引っ張るMethod
-    # VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
-    # get_atoms_index0 との兼ね合いがあるのでもう一度中身のある実行をする
     def get_atoms_index(self):
+        """
+        atoms_index (My配列) の情報を引っ張るMethod
+        VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
+        get_atoms_index0 との兼ね合いがあるのでもう一度中身のある実行をする
+        :return:
+        """
         NION = self.get_nion()
         self.atoms_index = []
         j = 0
@@ -600,9 +609,12 @@ class ReadVaspOutcar(object):
 
         return self.atoms_index
 
-    # atoms_index (My配列) の情報を引っ張るMethod
-    # 名称を get_atoms_index0 と変更 (NWRITE =2 以上でないと動作しない)
     def get_atoms_index0(self):
+        """
+        atoms_index (My配列) の情報を引っ張るMethod
+        名称を get_atoms_index0 と変更 (NWRITE =2 以上でないと動作しない)
+        :return:
+        """
         NION = self.get_nion()
         self.atoms_index = []
         j = 0
