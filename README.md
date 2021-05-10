@@ -14,6 +14,15 @@ Python フレームワークです。
 なによりも2015 年あたりから開発が完全に停止してます。中途半端です。
 また、当時はPythonがよくわかってなかったので今見るとかなりいい加減です。
 
+## 互換性問題
+
+現在は動くが、おそらく後ほど問題になる(2020.05.10)
+
+```angular2html
+/home/nakada/.pyenv/versions/3.9.1/lib/python3.9/site-packages/ase/lattice/spacegroup.py:5: UserWarning: Moved to ase.spacegroup
+  warnings.warn('Moved to ase.spacegroup')
+```
+
 ## 履歴
 
 - ver_0.0.18: 2020.11.18 21:11 突貫微調整, 名前空間の問題を（一部）解消

@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.25, 2021.05.10, 19:26
+
+- python 3.x と 2.x の互換性問題（gzip module)
+    - gzip 読み込み時は decode する必要があるッぽい感じ
+    
 ## Ver_0.0.24, 2021.05.10, 17:01
 
 - VASP 5.4.x にて、OUTCAR からの ISYM 分解で、ISYM に相当する名前が別にある問題が発生した。
