@@ -1,5 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.24, 2021.05.10, 17:01
+
+- VASP 5.4.x にて、OUTCAR からの ISYM 分解で、ISYM に相当する名前が別にある問題が発生した。
+そのため、正しく情報を吸い取れないので、分離用の正規表現マッチを変更した。
+  - ReadVaspOutcar.py
+
+## 2021.04.27, 19:56
+
+- update sample script
+    - fdExp_comp_XAS.py
+    
 ## Ver_0.0.23, 2021.04.27, 08:42
 
 - FDvasp2fdm.py: INP 生成をオプションで制御出来る項目を多数追加
