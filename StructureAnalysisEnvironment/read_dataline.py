@@ -40,24 +40,27 @@ import os
 import gzip
 
 ##########################################################################
-#
+
 def read_dataline(name):
 
     if os.path.exists(name):
         GZIP = False
     elif os.path.exists(name + ".gz"):
+        print("=== GZIP mode is TRUE")
         GZIP = True
     else:
-        sys.exit("STOP(read_dataline): " + name +
-                 " or " + name + ".gz file not found")
+        sys.exit("STOP(read_dataline): " + name + " or " + name + ".gz file not found")
 
     try:
         if GZIP:
             tmp = gzip.open(name + ".gz")
         else:
             tmp = open(name)
-#       datfile = tmp.read().replace('\r','')
+        # datfile = tmp.read().replace('\r','')
         datfile = tmp.read()
+        if isinstance(datfile, bytes):
+            # for Python 3.x ? (modified 2021.05.10)
+            datfile = datfile.decode('ascii')
     except:
         tmp.close()
         sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
