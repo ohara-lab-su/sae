@@ -46,7 +46,7 @@ def read_dataline(name):
     if os.path.exists(name):
         GZIP = False
     elif os.path.exists(name + ".gz"):
-        print("=== GZIP mode is TRUE")
+        # print("=== GZIP mode is TRUE")
         GZIP = True
     else:
         sys.exit("STOP(read_dataline): " + name + " or " + name + ".gz file not found")

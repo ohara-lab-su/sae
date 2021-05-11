@@ -127,17 +127,17 @@ def conv_car2direct(scale, t, natom, direct, position):
     det = a11 * a22 * a33 + a21 * a32 * a13 + a31 * a12 * a23 \
           - a11 * a32 * a23 - a31 * a22 * a13 - a21 * a12 * a33
 
-    t11 = (a22 * a33 - a23 * a32) / det;
-    t21 = (a23 * a31 - a21 * a33) / det;
-    t31 = (a21 * a32 - a22 * a31) / det;
+    t11 = (a22 * a33 - a23 * a32) / det
+    t21 = (a23 * a31 - a21 * a33) / det
+    t31 = (a21 * a32 - a22 * a31) / det
 
-    t12 = (a13 * a32 - a12 * a33) / det;
-    t22 = (a11 * a33 - a13 * a31) / det;
-    t32 = (a12 * a31 - a11 * a32) / det;
+    t12 = (a13 * a32 - a12 * a33) / det
+    t22 = (a11 * a33 - a13 * a31) / det
+    t32 = (a12 * a31 - a11 * a32) / det
 
-    t13 = (a12 * a23 - a13 * a22) / det;
-    t23 = (a13 * a21 - a11 * a23) / det;
-    t33 = (a11 * a22 - a12 * a21) / det;
+    t13 = (a12 * a23 - a13 * a22) / det
+    t23 = (a13 * a21 - a11 * a23) / det
+    t33 = (a11 * a22 - a12 * a21) / det
 
     dp = np.zeros((natom, 3))
     for j in range(natom):

@@ -1,5 +1,14 @@
 # ChangeLog
 
+## Ver_0.0.26, 2021.05.11, 09:30
+
+- conv_car2direct.py (modified)
+- FDM
+  - io/ReadFdmBav2020.py (changed property)
+  -  bav ファイル読み込みに関しての自動的な suffix 追加の修正
+    - io/ReaFdmBav.py
+    - io/ReaFdmBav2020.py
+
 ## Ver_0.0.25, 2021.05.10, 19:26
 
 - python 3.x と 2.x の互換性問題（gzip module)
