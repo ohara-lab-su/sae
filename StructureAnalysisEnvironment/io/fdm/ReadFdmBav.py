@@ -74,7 +74,13 @@ class ReadFdmBav(object):
         :param cname:  入力の bav ファイル(FDMNESの全ログ情報)
         :param suffix:
         """
-        self.__datlines, self.__num = SAE.read_dataline(cname + suffix)
+        # suffix がすでにセットされているときと、suffix がセットされてないときで切り替える
+        if cname.endswith(suffix):
+            bav_name = cname
+        else:
+            bav_name = cname + suffix
+
+        self.__datlines, self.__num = SAE.read_dataline(bav_name)
 
         fdmnes_ver_reg = re.compile('.*FDMNES.*program,.*')
 

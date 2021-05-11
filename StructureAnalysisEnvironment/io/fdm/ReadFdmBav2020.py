@@ -110,7 +110,7 @@ class ReadFdmBav2020(object):
         self.__nspin = 1  # default nonmag
         self.SCF = False
         self.__n_scf_loop = 0
-        self.scf_toten = []
+        self.__scf_toten = []
 
         # ログファイル読み込みのアホなループ
         for i in range(self.__num):
@@ -137,7 +137,7 @@ class ReadFdmBav2020(object):
 
             # scf ループ毎の unit cell の全エネルギー
             if bool(scf_toten_reg.match(self.__datlines[i])):
-                self.scf_toten.append(self.__datlines[i])
+                self.__scf_toten.append(self.__datlines[i])
 
             # 全原子数の検索
             if bool(ngroup_reg.match(self.__datlines[i])):
@@ -229,7 +229,7 @@ class ReadFdmBav2020(object):
 
         # ispin と nspin は同じ（互換)
         self.__ispin = self.__nspin
-        self.__scf_toten = np.array(self.scf_toten)
+        self.__scf_toten = np.array(self.__scf_toten)
 
     #
     # property (added: 2020.07.17)
