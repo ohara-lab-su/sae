@@ -90,6 +90,7 @@ from .fdm.ReadFdmSd import *
 from .fdm.ReadFdmSd2016 import *
 from .fdm.ReadFdmSd2020 import *
 from .fdm.ReadFdmFdmfile import *
+from .fdm.WriteFdmInp import *
 
 #
 # class for RMC
