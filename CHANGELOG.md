@@ -1,5 +1,12 @@
 # ChangeLog
 
+## Ver_0.0.27, 2021.05.23, 13:56
+
+FDvasp2fdm.py のクラス化
+
+- io/fdm
+  - WriteFdmInp.py
+
 ## Ver_0.0.26, 2021.05.11, 09:30
 
 - conv_car2direct.py (modified)
