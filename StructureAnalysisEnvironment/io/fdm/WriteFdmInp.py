@@ -52,7 +52,7 @@ class WriteFdmInp():
         """
         FDMNES 入力形式へ POSCAR を変換する
 
-        :param name:
+        :param name: 書き込み名のprefix. "name.fdmnes" ファイルとして出力される
         :param atoms:
         :param STD:
         :param MOL:
@@ -123,6 +123,9 @@ class WriteFdmInp():
         :param MOL:  分子の場合は True
         :return:
         """
+        if atoms is None:
+            atoms = self.__atoms
+
         try:
             out = open(name, 'w')
         except:
@@ -276,6 +279,6 @@ if __name__ == '__main__':
     # print ""
     # print atoms.get_scaled_positions()
 
-    fdm.write_fdmnes(atoms=atoms, MOL=MOL)
+    # fdm.write_fdmnes(atoms=atoms, MOL=MOL)
     fdm.write_fdmnes(name=name, atoms=atoms, STD=False, MOL=MOL)
     fdm.write_fdmnes_inp(atoms=atoms, MOL=MOL)
