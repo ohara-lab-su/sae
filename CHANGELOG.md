@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.28, 2021.05.25, 08:49
+
+- io.WriteFdmInp()
+  - Muffin-tin 半径の変更オプションをお試し実装
+
 ## Ver_0.0.27, 2021.05.23, 13:56
 
 FDvasp2fdm.py のクラス化
