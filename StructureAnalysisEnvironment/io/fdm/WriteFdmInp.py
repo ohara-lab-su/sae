@@ -25,9 +25,8 @@ __license__ = "MIT"
 #
 __status__ = "alpha"
 __version__ = "0.1.1"
-
 ################################################################################
-#
+
 from ase.io import read, write
 from ase.io.vasp import *
 from ase.io.wien2k import *  ## using cellconst
@@ -40,7 +39,7 @@ import optparse
 import numpy as np
 
 
-class WriteFdmInp():
+class WriteFdmInp(object):
     def __init__(self, atoms=None):
         """
         :param atoms:  ASE-ATOMS object
@@ -48,12 +47,16 @@ class WriteFdmInp():
         if atoms is not None:
             self.__atoms = atoms
 
-    def write_fdmnes(self, name='POSCAR', atoms=None, STD=True, MOL=False):
+    def write_fdmnes(self,
+                     atoms=None,
+                     name='POSCAR',
+                     STD=True,
+                     MOL=False):
         """
         FDMNES 入力形式へ POSCAR を変換する
 
-        :param name: 書き込み名のprefix. "name.fdmnes" ファイルとして出力される
         :param atoms:
+        :param name: 書き込み名のprefix. "name.fdmnes" ファイルとして出力される
         :param STD:
         :param MOL:
         :return:
@@ -102,24 +105,26 @@ class WriteFdmInp():
             out.close()
 
     def write_fdmnes_inp(self,
+                         atoms=None,
                          name='read_pdb.inp',
                          absorber=1,
                          fileout='Cu',
                          e_range=None,
                          edge='K',
                          radius=5,
-                         atoms=None,
+                         rmt=None,
                          MOL=False):
         """
         FDMNES 形式のひな形を作る（構造はここでは作らない)
 
+        :param atoms:  SAE のインスタンス
         :param name: 読み込むファイル
         :param absorber: アブソーバー番号
         :param fileout: 出力ファイル名prefix
         :param e_range: エネルギーレンジ
         :param edge: 吸収端(K,L,,,)
         :param radius: クラスター半径
-        :param atoms:  SAE のインスタンス
+        :param rmt: MT半径
         :param MOL:  分子の場合は True
         :return:
         """
@@ -177,6 +182,7 @@ class WriteFdmInp():
         # print("", file=out)
         print(" Convolution", file=out)
         # print("", file=out)
+        print("", file=out)
         print("!No_Fermi", file=out)
         print("!Efermi", file=out)
         print("!  -6.0", file=out)
@@ -208,6 +214,11 @@ class WriteFdmInp():
         radius_comment = 'For a good calculation, this radius must be increased up to 6 or 7 Angstroems'
         print("   %s  ! %s" % (radius, radius_comment), file=out)
         print("", file=out)
+
+        if rmt is not None:
+            print("Rmt", file=out)
+            print(" %s" % str(rmt), file=out)
+            print("", file=out)
 
         print(" Memory_save", file=out)
         print("", file=out)
