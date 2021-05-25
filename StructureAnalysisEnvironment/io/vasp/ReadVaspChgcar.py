@@ -99,6 +99,8 @@ try:
 except ImportError:
     import StructureAnalysisEnvironment as SAEnv
     from StructureAnalysisEnvironment.Method import Method
+
+
 # import SpaceGroupEnvironment as SGE
 
 # from numba import jit
@@ -526,7 +528,7 @@ class ReadVaspChgcar(Method):
 
         return self.ave_elf
 
-    def inverce_chgcar(self, chgcar=None):
+    def inverce_chgcar_OLD(self, chgcar=None):
         """
         入力の CHGCAR を各要素毎に 1/CHGCAR して結果を 新しい CHGCAR を返す
         :param chgcar:
@@ -536,6 +538,18 @@ class ReadVaspChgcar(Method):
             chgcar = self.chgdata
 
         return 1 / chgcar
+
+    def inverce_chgcar(self, chgcar=None):
+        """
+        入力の CHGCAR を各要素毎に -1 を掛けて, 最小の CHAEGE(元データで言うところの最大値) を足して
+        ゼロとするオフセット処理をして CHGCAR を返す
+        :param chgcar:
+        :return:
+        """
+        if chgcar is None:
+            chgcar = self.chgdata * -1 + self.chgdata.max
+
+        return chgcar
 
     def get_chgcar(self, chgcar=None):
         if chgcar is None:
@@ -913,7 +927,12 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
     name = options.INPUT
 
-    poscar = ReadVaspChgcar(name)
+    # 反転した CHGCAR を作る
+    chgcar = ReadVaspChgcar(name)
+    inv_chg = chgcar.inverce_chgcar()
+    chgcar.print_chgcar()
+
+#   poscar = ReadVaspChgcar(name)
 #   poscar.print_chgcar(outname='ELFCAR_NEW') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
 
 #   poscar.init_ave_elf()  # ELF 積算のための準備
