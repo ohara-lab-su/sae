@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # cofing:utf-8
+"""
+様々なエネルギーを作成する
+"""
 
 import StructureAnalysisEnvironment as SAE
 

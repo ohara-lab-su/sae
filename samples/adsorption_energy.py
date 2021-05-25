@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # cofing:utf-8
 """
-吸着エネルギー
+吸着エネルギーの計算
 """
 
 import StructureAnalysisEnvironment as SAE
