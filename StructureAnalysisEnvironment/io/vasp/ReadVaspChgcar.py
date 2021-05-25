@@ -380,6 +380,9 @@ class ReadVaspChgcar(Method):
         print("Ngyz = %s" % self.ngyz)
         print("Ngzc = %s" % self.ngzc)
         mesh_max = self.ngxc * self.ngyz * self.ngzc
+        print("mesh_max = %s" % mesh_max)
+        print("mode     = %s" % mode)
+
         if mode == 'CHGCAR':
             mesh_max_line = int(mesh_max / 5)
         elif mode == 'ELFCAR':
@@ -405,9 +408,16 @@ class ReadVaspChgcar(Method):
         # join後のデーターを split して LIST化
         chgarray = chglist.split()
 
-        # 読み取りの確認
-        print("num. chgarray = %s" % len(chgarray))
+        # 一行足りないケースがあるのでその場合は追加する
         if len(chgarray) != mesh_max:
+            print('added to read line')
+            chglist += ''.join(self.datlines[start_mesh_index + i+1])
+            chgarray = chglist.split()
+
+        # 読み取りの確認
+        print("num. CHG array = %s" % len(chgarray))
+        if len(chgarray) != mesh_max:
+            print(tmp_)
             print('read error')
 
         # 最終データーの確認
@@ -585,7 +595,7 @@ class ReadVaspChgcar(Method):
         :param: ngy: FFT-mesh, None のときは読み込んだ CHGCAR の mesh そのまま
         :param: ngz: FFT-mesh, None のときは読み込んだ CHGCAR の mesh そのまま
         :param: chgcar: chgdata[x,y,z]: FFT-MESH のchgdata
-        :param: filename: ファイル名を入れたらファイル書き出し(CHGパートのみ)
+        :param: filename: ファイル名を入れたらファイル書き出し
         """
         if chgcar is None:
             chgcar = self.chgdata
@@ -598,9 +608,6 @@ class ReadVaspChgcar(Method):
 
         if ngz_max is None:
             ngz_max = self.ngzc
-
-        if outname is None:
-            outname = 'CHGCAR_INVERSE'
 
         if outname is not None:
             try:
@@ -726,7 +733,7 @@ class ReadVaspChgcar(Method):
             try:
                 out = open(outname, 'w')
             except:
-                sys.exit("STOP: %s can't open." % filename)
+                sys.exit("STOP: %s can't open." % outname)
         else:
             out = sys.stdout
 
@@ -757,12 +764,17 @@ class ReadVaspChgcar(Method):
 
         out.close()
 
-    ############################################################################
-    # 基本並進ベクトルを、alpha, beta, gamma で回す
-    # VASP 表記とは転置した形で t ベクトルに入っているの注意
-    # 注意) むしろ VASP 表記が転置している
-    # ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
     def conv_rot_euler(self, alpha, beta, gamma):
+        """
+        基本並進ベクトルを、alpha, beta, gamma で回す
+        VASP 表記とは転置した形で t ベクトルに入っているの注意
+        注意) むしろ VASP 表記が転置している
+        ここでは転置したまま,正しい基本並進ベクトルのまま処理をする
+        :param alpha:
+        :param beta:
+        :param gamma:
+        :return:
+        """
 
         R = SAEnv.rotate_euler(alpha, beta, gamma)
 
@@ -837,9 +849,13 @@ class ReadVaspChgcar(Method):
             self.direct,
             self.position)
 
-    ############################################################################
-    # print POSCAR
     def print_poscar(self, outname='POSCAR', STD=True):
+        """
+        POSCAR パートを表示する、outname 入力がある場合はファイル出力
+        :param outname:
+        :param STD:
+        :return:
+        """
 
         SAEnv.print_poscar(
             outname, STD,
@@ -856,10 +872,14 @@ class ReadVaspChgcar(Method):
             self.position,
             self.fix)
 
-    ############################################################################
-    # スーパーセル作成 Method
-    # 関数版を持ってきただけのやっつけ対応
     def conv_supercell(self, times=(1, 1, 1)):
+        """
+        スーパーセル作成 Method
+        関数版を持ってきただけのやっつけ対応
+
+        :param times:
+        :return:
+        """
 
         super_x = int(times[0])
         super_y = int(times[1])
