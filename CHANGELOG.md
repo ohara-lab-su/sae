@@ -1,5 +1,15 @@
 # ChangeLog
 
+## Ver_0.0.31, 2021.05.25, 20:08
+
+CHGCAR 反転
+- bin/VchgInverse.py から ReadVaspChagcar() クラスを完全分離
+
+開くことの出来ないCHGCARパターンに対応
+- ELFCAR/CHGCAR 両対応（mode指定が必要、デフォルトはCHGCAR)
+
+開くことの出来ないCHGCARパターン（ kx * ky * kz が 5 or 10 で割りきれないときにでてくる) に対応
+
 ## Ver_0.0.30, 2021.05.25, 19:42
 
 CHCAR の反転プログラムのバグ修正および単独プログラム化。
