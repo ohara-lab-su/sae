@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.29, 2021.05.25, 16:19
+
+CHGCAR の反転(反転アルゴリズムを変更)
+- ReadVaspChgcar.py
+
 ## Ver_0.0.28, 2021.05.25, 08:49
 
 - io.WriteFdmInp()
