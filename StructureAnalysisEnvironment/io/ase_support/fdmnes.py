@@ -1,29 +1,15 @@
 #!/usr/bin/env python
+# coding:utf-8
 ################################################################################
-# VASP to FDMNES crystal 情報
+# VASP to FDMNES crystal
 #
 # using ASE version
 #
-# (注意)
-#  1) ASE のルーチン(cellconst) を使っている
-#  2) ASE のmodule を呼び出している
+#  1) using ASE cellconst
+#  2) call ASE-module
 #
 ################################################################################
-# 2021.04.27
-#  SAE 内の ASE support へ移植
-#
-# 2018.08.21
-#  Python2/3 両対応
-#
-# 2016.01.16
-#  出力形式だけ新バージョンに合わせる
-#
-# 2016.01.16
-#  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
-#  バグを発見。旧バージョンを復帰させる
-#
-# 2015.05.18 startup
-#
+
 ################################################################################
 from __future__ import print_function
 
@@ -54,7 +40,7 @@ import numpy as np
 
 def write_fdmnes(name='POSCAR', atoms=None, STD=True, MOL=False):
     """
-    FDMNES 入力形式へ POSCAR を変換する
+    convert to FDMNES from POSCAR
 
     :param name:
     :param atoms:

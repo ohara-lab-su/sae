@@ -1,5 +1,17 @@
 # ChangeLog
 
+## Ver_0.0.30, 2021.05.25, 19:42
+
+CHCAR の反転プログラムのバグ修正および単独プログラム化。
+**尾原さんへ提供版(2021.05.25, 19:42)**
+現バージョンでは ReadVaspChgcar/VchgInverse は同じ内容。
+
+- io/
+  - vasp/
+    - ReadVaspChgcar.py
+- bin/
+  - VchgInverse.py
+
 ## Ver_0.0.29, 2021.05.25, 16:19
 
 CHGCAR の反転(反転アルゴリズムを変更)
