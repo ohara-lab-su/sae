@@ -110,7 +110,7 @@ except ImportError:
 class ReadVaspChgcar(Method):
 
     ###############################################
-    ## init and Read CHGCAR
+    # init and Read CHGCAR
     def __init__(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None):
 
         self.datlines, self.num = SAEnv.read_dataline(CHGCAR)
@@ -121,12 +121,12 @@ class ReadVaspChgcar(Method):
 
         print("--- Read STRUCTURE DATA")
         ###############################################
-        ## Read Translation Vector
-        ##         x   y   z
-        ##   t1 = t11 t21 t31
-        ##   t2 = t12 t22 t32
-        ##   t3 = t13 t23 t33
-        ##
+        # Read Translation Vector
+        #         x   y   z
+        #   t1 = t11 t21 t31
+        #   t2 = t12 t22 t32
+        #   t3 = t13 t23 t33
+        #
         t1_x = float(self.datlines[2].split()[0])
         t1_y = float(self.datlines[2].split()[1])
         t1_z = float(self.datlines[2].split()[2])
@@ -164,8 +164,8 @@ class ReadVaspChgcar(Method):
         # print("lattice c = %s " % str(self.t3_len))
 
         ###############################################
-        ## VASP のバージョン番号確認(記号があるか否か)
-        ##
+        # VASP のバージョン番号確認(記号があるか否か)
+        #
         i = 5
         self.vasp_version = 5
         atoms = self.datlines[i].split()
@@ -175,9 +175,9 @@ class ReadVaspChgcar(Method):
 
         print("    vasp version = %s" % self.vasp_version)
         ###############################################
-        ## atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
-        ## atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
-        ##
+        # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+        # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+        #
         i = 5
         self.atoms_index = []
         self.atoms = []
@@ -193,16 +193,16 @@ class ReadVaspChgcar(Method):
         self.nion = len(self.atoms)
 
         ###############################################
-        ## atoms_number[i]
-        ##   atoms_index の原子番号版
+        # atoms_number[i]
+        #   atoms_index の原子番号版
         self.atoms_number = np.zeros(self.nion, dtype=int)
         for i in range(self.nion):
             # print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
             self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
         ###############################################
-        ## atoms_index の通し番号版
-        ##    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+        # atoms_index の通し番号版
+        #    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
         self.atoms_index_j = []
         if self.vasp_version == 5:
             for k in range(self.nion):
@@ -210,7 +210,7 @@ class ReadVaspChgcar(Method):
                     self.atoms_index_j.append(str(self.atoms_index[k]))
 
         ###############################################
-        ## atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
+        # atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
         self.atoms_number_j = []
         if self.vasp_version == 5:
             for k in range(self.nion):
@@ -219,16 +219,16 @@ class ReadVaspChgcar(Method):
                     self.atoms_number_j.append(num0)
 
         ###############################################
-        ## 全原子数の確認
+        # 全原子数の確認
         self.natom = 0
         for j in range(self.nion):
             sum = int(self.atoms[j])
             self.natom = self.natom + sum
 
         ###############################################
-        ## get ion (makes index)
-        ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
-        ##
+        # get ion (makes index)
+        # ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+        #
         self.ion = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
@@ -240,8 +240,8 @@ class ReadVaspChgcar(Method):
             # print tmp, int(ion[tmp])
 
         ###############################################
-        ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
-        ##
+        # ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+        #
         self.ion_local = np.zeros(self.natom, dtype=int)
         tmp = -1
         for j in range(self.nion):
@@ -253,9 +253,9 @@ class ReadVaspChgcar(Method):
             # print tmp, int(ion[tmp]), int(ion_local[tmp])
 
         ###############################################
-        ## natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
-        ##                               <---> atoms_index_j() は元素記号を返す
-        ## ReadOutcar.py, ReadMxDatMethod.py 互換
+        # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
+        #                               <---> atoms_index_j() は元素記号を返す
+        # ReadOutcar.py, ReadMxDatMethod.py 互換
         self.atoms_j = np.zeros(self.natom, dtype=int)
         j = 0
         for ion in range(self.nion):
@@ -264,8 +264,8 @@ class ReadVaspChgcar(Method):
                 j += 1
 
         ###############################################
-        ## get atomc coordinate mode
-        ##
+        # get atomc coordinate mode
+        #
         if self.vasp_version == 4:
             i = 5 + 1
         else:
@@ -284,8 +284,8 @@ class ReadVaspChgcar(Method):
                 self.selective = False
 
         ###############################################
-        ## 内部座標のモードを取得
-        ##
+        # 内部座標のモードを取得
+        #
         if self.vasp_version == 4:
             i = 5 + 1
         else:
@@ -304,8 +304,8 @@ class ReadVaspChgcar(Method):
             self.direct = False
 
         ###############################################
-        ## get atomic coordinate position
-        ##
+        # get atomic coordinate position
+        #
         if self.vasp_version == 4:
             i = 5
         else:
@@ -335,11 +335,11 @@ class ReadVaspChgcar(Method):
         #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
         # print ""
 
-        print("--- END")
+        print("--- END (readline = %s)" % current_datlines)
         self.read_mesh_data(startline=current_datlines + 2)
 
     #   @jit
-    def read_mesh_data(self, startline=None):
+    def read_mesh_data(self, startline=None, mode="CHGCAR"):
         ########################################################################
         #
         # 電荷密度構造 の読み込み (2018.08.18)
@@ -360,7 +360,7 @@ class ReadVaspChgcar(Method):
         self.ngxc = int(self.datlines[startline].split()[0])
         self.ngyz = int(self.datlines[startline].split()[1])
         self.ngzc = int(self.datlines[startline].split()[2])
-        # print("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
+        print("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
 
         ####################
         # FFT-Mesh 一つあたりの長さ(インスタンス変数の定義)
@@ -376,12 +376,20 @@ class ReadVaspChgcar(Method):
         ####################
         # 総Mesh数および読み込むべき総ライン数の算出 (一行に10個のデータがある)
         #
+        print("Ngxc = %s" % self.ngxc)
+        print("Ngyz = %s" % self.ngyz)
+        print("Ngzc = %s" % self.ngzc)
         mesh_max = self.ngxc * self.ngyz * self.ngzc
-        mesh_max_line = int(mesh_max / 10)
+        if mode == 'CHGCAR':
+            mesh_max_line = int(mesh_max / 5)
+        elif mode == 'ELFCAR':
+            mesh_max_line = int(mesh_max / 10)
+        else:
+            print("Error")
+            return
 
         # CHACAR 形式のメッシュデータの読み込み開始行のセット
         start_mesh_index = startline + 1
-
         self.chgdata = np.zeros((self.ngxc, self.ngyz, self.ngzc))
 
         ####################
@@ -389,12 +397,16 @@ class ReadVaspChgcar(Method):
         # 行を全部 join
         chglist = ''
         for i in range(mesh_max_line):
-            chglist += ''.join(self.datlines[start_mesh_index + i])
+            tmp_ = self.datlines[start_mesh_index + i]
+            # print(tmp_)
+            chglist += ''.join(tmp_)
+            # chglist += ''.join(self.datlines[start_mesh_index + i])
 
         # join後のデーターを split して LIST化
         chgarray = chglist.split()
 
         # 読み取りの確認
+        print("num. chgarray = %s" % len(chgarray))
         if len(chgarray) != mesh_max:
             print('read error')
 
@@ -528,7 +540,7 @@ class ReadVaspChgcar(Method):
 
         return self.ave_elf
 
-    def inverce_chgcar_OLD(self, chgcar=None):
+    def inverse_chgcar_OLD(self, chgcar=None):
         """
         入力の CHGCAR を各要素毎に 1/CHGCAR して結果を 新しい CHGCAR を返す
         :param chgcar:
@@ -539,7 +551,7 @@ class ReadVaspChgcar(Method):
 
         return 1 / chgcar
 
-    def inverce_chgcar(self, chgcar=None):
+    def inverse_chgcar(self, chgcar=None, offset=None):
         """
         入力の CHGCAR を各要素毎に -1 を掛けて, 最小の CHAEGE(元データで言うところの最大値) を足して
         ゼロとするオフセット処理をして CHGCAR を返す
@@ -547,7 +559,10 @@ class ReadVaspChgcar(Method):
         :return:
         """
         if chgcar is None:
-            chgcar = self.chgdata * -1 + self.chgdata.max
+            if offset is None:
+                chgcar = self.chgdata * -1
+            else:
+                chgcar = self.chgdata * -1 + offset
 
         return chgcar
 
@@ -572,7 +587,6 @@ class ReadVaspChgcar(Method):
         :param: chgcar: chgdata[x,y,z]: FFT-MESH のchgdata
         :param: filename: ファイル名を入れたらファイル書き出し(CHGパートのみ)
         """
-
         if chgcar is None:
             chgcar = self.chgdata
 
@@ -584,6 +598,9 @@ class ReadVaspChgcar(Method):
 
         if ngz_max is None:
             ngz_max = self.ngzc
+
+        if outname is None:
+            outname = 'CHGCAR_INVERSE'
 
         if outname is not None:
             try:
@@ -611,8 +628,8 @@ class ReadVaspChgcar(Method):
         ion_local = self.get_ion_local()
         atoms_index_j = self.get_atoms_index_j()
 
-        ## POSCAR 相当情報の書き込み
-        ##
+        # POSCAR 相当情報の書き込み
+        #
         print("%s" % str(title), file=out)
         print("  %13.9f" % scale, file=out)
 
@@ -646,14 +663,14 @@ class ReadVaspChgcar(Method):
                 print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
             print("", file=out)
 
-        print("write VASP style (new) CHGCAR files: plase waite...", file=sys.stdout)
+        print("write VASP style (new) CHGCAR files: plase wait...", file=sys.stdout)
         ngx_max = self.ngxc * 1
         ngy_max = self.ngyz * 1
         ngz_max = self.ngzc * 1
 
         inner_counter = 0
 
-        ## WRITE CHGCAR/ELFCAR DATA
+        # WRITE CHGCAR/ELFCAR DATA
         print("", file=out)
         print("%d %d %d" % (ngx_max, ngy_max, ngz_max), file=out)
 
@@ -713,7 +730,7 @@ class ReadVaspChgcar(Method):
         else:
             out = sys.stdout
 
-        print("write VASP style (new)CHGCAR files: plase waite...", file=sys.stdout)
+        print("write VASP style (new)CHGCAR files: plase wait...", file=sys.stdout)
         ngx_max = self.ngxc * x_times
         ngy_max = self.ngyz * y_times
         ngz_max = self.ngzc * z_times
@@ -918,7 +935,8 @@ class ReadVaspChgcar(Method):
 if __name__ == '__main__':
     import optparse
 
-    name = 'POSCAR'
+    # name = 'POSCAR'
+    name = 'CHGCAR'
     parser = optparse.OptionParser()
     parser.add_option('-i', '--input',
                       dest='INPUT',
@@ -929,8 +947,15 @@ if __name__ == '__main__':
 
     # 反転した CHGCAR を作る
     chgcar = ReadVaspChgcar(name)
-    inv_chg = chgcar.inverce_chgcar()
-    chgcar.print_chgcar()
+    max = chgcar.chgdata.max()
+    min = chgcar.chgdata.min()
+    print("origin CHGCAR max = %s" % max)
+    print("origin CHGCAR min = %s" % min)
+    print("offset            = %s" % max)
+    inv_chg = chgcar.inverse_chgcar(offset=max)
+    print("origin CHGCAR Inverse max = %s" % inv_chg.max())
+    print("origin CHGCAR Inverse min = %s" % inv_chg.min())
+    chgcar.print_chgcar(chgcar=inv_chg, outname='CHGCAR_INVERSE')
 
 #   poscar = ReadVaspChgcar(name)
 #   poscar.print_chgcar(outname='ELFCAR_NEW') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
