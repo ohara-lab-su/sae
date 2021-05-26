@@ -15,5 +15,6 @@ from .ReadVaspIncar import *
 from .ReadVaspAcf import *
 from .ReadVaspPotcar import *
 from .ReadVaspChgcar import *
+from .WriteVaspChgcar import *
 
 # from .Method import *

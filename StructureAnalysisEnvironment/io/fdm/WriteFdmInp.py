@@ -47,6 +47,13 @@ class WriteFdmInp(object):
         if atoms is not None:
             self.__atoms = atoms
 
+        self.__absorber = 1
+        self.__fileout = 'Cu'
+        self.__e_range = "-15. 0.2  0. 0.5 10. 1. 45."
+        self.__edge = 'K'
+        self.__radius = 5
+        self.__rmt = None
+
     def write_fdmnes(self,
                      atoms=None,
                      name='POSCAR',
@@ -104,14 +111,68 @@ class WriteFdmInp(object):
         if not STD:
             out.close()
 
+    def get_absorber(self):
+        return self.__absorber
+
+    def set_absorber(self, val):
+        self.__absorber = val
+
+    absorber = property(get_absorber, set_absorber)
+
+    def get_fileout(self):
+        return self.__fileout
+
+    def set_fileout(self, val):
+        self.__fileout = val
+
+    fileout = property(get_fileout, set_fileout)
+
+    def get_e_range(self):
+        return self.__e_range
+
+    def set_e_range(self, val):
+        self.__e_range = val
+
+    e_range = property(get_e_range, set_e_range)
+
+    def get_edge(self):
+        return self.__edge
+
+    def set_edge(self, val):
+        self.__edge = val
+
+    edge = property(get_edge, set_edge)
+
+    def get_radius(self):
+        return self.__radius
+
+    def set_radius(self, val):
+        self.__radius = val
+
+    radius = property(get_radius, set_radius)
+
+    def get_rmt(self):
+        return self.__rmt
+
+    def set_rmt(self, val):
+        self.__rmt = val
+
+    #
+    # 書き出し
+    #
+
+    def write_inp(self, atoms= None, name='read_pdb.inp', absorber=None, fileout=None, e_range=None,
+                  edge=None, radius=None, rmt=None, MOL=False):
+        return self.write_fdmnes_inp(atoms=atoms, name=name, absorber=absorber, fileout=fileout, e_range=e_range, edge=edge, radius=radius, rmt=rmt, MOL=MOL)
+
     def write_fdmnes_inp(self,
                          atoms=None,
                          name='read_pdb.inp',
-                         absorber=1,
-                         fileout='Cu',
+                         absorber=None,
+                         fileout=None,
                          e_range=None,
-                         edge='K',
-                         radius=5,
+                         edge=None,
+                         radius=None,
                          rmt=None,
                          MOL=False):
         """
@@ -128,8 +189,13 @@ class WriteFdmInp(object):
         :param MOL:  分子の場合は True
         :return:
         """
-        if atoms is None:
-            atoms = self.__atoms
+        if atoms is None: atoms = self.__atoms
+        if absorber is None: absorber = self.__absorber
+        if fileout is None: fileout = self.__fileout
+        if e_range is None: e_range = self.__e_range
+        if edge is None: edge = self.__edge
+        if radius is None: radius = self.__radius
+        if rmt is None: rmt = self.__rmt
 
         try:
             out = open(name, 'w')
@@ -138,8 +204,6 @@ class WriteFdmInp(object):
             sys.exit("STOP:" + name + ".fdmnes file can't open")
 
         e_range_comment = "first energy, step, intermediary energy, step ..., last energy"
-        if e_range is None:
-            e_range = "-15. 0.2  0. 0.5 10. 1. 45."
         #   atoms = atoms2.copy()
 
         cell = atoms.get_cell()  # from ASE

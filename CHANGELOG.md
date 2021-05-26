@@ -1,5 +1,12 @@
 # ChangeLog
 
+## Ver_0.0.32, 2021.05.26, 09:11
+
+- io/
+  - fdm/
+    - WriteFdmInp.py: property 追加
+    - WriteFdmfile.py: 新規
+
 ## Ver_0.0.31, 2021.05.25, 20:08
 
 CHGCAR 反転
