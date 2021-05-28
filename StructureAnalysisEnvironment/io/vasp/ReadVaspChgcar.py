@@ -102,17 +102,21 @@ except ImportError:
 
 
 # import SpaceGroupEnvironment as SGE
-
 # from numba import jit
 
 
-################################################################################
 class ReadVaspChgcar(Method):
 
-    ###############################################
-    # init and Read CHGCAR
     def __init__(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None):
+        """ init and Read CHGCAR
+        :param CHGCAR: 読み込みファイルの名前
+        :param suffix: 使ってない
+        :param sort:
+        :param atoms_index:
+        """
+        self.open(CHGCAR=CHGCAR, suffix=suffix, sort=sort, atoms_index=sort)
 
+    def open(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None):
         self.datlines, self.num = SAEnv.read_dataline(CHGCAR)
 
         self.system = self.datlines[0]
@@ -393,7 +397,7 @@ class ReadVaspChgcar(Method):
 
         # CHACAR 形式のメッシュデータの読み込み開始行のセット
         start_mesh_index = startline + 1
-        self.chgdata = np.zeros((self.ngxc, self.ngyz, self.ngzc))
+        self.__chgdata = np.zeros((self.ngxc, self.ngyz, self.ngzc))
 
         ####################
         # アホループ(numpyのmethodを使うと一行で高速に書けるので注意) START
@@ -429,8 +433,8 @@ class ReadVaspChgcar(Method):
         for nx in range(0, self.ngxc):
             for ny in range(0, self.ngyz):
                 for nz in range(0, self.ngzc):
-                    self.chgdata[nx, ny, nz] = float(chgarray[i])
-                    # print(self.chgdata[nx,ny,nz], chgarray[i])
+                    self.__chgdata[nx, ny, nz] = float(chgarray[i])
+                    # print(self.__chgdata[nx,ny,nz], chgarray[i])
                     i += 1
         # WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
 
@@ -444,16 +448,48 @@ class ReadVaspChgcar(Method):
         #           for ny in range(0, ngy_max):
         #               for nz in range(0, ngz_max):
         #                   inner_counter += 1
-        #                   if self.chgdata[nx, ny, nz] >= 0.001:
-        #                       print("{:<12.5f}".format(self.chgdata[nx, ny, nz]), end="")
-        #                      #print("%11.5f " % self.chgdata[nx, ny, nz], end="")
+        #                   if self.__chgdata[nx, ny, nz] >= 0.001:
+        #                       print("{:<12.5f}".format(self.__chgdata[nx, ny, nz]), end="")
+        #                      #print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
         #                   else:
-        #                      print("{:<12.5e}".format(self.chgdata[nx, ny, nz]), end="")
-        #                      #print("%12.5e " % self.chgdata[nx, ny, nz], end="")
+        #                      print("{:<12.5e}".format(self.__chgdata[nx, ny, nz]), end="")
+        #                      #print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
         #                   if inner_counter >= 10:
         #                       inner_counter = 0
         #                       print("")
-        print("--- END")
+        print("--- END: read_mesh_data()")
+        print("")
+
+    @property
+    def chgdata(self):
+        """ チャージ情報を取り出す(numpy)
+        """
+        return self.__chgdata
+
+    def get_poscar_info(self):
+        """ POSCAR 情報の取り出し
+        リストなので順番維持
+        return [title, scale, t, vasp, nion, atoms, atoms_index, natom, selective, direct, position, fix]:
+        """
+        title = self.get_title()
+        scale = self.get_scale()
+        t = self.get_t()
+        vasp = self.get_vasp_version()
+        nion = self.get_nion()
+        atoms = self.get_atoms()
+        atoms_index = self.get_atoms_index()
+        natom = self.get_natom()
+        selective = self.get_selective()
+        direct = self.get_direct()
+        position = self.get_position()
+        fix = self.get_fix()
+        return [title, scale, t, vasp, nion, atoms, atoms_index, natom, selective, direct, position, fix]
+
+    @property
+    def poscar_info(self):
+        """ POSCAR 情報の取り出し
+        """
+        return self.get_poscar_info()
 
     # @jit
     def init_ave_elf(self):
@@ -461,7 +497,7 @@ class ReadVaspChgcar(Method):
         ELF 積算解析（ある原点を中心としたELFの球積分値の解析)用のために
         chgcar/elfcar のデータを 3x3x3 の super-cell とする
 
-        self.chgdata[nx, ny, nz] にて chg/elf が読み込まれている必要がある
+        self.__chgdata[nx, ny, nz] にて chg/elf が読み込まれている必要がある
 
         :return: chgdata_s[nx, ny, nz]: 3x3x3 スーパーセル化した chgdata のマトリックス
         """
@@ -484,7 +520,7 @@ class ReadVaspChgcar(Method):
         for nx in range(0, self.ngxc):
             for ny in range(0, self.ngyz):
                 for nz in range(0, self.ngzc):
-                    s = self.chgdata[nx, ny, nz]
+                    s = self.__chgdata[nx, ny, nz]
                     for i in range(3):
                         for j in range(3):
                             for k in range(3):
@@ -557,7 +593,7 @@ class ReadVaspChgcar(Method):
         :return:
         """
         if chgcar is None:
-            chgcar = self.chgdata
+            chgcar = self.__chgdata
 
         return 1 / chgcar
 
@@ -570,15 +606,15 @@ class ReadVaspChgcar(Method):
         """
         if chgcar is None:
             if offset is None:
-                chgcar = self.chgdata * -1
+                chgcar = self.__chgdata * -1
             else:
-                chgcar = self.chgdata * -1 + offset
+                chgcar = self.__chgdata * -1 + offset
 
         return chgcar
 
     def get_chgcar(self, chgcar=None):
         if chgcar is None:
-            chgcar = self.chgdata
+            chgcar = self.__chgdata
 
         return chgcar
 
@@ -598,7 +634,7 @@ class ReadVaspChgcar(Method):
         :param: filename: ファイル名を入れたらファイル書き出し
         """
         if chgcar is None:
-            chgcar = self.chgdata
+            chgcar = self.__chgdata
 
         if ngx_max is None:
             ngx = self.ngxc
@@ -687,12 +723,12 @@ class ReadVaspChgcar(Method):
                     inner_counter += 1
                     if (chgcar[nx, ny, nz] < 0.001):
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
-                    if (0.001 <= chgcar[nx, ny, nz] < 10):
+                    elif (0.001 <= chgcar[nx, ny, nz] < 10):
                         print("{:<12.5f}".format(chgcar[nx, ny, nz]), file=out, end="")
-                    # print("%11.5f " % self.chgdata[nx, ny, nz], end="")
+                    # print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
                     elif chgcar[nx, ny, nz] >= 10.00:
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
-                        # print("%12.5e " % self.chgdata[nx, ny, nz], end="")
+                        # print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
                     else:
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
                     if inner_counter >= 10:
