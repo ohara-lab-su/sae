@@ -1,11 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.34, 2021.05.28, 21:04
+
+bug fix
+- VbarderVolumeSum.py
+
 ## Ver_0.0.33, 2021.05.28, 19:21
 
 Bader 対応(Bader Volume sum スクリプトを含む)
 
 - bin
-  - VbaderVolume.py (指定原子の Bader Volume を BCF.data から探して、全て足し合わす)
+  - VbaderVolumeSum.py (指定原子の Bader Volume を BCF.data から探して、全て足し合わす)
 - io
   - bader
     - ReadBaderBcf.py
