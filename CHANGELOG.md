@@ -1,5 +1,21 @@
 # ChangeLog
 
+## Ver_0.0.33, 2021.05.28, 19:21
+
+Bader 対応(Bader Volume sum スクリプトを含む)
+
+- bin
+  - VbaderVolume.py (指定原子の Bader Volume を BCF.data から探して、全て足し合わす)
+- io
+  - bader
+    - ReadBaderBcf.py
+    - ReadBaderBvat.py
+    - UtilBader.py
+    - WriteBaderVolume.py
+  - vasp
+    - ReadVaspChgcar.py
+    - WriteVaspChgcar.py
+  
 ## 2021.05.27, 08:34
 
 - bin/Vch --> bin/Vch.py
