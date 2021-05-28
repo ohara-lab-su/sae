@@ -12,6 +12,7 @@ import StructureAnalysisEnvironment as SAE
 def options():
     parser = optparse.OptionParser()
     parser.add_option('-a','--atom', )
+    parser.add_option('-o','--outname', default='CHGCAR_BvA_SUM',)
     options,  args = parser.parse_args()
 
     ret = [1,2,3]
@@ -19,16 +20,21 @@ def options():
         ret = atom
     if len(args) > 0:
         ret = args
-    return ret
+    return [ret, options.outname]
 
 
 if __name__ == '__main__':
 
-    atom_list = options()
-    print('**************************')
+    op = options()
+    atom_list = op[0]
+    outname = op[1]
+    print('')
+    print('***************************************')
     print('SUM Bader Volume')
     print(atom_list)
-    print('**************************')
+    print(outname)
+    print('***************************************')
+    print('')
     volumes = []
 
     for atom in atom_list:
@@ -50,7 +56,7 @@ if __name__ == '__main__':
     i = 0
     for atom in atom_list:
         try:
-            chgdata = chgdata + volumes[int(atom)]
+            chgdata = chgdata + volumes[i]
         except:
             chgdata = volumes[i]
         i += 1
@@ -59,6 +65,6 @@ if __name__ == '__main__':
     wbv = SAE.io.WriteBaderVolume()
     wbv.chgdata = chgdata
     wbv.poscar_info = poscar_info
-    wbv.write_bader_volume('CHGCAR_BvA_SUM')
+    wbv.write_bader_volume(outname)
 
 

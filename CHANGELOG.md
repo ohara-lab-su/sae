@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.35, 2021.05.29, 08:56
+
+- VbaderVolumeSum.py (bugfix)
+- VbaderVolumeNum.py: 原子番号から体積板東だけを知る
+
 ## Ver_0.0.34, 2021.05.28, 21:04
 
 bug fix
