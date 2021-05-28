@@ -34,7 +34,7 @@ if __name__ == '__main__':
     for atom in atom_list:
 
         # Bader Volume の調査
-        print('=== ReadBaderBcf()')
+        print('======================== ReadBaderBcf()')
         bcf = SAE.io.ReadBaderBcf()
         volume_list = bcf.search_atomic_volume_num(atom)
         print("volume list = %s" % atom, end="")
@@ -47,11 +47,13 @@ if __name__ == '__main__':
         poscar_info = util.poscar_info
         del util
 
+    i = 0
     for atom in atom_list:
         try:
             chgdata = chgdata + volumes[int(atom)]
         except:
-            chgdata = volumes[int(atom)]
+            chgdata = volumes[i]
+        i += 1
 
     # Bader Volume の書き出し1G
     wbv = SAE.io.WriteBaderVolume()
