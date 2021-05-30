@@ -23,6 +23,8 @@ from .copyright import *
 from .io import __init__
 from .Method import __init__
 
+from .util import __init__
+
 # general
 from .write import *
 
