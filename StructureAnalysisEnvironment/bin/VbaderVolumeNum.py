@@ -10,6 +10,7 @@ import StructureAnalysisEnvironment as SAE
 def options():
     parser = optparse.OptionParser()
     parser.add_option('-a','--atom', )
+    parser.add_option('-d','--debug', default=False)
     options,  args = parser.parse_args()
 
     ret = [1,2,3]
@@ -17,46 +18,38 @@ def options():
         ret = atom
     if len(args) > 0:
         ret = args
-    return ret
+    return [ret, options.debug]
 
 
 if __name__ == '__main__':
 
-    atom_list = options()
-    print('**************************')
-    print('SUM Bader Volume')
-    print(atom_list)
-    print('**************************')
+    opts = options()
+    atom_list = opts[0]
+    debug = opts[1]
+    if debug:
+        logger = SAE.util.logger.Logger(loglevel='debug')
+    else:
+        logger = SAE.util.logger.Logger(loglevel='info')
+
+    logger.debug('**************************')
+    logger.debug('SUM Bader Volume')
+    logger.debug(atom_list)
+    logger.debug('**************************')
+    logger.debug('')
     volumes = []
 
     for atom in atom_list:
 
         # Bader Volume の調査
-        print('======================== ReadBaderBcf()')
+        logger.debug('=== ReadBaderBcf()')
         bcf = SAE.io.ReadBaderBcf()
         volume_list = bcf.search_atomic_volume_num(atom)
-        print("volume list = %s" % atom, end="")
-        print(volume_list)
 
-        # # Bader Volume の足し合わせ
-        # util = SAE.io.UtilBader()
-        # util.sum_bader_volume(volume_list)
-        # volumes.append(util.bader_volume)
-        # poscar_info = util.poscar_info
-        # del util
-
-    # i = 0
-    # for atom in atom_list:
-    #     try:
-    #         chgdata = chgdata + volumes[int(atom)]
-    #     except:
-    #         chgdata = volumes[i]
-    #     i += 1
-
-    # # Bader Volume の書き出し1G
-    # wbv = SAE.io.WriteBaderVolume()
-    # wbv.chgdata = chgdata
-    # wbv.poscar_info = poscar_info
-    # wbv.write_bader_volume('CHGCAR_BvA_SUM')
-
-
+    try:
+        volume_list
+    except:
+        pass
+    else:
+        for i in volume_list:
+            print("%s " % i, end="")
+        print("")

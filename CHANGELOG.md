@@ -1,9 +1,26 @@
 # ChangeLog
 
+## Ver_0.0.36, 2021.05.30, 11:11
+
+logger を用意
+
+- util/
+  - logger.py
+  - logger_support.py
+- io/
+  - bader
+    - ReadBaderBcf.py (logger対応)
+- bin/
+  - VbaderVolueNum.py: logging level 切り替え(スクリプト中での利用のために info level の表示をシンプル化)
+
+supace Group 関係のエラーを取り敢えず停止(使ってなかったルーチン)
+
+- ReadHiSets.py (# from ase.lattice.spacegroup import crystal)
+
 ## Ver_0.0.35, 2021.05.29, 08:56
 
 - VbaderVolumeSum.py (bugfix)
-- VbaderVolumeNum.py: 原子番号から体積板東だけを知る
+- VbaderVolumeNum.py: 原子番号から体積番号だけを知る
 
 ## Ver_0.0.34, 2021.05.28, 21:04
 

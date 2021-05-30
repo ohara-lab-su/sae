@@ -42,7 +42,7 @@ except ImportError:
 # import SpaceGroupEnvironment as SGE
 
 # from ase.lattice.spacegroup import Spacegroup
-from ase.lattice.spacegroup import crystal
+# from ase.lattice.spacegroup import crystal
 
 
 ###############################################################################
