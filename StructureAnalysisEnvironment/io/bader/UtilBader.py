@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 # coding:utf-8
-
+"""
+Bader Volume の足し算などを行うサポート Method がまとめられた class
+"""
+import multiprocessing
 import StructureAnalysisEnvironment as SAE
 
 
 class UtilBader(object):
+    def __init__(self, logger=None):
+        if logger is None:
+            logger = multiprocessing.get_logger()
+        self.__logger = logger
+
     @property
     def ngx_max(self):
         return self.__ngx_max
@@ -65,20 +73,20 @@ class UtilBader(object):
         :param volume_list:
         :return:
         """
-        print('')
-        print('=== sum_bader_volume')
+        self.__logger.debug('')
+        self.__logger.debug('=== sum_bader_volume')
         #print(volume_list)
 
         if len(volume_list) > 1:
             poscar_info_list = []
             bader_volume_list = []
             for i in volume_list:
-                print("Read Bader volume = %s" % i)
+                self.__logger.debug("Read Bader volume = %s" % i)
                 bvat = SAE.io.ReadBaderBvat(i)
                 poscar_info_list.append(bvat.poscar_info)
                 bader_volume_list.append(bvat.chgdata)
 
-            print("sum Bader volume...")
+            self.__logger.debug("sum Bader volume...")
             self.__poscar_info = poscar_info_list[0]
             for i in volume_list:
                 try:
@@ -87,7 +95,7 @@ class UtilBader(object):
                     bader_volume = bader_volume[i]
             self.__bader_volume = bader_volume
         else:
-            print("Read Bader Volume = %s" % volume_list[0])
+            self.__logger.debug("Read Bader Volume = %s" % volume_list[0])
             bvat = SAE.io.ReadBaderBvat(volume_list[0])
             self.__poscar_info = bvat.poscar_info
             self.__bader_volume = bvat.chgdata

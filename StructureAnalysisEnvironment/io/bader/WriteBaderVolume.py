@@ -3,6 +3,7 @@
 """
 Bader Volume の書き出し
 実質的には CHGCAR 書き出しと同じ(CHGCAR書き出しルーチンのadapter的なクラスとなっている)
+UtilBader()　で作成した、足し合わせた Bader Volume などの書き出し用。
 """
 
 import StructureAnalysisEnvironment as SAE
