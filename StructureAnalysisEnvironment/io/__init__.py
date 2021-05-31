@@ -97,6 +97,7 @@ from .fdm.WriteFdmfile import *
 #
 # Bader
 #
+from .bader.ReadBaderAvf import *
 from .bader.ReadBaderBcf import *
 from .bader.ReadBaderBvat import *
 from .bader.WriteBaderVolume import *

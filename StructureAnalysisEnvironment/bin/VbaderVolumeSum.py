@@ -41,8 +41,10 @@ if __name__ == '__main__':
 
         # Bader Volume の調査
         print('======================== ReadBaderBcf()')
-        bcf = SAE.io.ReadBaderBcf()
-        volume_list = bcf.search_atomic_volume_num(atom)
+        # bcf = SAE.io.ReadBaderBcf()
+        # volume_list = bcf.search_atomic_volume_num(atom)
+        avf = SAE.io.ReadBaderAvf()
+        volume_list = avf.search_atomic_volume_num(atom)
         print("volume list = %s" % atom, end="")
         print(volume_list)
 

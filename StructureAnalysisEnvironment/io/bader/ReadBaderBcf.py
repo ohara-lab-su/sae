@@ -2,6 +2,8 @@
 # coding:utf-8
 """
 Bader BCF.dat
+
+原子の番号から Bader Volume 番号を取り出すなど (AVF.dat の情報とconsistentなはず)
 """
 import multiprocessing
 import math
@@ -24,7 +26,7 @@ class ReadBaderBcf(object):
         self.__ngy_max = 150
         self.__ngz_max = 150
 
-    def open(self, name):
+    def open(self, name='BCF.dat'):
         # df = pd.read_csv(name, sep='\s+')
         self.__df = pd.read_csv(name, skiprows=[1,1], skipfooter=1, delim_whitespace=True, engine='python')
 
