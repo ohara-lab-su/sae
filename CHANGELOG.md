@@ -1,6 +1,6 @@
 # ChangeLog
 
-## Ver_0.0.38, 2021.06.02, 07:27
+## Ver_0.0.39, 2021.06.02, 07:27
 
 - bin
   - VbaderVolumeSum.py: logger 追加
