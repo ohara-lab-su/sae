@@ -99,10 +99,10 @@ class WriteBaderVolume(object):
             outname = self.__outname
         self.__logger.debug('=== write_bader_volume(): outname = %s' % outname)
 
-        chgcar = SAE.io.WriteVaspChgcar()
+        chgcar = SAE.io.WriteVaspChgcar(logger=self.__logger)
+        chgcar.poscar_info = self.__poscar_info
+        chgcar.chgdata = self.__chgdata
         chgcar.ngx_max = self.__ngx_max
         chgcar.ngy_max = self.__ngy_max
         chgcar.ngz_max = self.__ngz_max
-        chgcar.poscar_info = self.__poscar_info
-        chgcar.chgdata = self.__chgdata
         chgcar.write_chgcar(outname=outname)

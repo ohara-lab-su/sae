@@ -43,11 +43,17 @@ if __name__ == '__main__':
 
     util = SAE.io.UtilBader(logger=logger)
     chgdata = util.sum_bader_volume(atom_list)
+    ngx_max = util.ngx_max
+    ngy_max = util.ngy_max
+    ngz_max = util.ngz_max
     poscar_info = util.poscar_info
 
-    # Bader Volume の書き出し1G
-    wbv = SAE.io.WriteBaderVolume()
+    # Bader Volume の書き出し
+    wbv = SAE.io.WriteBaderVolume(logger=logger)
     wbv.chgdata = chgdata
+    wbv.ngx_max = ngx_max
+    wbv.ngy_max = ngy_max
+    wbv.ngz_max = ngz_max
     wbv.poscar_info = poscar_info
     wbv.write_bader_volume(outname)
 

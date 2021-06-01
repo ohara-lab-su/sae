@@ -3,6 +3,7 @@
 import multiprocessing
 import sys
 import os
+import traceback
 
 
 class WriteVaspChgcar(object):
@@ -117,7 +118,11 @@ class WriteVaspChgcar(object):
         if outname is None:
             outname = self.__outname
 
-        print("outname = %s" % outname)
+        self.__logger.info("outname = %s" % outname)
+        self.__logger.info("ngx_max = %s" % self.ngx_max)
+        self.__logger.info("ngy_max = %s" % self.ngy_max)
+        self.__logger.info("ngz_max = %s" % self.ngz_max)
+
         try:
             out = open(outname, 'w')
         except:
@@ -194,16 +199,24 @@ class WriteVaspChgcar(object):
             for ny in range(0, ngy_max):
                 for nz in range(0, ngz_max):
                     inner_counter += 1
-                    if (chgdata[nx, ny, nz] < 0.001):
-                        print("{:<12.5e}".format(chgdata[nx, ny, nz]), file=out, end="")
-                    elif (0.001 <= chgdata[nx, ny, nz] < 10):
-                        print("{:<12.5f}".format(chgdata[nx, ny, nz]), file=out, end="")
-                    # print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
-                    elif chgdata[nx, ny, nz] >= 10.00:
-                        print("{:<12.5e}".format(chgdata[nx, ny, nz]), file=out, end="")
-                        # print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
-                    else:
-                        print("{:<12.5e}".format(chgdata[nx, ny, nz]), file=out, end="")
+                    try:
+                        if (chgdata[nx, ny, nz] < 0.001):
+                            print("{:<12.5e}".format(chgdata[nx, ny, nz]), file=out, end="")
+                        elif (0.001 <= chgdata[nx, ny, nz] < 10):
+                            print("{:<12.5f}".format(chgdata[nx, ny, nz]), file=out, end="")
+                        # print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
+                        elif chgdata[nx, ny, nz] >= 10.00:
+                            print("{:<12.5e}".format(chgdata[nx, ny, nz]), file=out, end="")
+                            # print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
+                        else:
+                            print("{:<12.5e}".format(chgdata[nx, ny, nz]), file=out, end="")
+                    except Exception as e:
+                        print("***Error***, %s" % e)
+                        print("nx = %s" % nx)
+                        print("ny = %s" % ny)
+                        print("nz = %s" % nz)
+                        print("chgdata = %s" % chgdata[nx, ny, nz])
+
                     # if inner_counter >= 10:
                     if inner_counter >= 5:
                         inner_counter = 0
