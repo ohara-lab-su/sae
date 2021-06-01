@@ -14,15 +14,6 @@ Python フレームワークです。
 なによりも2015 年あたりから開発が完全に停止してます。中途半端です。
 また、当時はPythonがよくわかってなかったので今見るとかなりいい加減です。
 
-## 互換性問題
-
-現在は動くが、おそらく後ほど問題になる(2020.05.10)
-
-```angular2html
-/home/nakada/.pyenv/versions/3.9.1/lib/python3.9/site-packages/ase/lattice/spacegroup.py:5: UserWarning: Moved to ase.spacegroup
-  warnings.warn('Moved to ase.spacegroup')
-```
-
 ## 履歴
 
 - ver_0.0.18: 2020.11.18 21:11 突貫微調整, 名前空間の問題を（一部）解消
@@ -33,13 +24,17 @@ Python フレームワークです。
 ## ライセンスおよび免責事項
 
 [MITライセンス](http://opensource.org/licenses/mit-license.php)([日本語のMITライセンスの解説](https://ja.wikipedia.org/wiki/MIT_License))です。
-ユーザーは使用にあたってMITライセンスを順守してください。MITライセンスに基づき、作者はソフトウエアに関して何ら責任を負いません。詳しくはパッケージに同封の LICENSE.txt ファイルをご覧ください。
+ユーザーは使用にあたってMITライセンスを順守してください。
+MITライセンスに基づき、作者はソフトウエアに関して何ら責任を負いません。
+詳しくはパッケージに同封の LICENSE.txt ファイルをご覧ください。
 
 This software is released under the MIT License, see LICENSE.txt.
 
 ## 想定する実行環境
 
-開発のメインは Mac OS X で、テスト環境のメインは Linux ですが、ある程度は Windows 7 Pro および Windows 8.1 Pro でテストを行っています。Python が導入されていればほとんど何処でも動くと思います。
+開発のメインは Mac OS X で、テスト環境のメインは Linux ですが、
+ある程度は Windows 7 Pro および Windows 8.1 Pro でテストを行っています。
+Python が導入されていればほとんど何処でも動くと思います。
 
 ## インストール
 
@@ -80,30 +75,38 @@ Matplotlibモジュールは NumPy および SciPy を用いますが、それ�
 
 ## フレームワークの基本的な使い方
 
-一般的なPythonによるOOPでスタイルでコードが書けます。たとえば、構造情報を読み込むReadクラスを用いてインスタンスを作成すること事が可能です。これによりインスタンスに様々なメッソドを作用させて処理させるなどの当たり前の操作が可能です。たとえば、以下の数行のプログラムにより、VASPの構造入力ファイルであるPOSCARをFDMNES形式に変換します。<b>プログラム本体はたった二行で変換作業が終わります</b>。
+一般的なPythonによるOOPでスタイルでコードが書けます。
+たとえば、構造情報を読み込むReadクラスを用いてインスタンスを作成すること事が可能です。
+これによりインスタンスに様々なメッソドを作用させて処理させるなどの当たり前の操作が可能です。たとえば、以下の数行のプログラムにより、VASPの構造入力ファイルであるPOSCARをFDMNES形式に変換します。<b>プログラム本体はたった二行で変換作業が終わります</b>。
 
 ```python
 #!/usr/bin/env python
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 
-cell = SAEnv.io.Read(filename='POSCAR', code='VASP')
+cell = SAE.io.Read(filename='POSCAR', code='VASP')
 cell.write(code='FDMNES')
 ```
 
-これらのクラス・メッソド・関数には様々なオプションがあり、たとえば構造情報であるPOSCAR以外のVASPの入力ファイルを読み込んで、ほぼ同じ計算条件の入力ファイルを自動作成する機能などもあります。
+これらのクラス・メッソド・関数には様々なオプションがあり、
+たとえば構造情報であるPOSCAR以外のVASPの入力ファイルを読み込んで、
+ほぼ同じ計算条件の入力ファイルを自動作成する機能などもあります。
 また、作成したインスタンスをメッソドからのアクセスではなく write 関数を用いて関数型としてコーディングも可能です。
 
 ```python
 #!/usr/bin/env python
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 
-cell = SAEnv.io.Read(filename='POSCAR', code='VASP')
-SAEnv.write(cell, code='FDMNES')
+cell = SAE.io.Read(filename='POSCAR', code='VASP')
+SAE.write(cell, code='FDMNES')
 ```
 
-その他、スーパーセルを作ったり、オイラー角にしたがって回転させたりなど、多数の構造に関するメッソド・関数を有しています。他にも、計算後の電子状態に対する処理も同様の手続きで処理が可能です。それぞれのクラス・メッソド・関数には多数のオプション機能があります。Pythonでのプログラム経験があれば、だれでも容易に、統一的に、構造作成から電子状態の解析まで第一原理計算のプログラム処理が可能になります。
+その他、スーパーセルを作ったり、
+オイラー角にしたがって回転させたりなど、多数の構造に関するメッソド・関数を有しています。
+他にも、計算後の電子状態に対する処理も同様の手続きで処理が可能です。それぞれのクラス・メッソド・関数には多数のオプション機能があります。Pythonでのプログラム経験があれば、だれでも容易に、統一的に、構造作成から電子状態の解析まで第一原理計算のプログラム処理が可能になります。
 
-フレームワークの各機能についてはここでは詳しくは紹介しませんが、実際には、ユーザーはこのフレームワークを用いて作られたツール群を用いてこれらの機能の恩恵を受けることが可能です。エンドユーザーはツール群をお使いください。
+フレームワークの各機能についてはここでは詳しくは紹介しませんが、
+実際には、ユーザーはこのフレームワークを用いて作られたツール群を用いてこれらの機能の恩恵を受けることが可能です。
+エンドユーザーはツール群をお使いください。
 
 
 ## フレームワークを用いたツール群の解説
