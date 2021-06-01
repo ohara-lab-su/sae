@@ -27,8 +27,12 @@ if __name__ == '__main__':
 
     logger = SAE.util.logger.Logger(loglevel='debug')
     op = options()
-    atom_list = op[0]
+    atom_list_str = op[0]
     outname = op[1]
+
+    # 引数は string なので int に直す
+    atom_list = list(map((lambda x: int(x)), atom_list_str))
+
     logger.info('')
     logger.info('***************************************')
     logger.info('SUM Bader Volume')
@@ -36,33 +40,10 @@ if __name__ == '__main__':
     logger.info(outname)
     logger.info('***************************************')
     logger.info('')
-    volumes = []
 
-    for atom in atom_list:
-
-        # Bader Volume の調査
-        logger.info('======================== ReadBaderBcf()')
-        # bcf = SAE.io.ReadBaderBcf()
-        # volume_list = bcf.search_atomic_volume_num(atom)
-        avf = SAE.io.ReadBaderAvf()
-        volume_list = avf.search_atomic_volume_num(atom)
-        logger.info("volume list = %s" % atom, end="")
-        print(volume_list)
-
-        # Bader Volume の足し合わせ
-        util = SAE.io.UtilBader()
-        util.sum_bader_volume(volume_list)
-        volumes.append(util.bader_volume)
-        poscar_info = util.poscar_info
-        del util
-
-    i = 0
-    for atom in atom_list:
-        try:
-            chgdata = chgdata + volumes[i]
-        except:
-            chgdata = volumes[i]
-        i += 1
+    util = SAE.io.UtilBader(logger=logger)
+    chgdata = util.sum_bader_volume(atom_list)
+    poscar_info = util.poscar_info
 
     # Bader Volume の書き出し1G
     wbv = SAE.io.WriteBaderVolume()
