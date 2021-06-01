@@ -1,5 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.41, 2021.06.02, 08:41
+
+46LiI 以外の系で動かないことがある問題。fft-mesh のパラメーター問題。
+
+フレーム側のバグと思って調査したけっか、結局 bin 側のミスだったが、
+結果的にバグトレース系の情報が充実した。それに関しての update
+
+- modified: WriteBaderVolume.py
+- modified: WriteVaspChgcar.py
+- bugfix: VbaderVolumeSum.py: ngx などの FFT-mesh 情報を writer に食わせてなかった問題の修正
+
 ## Ver_0.0.40, 2021.06.02, 07:47
 
 - bin
