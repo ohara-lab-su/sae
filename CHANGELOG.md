@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.40, 2021.06.02, 07:47
+
+- bin
+  - VbaderVolumeSum.py: -p all_atom の誤解のままだったのを修正(中身は完全に別物)
+  
 ## Ver_0.0.39, 2021.06.02, 07:27
 
 - bin
