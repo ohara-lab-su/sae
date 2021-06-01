@@ -5,12 +5,30 @@ Bader Volume の書き出し
 実質的には CHGCAR 書き出しと同じ(CHGCAR書き出しルーチンのadapter的なクラスとなっている)
 UtilBader()　で作成した、足し合わせた Bader Volume などの書き出し用。
 """
-
+import multiprocessing
 import StructureAnalysisEnvironment as SAE
 
 
 class WriteBaderVolume(object):
-    def __init__(self, outname='CHGCAR_BvAt', chgdata=None, poscar_info=None, ngx_max=None, ngy_max=None, ngz_max=None):
+    def __init__(self, outname='CHGCAR_BvAt',
+                 chgdata=None,
+                 poscar_info=None,
+                 ngx_max=None,
+                 ngy_max=None,
+                 ngz_max=None,
+                 logger=None):
+        """
+        :param outname:
+        :param chgdata:
+        :param poscar_info:
+        :param ngx_max:
+        :param ngy_max:
+        :param ngz_max:
+        :param logger:
+        """
+        if logger is None:
+            logger = multiprocessing.get_logger()
+        self.__logger = logger
 
         self.__outname = outname
         self.__chgdata = chgdata
@@ -79,7 +97,7 @@ class WriteBaderVolume(object):
     def write_bader_volume(self, outname=None):
         if outname is None:
             outname = self.__outname
-        print('=== write_bader_volume(): outname = %s' % outname)
+        self.__logger.debug('=== write_bader_volume(): outname = %s' % outname)
 
         chgcar = SAE.io.WriteVaspChgcar()
         chgcar.ngx_max = self.__ngx_max

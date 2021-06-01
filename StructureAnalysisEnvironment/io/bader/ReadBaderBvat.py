@@ -69,4 +69,4 @@ class ReadBaderBvat(object):
 
 
 if __name__ == '__main__':
-    bader = ReadBaderBcf()
+    bader = ReadBaderBvat()
