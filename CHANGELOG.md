@@ -1,5 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.38, 2021.06.01, 21:13
+
+- mdified: UtilBader.py
+
+```angular2html
+-p all_atoms
+-p all_bader
+
+オプションを勘違いしていた点について修正
+```
+
 ## Ver_0.0.37, 2021.05.31, 21:35
 
 - added samples
