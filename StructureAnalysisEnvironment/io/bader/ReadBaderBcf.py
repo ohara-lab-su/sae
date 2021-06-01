@@ -32,6 +32,9 @@ class ReadBaderBcf(object):
 
     def search_atomic_volume_num(self, atom):
         """
+        [注意]
+        -p all_bader オプションで BvAtxxx.dat ファイルが Bader Volume を示しているときに意味がある
+
         :param atom: 検索する原子の番号(POSCARの順番)
         :return volumes_n: atom の所属する bader-bolume 番号（複数有り)
         """

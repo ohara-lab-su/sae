@@ -66,15 +66,16 @@ class UtilBader(object):
     #
 
     def sum_bader_volume(self, volume_list):
-        """ 指定原子の番号のBader Volume を取り出す
-        1) BCF.dat ファイルから検索をして Volume 番号を探す
-        2) Volume に対応する *.dat から CHG 情報を取り出す
-        3) 原子が複数の Volume 領域を持つときは足し合わせる
+        """
+        指定原子の番号のBader Volume を積算する
+        1) Volume に対応する *.dat から CHG 情報を取り出す
+        2) 原子が複数の Volume 領域を持つときは足し合わせる
+
         :param volume_list:
         :return:
         """
         self.__logger.debug('')
-        self.__logger.debug('=== sum_bader_volume')
+        self.__logger.debug('=== sum_bader_volumes')
         #print(volume_list)
 
         if len(volume_list) > 1:
@@ -82,6 +83,7 @@ class UtilBader(object):
             bader_volume_list = []
             for i in volume_list:
                 self.__logger.debug("Read Bader volume = %s" % i)
+                # BvAtxxx.dat の読み込み
                 bvat = SAE.io.ReadBaderBvat(i)
                 poscar_info_list.append(bvat.poscar_info)
                 bader_volume_list.append(bvat.chgdata)
