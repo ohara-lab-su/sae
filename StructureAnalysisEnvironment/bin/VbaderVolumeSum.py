@@ -25,27 +25,28 @@ def options():
 
 if __name__ == '__main__':
 
+    logger = SAE.util.logger.Logger(loglevel='debug')
     op = options()
     atom_list = op[0]
     outname = op[1]
-    print('')
-    print('***************************************')
-    print('SUM Bader Volume')
-    print(atom_list)
-    print(outname)
-    print('***************************************')
-    print('')
+    logger.info('')
+    logger.info('***************************************')
+    logger.info('SUM Bader Volume')
+    logger.info(atom_list)
+    logger.info(outname)
+    logger.info('***************************************')
+    logger.info('')
     volumes = []
 
     for atom in atom_list:
 
         # Bader Volume の調査
-        print('======================== ReadBaderBcf()')
+        logger.info('======================== ReadBaderBcf()')
         # bcf = SAE.io.ReadBaderBcf()
         # volume_list = bcf.search_atomic_volume_num(atom)
         avf = SAE.io.ReadBaderAvf()
         volume_list = avf.search_atomic_volume_num(atom)
-        print("volume list = %s" % atom, end="")
+        logger.info("volume list = %s" % atom, end="")
         print(volume_list)
 
         # Bader Volume の足し合わせ

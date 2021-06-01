@@ -88,6 +88,7 @@ import sys
 import os
 import re
 # import gzip
+import multiprocessing
 import math
 import numpy as np
 
@@ -107,13 +108,17 @@ except ImportError:
 
 class ReadVaspChgcar(Method):
 
-    def __init__(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None):
+    def __init__(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None, logger=None):
         """ init and Read CHGCAR
         :param CHGCAR: 読み込みファイルの名前
         :param suffix: 使ってない
         :param sort:
         :param atoms_index:
         """
+        if logger is None:
+            logger = multiprocessing.get_logger()
+        self.__logger = logger
+
         self.open(CHGCAR=CHGCAR, suffix=suffix, sort=sort, atoms_index=sort)
 
     def open(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None):
@@ -123,7 +128,7 @@ class ReadVaspChgcar(Method):
         self.title = self.system
         self.scale = float(self.datlines[1])
 
-        print("--- Read STRUCTURE DATA")
+        self.__logger.debug("--- Read STRUCTURE DATA")
         ###############################################
         # Read Translation Vector
         #         x   y   z
@@ -177,7 +182,7 @@ class ReadVaspChgcar(Method):
             self.vasp_version = 4
         del atoms
 
-        print("    vasp version = %s" % self.vasp_version)
+        self.__logger.debug("    vasp version = %s" % self.vasp_version)
         ###############################################
         # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
         # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
@@ -339,7 +344,7 @@ class ReadVaspChgcar(Method):
         #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
         # print ""
 
-        print("--- END (readline = %s)" % current_datlines)
+        self.__logger.debug("--- END (readline = %s)" % current_datlines)
         self.read_mesh_data(startline=current_datlines + 2)
 
     #   @jit
@@ -351,7 +356,7 @@ class ReadVaspChgcar(Method):
         # WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
         #
         ########################################################################
-        print("--- Read MESH DATA and Makes CELL INDEX")
+        self.__logger.debug("--- Read MESH DATA and Makes CELL INDEX")
         if startline is None:
             return
 
@@ -364,7 +369,7 @@ class ReadVaspChgcar(Method):
         self.ngxc = int(self.datlines[startline].split()[0])
         self.ngyz = int(self.datlines[startline].split()[1])
         self.ngzc = int(self.datlines[startline].split()[2])
-        print("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
+        self.__logger.debug("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
 
         ####################
         # FFT-Mesh 一つあたりの長さ(インスタンス変数の定義)
@@ -380,19 +385,19 @@ class ReadVaspChgcar(Method):
         ####################
         # 総Mesh数および読み込むべき総ライン数の算出 (一行に10個のデータがある)
         #
-        print("Ngxc = %s" % self.ngxc)
-        print("Ngyz = %s" % self.ngyz)
-        print("Ngzc = %s" % self.ngzc)
+        # self.__logger.debug("Ngxc = %s" % self.ngxc)
+        # self.__logger.debug("Ngyz = %s" % self.ngyz)
+        # self.__logger.debug("Ngzc = %s" % self.ngzc)
         mesh_max = self.ngxc * self.ngyz * self.ngzc
-        print("mesh_max = %s" % mesh_max)
-        print("mode     = %s" % mode)
+        self.__logger.debug("mesh_max = %s" % mesh_max)
+        self.__logger.debug("mode     = %s" % mode)
 
         if mode == 'CHGCAR':
             mesh_max_line = int(mesh_max / 5)
         elif mode == 'ELFCAR':
             mesh_max_line = int(mesh_max / 10)
         else:
-            print("Error")
+            self.__logger.error("Error")
             return
 
         # CHACAR 形式のメッシュデータの読み込み開始行のセット
@@ -414,12 +419,12 @@ class ReadVaspChgcar(Method):
 
         # 一行足りないケースがあるのでその場合は追加する
         if len(chgarray) != mesh_max:
-            print('added to read line')
+            self.__logger.debug('added to read line')
             chglist += ''.join(self.datlines[start_mesh_index + i+1])
             chgarray = chglist.split()
 
         # 読み取りの確認
-        print("num. CHG array = %s" % len(chgarray))
+        self.__logger.debug("num. CHG array = %s" % len(chgarray))
         if len(chgarray) != mesh_max:
             print(tmp_)
             print('read error')
@@ -457,8 +462,8 @@ class ReadVaspChgcar(Method):
         #                   if inner_counter >= 10:
         #                       inner_counter = 0
         #                       print("")
-        print("--- END: read_mesh_data()")
-        print("")
+        self.__logger.debug("--- END: read_mesh_data()")
+        self.__logger.debug("")
 
     @property
     def chgdata(self):
@@ -515,7 +520,7 @@ class ReadVaspChgcar(Method):
         sy = [0, self.ngyz, self.ngyz * 2]
         sz = [0, self.ngzc, self.ngzc * 2]
 
-        print("makes chgcar super-cell: plase waite...")
+        self.__logger.debug("makes chgcar super-cell: plase waite...")
         # 基本セル情報 chgdata[nx,ny,nz] のループを new-cell 内で行う
         for nx in range(0, self.ngxc):
             for ny in range(0, self.ngyz):
@@ -773,7 +778,7 @@ class ReadVaspChgcar(Method):
         else:
             out = sys.stdout
 
-        print("write VASP style (new)CHGCAR files: plase wait...", file=sys.stdout)
+        self.__logger.debug("write VASP style (new)CHGCAR files: plase wait...", file=sys.stdout)
         ngx_max = self.ngxc * x_times
         ngy_max = self.ngyz * y_times
         ngz_max = self.ngzc * z_times

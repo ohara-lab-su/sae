@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 # coding:utf-8
+import multiprocessing
 import sys
 import os
 
 
 class WriteVaspChgcar(object):
-    def __init__(self, outname=None, poscar_info=None, ngx_max=None, ngy_max=None, ngz_max=None):
+    def __init__(self, outname=None, poscar_info=None, ngx_max=None, ngy_max=None, ngz_max=None, logger=None):
         """
         :param outname:
         """
+        if logger is None:
+            logger = multiprocessing.get_logger()
+        self.__logger = logger
+
         if outname is None:
             self.__outname = "CHGCAR_NEW"
         else:
@@ -173,7 +178,8 @@ class WriteVaspChgcar(object):
                 print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
             print("", file=out)
 
-        print("write VASP style (new) CHGCAR files: plase wait...", file=sys.stdout)
+        # print("write VASP style (new) CHGCAR files: plase wait...", file=sys.stdout)
+        self.__logger.debug("write VASP style (new) CHGCAR files: plase wait...")
         ngx_max = self.ngx_max * 1
         ngy_max = self.ngy_max * 1
         ngz_max = self.ngz_max * 1

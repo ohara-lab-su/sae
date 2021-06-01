@@ -1,5 +1,16 @@
 # ChangeLog
 
+## Ver_0.0.38, 2021.06.02, 07:27
+
+- bin
+  - VbaderVolumeSum.py: logger 追加
+- io.vasp
+  - ReadVaspChgcar.py: logger 追加
+  - WriteVaspChgcar.py: logger 追加
+- io.bader
+  - WriteBaderVolume.py: logger 追加
+  - UtilBader.py: atom_all 化で間違って消してしまった部分を復活
+ 
 ## Ver_0.0.38, 2021.06.01, 21:13
 
 - mdified: UtilBader.py
