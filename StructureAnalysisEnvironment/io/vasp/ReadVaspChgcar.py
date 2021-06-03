@@ -711,7 +711,7 @@ class ReadVaspChgcar(Method):
                 print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
             print("", file=out)
 
-        print("write VASP style (new) CHGCAR files: plase wait...", file=sys.stdout)
+        print("write VASP style (new) %s files: plase wait..." % outname, file=sys.stdout)
         ngx_max = self.ngxc * 1
         ngy_max = self.ngyz * 1
         ngz_max = self.ngzc * 1
@@ -778,7 +778,7 @@ class ReadVaspChgcar(Method):
         else:
             out = sys.stdout
 
-        self.__logger.debug("write VASP style (new)CHGCAR files: plase wait...", file=sys.stdout)
+        self.__logger.debug("write VASP style (new) %s files: plase wait..." % outname, file=sys.stdout)
         ngx_max = self.ngxc * x_times
         ngy_max = self.ngyz * y_times
         ngz_max = self.ngzc * z_times

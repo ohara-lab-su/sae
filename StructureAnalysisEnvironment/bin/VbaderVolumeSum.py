@@ -17,7 +17,7 @@ def options():
 
     ret = [1,2,3]
     if options.atom:
-        ret = atom
+        ret = options.atom
     if len(args) > 0:
         ret = args
     return [ret, options.outname]
