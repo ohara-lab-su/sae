@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Ver_0.0.42, 2021.06.03, 09:06
+
+- bugfix (VbaderVolumeSum.py)
+
 ## Ver_0.0.41, 2021.06.02, 08:41
 
 46LiI 以外の系で動かないことがある問題。fft-mesh のパラメーター問題。
