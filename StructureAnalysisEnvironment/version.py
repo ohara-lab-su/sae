@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-__version__ = "0.0.42"
+__version__ = "0.0.43"
 
+# __version__ = "0.0.42"
 # __version__ = "0.0.41"
 # __version__ = "0.0.40"
 # __version__ = "0.0.39"

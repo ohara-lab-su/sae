@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Ver_0.0.43, 2021.06.05, 14:48
+
+- Rmt 変更しながら FDMNES を計算するサンプルスクリプト追加
+
 ## Ver_0.0.42, 2021.06.03, 09:06
 
 - bugfix (VbaderVolumeSum.py)
