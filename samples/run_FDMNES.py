@@ -48,9 +48,9 @@ for folder in cluster_list:
     shutil.copy2(fdm_file, folder)
 
     # copy input file
-    for absorber in range(1, num+1):
+    for absorber in range(1, num + 1):
         # アブソーバーフォルダ名
-        ab_folder =  'absorber_' + "{:02}".format(absorber)
+        ab_folder = 'absorber_' + "{:02}".format(absorber)
 
         # クラスー毎のさらにアブソーバー毎の作業フォルダ
         work = folder + '/' + ab_folder
@@ -72,7 +72,7 @@ for folder in cluster_list:
             name=work + '/' + fdm_inp,
             absorber=absorber,
             fileout=fileout,
-            e_range = "-15. 0.2  0. 0.5 10. 1. 80.",
+            e_range="-15. 0.2  0. 0.5 10. 1. 80.",
             radius=5,
             MOL=True)
 
