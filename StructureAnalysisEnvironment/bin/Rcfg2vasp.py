@@ -83,7 +83,7 @@ if __name__ == '__main__':
     usage:
     V と O 原子の時
     LVOF.cfg ファイルに対するアプローチとしては
-       ./Rcfg2vasp.py --atoms_index=V,O LVOF.cf
+       ./Rcfg2vasp.py --atoms_index=V,O LVOF.cfg
     """
     cname, atoms_index0 = options()
 
