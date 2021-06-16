@@ -42,6 +42,7 @@
 #
 ################################################################################
 from __future__ import print_function
+import traceback
 
 try:
     from ...copyright import *
@@ -85,16 +86,34 @@ class ReadRmcpotCfg(Method):
 
         ###############################################
         # Read Parameter
-        self.header = str(self.datlines[0])
-        self.comment = str(self.datlines[1])
-        self.title = self.comment
-        self.system = self.title
-        self.moves = self.datlines[4]  # RMC
-        self.saved = self.datlines[5]  # RMC
-        self.natom = int(self.datlines[7].split()[0])
-        self.nion = int(self.datlines[8].split()[0])
-        self.nmoles = self.datlines[9]  # RMC
-        self.angles = self.datlines[10]  # RMC
+        try:
+            self.header = str(self.datlines[0])
+            self.comment = str(self.datlines[1])
+            self.title = self.comment
+            self.system = self.title
+
+            self.moves = self.datlines[4]  # RMC
+            self.saved = self.datlines[5]  # RMC
+            # self.natom = int(self.datlines[7].split()[0])
+            # self.nion = int(self.datlines[8].split()[0])
+
+            # 368. などの Interger + '.' 文字を整数とするための処理
+            self.natom = int(self.datlines[7].split()[0].strip('.'))
+            self.nion = int(self.datlines[8].split()[0].strip('.'))
+
+            self.nmoles = self.datlines[9].split()[0]  # RMC
+            self.angles = self.datlines[10].split()[0]  # RMC
+        except Exception as e:
+            print("\n*** Error ***, %s" % e)
+            print(traceback.format_exc())
+            sys.exit(-1)
+        else:
+            print('')
+            print('natom = %s' % self.natom)
+            print('nion = %s' % self.nion)
+            print('nmoles = %s' % self.nmoles)
+            print('angles = %s' % self.angles)
+            print('')
 
         # dummy parameter
         self.vasp_version = 5
