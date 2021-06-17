@@ -30,6 +30,59 @@ class ReadBaderBcf(object):
         # df = pd.read_csv(name, sep='\s+')
         self.__df = pd.read_csv(name, skiprows=[1,1], skipfooter=1, delim_whitespace=True, engine='python')
 
+    def get_distance(self, atom):
+        """
+        BCF にて、atom 番号を指定して、distance を取り出す。
+        :param atom: 引き出したい atom の番号
+        :return:
+        """
+        self.__logger.debug('')
+        # DF は numpy.float64 で入ってしまうので、atom番号を INT にする
+        self.__df['ATOM'] = self.__df['ATOM'].astype(int)
+
+        distance = None
+        charge = None
+        index_n = len(self.__df['ATOM'])
+
+        # volume 番号でループして探す
+        for i in range(index_n):
+            # atom の番号と同じ volume を探す
+            bader_atom = self.__df['ATOM'][i]
+            if np.isclose(bader_atom, int(atom)):
+                distance = self.__df['DISTANCE'][i]
+                charge = self.__df['CHARGE'][i]
+                volume_num = self.__df['#'][i]
+                self.__logger.info("-->volume#=%s, atom=%s, charge=%s, distance=%s" %
+                                   (volume_num, bader_atom, charge, distance))
+        return distance
+
+    def get_charge(self, atom):
+        """
+        BCF にて、atom 番号を指定して、charge を取り出す。
+        :param atom: 引き出したい atom の番号
+        :return:
+        """
+        self.__logger.debug('')
+        # DF は numpy.float64 で入ってしまうので、atom番号を INT にする
+        self.__df['ATOM'] = self.__df['ATOM'].astype(int)
+
+        distance = None
+        charge = None
+        index_n = len(self.__df['ATOM'])
+
+        # volume 番号でループして探す
+        for i in range(index_n):
+            # atom の番号と同じ volume を探す
+            bader_atom = self.__df['ATOM'][i]
+            if np.isclose(bader_atom, int(atom)):
+                distance = self.__df['DISTANCE'][i]
+                charge = self.__df['CHARGE'][i]
+                volume_num = self.__df['#'][i]
+                self.__logger.info("-->volume#=%s, atom=%s, charge=%s, distance=%s" %
+                                   (volume_num, bader_atom, charge, distance))
+
+        return charge
+
     def search_atomic_volume_num(self, atom):
         """
         [注意]
@@ -73,8 +126,11 @@ if __name__ == '__main__':
     # Bader Volume の調査
     logger.debug('=== get_bader_volume(%s)' % atom)
     bcf = ReadBaderBcf()
-    volume_list = bcf.search_atomic_volume_num(atom)
-    print(volume_list)
+    # volume_list = bcf.search_atomic_volume_num(atom)
+    # print(volume_list)
+    dis = bcf.get_distance(1)
+    print(dis)
+
 
     # # Bader Volume の足し合わせ
     # util = SAE.io.UtilBader()

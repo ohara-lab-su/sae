@@ -1,5 +1,11 @@
 # ChangeLog
 
+## Ver_0.0.45, 2021.06.18, 07:48
+
+- ReadBaderBcf.py
+  - get_distance(atom)
+  - get_charge(atom)
+  
 ## Ver_0.0.44, 2021.06.17, 08:53
 
 - ReadRmcpotCfg.py  
