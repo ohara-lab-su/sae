@@ -54,10 +54,12 @@ class WriteFdmInp(object):
         self.__radius = 5
         self.__rmt = None
         self.__energpho = False
+        self.__MOL = False
 
     def write_fdmnes(self,
                      atoms=None,
-                     name='POSCAR',
+                     prefix_name='POSCAR',
+                     name=None,
                      STD=True,
                      MOL=False):
         """
@@ -72,14 +74,17 @@ class WriteFdmInp(object):
         if atoms is None:
             atoms = self.__atoms
 
+        if name is not None:
+            prefix_name = name
+
         if STD:
             out = sys.stdout
         else:
             try:
-                out = open(name + '.fdmnes', 'w')
+                out = open(prefix_name + '.fdmnes', 'w')
             except:
                 out.close()
-                sys.exit("STOP:" + name + ".fdmnes file can't open")
+                sys.exit("STOP:" + prefix_name + ".fdmnes file can't open")
 
         #   atoms = atoms2.copy()
 
@@ -166,6 +171,14 @@ class WriteFdmInp(object):
 
     energpho = property(get_energpho, set_energpho)
 
+    def get_MOL(self):
+        return self.__MOL
+
+    def set_MOL(self, val_):
+        self.__MOL = val_
+
+    MOL = property(get_MOL, set_MOL)
+
     #
     # 書き出し
     #
@@ -190,7 +203,7 @@ class WriteFdmInp(object):
         FDMNES 形式のひな形を作る（構造はここでは作らない)
 
         :param atoms:  SAE のインスタンス
-        :param name: 読み込むファイル
+        :param name: 書き込みINPファイル
         :param absorber: アブソーバー番号
         :param fileout: 出力ファイル名prefix
         :param e_range: エネルギーレンジ
@@ -207,8 +220,9 @@ class WriteFdmInp(object):
         if e_range is None: e_range = self.__e_range
         if edge is None: edge = self.__edge
         if radius is None: radius = self.__radius
-        if energpho is None: energpho = self.__energpho
         if rmt is None: rmt = self.__rmt
+        if energpho is None: energpho = self.__energpho
+        if MOL is None: MOL = self.__MOL
 
         if R is not None:
             self.__radius = R
