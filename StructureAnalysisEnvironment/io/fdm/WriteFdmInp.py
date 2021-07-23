@@ -53,6 +53,7 @@ class WriteFdmInp(object):
         self.__edge = 'K'
         self.__radius = 5
         self.__rmt = None
+        self.__energpho = False
 
     def write_fdmnes(self,
                      atoms=None,
@@ -157,6 +158,14 @@ class WriteFdmInp(object):
     def set_rmt(self, val):
         self.__rmt = val
 
+    def get_energpho(self):
+        return self.__energpho
+
+    def set_energpho(self, val_):
+        self.__energpho = val_
+
+    energpho = property(get_energpho, set_energpho)
+
     #
     # 書き出し
     #
@@ -175,6 +184,7 @@ class WriteFdmInp(object):
                          radius=None,
                          R=None,
                          rmt=None,
+                         energpho=False,
                          MOL=False):
         """
         FDMNES 形式のひな形を作る（構造はここでは作らない)
@@ -187,6 +197,7 @@ class WriteFdmInp(object):
         :param edge: 吸収端(K,L,,,)
         :param radius: クラスター半径
         :param rmt: MT半径
+        :param energpho:
         :param MOL:  分子の場合は True
         :return:
         """
@@ -196,6 +207,7 @@ class WriteFdmInp(object):
         if e_range is None: e_range = self.__e_range
         if edge is None: edge = self.__edge
         if radius is None: radius = self.__radius
+        if energpho is None: energpho = self.__energpho
         if rmt is None: rmt = self.__rmt
 
         if R is not None:
@@ -238,7 +250,10 @@ class WriteFdmInp(object):
         print("  %s  ! %s " % (e_range, e_range_comment), file=out)
         print("! -15. 0.1 50. 1. 200.        !", file=out)
         print("", file=out)
-        print("!Energpho", file=out)
+        if energpho:
+            print("Energpho", file=out)
+        else:
+            print("!Energpho", file=out)
         print("", file=out)
         print(" Edge", file=out)
         print("  %s" % edge, file=out)
