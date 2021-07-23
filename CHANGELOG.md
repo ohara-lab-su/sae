@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.46, 2021.07.23, 10:14
+
+- WriteFdmInp.py
+  - radius の変更に radius 以外にも R 引数で変更できるようにした
+
 ## Ver_0.0.45, 2021.06.18, 07:48
 
 - ReadBaderBcf.py

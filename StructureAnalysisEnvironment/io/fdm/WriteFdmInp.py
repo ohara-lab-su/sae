@@ -173,6 +173,7 @@ class WriteFdmInp(object):
                          e_range=None,
                          edge=None,
                          radius=None,
+                         R=None,
                          rmt=None,
                          MOL=False):
         """
@@ -196,6 +197,9 @@ class WriteFdmInp(object):
         if edge is None: edge = self.__edge
         if radius is None: radius = self.__radius
         if rmt is None: rmt = self.__rmt
+
+        if R is not None:
+            self.__radius = R
 
         try:
             out = open(name, 'w')
