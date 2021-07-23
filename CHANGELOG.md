@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_00.47, 2021.07.23 11:22
+
+- WwiteFdmInp.py
+  - added energpho FLAG
+
 ## Ver_0.0.46, 2021.07.23, 10:14
 
 - WriteFdmInp.py
