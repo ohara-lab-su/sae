@@ -1,6 +1,11 @@
 # ChangeLog
 
-## Ver_00.47, 2021.07.23 11:22
+## Ver_0.0.48, 2021.07.24 14:24
+
+- WiteFdmInp.py
+  - convolution 関係のオプションを追加
+
+## Ver_0.0.47, 2021.07.23 11:22
 
 - WiteFdmInp.py
   - added energpho FLAG

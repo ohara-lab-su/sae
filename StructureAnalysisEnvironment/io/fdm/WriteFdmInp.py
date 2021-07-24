@@ -54,63 +54,8 @@ class WriteFdmInp(object):
         self.__radius = 5
         self.__rmt = None
         self.__energpho = False
-
-    def write_fdmnes(self,
-                     atoms=None,
-                     name='POSCAR',
-                     STD=True,
-                     MOL=False):
-        """
-        FDMNES 入力形式へ POSCAR を変換する
-
-        :param atoms:
-        :param name: 書き込み名のprefix. "name.fdmnes" ファイルとして出力される
-        :param STD:
-        :param MOL:
-        :return:
-        """
-        if atoms is None:
-            atoms = self.__atoms
-
-        if STD:
-            out = sys.stdout
-        else:
-            try:
-                out = open(name + '.fdmnes', 'w')
-            except:
-                out.close()
-                sys.exit("STOP:" + name + ".fdmnes file can't open")
-
-        #   atoms = atoms2.copy()
-
-        cell = atoms.get_cell()
-        metT = np.dot(cell, np.transpose(cell))
-        cell2 = cellconst(metT)  # from ASE module
-
-        a = cell2[0]
-        b = cell2[1]
-        c = cell2[2]
-        alpha = cell2[3]
-        beta = cell2[4]
-        gamma = cell2[5]
-
-        nat = len(atoms.get_positions())
-
-        if MOL:
-            print(" molecule", file=out)
-        else:
-            print(" Crystal", file=out)
-
-        print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma), file=out)
-        for ii in range(nat):
-            zza = atoms.get_atomic_numbers()[ii]
-            # pos = atoms.get_positions()[ii]
-            pos = atoms.get_scaled_positions()[ii]
-            sym = atoms.get_chemical_symbols()[ii]
-            print("   %2d %8.4f %8.4f %8.4f    ! %s" % (zza, pos[0], pos[1], pos[2], sym), file=out)
-
-        if not STD:
-            out.close()
+        self.__green = False
+        self.__MOL = False
 
     def get_absorber(self):
         return self.__absorber
@@ -166,9 +111,94 @@ class WriteFdmInp(object):
 
     energpho = property(get_energpho, set_energpho)
 
+    def get_MOL(self):
+        return self.__MOL
+
+    def set_MOL(self, val_):
+        self.__MOL = val_
+
+    MOL = property(get_MOL, set_MOL)
+
     #
     # 書き出し
     #
+
+    def write_structure_inp(self, out, atoms=None, MOL=False):
+        """
+        構造情報パート
+
+        :param out: ファイルディスクプリター(instance)
+        :param atoms:
+        :param MOD:
+        :return:
+        """
+        if atoms is None: atoms = self.__atoms
+
+        cell = atoms.get_cell()
+        metT = np.dot(cell, np.transpose(cell))
+        cell2 = cellconst(metT)  # from ASE module
+
+        a = cell2[0]
+        b = cell2[1]
+        c = cell2[2]
+        alpha = cell2[3]
+        beta = cell2[4]
+        gamma = cell2[5]
+
+        nat = len(atoms.get_positions())
+
+        if MOL:
+            print(" molecule", file=out)
+        else:
+            print(" Crystal", file=out)
+
+        print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma), file=out)
+        for ii in range(nat):
+            zza = atoms.get_atomic_numbers()[ii]
+            # pos = atoms.get_positions()[ii]
+            pos = atoms.get_scaled_positions()[ii]
+            sym = atoms.get_chemical_symbols()[ii]
+            print("   %2d %8.4f %8.4f %8.4f    ! %s" % (zza, pos[0], pos[1], pos[2], sym), file=out)
+
+    def write_conv_inp(self, out, conv_out=None, ecent=None, elarg=None, gamma_hole=None, gamma_max=None):
+        """
+        Convolution 情報の書き込み
+
+        :param out: ファイルディスクプリター(instance)
+        :param conv_out:
+        :param ecent:
+        :param elarg:
+        :param gamma_hole:
+        :param gamma_max:
+        :return:
+        """
+        print(" Convolution", file=out)
+        print("", file=out)
+
+        if conv_out is not None:
+            print(" Conv_out", file=out)
+            print("   %s" % conv_out, file=out)
+            print("", file=out)
+
+        if ecent is not None:
+            print(" Ecent", file=out)
+            print("   %s" % ecent, file=out)
+            print("", file=out)
+
+        if elarg is not None:
+            print(" Ecent", file=out)
+            print("   %s" % elarg, file=out)
+            print("", file=out)
+
+        if gamma_hole is not None:
+            print(" Gamma_hole", file=out)
+            print("   %s" % gamma_hole, file=out)
+            print("", file=out)
+
+        if gamma_max is not None:
+            print(" Gamma_max", file=out)
+            print("   %s" % gamma_max, file=out)
+            print("", file=out)
 
     def write_inp(self, atoms= None, name='read_pdb.inp', absorber=None, fileout=None, e_range=None,
                   edge=None, radius=None, rmt=None, MOL=False):
@@ -184,20 +214,33 @@ class WriteFdmInp(object):
                          radius=None,
                          R=None,
                          rmt=None,
+                         green=False,
                          energpho=False,
+                         conv_out=None,
+                         ecent=None,
+                         elarg=None,
+                         gamma_hole=None,
+                         gamma_max=None,
                          MOL=False):
         """
         FDMNES 形式のひな形を作る（構造はここでは作らない)
 
         :param atoms:  SAE のインスタンス
-        :param name: 読み込むファイル
+        :param name: 書き込みINPファイル
         :param absorber: アブソーバー番号
-        :param fileout: 出力ファイル名prefix
+        :param fileout: 出力ファイル名prefix (例 Pd)
         :param e_range: エネルギーレンジ
         :param edge: 吸収端(K,L,,,)
         :param radius: クラスター半径
+        :param R: クラスター半径(radiusの別名入力)
         :param rmt: MT半径
+        :param green:
         :param energpho:
+        :param conv_out: 出力 convolution 名 (fullname)
+        :param ecent:
+        :param elarg:
+        :param gamma_hole:
+        :param gamma_max:
         :param MOL:  分子の場合は True
         :return:
         """
@@ -206,12 +249,12 @@ class WriteFdmInp(object):
         if fileout is None: fileout = self.__fileout
         if e_range is None: e_range = self.__e_range
         if edge is None: edge = self.__edge
+        if R is not None: radius = R
         if radius is None: radius = self.__radius
-        if energpho is None: energpho = self.__energpho
         if rmt is None: rmt = self.__rmt
-
-        if R is not None:
-            self.__radius = R
+        if energpho is None: energpho = self.__energpho
+        if MOL is None: MOL = self.__MOL
+        if green is None: green = self.__green
 
         try:
             out = open(name, 'w')
@@ -220,20 +263,6 @@ class WriteFdmInp(object):
             sys.exit("STOP:" + name + ".fdmnes file can't open")
 
         e_range_comment = "first energy, step, intermediary energy, step ..., last energy"
-        #   atoms = atoms2.copy()
-
-        cell = atoms.get_cell()  # from ASE
-        metT = np.dot(cell, np.transpose(cell))
-        cell2 = cellconst(metT)  # from ASE module
-
-        a = cell2[0]
-        b = cell2[1]
-        c = cell2[2]
-        alpha = cell2[3]
-        beta = cell2[4]
-        gamma = cell2[5]
-
-        nat = len(atoms.get_positions())
 
         print("! FDMNES indata file", file=out)
         print("", file=out)
@@ -243,27 +272,35 @@ class WriteFdmInp(object):
         print("  %s" % absorber, file=out)
         print("! allsite", file=out)
         print("", file=out)
+
         print(" Filout", file=out)
         print("  %s" % fileout, file=out)
         print("", file=out)
+
         print(" Range                        ! Energy range of calculation (eV)", file=out)
         print("  %s  ! %s " % (e_range, e_range_comment), file=out)
         print("! -15. 0.1 50. 1. 200.        !", file=out)
         print("", file=out)
+
         if energpho:
             print("Energpho", file=out)
         else:
             print("!Energpho", file=out)
         print("", file=out)
+
         print(" Edge", file=out)
         print("  %s" % edge, file=out)
         print("! L23", file=out)
         print("", file=out)
+
         print("!Quadrupole", file=out)
         # print("", file=out)
         print(" Relativism", file=out)
-        # print("", file=out)
-        print(" Convolution", file=out)
+        print("", file=out)
+
+        # convolution 情報
+        self.write_conv_inp(out, conv_out, ecent, elarg, gamma_hole, gamma_max)
+
         # print("", file=out)
         print("", file=out)
         print("!No_Fermi", file=out)
@@ -285,13 +322,19 @@ class WriteFdmInp(object):
         print("!Magnetism", file=out)
         print("!SCF_mag_free", file=out)
         print("", file=out)
+
         print("!Hubbard", file=out)
         print("! 0.0 6.3 0.0", file=out)
         print("", file=out)
         print("!TDDFT", file=out)
         print("", file=out)
-        print("!Green", file=out)
-        print("", file=out)
+
+        if green:
+            print(" Green", file=out)
+            print("", file=out)
+        else:
+            print("!Green", file=out)
+            print("", file=out)
 
         print(" Radius                       ! Radius of the cluster where final state calculation is performed", file=out)
         radius_comment = 'For a good calculation, this radius must be increased up to 6 or 7 Angstroems'
@@ -306,18 +349,8 @@ class WriteFdmInp(object):
         print(" Memory_save", file=out)
         print("", file=out)
 
-        if MOL:
-            print(" molecule", file=out)
-        else:
-            print(" Crystal", file=out)
-
-        print("      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma), file=out)
-        for ii in range(nat):
-            zza = atoms.get_atomic_numbers()[ii]
-            # pos = atoms.get_positions()[ii]
-            pos = atoms.get_scaled_positions()[ii]
-            sym = atoms.get_chemical_symbols()[ii]
-            print("   %2d %8.4f %8.4f %8.4f    ! %s" % (zza, pos[0], pos[1], pos[2], sym), file=out)
+        # 構造情報
+        self.write_structure_inp(out, atoms, MOL)
 
         print("", file=out)
         print("!Cif_file", file=out)
@@ -333,6 +366,42 @@ class WriteFdmInp(object):
         print("", file=out)
 
         out.close()
+
+    def write_fdmnes(self,
+                     atoms=None,
+                     prefix_name='POSCAR',
+                     name=None,
+                     STD=True,
+                     MOL=False):
+        """
+        FDMNES 入力形式へ POSCAR を変換する
+
+        :param atoms:
+        :param name: 書き込み名のprefix. "name.fdmnes" ファイルとして出力される
+        :param STD:
+        :param MOL:
+        :return:
+        """
+        if atoms is None:
+            atoms = self.__atoms
+
+        if name is not None:
+            prefix_name = name
+
+        if STD:
+            out = sys.stdout
+        else:
+            try:
+                out = open(prefix_name + '.fdmnes', 'w')
+            except:
+                out.close()
+                sys.exit("STOP:" + prefix_name + ".fdmnes file can't open")
+
+        #  atoms = atoms2.copy()
+        self.write_structure_inp(out, atoms, MOL)
+
+        if not STD:
+            out.close()
 
 
 def options():
