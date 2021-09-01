@@ -247,11 +247,11 @@ if __name__ == '__main__':
     print("bavname    (log file)              =", bavname)
     print("")
 
-    #   bav = SAE.ReadFdmBav(bavname)
+    #   bav = SAE.io.ReadFdmBav(bavname)
     txt = SAEnv.io.ReadFdmTxt(txtname, '.txt', weight=WETXT)
     conv = SAEnv.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
-    #   sd0 = SAEnv.io.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
-    sd = SAEnv.io.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
+    #   sd0 = SAE.io.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
+    sd = SAE.io.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
     if ispin >= 2:

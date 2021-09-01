@@ -37,7 +37,7 @@ import os
 import optparse
 # import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 # import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -60,7 +60,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAEnv.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
@@ -88,13 +88,13 @@ if __name__ == '__main__':
     if not orbit:
         orbit = 1
 
-    inp = SAEnv.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
     ispin = inp.ispin
     if not filout:
         filout = inp.filout
 
     ###########################################################################
-    #   bav = SAE.ReadFdmBav(name0)
+    #   bav = SAE.io.ReadFdmBav(name0)
     ###########################################################################
 
     plt.rcParams['font.family'] = 'Times New Roman'
@@ -120,9 +120,9 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    txt = SAEnv.io.ReadFdmTxt(filout, '.txt')
-    conv = SAEnv.io.ReadFdmConv(filout, suffix_conv)
-    sd0 = SAEnv.io.ReadFdmSd(filout, '_sd0.txt')
+    txt = SAE.io.ReadFdmTxt(filout, '.txt')
+    conv = SAE.io.ReadFdmConv(filout, suffix_conv)
+    sd0 = SAE.io.ReadFdmSd(filout, '_sd0.txt')
 
     ################################################ convert Energy
     # PhotoEnegy モードで計算した時と同じ結果を返す
@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
     ######################################### plot LDOS
     #
-    sd = SAEnv.io.ReadFdmSd(filout, suffix_sd)
+    sd = SAE.io.ReadFdmSd(filout, suffix_sd)
     for orbit in orbit_list:
         plt.axes([orgx, orgy, xsize, ysize])
 

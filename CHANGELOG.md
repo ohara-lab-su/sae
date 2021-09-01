@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.49, 2021.09.02 08:24
+
+- FDplot_*DOS*.py
+  - namespace の修正(io系に対応)
+ 
 ## Ver_0.0.48, 2021.07.24 14:24
 
 - WiteFdmInp.py
