@@ -212,7 +212,7 @@ if __name__ == '__main__':
     #
     # sd 番号を オプション指定の atom で選択する
     #
-    inp = SAE.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
 
     if not atom and not inp.nonexc:
         atom = 0
@@ -242,10 +242,10 @@ if __name__ == '__main__':
     print("")
 
     #   bav = SAE.ReadFdmBav(name0)
-    txt = SAE.ReadFdmTxt(txtname, '.txt', weight=WETXT)
-    conv = SAE.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
-    #   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
-    sd = SAE.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
+    txt = SAE.io.ReadFdmTxt(txtname, '.txt', weight=WETXT)
+    conv = SAE.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
+    #   sd0 = SAE.io.ReadFdmSd(sdname, '_sd0.txt')
+    sd = SAE.io.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
     if ispin >= 2:
