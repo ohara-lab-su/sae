@@ -31,7 +31,7 @@ __version__    = "0.0.1"
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -68,13 +68,13 @@ if __name__ == '__main__':
     if not orbit:
         orbit=1
 
-    inp = SAEnv.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
     name0 = inp.get_filout()
 
     ###########################################################################
-#   txt = SAEnv.ReadFdmTxt(name0,'.txt')
-#   bav = SAEnv.ReadFdmBav(name0)
-    sd = SAEnv.ReadFdmSd(name0, suffix_sd)
+#   txt = SAE.io.ReadFdmTxt(name0,'.txt')
+#   bav = SAE.io.ReadFdmBav(name0)
+    sd = SAE.io.ReadFdmSd(name0, suffix_sd)
     ###########################################################################
 
     ispin = inp.get_ispin()

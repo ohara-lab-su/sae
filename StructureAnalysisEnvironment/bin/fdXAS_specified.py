@@ -34,7 +34,7 @@ import os
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -51,7 +51,7 @@ import matplotlib.pyplot as plt
 #    options,args = parser.parse_args()
 #
 #    if not os.path.exists(name):
-#        name0 = SAEnv.find_datfile1('_conv.txt')
+#        name0 = SAE.find_datfile1('_conv.txt')
 #        name0 = name0.replace(suffix,'')
 #        if name0 is None:
 #            name0 = name
@@ -66,7 +66,7 @@ import matplotlib.pyplot as plt
 if __name__ == '__main__':
 
 #   name,suffix = options()
-#   conv = SAEnv.ReadFdmConv(name)
+#   conv = SAE.ReadFdmConv(name)
 #   eng = conv.get_eng()
 #   xas = conv.get_xas()
 
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     plt.axes([orgx,orgy,xsize,ysize])
 
 #    #######################################################
-#    nor = SAEnv.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+#    nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
 #    plt.plot(nor.eng,nor.nor,color='blue',linewidth=1,label='exp.')
 #    #######################################################
 
@@ -94,10 +94,10 @@ if __name__ == '__main__':
 #   E_edge   = 0.0
 #   E_fermi  = -5.41217
 
-#   conv = SAEnv.ReadFdmConv(name, suffix)
+#   conv = SAE.ReadFdmConv(name, suffix)
 
-    txt = SAEnv.ReadFdmTxt('R3.0/Au', suffix='.txt')
-    conv = SAEnv.ReadFdmConv('R3.0/Au', suffix='_conv.txt')
+    txt = SAE.io.ReadFdmTxt('R3.0/Au', suffix='.txt')
+    conv = SAE.io.ReadFdmConv('R3.0/Au', suffix='_conv.txt')
     plt.plot(conv.eng - txt.E_Fermi, conv.xas, linewidth=2, label='XAS')
 
     plt.ticklabel_format(axis='x',useOffset=False)

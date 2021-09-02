@@ -54,7 +54,7 @@ import os
 import optparse
 # import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 # import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -107,7 +107,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAEnv.io.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
@@ -218,7 +218,7 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    inp = SAEnv.io.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
 
     if not atom and not inp.nonexc:
         atom = 0
@@ -248,8 +248,8 @@ if __name__ == '__main__':
     print("")
 
     #   bav = SAE.io.ReadFdmBav(bavname)
-    txt = SAEnv.io.ReadFdmTxt(txtname, '.txt', weight=WETXT)
-    conv = SAEnv.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
+    txt = SAE.io.ReadFdmTxt(txtname, '.txt', weight=WETXT)
+    conv = SAE.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
     #   sd0 = SAE.io.ReadFdmSd(sdname, '_sd0.txt',weight=WEDOS)
     sd = SAE.io.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 

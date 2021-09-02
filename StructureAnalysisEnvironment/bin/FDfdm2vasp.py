@@ -30,7 +30,7 @@ __version__    = "0.0.5"
 ################################################################################
 
 #import sys
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     print("INPUT :",name)
     print("OUTPUT:",name+".vasp")
 
-    cell = SAEnv.Read(filename=name,code='FDMNES')
+    cell = SAE.io.Read(filename=name,code='FDMNES')
     cell.write(code='VASP',outname=name,STD=True)
     cell.write(code='VASP',outname=name)
 

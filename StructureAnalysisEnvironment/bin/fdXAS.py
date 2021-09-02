@@ -36,7 +36,7 @@ import os
 import optparse
 # import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 # import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -52,7 +52,7 @@ def options():
     options, args = parser.parse_args()
 
     if not os.path.exists(name):
-        name0 = SAEnv.find_datfile1('_conv.txt')
+        name0 = SAE.find_datfile1('_conv.txt')
         name0 = name0.replace(suffix, '')
         if name0 is None:
             name0 = name
@@ -67,7 +67,7 @@ def options():
 ################################################################################
 if __name__ == '__main__':
     name, suffix = options()
-    conv = SAEnv.io.ReadFdmConv(name, suffix)
+    conv = SAE.io.ReadFdmConv(name, suffix)
 
     eng = conv.eng
     xas = conv.xas

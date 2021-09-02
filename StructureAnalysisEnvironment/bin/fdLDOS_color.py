@@ -34,7 +34,7 @@ import os
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -99,7 +99,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAEnv.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
     ###########################################################################
 
-    inp = SAEnv.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
 
     if not atom and not inp.nonexc:
         atom = 0
@@ -228,11 +228,11 @@ if __name__ == '__main__':
     print("bavname    (log file)              =", bavname)
     print("")
 
-#   bav = SAE.ReadFdmBav(name0)
-    txt = SAEnv.ReadFdmTxt(txtname,'.txt', weight=WETXT)
-    conv = SAEnv.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
-#   sd0 = SAEnv.ReadFdmSd(sdname, '_sd0.txt')
-    sd = SAEnv.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
+#   bav = SAE.io.ReadFdmBav(name0)
+    txt = SAE.io.ReadFdmTxt(txtname,'.txt', weight=WETXT)
+    conv = SAE.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
+#   sd0 = SAE.io.ReadFdmSd(sdname, '_sd0.txt')
+    sd = SAE.io.ReadFdmSd(sdname, suffix_sd, weight=WEDOS)
 
     ispin = inp.ispin
     if ispin >=2:

@@ -73,7 +73,7 @@ def options():
 if __name__ == '__main__':
 
     inpname = options()
-    inp = SAE.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
 
     filout = inp.get_filout()
     if filout is None:

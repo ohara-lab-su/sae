@@ -63,7 +63,7 @@ def options():
             inpname = options.INPUT
         else:
             if os.path.exists('fdmfile.txt'):
-                fdmfiletxt = SAE.ReadFdmFdmfile()
+                fdmfiletxt = SAE.io.ReadFdmFdmfile()
                 inpname = fdmfiletxt.filout
             else:
                 inpname = 'read_pdb.inp'
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
     if filsrc is None:
         print('inp :', inpname)
-        out = SAE.ReadFdmInp(inpname)
+        out = SAE.io.ReadFdmInp(inpname)
         filsrc = out.get_filout()
 
     print('src :', filsrc)

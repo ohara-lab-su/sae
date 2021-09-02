@@ -62,7 +62,7 @@ def options():
 if __name__ == '__main__':
 
     name,suffix,STD_FLAG = options()
-    bav = SAE.ReadFdmBav(name,suffix)
+    bav = SAE.io.ReadFdmBav(name,suffix)
 
     natom = bav.get_natom()
     lmax = bav.get_lmax()

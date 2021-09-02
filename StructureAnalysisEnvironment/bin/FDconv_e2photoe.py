@@ -76,7 +76,7 @@ if __name__ == '__main__':
     print("--inp  , inpname .inp       : read current mode     =",inpname)
 
     # inp ファイルの分解
-    inp = SAE.ReadFdmInp(inpname)
+    inp = SAE.io.ReadFdmInp(inpname)
     if inp.get_energygpho():
         sys.exit("STOP: current mode is PhotoEnergy")
 
@@ -106,8 +106,8 @@ if __name__ == '__main__':
 
 
     # データーの分解
-    txt = SAE.ReadFdmTxt(filout,'.txt')
-    conv = SAE.ReadFdmConv(convout,'_conv.txt')
+    txt = SAE.io.ReadFdmTxt(filout,'.txt')
+    conv = SAE.io.ReadFdmConv(convout,'_conv.txt')
     print("E_edge                                              =",txt.E_edge)
     print("E_fermi                                             =",txt.E_Fermi)
 
