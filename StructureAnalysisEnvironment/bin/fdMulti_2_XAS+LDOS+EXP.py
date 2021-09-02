@@ -29,15 +29,15 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-#import sys
-#import gzip
+# import sys
+# import gzip
 import os
-#import re
+# import re
 import optparse
-#import numpy as np
+# import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
 
     #######################################################
-#   conv = SAEnv.ReadFdmConv('Au_conv_Fermi.txt')
+#   conv = SAE.io.ReadFdmConv('Au_conv_Fermi.txt')
     #######################################################
 
     e0 = 4.5
@@ -92,12 +92,12 @@ if __name__ == '__main__':
     ###########################################################################
     plt.axes([orgx,orgy,xsize,ysize])
 
-    conv = SAEnv.ReadFdmConv('Cu', suffix='_conv.txt')
-    txt = SAEnv.ReadFdmTxt('Cu', suffix='.txt')
+    conv = SAE.io.ReadFdmConv('Cu', suffix='_conv.txt')
+    txt = SAE.io.ReadFdmTxt('Cu', suffix='.txt')
     plt.plot(conv.eng + txt.E_edge + e0, conv.xas, color='black', linewidth=3, label='XAS with Broad')
     plt.plot(conv.eng + txt.E_edge + e0, txt.xas,  color='green', linewidth=1, label='XAS raw data')
 
-    nor = SAEnv.ReadAthenaNor('Cu_K_Cu_foil_Si311_50ms_140625.txt.nor')
+    nor = SAE.io.ReadAthenaNor('Cu_K_Cu_foil_Si311_50ms_140625.txt.nor')
     plt.plot(nor.eng, nor.nor/39. + exp_off , color='blue',linewidth=3,label='exp. BL14B2')
     plt.axvline(x=txt.E_edge + txt.E_fermi + e0 ,color='black',linewidth=1)
     plt.yticks([])
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     orgy = orgy + ysize + off 
     plt.axes([orgx,orgy,xsize,ysize])
 
-    sd = SAEnv.ReadFdmSd('Cu', suffix='_sd0.txt')
+    sd = SAE.io.ReadFdmSd('Cu', suffix='_sd0.txt')
     ldos = sd.get_ldos(l='p')
     plt.plot(conv.eng + txt.E_edge + e0, ldos, color='red', linewidth=2, label='LDOS Cu-p')
     plt.axvline(x=txt.E_edge + txt.E_fermi + e0 ,color='black',linewidth=1)

@@ -29,15 +29,15 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-#import sys
-#import gzip
-#import os
-#import re
+# import sys
+# import gzip
+# import os
+# import re
 import optparse
-#import numpy as np
+# import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -146,27 +146,27 @@ if __name__ == '__main__':
     inp_2 = 'R5_fdm_ad_on_68/read_pdb.inp'
     inp_3 = 'R5_fdm_ad_on_72/read_pdb.inp'
 
-    inp = SAEnv.io.ReadFdmInp(inp_1)
+    inp = SAE.io.ReadFdmInp(inp_1)
 
-    conv = SAEnv.io.ReadFdmConv(fil_1, suffix='_conv.txt')
-    conv_2 = SAEnv.io.ReadFdmConv(fil_2, suffix='_conv.txt')
-    conv_3 = SAEnv.io.ReadFdmConv(fil_3, suffix='_conv.txt')
+    conv = SAE.io.ReadFdmConv(fil_1, suffix='_conv.txt')
+    conv_2 = SAE.io.ReadFdmConv(fil_2, suffix='_conv.txt')
+    conv_3 = SAE.io.ReadFdmConv(fil_3, suffix='_conv.txt')
     conv_1 = conv
 
-    txt = SAEnv.io.ReadFdmTxt(fil_1, suffix='.txt')
-    txt_2 = SAEnv.io.ReadFdmTxt(fil_2, suffix='.txt')
-    txt_3 = SAEnv.io.ReadFdmTxt(fil_3, suffix='.txt')
+    txt = SAE.io.ReadFdmTxt(fil_1, suffix='.txt')
+    txt_2 = SAE.io.ReadFdmTxt(fil_2, suffix='.txt')
+    txt_3 = SAE.io.ReadFdmTxt(fil_3, suffix='.txt')
     txt_1 = txt
 
     s_sd0 = '_sd0.txt'
-    sd0_1 = SAEnv.io.ReadFdmSd(fil_1, inpname=inp_1, suffix=s_sd0, weight=WEDOS)
-    sd0_2 = SAEnv.io.ReadFdmSd(fil_2, inpname=inp_2, suffix=s_sd0, weight=WEDOS)
-    sd0_3 = SAEnv.io.ReadFdmSd(fil_3, inpname=inp_3, suffix=s_sd0, weight=WEDOS)
+    sd0_1 = SAE.io.ReadFdmSd(fil_1, inpname=inp_1, suffix=s_sd0, weight=WEDOS)
+    sd0_2 = SAE.io.ReadFdmSd(fil_2, inpname=inp_2, suffix=s_sd0, weight=WEDOS)
+    sd0_3 = SAE.io.ReadFdmSd(fil_3, inpname=inp_3, suffix=s_sd0, weight=WEDOS)
 
     s_sd = '_sd'+str(atom)+'.txt'
-    sd_1 = SAEnv.io.ReadFdmSd(fil_1, inpname=inp_1, suffix=s_sd, weight=WEDOS)
-    sd_2 = SAEnv.io.ReadFdmSd(fil_2, inpname=inp_2, suffix=s_sd, weight=WEDOS)
-    sd_3 = SAEnv.io.ReadFdmSd(fil_3, inpname=inp_3, suffix=s_sd, weight=WEDOS)
+    sd_1 = SAE.io.ReadFdmSd(fil_1, inpname=inp_1, suffix=s_sd, weight=WEDOS)
+    sd_2 = SAE.io.ReadFdmSd(fil_2, inpname=inp_2, suffix=s_sd, weight=WEDOS)
+    sd_3 = SAE.io.ReadFdmSd(fil_3, inpname=inp_3, suffix=s_sd, weight=WEDOS)
 
     txt_xas_av = (txt_1.xas + txt_2.xas + txt_3.xas)/3.
     conv_xas_av = (conv_1.xas + conv_2.xas + conv_3.xas)/3.

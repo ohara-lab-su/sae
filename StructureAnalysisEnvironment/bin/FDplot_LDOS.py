@@ -241,7 +241,7 @@ if __name__ == '__main__':
     print("bavname    (log file)              =", bavname)
     print("")
 
-    #   bav = SAE.ReadFdmBav(name0)
+    #   bav = SAE.io.ReadFdmBav(name0)
     txt = SAE.io.ReadFdmTxt(txtname, '.txt', weight=WETXT)
     conv = SAE.io.ReadFdmConv(convname, suffix_conv, weight=WEXAS)
     #   sd0 = SAE.io.ReadFdmSd(sdname, '_sd0.txt')

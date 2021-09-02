@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.50, 2021.09.03 07:41
+
+- FD*.py, fd*.py 関係
+  - namespace の修正(io系に対応)
+
 ## Ver_0.0.49, 2021.09.02 08:24
 
 - FDplot_*DOS*.py

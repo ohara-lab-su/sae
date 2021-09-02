@@ -33,7 +33,7 @@ import os
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 #import matplotlib.pyplot as plt
@@ -52,7 +52,7 @@ def options():
         inpname = options.INPUT
     else:
         if os.path.exists('fdmfile.txt'):
-            fdmfiletxt = SAEnv.ReadFdmFdmfile()
+            fdmfiletxt = SAE.io.ReadFdmFdmfile()
             inpname = fdmfiletxt.filout
         else:
             inpname = 'read_pdb.inp'
@@ -68,11 +68,11 @@ if __name__ == '__main__':
     inpname, filout = options()
 
     if not filout:
-        inp = SAEnv.ReadFdmInp(inpname)
+        inp = SAE.io.ReadFdmInp(inpname)
         filout = inp.filout
 
-    txt = SAEnv.ReadFdmTxt(filout, suffix='.txt')
-    bav = SAEnv.ReadFdmBav(filout, suffix = '_bav.txt')
+    txt = SAE.io.ReadFdmTxt(filout, suffix='.txt')
+    bav = SAE.io.ReadFdmBav(filout, suffix = '_bav.txt')
 
     efermi = txt.E_Fermi
     eedge = txt.E_edge

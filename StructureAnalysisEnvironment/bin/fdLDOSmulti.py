@@ -83,8 +83,8 @@ if __name__ == '__main__':
 
     ###########################################################################
     # f0: sd0
-    txt = SAE.ReadFdmTxt('BaTiO3_R3m')
-    sd_sd0 = SAE.ReadFdmSd('BaTiO3_R3m', suffix='_sd0.txt', inpname='read_pdb.inp')
+    txt = SAE.io.ReadFdmTxt('BaTiO3_R3m')
+    sd_sd0 = SAE.io.ReadFdmSd('BaTiO3_R3m', suffix='_sd0.txt', inpname='read_pdb.inp')
 
     ef = txt.E_edge + txt.E_fermi
     dos_s_sd0 = sd_sd0.get_ldos(l='s')
@@ -101,8 +101,8 @@ if __name__ == '__main__':
 
     ###########################################################################
     # f1: sd1
-    #   txt = SAE.ReadFdmTxt(BASE+'BaTiO3_R3m')
-    sd_sd1 = SAE.ReadFdmSd('BaTiO3_R3m', suffix='_sd1.txt', inpname='read_pdb.inp')
+    #   txt = SAE.io.ReadFdmTxt(BASE+'BaTiO3_R3m')
+    sd_sd1 = SAE.io.ReadFdmSd('BaTiO3_R3m', suffix='_sd1.txt', inpname='read_pdb.inp')
 
     #   ef = txt.E_edge + txt.E_fermi
     dos_s_sd1 = sd_sd1.get_ldos(l='s')
@@ -119,8 +119,8 @@ if __name__ == '__main__':
 
     ###########################################################################
     # f2: sd2
-    #   txt = SAE.ReadFdmTxt(BASE+'BaTiO3_R3m')
-    sd_sd2 = SAE.ReadFdmSd('BaTiO3_R3m', suffix='_sd2.txt', inpname='read_pdb.inp')
+    #   txt = SAE.io.ReadFdmTxt(BASE+'BaTiO3_R3m')
+    sd_sd2 = SAE.io.ReadFdmSd('BaTiO3_R3m', suffix='_sd2.txt', inpname='read_pdb.inp')
 
     #   ef = txt.E_edge + txt.E_fermi
     dos_s_sd2 = sd_sd2.get_ldos(l='s')

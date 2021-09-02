@@ -25,14 +25,14 @@ __license__    = "MIT"
 __status__     = "alpha"
 __version__    = "0.1.1"
 ################################################################################
-#
+
 import os
 import sys
 import optparse
-#import numpy as np
+# import numpy as np
 
 from ase.io import read
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 
 ################################################################################
 def options():

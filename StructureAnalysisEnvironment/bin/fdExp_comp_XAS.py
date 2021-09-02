@@ -36,7 +36,7 @@ import os
 import optparse
 #import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
 
     #######################################################
-#   conv = SAEnv.ReadFdmConv('Au_conv_Fermi.txt')
+#   conv = SAE.io.ReadFdmConv('Au_conv_Fermi.txt')
     #######################################################
 
 #   E_edge = 0.0
@@ -92,18 +92,18 @@ if __name__ == '__main__':
 #   times = 35
 #   times = 1.0
     ###########################################################################
-    conv = SAEnv.io.ReadFdmConv('Au', suffix='_conv.txt')
-    txt = SAEnv.io.ReadFdmTxt('Au', suffix='.txt')
+    conv = SAE.io.ReadFdmConv('Au', suffix='_conv.txt')
+    txt = SAE.io.ReadFdmTxt('Au', suffix='.txt')
     plt.plot(conv.eng + txt.E_edge, conv.xas, color='red', linewidth=1, label='FDM Green R3')
 
     ###########################################################################
-    nor = SAEnv.io.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+    nor = SAE.io.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
     plt.plot(nor.eng, nor.nor, color='blue', linewidth=1, label='exp.')
 #   plt.plot(nor.eng - nor.e0 ,nor.nor,color='blue',linewidth=1,label='exp.')
 
 #   timesP = 1.0
 #   ###########################################################################
-#   pw = SAEnv.ReadPwXanes('xanes.dat')
+#   pw = SAE.ReadPwXanes('xanes.dat')
 #   plt.plot(pw.eng+E_edge,pw.xas*timesP,color='green',linewidth=1,label='PWSCF fch')
 
 

@@ -79,11 +79,11 @@ if __name__ == '__main__':
     suffix='_sd0.txt'
 
     ###########################################################################
-#   inp = SAE.ReadFdmInp(inpname)
+#   inp = SAE.io.ReadFdmInp(inpname)
 #   filout = inp.get_filout()
 #   ispin = inp.get_ispin()
-#   txt = SAE.ReadFdmTxt(name0,'.txt')
-#   bav = SAE.ReadFdmBav(name0)
+#   txt = SAE.io.ReadFdmTxt(name0,'.txt')
+#   bav = SAE.io.ReadFdmBav(name0)
     ###########################################################################
 
     plt.rcParams['font.family']     = 'Times New Roman'
@@ -110,8 +110,8 @@ if __name__ == '__main__':
     EF0 = E_edge + E_fermi
 
     ###########################################################################
-    sd = SAE.ReadFdmSd('Pd6/Pd6',inpname='Pd6/read_pdb.inp',\
-                        absorber=(1,2,3,4,5),weight=6.0)
+    sd = SAE.io.ReadFdmSd('Pd6/Pd6',inpname='Pd6/read_pdb.inp',\
+                          absorber=(1,2,3,4,5),weight=6.0)
     dos = sd.get_ldos(l='p')
     plt.plot(sd.eng+E_edge,dos,linewidth=2,label='absorber LDOS (p)')
     ###########################################################################

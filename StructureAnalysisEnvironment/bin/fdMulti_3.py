@@ -28,16 +28,16 @@ __status__     = "alpha"
 __version__    = "0.0.1"
 ################################################################################
 
-#import sys
-#import gzip
-#import os
-#import re
-#import optparse
+# import sys
+# import gzip
+# import os
+# import re
+# import optparse
 import argparse
-#import numpy as np
+# import numpy as np
 
-import StructureAnalysisEnvironment as SAEnv
-#import SpaceGroupEnvironment as SGE
+import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
 
@@ -87,21 +87,21 @@ if __name__ == '__main__':
     ysize = ysize0/3.
 
     ###########################################################################
-    sd1 = SAEnv.ReadFdmSd('Pd55_1', suffix='_sd0.txt', weight=1.0)
-    sd2 = SAEnv.ReadFdmSd('Pd55_5', suffix='_sd0.txt', weight=1.0)
-    sd3 = SAEnv.ReadFdmSd('FCC/Pd', suffix='_sd0.txt', weight=1.0)
+    sd1 = SAE.io.ReadFdmSd('Pd55_1', suffix='_sd0.txt', weight=1.0)
+    sd2 = SAE.io.ReadFdmSd('Pd55_5', suffix='_sd0.txt', weight=1.0)
+    sd3 = SAE.io.ReadFdmSd('FCC/Pd', suffix='_sd0.txt', weight=1.0)
 
     ldos1 = sd1.get_ldos(l='p')
     ldos2 = sd2.get_ldos(l='p')
     ldos3 = sd3.get_ldos(l='p')
 
-    conv1 = SAEnv.ReadFdmConv('Pd55_1', suffix='_conv.txt', weight=24.0)
-    conv2 = SAEnv.ReadFdmConv('Pd55_5', suffix='_conv.txt', weight=1.0)
-    conv3 = SAEnv.ReadFdmConv('FCC/Pd', suffix='_conv.txt', weight=1.0)
+    conv1 = SAE.io.ReadFdmConv('Pd55_1', suffix='_conv.txt', weight=24.0)
+    conv2 = SAE.io.ReadFdmConv('Pd55_5', suffix='_conv.txt', weight=1.0)
+    conv3 = SAE.io.ReadFdmConv('FCC/Pd', suffix='_conv.txt', weight=1.0)
 
-    txt1 = SAEnv.ReadFdmTxt('Pd55_1', suffix='.txt', weight=24.0)
-    txt2 = SAEnv.ReadFdmTxt('Pd55_5', suffix='.txt', weight=1.0)
-    txt3 = SAEnv.ReadFdmTxt('FCC/Pd', suffix='.txt', weight=1.0)
+    txt1 = SAE.io.ReadFdmTxt('Pd55_1', suffix='.txt', weight=24.0)
+    txt2 = SAE.io.ReadFdmTxt('Pd55_5', suffix='.txt', weight=1.0)
+    txt3 = SAE.io.ReadFdmTxt('FCC/Pd', suffix='.txt', weight=1.0)
 
     ###########################################################################
     ### 共通項目
