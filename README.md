@@ -36,6 +36,12 @@ This software is released under the MIT License, see LICENSE.txt.
 ある程度は Windows 7 Pro および Windows 8.1 Pro でテストを行っています。
 Python が導入されていればほとんど何処でも動くと思います。
 
+## インストール(pip)
+
+```
+pip install git+http://selenium.spring8.or.jp:8081/analysis/sae.git
+```
+
 ## インストール
 
 ~~Windows (64bit)の場合は <b>StructureAnalysisEnvironment-0.0.1.win-amd64.exe</b> を実行していただければインストーラが立ち上がり、すべてOKで推し進めれば、インストールは完了します。~~
@@ -48,7 +54,7 @@ Python が導入されていればほとんど何処でも動くと思います�
 python setup.py install
 ```
 
-主なテストは **python 3.6.10** にて行っています
+主なテストは **python 3.6.10, 3.7.10, 3.9.1** にて行っています
 
 ## 実行に必要なPythonおよびモジュール
 
