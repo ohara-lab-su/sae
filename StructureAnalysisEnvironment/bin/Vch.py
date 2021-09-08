@@ -46,7 +46,7 @@ import optparse
 # import re
 # from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 
 
 # import SpaceGroupEnvironment as SGE
@@ -68,9 +68,9 @@ if __name__ == '__main__':
     if not os.path.exists('POSCAR'): sys.exit("STOP: POSCAR not found")
     if not os.path.exists('POTCAR'): sys.exit("STOP: POTCAR not found")
 
-    incar = SAEnv.io.ReadVaspIncar()
-    poscar = SAEnv.io.ReadVaspPoscar()
-    potcar = SAEnv.io.ReadVaspPotcar()
+    incar = SAE.io.ReadVaspIncar()
+    poscar = SAE.io.ReadVaspPoscar()
+    potcar = SAE.io.ReadVaspPotcar()
 
     print("ISTART = %s" % str(incar.istart))
     print("ICHARG = %s" % str(incar.icharg))
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     print("EDIFF  = %s" % str(incar.ediff))
     print("EDIFFG = %s" % str(incar.ediffg))
 
-    kpoints = SAEnv.io.ReadVaspKpoints()
+    kpoints = SAE.io.ReadVaspKpoints()
     kx, ky, kz = kpoints.get_kpoints()
     if kpoints.FLAGS[5]:
         gamma_FLAG = True

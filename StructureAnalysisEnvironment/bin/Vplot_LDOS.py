@@ -165,7 +165,7 @@ if __name__ == '__main__':
     out = sys.stdout
 
     # makes instance ( Read DOSCAR )
-    dos = SAE.ReadVaspDoscar(dname)
+    dos = SAE.io.ReadVaspDoscar(dname)
 
     NSPIN = dos.ispin
     LORBIT = dos.lorbit

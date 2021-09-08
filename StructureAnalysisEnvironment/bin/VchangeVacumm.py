@@ -122,11 +122,9 @@ if __name__ == '__main__':
 
     # convert to Cartesian Corrdinate
     if direct:
-        scale,t,natom,direct,position = \
-                SAE.conv_direct2carABS(scale,t,natom,direct,position)
+        scale,t,natom,direct,position = SAE.conv_direct2carABS(scale,t,natom,direct,position)
     else:
-        scale,t,natom,direct,position = \
-                SAE.conv_car2carABS(scale,t,natom,direct,position)
+        scale,t,natom,direct,position = SAE.conv_car2carABS(scale,t,natom,direct,position)
 
     # check c-axis
     cmax = max(position[:,2])
@@ -141,14 +139,12 @@ if __name__ == '__main__':
 
     # conver to original coordinate mode
     if direct0:
-        scale,t,natom,direct,position = \
-                SAE.conv_car2direct(scale,t,natom,direct,position)
+        scale,t,natom,direct,position = SAE.conv_car2direct(scale,t,natom,direct,position)
 
     # POSCAR の標準出力
     STD=False
    #STD=True
-    SAE.print_poscar(outname,STD,title,scale,natom,nion,\
-                 selective,direct,vasp,t,atoms,atoms_index,position,fix)
+    SAE.print_poscar(outname,STD,title,scale,natom,nion,selective,direct,vasp,t,atoms,atoms_index,position,fix)
 
 
 ################################################################################

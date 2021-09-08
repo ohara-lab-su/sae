@@ -174,8 +174,8 @@ if __name__ == '__main__':
     if DOS_FLAG: print("WRITE DOS  : %s" % str(DOS_FLAG))
 
     # 基本インスタンス生成
-    band = SAE.ReadVaspEigenval(eigenname)
-    kpoints = SAE.ReadVaspKpoints(kpointsname)
+    band = SAE.io.ReadVaspEigenval(eigenname)
+    kpoints = SAE.io.ReadVaspKpoints(kpointsname)
 
     # バンドの基本情報取得
     NATOM = band.get_natom()
@@ -236,7 +236,7 @@ if __name__ == '__main__':
         efermi = efermifile.get_efermi()
         print(efermi)
     else:
-        dos = SAE.ReadVaspDoscar(doscarname)
+        dos = SAE.io.ReadVaspDoscar(doscarname)
         efermi = dos.get_efermi()
         print('EFERMI(DOS):', end="")
         print(efermi)
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     if os.path.exists(symdatname) or os.path.exists(symdatname+".gz"):
         print("SYM.DAT    : %s" % str(symdatname))
 
-        sym = SAE.ReadVaspSymdat(symdatname)
+        sym = SAE.io.ReadVaspSymdat(symdatname)
         num_symlines = sym.get_num_symlines()
         symlines = sym.get_symlines()
 

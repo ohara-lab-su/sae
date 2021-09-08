@@ -165,7 +165,7 @@ if __name__ == '__main__':
 
     # makes instance ( Read OUTCAR )
     print("READ %s" % str(oname))
-    outcar = SAE.ReadVaspOutcar(oname)
+    outcar = SAE.io.ReadVaspOutcar(oname)
     print("END READ")
 
     NION = outcar.get_nion()

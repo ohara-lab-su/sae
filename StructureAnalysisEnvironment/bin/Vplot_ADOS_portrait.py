@@ -78,8 +78,8 @@ def options():
     if options.DOSCAR: dname=options.DOSCAR
     if options.OUTCAR: oname=options.OUTCAR
 
-    return [dname,oname,\
-            options.NOWINDOW,options.LANDSCAPE,\
+    return [dname,oname,
+            options.NOWINDOW,options.LANDSCAPE,
             options.EMAX,options.EMIN,options.YMAX]
 
 ################################################################################

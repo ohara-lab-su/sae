@@ -110,11 +110,11 @@ if __name__ == '__main__':
         spin_list = [0,1]
 
     # TOTAL DOS
-    dos = SAE.ReadLobDos()
+    dos = SAE.io.ReadLobDos()
     dos_x = dos.get_eng()
 
     # COHP Average
-    cohp = SAE.ReadLobCohp()
+    cohp = SAE.io.ReadLobCohp()
     cohp_x = cohp.get_eng()
 
     if OPT_PAIR:

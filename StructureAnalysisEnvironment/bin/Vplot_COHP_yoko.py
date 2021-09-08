@@ -143,13 +143,13 @@ if __name__ == '__main__':
 
     # TOTAL DOS & PDOS
     print('--- READ DOSCAR.lobster')
-    dos = SAE.ReadLobDos()
+    dos = SAE.io.ReadLobDos()
     print('    END')
     dos_x = dos.eng
 
     # COHP Average
     print('--- READ COHPCAR.lobster')
-    cohp = SAE.ReadLobCohp()
+    cohp = SAE.io.ReadLobCohp()
     print('    END')
     cohp_x = cohp.eng
 

@@ -259,7 +259,7 @@ if __name__ == '__main__':
     # 原子種の名前をゲットかのうならばゲットする
     if os.path.exists(oname) or os.path.exists(oname + '.gz'):
         FLAG_OUTCAR = True
-        outcar = SAE.ReadVaspOutcar(oname)
+        outcar = SAE.io.ReadVaspOutcar(oname)
         atoms_index_j = outcar.atoms_index_j
 
 #       atoms = outcar.get_atoms_index()
