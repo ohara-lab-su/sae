@@ -41,7 +41,7 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 ################################################################################
@@ -63,8 +63,8 @@ if __name__ == '__main__':
 
     # set input file
     name = options()
-#   dos = SAEnv.ReadVaspDoscar(name)
-    dos = SAEnv.io.ReadLobDos(name)
+#   dos = SAE.io.ReadVaspDoscar(name)
+    dos = SAE.io.ReadLobDos(name)
 
     # set output device
     out = sys.stdout

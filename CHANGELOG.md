@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Ver_0.0.51, 2021.09.09 07:41
+
+- Vplot_LDOS.py などの V* 関係スクリプトの name spcae 修正
+ 
 ## Ver_0.0.50, 2021.09.03 07:41
 
 - FD*.py, fd*.py 関係

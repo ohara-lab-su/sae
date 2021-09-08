@@ -69,7 +69,7 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -149,11 +149,11 @@ if __name__ == '__main__':
         print("INTTDOS mode")
 
     # makes instance ( Read DOSCAR )
-    dos = SAEnv.io.ReadVaspDoscar(dname)
+    dos = SAE.io.ReadVaspDoscar(dname)
 
 #   if os.path.exists(oname) or os.path.exists(oname+'.gz'):
 #       FLAG_outcar = True
-#       outcar = SAEnv.ReadVaspOutcar(oname)
+#       outcar = SAE.io.ReadVaspOutcar(oname)
 
     # set output device
     out = sys.stdout

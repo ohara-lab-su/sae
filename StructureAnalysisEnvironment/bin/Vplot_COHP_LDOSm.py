@@ -42,7 +42,7 @@ import optparse
 #import re
 #from copy import deepcopy
 
-import StructureAnalysisEnvironment as SAEnv
+import StructureAnalysisEnvironment as SAE
 #import SpaceGroupEnvironment as SGE
 
 import matplotlib.pyplot as plt
@@ -143,9 +143,9 @@ if __name__ == '__main__':
 
     #####################################################
     # makes instance ( Read DOSCAR )
-#   dos = SAEnv.ReadVaspDoscar(dname)
-    dos = SAEnv.ReadLobDos(dname)
-#   dos = SAEnv.ReadLobDos()
+#   dos = SAE.io.ReadVaspDoscar(dname)
+    dos = SAE.io.ReadLobDos(dname)
+#   dos = SAE.io.ReadLobDos()
 
     nspin = dos.nspin
     natom = dos.natom

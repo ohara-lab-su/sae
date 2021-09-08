@@ -154,7 +154,7 @@ if __name__ == '__main__':
         dname = dname+'/DOSCAR'
         print("DOSCAR: ",dname)
 
-        dos = SAE.ReadVaspDoscar(dname)
+        dos = SAE.io.ReadVaspDoscar(dname)
         eng = dos.get_eng() - dos.get_efermi()
         ldos = dos.get_tdos(spin)
        #ldos = dos.get_ldos(orbit,atom,spin)

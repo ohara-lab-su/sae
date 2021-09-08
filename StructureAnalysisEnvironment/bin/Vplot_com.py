@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
     # 基本インスタンス生成
     procar = StructureAnalysisEnvironment.io.ReadVaspProcar(procarname)
-    kpoints = SAE.ReadVaspKpoints(kpointsname)
+    kpoints = SAE.io.ReadVaspKpoints(kpointsname)
 
     # バンドの基本情報取得
 #   TITLE = doscar.get_title()
@@ -229,7 +229,7 @@ if __name__ == '__main__':
         TITLE = kinstance.get_title()
         print(efermi)
     else:
-        dos = SAE.ReadVaspDoscar(doscarname)
+        dos = SAE.io.ReadVaspDoscar(doscarname)
         TITLE = dos.get_title()
         efermi = dos.get_efermi()
         print('EFERMI(DOS):', end="")
@@ -250,7 +250,7 @@ if __name__ == '__main__':
     if os.path.exists(symdatname) or os.path.exists(symdatname+".gz"):
         print("SYM.DAT    :", symdatname)
 
-        sym = SAE.ReadVaspSymdat(symdatname)
+        sym = SAE.io.ReadVaspSymdat(symdatname)
         num_symlines = sym.get_num_symlines()
         symlines = sym.get_symlines()
 
