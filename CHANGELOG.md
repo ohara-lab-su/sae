@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Ver_0.0.52, 2021.09.00 07:57
+
+- FDM plot 関係 の ylim=0 化 (一部)
+ 
 ## Ver_0.0.51, 2021.09.09 07:41
 
 - Vplot_LDOS.py などの V* 関係スクリプトの name spcae 修正

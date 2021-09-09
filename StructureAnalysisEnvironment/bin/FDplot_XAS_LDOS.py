@@ -149,6 +149,7 @@ if __name__ == '__main__':
     EF0 = txt.E_edge + txt.E_Fermi
 
     ######################################### plot XAS
+    # XANES
     plt.axes([orgx, orgy, xsize, ysize])
 
     xas = conv.get_xas()
@@ -165,6 +166,7 @@ if __name__ == '__main__':
     #   eng_p = sd0.get_eng()
     #   plt.plot(eng_p, dos_p, linewidth=1, color='black', label='absorber')
     #   plt.xlim([xmin, xmax])
+    plt.ylim(ymin=0)
 
     leg = plt.legend(loc='lower right')
     leg.get_frame().set_alpha(0.5)
@@ -175,7 +177,7 @@ if __name__ == '__main__':
     orgy = orgy + ysize + off
 
     ######################################### plot LDOS
-    #
+    # LDOS
     sd = SAE.io.ReadFdmSd(filout, suffix_sd)
     for orbit in orbit_list:
         plt.axes([orgx, orgy, xsize, ysize])
@@ -189,6 +191,7 @@ if __name__ == '__main__':
 
         plt.plot(eng, dos, linewidth=2, color=color, label=label)
         plt.axvline(x=EF0, color='black', linewidth=1)
+        plt.ylim(ymin=0)
 
         plt.xticks([])
         leg = plt.legend(loc='upper right')
