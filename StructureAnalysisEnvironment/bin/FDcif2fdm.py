@@ -85,9 +85,9 @@ if __name__ == '__main__':
 
     # bug version につきコメントアウト
 #
-#    SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
-#    SAEnv.print_fdmnes0(name=name,atoms=atoms,STD=False,MOL=MOL)
-#    SAEnv.write_fdmnes_inp0(atoms=atoms,MOL=MOL)
+#    SAE.print_fdmnes0(atoms=atoms,MOL=MOL)
+#    SAE.print_fdmnes0(name=name,atoms=atoms,STD=False,MOL=MOL)
+#    SAE.write_fdmnes_inp0(atoms=atoms,MOL=MOL)
 
     print("bug version")
 

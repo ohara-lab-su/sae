@@ -39,9 +39,9 @@ import os
 # try:
 #     # sys.path.append('../..')
 #     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-#     import StructureAnalysisEnvironment as SAEnv
+#     import StructureAnalysisEnvironment as SAE
 # except ImportError:
-#     import StructureAnalysisEnvironment as SAEnv
+#     import StructureAnalysisEnvironment as SAE
 import StructureAnalysisEnvironment as SAEnv
 
 
@@ -122,7 +122,7 @@ class Read(object):
         klass = getattr(module, class_name)
         self.cell = klass(filename, suffix=suffix, atoms_index=atoms_index)
 
-        # self.cell = SAEnv.ReadVaspPoscar(suffix=suffix, atoms_index=atoms_index)
+        # self.cell = SAE.ReadVaspPoscar(suffix=suffix, atoms_index=atoms_index)
 
         # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
         self.title = self.cell.title

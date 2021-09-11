@@ -150,7 +150,7 @@ def print_fdmnes_inp0(outname='read_pdb.inp', atoms=None, MOL=False):
 
 
 ################################################################################
-## ASE 依存版 & atoms が SAEnv の構造を持つ
+## ASE 依存版 & atoms が SAE の構造を持つ
 ##  ただし、conv_cellparam  内でまだASEを用いているので一部ASE依存版
 ##
 ##  self.atoms_number_j

@@ -381,7 +381,7 @@ if __name__ == '__main__':
     #   print cfg.atoms
 
     #   cfg.conv_cfg2vasp()
-    #   cfg.scale,cfg.direct = SAEnv.conv_cfg2vasp(cfg.scale,\
+    #   cfg.scale,cfg.direct = SAE.conv_cfg2vasp(cfg.scale,\
     #           cfg.t,\
     #           cfg.natom,\
     #           cfg.direct,\

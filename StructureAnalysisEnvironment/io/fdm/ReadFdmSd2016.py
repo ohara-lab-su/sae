@@ -277,7 +277,7 @@ class ReadFdmSd2016(object):
         self.sd = self.datlines
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
-        #       bav = SAEnv.ReadFdmBav(bavname)
+        #       bav = SAE.ReadFdmBav(bavname)
         inp = SAEnv.io.fdm.ReadFdmInp(inpname)
 
         #################

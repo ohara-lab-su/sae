@@ -498,7 +498,7 @@ class ReadVaspDoscar(object):
 
         oname = 'OUTCAR'
 
-        # import StructureAnalysisEnvironment as SAEnv
+        # import StructureAnalysisEnvironment as SAE
         outcar = SAEnv.io.vasp.ReadVaspOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()
@@ -554,7 +554,7 @@ class ReadVaspDoscar(object):
 
         oname = 'OUTCAR'
 
-        # import StructureAnalysisEnvironment as SAEnv
+        # import StructureAnalysisEnvironment as SAE
         outcar = SAEnv.io.vasp.ReadVaspOutcar(oname)
         NATOM = outcar.get_natom()
         NION = outcar.get_nion()

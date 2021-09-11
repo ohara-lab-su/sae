@@ -53,6 +53,6 @@ if __name__ == '__main__':
     cell.write(code='VASP',outname=name,STD=True)
     cell.write(code='VASP',outname=name)
 
-#   SAEnv.write(cell, outname='test.vasp',code='VASP')
-#   SAEnv.write(cell, outname='test.vasp',code='VASP',STD=False)
+#   SAE.write(cell, outname='test.vasp',code='VASP')
+#   SAE.write(cell, outname='test.vasp',code='VASP',STD=False)
 

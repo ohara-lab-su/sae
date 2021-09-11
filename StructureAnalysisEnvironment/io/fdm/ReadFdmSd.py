@@ -108,9 +108,9 @@ class ReadFdmSd(object):
                  bav=None):
         """
 
-        :param sdname:
+        :param sdname: Pd_sd0.txt のとき Pd が sdname となる
         :param suffix:
-        :param inpname:
+        :param inpname: FDMNES の入力ファイルからいくつかの情報を取り出す
         :param bavname:
         :param absorber:
         :param weight:

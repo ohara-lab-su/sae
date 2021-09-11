@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
 
 #   # 結合してる距離が一番長いペアを表示
-#   cohp = SAEnv.ReadLobCohp()
+#   cohp = SAE.ReadLobCohp()
 #   print "Number of bond:",cohp.nbond-1
 #   print "No"+str(cohp.bond_max)+",",\
 #           cohp.bond_index[cohp.bond_max],":",\
