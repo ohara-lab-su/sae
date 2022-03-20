@@ -33,6 +33,9 @@ from .vasp.ReadVaspPotcar import *
 from .vasp.ReadVaspChgcar import *
 from .vasp.WriteVaspChgcar import *
 
+from .vasp.ReadVaspChgcarHeader import *
+from .vasp.ReadVaspChgcarFooter import *
+
 #
 # LOBSTER,COHP for VASP
 #

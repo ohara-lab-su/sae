@@ -8,7 +8,6 @@ import os
 import shutil
 import StructureAnalysisEnvironment as SAE
 
-
 if __name__ == '__main__':
     loglevel = 'info'
     logger = SAE.util.logger.Logger(loglevel=loglevel)

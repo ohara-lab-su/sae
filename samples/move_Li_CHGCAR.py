@@ -8,7 +8,6 @@ import os
 import shutil
 import StructureAnalysisEnvironment as SAE
 
-
 if __name__ == '__main__':
     loglevel = 'info'
     logger = SAE.util.logger.Logger(loglevel=loglevel)
@@ -45,5 +44,5 @@ if __name__ == '__main__':
         chgname = "%s%s.dat" % (BVA, a)
         new_name = "CHGCAR_%s%s" % (BVA, a)
         # print(chgname)
-        shutil.move(chgname, "%s/%s" % (dist_dir, new_name) )
+        shutil.move(chgname, "%s/%s" % (dist_dir, new_name))
         # shutil.copy(chgname, "%s/%s" % (dist_dir, new_name) )

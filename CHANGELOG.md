@@ -1,5 +1,41 @@
 # ChangeLog
 
+## Ver_0.0.53, 2022.03.20
+
+Bader 体積が巨大だと（原子数が多いと）BvAt ファイルの原子情報が全部
+繋がってしまう
+
+つまりこれは、
+Li P S
+100 300 300
+
+だとすると
+Li P S
+100300300
+
+となる。
+これは、BvAt からまもとに構造情報を取得しようと atom 情報が分離できずにすると失敗する
+
+BvA ファイルをヘッダ部分と原子ポジション/ＦＦＴ情報の二つに分ける
+ことにより、BvAt ファイルと POSCAR 指定で情報を抜けるようにした。
+選択性
+
+```
+split_chgcar=True
+```
+
+```
+- samples/chec_Li_CHGCAR.py
+- samples/copy_Li_CHGCAR.py
+- samples/sim_Li_CHGCAR.py (主にこれの改変)
+- StructureAnalysysEnvironment/io/bader/ReadBaderBvat.py
+- StructureAnalysysEnvironment/io/bader/UtilBaer.py
+- StructureAnalysisEnvironment/io/vasp/read_split_chgcar.py
+- StructureAnalysisEnvironment/io/vasp/ReaddVaspChgcar.py
+- StructureAnalysisEnvironment/io/vasp/ReaddVaspChgcarFooter.py
+- StructureAnalysisEnvironment/io/vasp/ReaddVaspChgcarHeader.py
+```
+
 ## Ver_0.0.52, 2021.09.00 07:57
 
 - FDM plot 関係 の ylim=0 化 (一部)
