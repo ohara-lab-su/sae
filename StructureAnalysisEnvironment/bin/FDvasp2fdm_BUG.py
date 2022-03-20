@@ -23,7 +23,7 @@
 #    このバージョンのブランチは 11.25 までつづく
 #
 # 2015.08.18
-#  ASE で読み込む構造を止めて、拙作 SAEnv を用いる様にした
+#  ASE で読み込む構造を止めて、拙作 SAE を用いる様にした
 #    注意) scale ファクターは 1 を要求
 #
 # 2015.05.18 startup
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     name,outname,MOL = options()
 
 ### bug-version につきコメントアウト
-#   cell = SAEnv.Read(filename=name,code='VASP')
+#   cell = SAE.Read(filename=name,code='VASP')
 #   cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
 #   cell.write(code='FDMNES',outname=outname,MOL=MOL)
 
@@ -102,14 +102,14 @@ if __name__ == '__main__':
 
 ## ASE version
 #   atoms = read_vasp(name)
-#   SAEnv.print_fdmnes0(atoms=atoms,MOL=MOL)
-#   SAEnv.print_fdmnes0(outname=outname,atoms=atoms,STD=False,MOL=MOL)
-#   SAEnv.print_fdmnes_inp0(atoms=atoms,MOL=MOL)
+#   SAE.print_fdmnes0(atoms=atoms,MOL=MOL)
+#   SAE.print_fdmnes0(outname=outname,atoms=atoms,STD=False,MOL=MOL)
+#   SAE.print_fdmnes_inp0(atoms=atoms,MOL=MOL)
 
-### SAEnv version
-#   cell = SAEnv.Read(filename = name, code = 'VASP')
-#   SAEnv.print_fdmnes1(outname=outname,cell=cell,MOL=MOL)
-#   SAEnv.print_fdmnes1(outname=outname,cell=cell,STD=False,MOL=MOL)
-#   SAEnv.print_fdmnes_inp1(cell=cell,MOL=MOL)
+### SAE version
+#   cell = SAE.Read(filename = name, code = 'VASP')
+#   SAE.print_fdmnes1(outname=outname,cell=cell,MOL=MOL)
+#   SAE.print_fdmnes1(outname=outname,cell=cell,STD=False,MOL=MOL)
+#   SAE.print_fdmnes_inp1(cell=cell,MOL=MOL)
 
 

@@ -124,7 +124,7 @@ class ReadFdmSd2020(object):
         """
         :param sdname:  材料名(ex: Cu)
         :param suffix:  default '_sd0.txt'
-        :param inpname:
+        :param inpname: FDMNES input ファイルからいくつかの情報を読み込む
         :param bavname:
         :param absorber: absorber=[] :matrix
         :param weight:
@@ -156,7 +156,7 @@ class ReadFdmSd2020(object):
         print('******************************')
 
         # オービタルの情報(bav) とスピンの情報(inp) を入手
-        # bav = SAEnv.ReadFdmBav(bavname)
+        # bav = SAE.ReadFdmBav(bavname)
         inp = SAE.io.fdm.ReadFdmInp(inpname)
 
         # 複数の sd ファイルを読んで平均化する

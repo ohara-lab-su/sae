@@ -17,4 +17,7 @@ from .ReadVaspPotcar import *
 from .ReadVaspChgcar import *
 from .WriteVaspChgcar import *
 
+from .ReadVaspChgcarHeader import *
+from .ReadVaspChgcarFooter import *
+
 # from .Method import *

@@ -36,7 +36,7 @@ from ase import Atoms
 import numpy as np
 
 
-# import StructureAnalysisEnvironment as SAEnv
+# import StructureAnalysisEnvironment as SAE
 
 
 ################################################################################
@@ -67,7 +67,7 @@ def conv_cellparam0(atoms):
 
 
 ################################################################################
-## ASE 利用 & atoms(cell) は SAEnv の構造
+## ASE 利用 & atoms(cell) は SAE の構造
 ##
 def conv_cellparam1(cell):
     t = cell.t

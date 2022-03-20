@@ -76,10 +76,10 @@ import collections
 # import SpaceGroupEnvironment as SGE
 try:
     sys.path.append('../../')
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
     from StructureAnalysisEnvironment.Method import Method
 except ImportError:
-    import StructureAnalysisEnvironment as SAEnv
+    import StructureAnalysisEnvironment as SAE
     from StructureAnalysisEnvironment.Method import Method
 
 # for coorsys
@@ -90,18 +90,20 @@ from ase.io.wien2k import *  # suing coorsys
 
 
 class ReadFdmInp(Method):
+    """
+    FDMNES の input ファイル名を読み込む
+    """
 
-    def __init__(self, inpname, suffix='.inp',
-                 sort=True, atoms_index=None):
+    def __init__(self, inpname, suffix='.inp', sort=True, atoms_index=None):
 
-        self.datlines, self.num = SAEnv.read_dataline(inpname)
-        self.datlines, self.num = SAEnv.del_comment(self.datlines)
+        self.datlines, self.num = SAE.read_dataline(inpname)
+        self.datlines, self.num = SAE.del_comment(self.datlines)
 
         nonexec_reg = re.compile('.*Nonexc.*', re.IGNORECASE)
         magnetism_reg = re.compile('.*Magnetism.*', re.IGNORECASE)
         energygpho_reg = re.compile('.*Energpho.*', re.IGNORECASE)
         absorber_reg = re.compile('.*Absorber.*', re.IGNORECASE)
-        #       filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
+        # filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
         filout_reg = re.compile('.*Fil.*out.*', re.IGNORECASE)
         atom_reg = re.compile('^\S*Atom', re.IGNORECASE)
 
@@ -227,7 +229,7 @@ class ReadFdmInp(Method):
                         # print("%s %f %f %f" % (zz, x, y, z))
 
                         # 原子番号から元素名を取り出す
-                        symbol_ = SAEnv.get_atomic_symbol0(zz)
+                        symbol_ = SAE.get_atomic_symbol0(zz)
                         self.atoms_index_j.append(symbol_)
                         self.position.append([x, y, z])
 
@@ -275,7 +277,7 @@ class ReadFdmInp(Method):
                         y = float(self.datlines[i].split()[2])
                         z = float(self.datlines[i].split()[3])
 
-                        symbol_ = SAEnv.get_atomic_symbol0(zz)
+                        symbol_ = SAE.get_atomic_symbol0(zz)
                         self.atoms_index_j.append(symbol_)
                         self.position.append([x, y, z])
 
@@ -297,15 +299,16 @@ class ReadFdmInp(Method):
                 self.position = []
                 self.atoms_index_j = []
 
-        print("END of READ INP")
+        print("=== END of READ INP")
         print("")
-        print("Fileout      = %s" % self.filout)
-        print("ISPIN        = %s" % self.ispin)
-        print("Allist       = %s" % self.allsite)
-        print("Energypho    = %s" % self.energygpho)
-        print("Convolutaion = %s" % self.convolution)
-        print("Center_abs   = %s" % self.center_abs)
-        print("Noexc        = %s" % self.nonexc)
+        print("input file name = %s" % inpname)
+        print("Fileout         = %s" % self.filout)
+        print("ISPIN           = %s" % self.ispin)
+        print("Allist          = %s" % self.allsite)
+        print("Energypho       = %s" % self.energygpho)
+        print("Convolutaion    = %s" % self.convolution)
+        print("Center_abs      = %s" % self.center_abs)
+        print("Noexc           = %s" % self.nonexc)
         print(self.atoms_index_j)
 
         # convolution などで filout 項目がないときは
@@ -332,14 +335,14 @@ class ReadFdmInp(Method):
         i = 0
         for atom, cnt in counter.most_common():
             self.atoms_index.append(atom)
-            self.atoms_number[i] = SAEnv.get_atomic_number1(atom)
+            self.atoms_number[i] = SAE.get_atomic_number1(atom)
             self.atoms[i] = cnt
             i += 1
 
         self.atoms_number_j = np.zeros(self.natom, dtype=int)
         for i in range(self.natom):
             self.atoms_number_j[i] = \
-                SAEnv.get_atomic_number1(str(self.atoms_index_j[i]))
+                SAE.get_atomic_number1(str(self.atoms_index_j[i]))
 
         # natom までの通し番号で原子種(原子の種類番号を返す)
         self.atoms_j = np.zeros(self.natom, dtype=int)
@@ -361,17 +364,17 @@ class ReadFdmInp(Method):
             self.atoms, \
             self.atoms_index, \
             self.atoms_index_j = \
-                SAEnv.sort_atom_index_j(self.atoms_index_j)
+                SAE.sort_atom_index_j(self.atoms_index_j)
 
             self.sort_index, self.sort_index_r, \
             self.atoms, \
             self.atoms_index, \
             self.atoms_number_j = \
-                SAEnv.sort_atom_number_j(self.atoms_number_j)
+                SAE.sort_atom_number_j(self.atoms_number_j)
 
             self.position = \
-                SAEnv.sort_position(self.sort_index_r, self.position)
-            self.fix = SAEnv.sort_fix(self.sort_index_r, self.fix)
+                SAE.sort_position(self.sort_index_r, self.position)
+            self.fix = SAE.sort_fix(self.sort_index_r, self.fix)
 
         ########################################
         # ion[j]: 通し番号(max=nmax)を与えると原子の種類番号を返す
@@ -460,7 +463,7 @@ class ReadFdmInp(Method):
         self.atoms, \
         self.atoms_index, \
         self.atoms_index_j = \
-            SAEnv.sort_atom_index_j(self.atoms_index_j)
+            SAE.sort_atom_index_j(self.atoms_index_j)
 
         return self.sort_index, self.sort_index_r, \
                self.atoms, \
@@ -470,7 +473,7 @@ class ReadFdmInp(Method):
     def sort_position(self):
         if self.sort_index_r is None:
             self.sort_atoms_index_j()
-        self.position = SAEnv.sort_position(self.sort_index_r, self.position)
+        self.position = SAE.sort_position(self.sort_index_r, self.position)
         return self.position
 
     # add 2019.03.14

@@ -204,7 +204,7 @@ class ReadVaspKpoints(object):
     #  OUTCAR の読み込みが必須
     def get_kpoints_vector(self, outcarname):
 
-        # import StructureAnalysisEnvironment as SAEnv
+        # import StructureAnalysisEnvironment as SAE
         import math
 
         # get kpoints

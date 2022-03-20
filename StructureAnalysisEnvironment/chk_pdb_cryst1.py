@@ -33,7 +33,7 @@ import sys
 # import optparse
 # import numpy as np
 
-# import StructureAnalysisEnvironment as SAEnv
+# import StructureAnalysisEnvironment as SAE
 
 ################################################################################
 def chk_pdb_cryst1(filename):

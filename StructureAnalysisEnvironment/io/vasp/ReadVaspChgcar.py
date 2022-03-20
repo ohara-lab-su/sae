@@ -69,6 +69,9 @@
 #
 ################################################################################
 #
+# 2022.03.13:
+#   メモリ消費が多くて実質使ってないルーチンを止
+#
 # 2018.08.17
 #  startup
 #
@@ -101,6 +104,9 @@ except ImportError:
     import StructureAnalysisEnvironment as SAEnv
     from StructureAnalysisEnvironment.Method import Method
 
+# スーパーセルに関していくつかルーチンを殺す。メモリ消費を少なくするため。
+# reduced_memory = True
+reduced_memory = False
 
 # import SpaceGroupEnvironment as SGE
 # from numba import jit
@@ -206,29 +212,36 @@ class ReadVaspChgcar(Method):
         #   atoms_index の原子番号版
         self.atoms_number = np.zeros(self.nion, dtype=int)
         for i in range(self.nion):
-            # print("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
+            self.__logger.debug("atoms_index[%d] = %s" % (i, self.atoms_index[i]))
             self.atoms_number[i] = SAEnv.get_atomic_number1(str(self.atoms_index[i]))
 
         ###############################################
         # atoms_index の通し番号版
         #    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
-        self.atoms_index_j = []
-        if self.vasp_version == 5:
-            for k in range(self.nion):
-                for l in range(int(self.atoms[k])):
-                    self.atoms_index_j.append(str(self.atoms_index[k]))
+
+        # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+        # print('makes atoms_index_j[i]')
+        # self.atoms_index_j = []
+        # if self.vasp_version == 5:
+        #     for k in range(self.nion):
+        #         for l in range(int(self.atoms[k])):
+        #             self.atoms_index_j.append(str(self.atoms_index[k]))
 
         ###############################################
         # atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
-        self.atoms_number_j = []
-        if self.vasp_version == 5:
-            for k in range(self.nion):
-                for l in range(int(self.atoms[k])):
-                    num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
-                    self.atoms_number_j.append(num0)
+        # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+
+        # print('makes atoms_number_j[]')
+        # self.atoms_number_j = []
+        # if self.vasp_version == 5:
+        #     for k in range(self.nion):
+        #         for l in range(int(self.atoms[k])):
+        #             num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
+        #             self.atoms_number_j.append(num0)
 
         ###############################################
         # 全原子数の確認
+        print('Confirmation of the total number of atoms')
         self.natom = 0
         for j in range(self.nion):
             sum = int(self.atoms[j])
@@ -238,39 +251,51 @@ class ReadVaspChgcar(Method):
         # get ion (makes index)
         # ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
         #
-        self.ion = np.zeros(self.natom, dtype=int)
-        tmp = -1
-        for j in range(self.nion):
-            local = -1
-            for k in range(int(self.atoms[j])):
-                tmp += 1
-                local += 1
-                self.ion[tmp] = int(j)
-            # print tmp, int(ion[tmp])
+
+        if not reduced_memory:
+            print('Create ion[j]')
+            self.ion = np.zeros(self.natom, dtype=int)
+            tmp = -1
+            for j in range(self.nion):
+                local = -1
+                for k in range(int(self.atoms[j])):
+                    tmp += 1
+                    local += 1
+                    self.ion[tmp] = int(j)
+                # print tmp, int(ion[tmp])
 
         ###############################################
         # ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
         #
-        self.ion_local = np.zeros(self.natom, dtype=int)
-        tmp = -1
-        for j in range(self.nion):
-            local = -1
-            for k in range(int(self.atoms[j])):
-                tmp += 1
-                local += 1
-                self.ion_local[tmp] = int(local)
-            # print tmp, int(ion[tmp]), int(ion_local[tmp])
+        if not reduced_memory:
+            print('Create ion_local[j]')
+            self.ion = np.zeros(self.natom, dtype=int)
+            self.ion_local = np.zeros(self.natom, dtype=int)
+            tmp = -1
+            for j in range(self.nion):
+                local = -1
+                for k in range(int(self.atoms[j])):
+                    tmp += 1
+                    local += 1
+                    self.ion_local[tmp] = int(local)
+                # print tmp, int(ion[tmp]), int(ion_local[tmp])
 
         ###############################################
         # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
         #                               <---> atoms_index_j() は元素記号を返す
         # ReadOutcar.py, ReadMxDatMethod.py 互換
-        self.atoms_j = np.zeros(self.natom, dtype=int)
-        j = 0
-        for ion in range(self.nion):
-            for atom in range(self.atoms[ion]):
-                self.atoms_j[j] = int(ion)
-                j += 1
+        #
+
+        # 通常使ってないので停止しても問題は無い
+        # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+
+        # print('Create atoms_j[j]')
+        # self.atoms_j = np.zeros(self.natom, dtype=int)
+        # j = 0
+        # for ion in range(self.nion):
+        #     for atom in range(self.atoms[ion]):
+        #         self.atoms_j[j] = int(ion)
+        #         j += 1
 
         ###############################################
         # get atomc coordinate mode
@@ -315,19 +340,26 @@ class ReadVaspChgcar(Method):
         ###############################################
         # get atomic coordinate position
         #
+        print('get atomic coordinate position')
         if self.vasp_version == 4:
             i = 5
         else:
             i = 6
         if self.selective: i += 1
 
+        print('natom = %d' % self.natom)
+        print('init: position')
         self.position = np.zeros((int(self.natom), 3))
+        # self.position = np.zeros((int(self.natom), 3), dtype='float32')
+
+        print('init: fix')
         self.fix = np.zeros((int(self.natom), 3), dtype='S')
 
         i += 2
         current_datlines = i
 
         for j in range(self.natom):
+            print("%s" % j)
             self.position[j, 0] = float(self.datlines[i + j].split()[0])
             self.position[j, 1] = float(self.datlines[i + j].split()[1])
             self.position[j, 2] = float(self.datlines[i + j].split()[2])
@@ -420,7 +452,7 @@ class ReadVaspChgcar(Method):
         # 一行足りないケースがあるのでその場合は追加する
         if len(chgarray) != mesh_max:
             self.__logger.debug('added to read line')
-            chglist += ''.join(self.datlines[start_mesh_index + i+1])
+            chglist += ''.join(self.datlines[start_mesh_index + i + 1])
             chgarray = chglist.split()
 
         # 読み取りの確認
@@ -476,8 +508,10 @@ class ReadVaspChgcar(Method):
         リストなので順番維持
         return [title, scale, t, vasp, nion, atoms, atoms_index, natom, selective, direct, position, fix]:
         """
-        title = self.get_title()
-        scale = self.get_scale()
+        # title = self.get_title()
+        # scale = self.get_scale()
+        title = self.title
+        scale = self.scale
         t = self.get_t()
         vasp = self.get_vasp_version()
         nion = self.get_nion()

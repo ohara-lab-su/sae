@@ -85,7 +85,7 @@ def print_fdmnes0(outname='POSCAR', atoms=None, STD=True, MOL=False):
 
 
 ################################################################################
-## ASE 依存版 & atoms(cell) は SAEnv の構造
+## ASE 依存版 & atoms(cell) は SAE の構造
 ##  ただし、conv_cellparam 内でまだASEを用いているので一部ASE依存
 ##
 ##  self.atoms_number_j
