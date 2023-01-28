@@ -29,11 +29,17 @@ if __name__ == '__main__':
     # num_Li = 14
 
     # yamada_mm
-    num_P = 405
-    num_S = 1620
-    num_Li = 1215
+    # num_P = 405
+    # num_S = 1620
+    # num_Li = 1215
+    # atom_list = range(num_P + num_S + 1, num_P + num_S + num_Li + 1)
 
-    atom_list = range(num_P + num_S + 1, num_P + num_S + num_Li + 1)
+    # Li6PS5Cl
+    # ~/bader_ohara/Li6PS5Cl_4d50_600K/4d50_600K_00001/
+    num_Cl = 16
+    num_Li = 96
+    atom_list = range(num_Cl + 1, num_Cl + num_Li + 1)
+
     # atom_list = [1, 2] # test
     # atom_list = [136, 137]  # test
 
