@@ -35,6 +35,7 @@ from .vasp.WriteVaspChgcar import *
 
 from .vasp.ReadVaspChgcarHeader import *
 from .vasp.ReadVaspChgcarFooter import *
+from .vasp.UtilChgcar import *
 
 #
 # LOBSTER,COHP for VASP

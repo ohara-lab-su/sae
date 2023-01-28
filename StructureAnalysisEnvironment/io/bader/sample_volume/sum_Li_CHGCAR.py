@@ -46,6 +46,7 @@ if __name__ == '__main__':
     ngz_max = util.ngz_max
     poscar_info = util.poscar_info
 
+    print('********** WRITER ************')
     # Bader Volume の書き出し
     wbv = SAE.io.WriteBaderVolume(logger=logger)
     wbv.chgdata = chgdata
@@ -60,4 +61,5 @@ if __name__ == '__main__':
 
     wbv.poscar_info = poscar_info
     # wbv.write_bader_volume('CHGCAR_Li')
-    wbv.write_bader_volume('CHGCAR_Li_136_137')
+    wbv.write_bader_volume('CHGCAR_Li')
+    print('**************** END ************')

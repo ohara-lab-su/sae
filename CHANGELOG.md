@@ -36,15 +36,19 @@ split_chgcar=True
 - StructureAnalysisEnvironment/io/vasp/ReaddVaspChgcarHeader.py
 ```
 
-## Ver_0.0.52, 2021.09.00 07:57
+## 0.0.53, 2022.05.14 16:07
+
+- VASP CHGCAR SUM 関係を追加（突貫)
+
+## 0.0.52, 2021.09.00 07:57
 
 - FDM plot 関係 の ylim=0 化 (一部)
  
-## Ver_0.0.51, 2021.09.09 07:41
+## 0.0.51, 2021.09.09 07:41
 
 - Vplot_LDOS.py などの V* 関係スクリプトの name spcae 修正
  
-## Ver_0.0.50, 2021.09.03 07:41
+## 0.0.50, 2021.09.03 07:41
 
 - FD*.py, fd*.py 関係
   - namespace の修正(io系に対応)

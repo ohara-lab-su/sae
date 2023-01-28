@@ -116,8 +116,9 @@ class ReadVaspChgcar(Method):
 
     def __init__(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None, logger=None):
         """ init and Read CHGCAR
+
         :param CHGCAR: 読み込みファイルの名前
-        :param suffix: 使ってない
+        :param suffix: 実はこれは使ってない(2022/05/14)
         :param sort:
         :param atoms_index:
         """
@@ -126,6 +127,33 @@ class ReadVaspChgcar(Method):
         self.__logger = logger
 
         self.open(CHGCAR=CHGCAR, suffix=suffix, sort=sort, atoms_index=sort)
+
+    @property
+    def ngxc(self):
+        # self.__logger.debug("Ngxc = %s" % self.__ngxc)
+        return self.__ngxc
+
+    @property
+    def ngyz(self):
+        # self.__logger.debug("Ngyz = %s" % self.__ngyz)
+        return self.__ngyz
+
+    @property
+    def ngzc(self):
+        # self.__logger.debug("Ngzc = %s" % self.__ngzc)
+        return self.__ngzc
+
+    @property
+    def chgdata(self):
+        """ チャージ情報を取り出す(numpy)
+        """
+        return self.__chgdata
+
+    @property
+    def poscar_info(self):
+        """ POSCAR 情報の取り出し
+        """
+        return self.get_poscar_info()
 
     def open(self, CHGCAR='CHGCAR', suffix='.vasp', sort=False, atoms_index=None):
         self.datlines, self.num = SAEnv.read_dataline(CHGCAR)
@@ -381,13 +409,17 @@ class ReadVaspChgcar(Method):
 
     #   @jit
     def read_mesh_data(self, startline=None, mode="CHGCAR"):
-        ########################################################################
-        #
-        # 電荷密度構造 の読み込み (2018.08.18)
-        # VASP マニュアルより下記
-        # WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
-        #
-        ########################################################################
+        """
+        電荷密度構造 の読み込み (2018.08.18)
+        VASP マニュアルより下記
+        WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
+
+        self.__chgdata = np.zeros((self.__ngxc, self.__ngyz, self.__ngzc))
+
+        :param startline:
+        :param mode:
+        :return:
+        """
         self.__logger.debug("--- Read MESH DATA and Makes CELL INDEX")
         if startline is None:
             return
@@ -398,17 +430,17 @@ class ReadVaspChgcar(Method):
         ####################
         # FFT Mesh の読み込み
         #
-        self.ngxc = int(self.datlines[startline].split()[0])
-        self.ngyz = int(self.datlines[startline].split()[1])
-        self.ngzc = int(self.datlines[startline].split()[2])
-        self.__logger.debug("NGXC=%d, NGYZ=%d, HGZC=%d" % (self.ngxc, self.ngyz, self.ngzc))
+        self.__ngxc = int(self.datlines[startline].split()[0])
+        self.__ngyz = int(self.datlines[startline].split()[1])
+        self.__ngzc = int(self.datlines[startline].split()[2])
+        self.__logger.debug("READ MeshDATA: NGXC=%d, NGYZ=%d, HGZC=%d" % (self.__ngxc, self.__ngyz, self.__ngzc))
 
         ####################
         # FFT-Mesh 一つあたりの長さ(インスタンス変数の定義)
         #
-        self.rate_x = self.t1_len / self.ngxc
-        self.rate_y = self.t2_len / self.ngyz
-        self.rate_z = self.t3_len / self.ngzc
+        self.rate_x = self.t1_len / self.__ngxc
+        self.rate_y = self.t2_len / self.__ngyz
+        self.rate_z = self.t3_len / self.__ngzc
 
         # print(self.rate_x)
         # print(self.rate_y)
@@ -417,10 +449,10 @@ class ReadVaspChgcar(Method):
         ####################
         # 総Mesh数および読み込むべき総ライン数の算出 (一行に10個のデータがある)
         #
-        # self.__logger.debug("Ngxc = %s" % self.ngxc)
-        # self.__logger.debug("Ngyz = %s" % self.ngyz)
-        # self.__logger.debug("Ngzc = %s" % self.ngzc)
-        mesh_max = self.ngxc * self.ngyz * self.ngzc
+        # self.__logger.debug("Ngxc = %s" % self.__ngxc)
+        # self.__logger.debug("Ngyz = %s" % self.__ngyz)
+        # self.__logger.debug("Ngzc = %s" % self.__ngzc)
+        mesh_max = self.__ngxc * self.__ngyz * self.__ngzc
         self.__logger.debug("mesh_max = %s" % mesh_max)
         self.__logger.debug("mode     = %s" % mode)
 
@@ -434,7 +466,7 @@ class ReadVaspChgcar(Method):
 
         # CHACAR 形式のメッシュデータの読み込み開始行のセット
         start_mesh_index = startline + 1
-        self.__chgdata = np.zeros((self.ngxc, self.ngyz, self.ngzc))
+        self.__chgdata = np.zeros((self.__ngxc, self.__ngyz, self.__ngzc))
 
         ####################
         # アホループ(numpyのmethodを使うと一行で高速に書けるので注意) START
@@ -467,9 +499,9 @@ class ReadVaspChgcar(Method):
 
         i = 0
         # 元の Matrix は 1 から始まるので注意
-        for nx in range(0, self.ngxc):
-            for ny in range(0, self.ngyz):
-                for nz in range(0, self.ngzc):
+        for nx in range(0, self.__ngxc):
+            for ny in range(0, self.__ngyz):
+                for nz in range(0, self.__ngzc):
                     self.__chgdata[nx, ny, nz] = float(chgarray[i])
                     # print(self.__chgdata[nx,ny,nz], chgarray[i])
                     i += 1
@@ -477,9 +509,9 @@ class ReadVaspChgcar(Method):
 
         #       # CHGCAR 形式でのデータ吐き出しテスト
         #       print("write VASP style CHGCAR files: plase waite...")
-        #       ngx_max = self.ngxc
-        #       ngy_max = self.ngyz
-        #       ngz_max = self.ngzc
+        #       ngx_max = self.__ngxc
+        #       ngy_max = self.__ngyz
+        #       ngz_max = self.__ngzc
         #       inner_counter = 0
         #       for nx in range(0, ngx_max):
         #           for ny in range(0, ngy_max):
@@ -496,12 +528,6 @@ class ReadVaspChgcar(Method):
         #                       print("")
         self.__logger.debug("--- END: read_mesh_data()")
         self.__logger.debug("")
-
-    @property
-    def chgdata(self):
-        """ チャージ情報を取り出す(numpy)
-        """
-        return self.__chgdata
 
     def get_poscar_info(self):
         """ POSCAR 情報の取り出し
@@ -524,12 +550,6 @@ class ReadVaspChgcar(Method):
         fix = self.get_fix()
         return [title, scale, t, vasp, nion, atoms, atoms_index, natom, selective, direct, position, fix]
 
-    @property
-    def poscar_info(self):
-        """ POSCAR 情報の取り出し
-        """
-        return self.get_poscar_info()
-
     # @jit
     def init_ave_elf(self):
         """
@@ -546,19 +566,19 @@ class ReadVaspChgcar(Method):
         # 2018.08.18 12:36 正しく計算されるのを確認
         #
 
-        self.chgdata_s = np.zeros((self.ngxc * 3, self.ngyz * 3, self.ngzc * 3))
+        self.chgdata_s = np.zeros((self.__ngxc * 3, self.__ngyz * 3, self.__ngzc * 3))
 
-        ### 3x3 の super-cell を作った場合の原点 shift
+        # 3x3 の super-cell を作った場合の原点 shift
         #
-        sx = [0, self.ngxc, self.ngxc * 2]  # supre-cell 用の Meth 原点
-        sy = [0, self.ngyz, self.ngyz * 2]
-        sz = [0, self.ngzc, self.ngzc * 2]
+        sx = [0, self.__ngxc, self.__ngxc * 2]  # supre-cell 用の Meth 原点
+        sy = [0, self.__ngyz, self.__ngyz * 2]
+        sz = [0, self.__ngzc, self.__ngzc * 2]
 
         self.__logger.debug("makes chgcar super-cell: plase waite...")
         # 基本セル情報 chgdata[nx,ny,nz] のループを new-cell 内で行う
-        for nx in range(0, self.ngxc):
-            for ny in range(0, self.ngyz):
-                for nz in range(0, self.ngzc):
+        for nx in range(0, self.__ngxc):
+            for ny in range(0, self.__ngyz):
+                for nz in range(0, self.__ngzc):
                     s = self.__chgdata[nx, ny, nz]
                     for i in range(3):
                         for j in range(3):
@@ -584,8 +604,8 @@ class ReadVaspChgcar(Method):
         #       r_diff = 2.0 # Angstrom
         #       elf_sum = 0
         #       v = 4.0/3.0*math.pi*r_diff**3 # Volume /A^3
-        #       for nx in range(0, self.ngxc*3):
-        #           for ny in range(0, self.ngyz*3):
+        #       for nx in range(0, self.__ngxc*3):
+        #           for ny in range(0, self.__ngyz*3):
         #               for nz in range(0, self.ngzc*3):
         #                   # 二点間の距離
         #                   r = (((org[0] - nx)*self.rate_x)**2
@@ -609,9 +629,9 @@ class ReadVaspChgcar(Method):
 
         事前に chg/elf の 3x3x3 スーパーセルを作っておく必要がある
         self.chgdata_s[nx, ny, nz]
-        self.ngxc
-        self.ngyz
-        self.ngzc
+        self.__ngxc
+        self.__ngyz
+        self.__ngzc
         self.rate_x
         self.rate_y
         self.rate_z
@@ -620,7 +640,7 @@ class ReadVaspChgcar(Method):
         :return: self.ave_elf[nx, ny, nz]: CHGCAR 形式(FFT-MESHパートのみ)のマトリックス
         """
 
-        self.ave_elf = SAEnv.sphere_integral_of_elf(self.chgdata_s, self.ngxc, self.ngyz, self.ngzc,
+        self.ave_elf = SAEnv.sphere_integral_of_elf(self.chgdata_s, self.__ngxc, self.__ngyz, self.__ngzc,
                                                     self.rate_x, self.rate_y, self.rate_z, r_diff=r_diff)
 
         return self.ave_elf
@@ -662,9 +682,9 @@ class ReadVaspChgcar(Method):
         CHGCAR 形式での出力
 
         in: 元のPOSCAR情報すべて
-        in: self.ngxc
-        in: self.ngyz
-        in: self.ngzc
+        in: self.__ngxc
+        in: self.__ngyz
+        in: self.__ngzc
 
         :param: ngx: FFT-mesh, None のときは読み込んだ CHGCAR の mesh そのまま
         :param: ngy: FFT-mesh, None のときは読み込んだ CHGCAR の mesh そのまま
@@ -676,13 +696,13 @@ class ReadVaspChgcar(Method):
             chgcar = self.__chgdata
 
         if ngx_max is None:
-            ngx = self.ngxc
+            ngx = self.__ngxc
 
         if ngy_max is None:
-            ngy_max = self.ngyz
+            ngy_max = self.__ngyz
 
         if ngz_max is None:
-            ngz_max = self.ngzc
+            ngz_max = self.__ngzc
 
         if outname is not None:
             try:
@@ -746,9 +766,9 @@ class ReadVaspChgcar(Method):
             print("", file=out)
 
         print("write VASP style (new) %s files: plase wait..." % outname, file=sys.stdout)
-        ngx_max = self.ngxc * 1
-        ngy_max = self.ngyz * 1
-        ngz_max = self.ngzc * 1
+        ngx_max = self.__ngxc * 1
+        ngy_max = self.__ngyz * 1
+        ngz_max = self.__ngzc * 1
 
         inner_counter = 0
 
@@ -785,15 +805,15 @@ class ReadVaspChgcar(Method):
         :param outname:
         :return:
         """
-        self.print_chgcar(self.ave_elf, ngx_max=self.ngxc, ngy_max=self.ngyz, ngz_max=self.ngzc, outname=outname)
+        self.print_chgcar(self.ave_elf, ngx_max=self.__ngxc, ngy_max=self.__ngyz, ngz_max=self.__ngzc, outname=outname)
 
     def print_super_chgcar(self, x_times=3, y_times=3, z_times=3, outname=None):
         """
         (test) 3x3x3 スーパーセルとして作成した CHGCAR mesh を CHGCAR 形式で出力する
 
-        in: self.ngxc
-        in: self.ngyz
-        in: self.ngzc
+        in: self.__ngxc
+        in: self.__ngyz
+        in: self.__ngzc
 
         in: self.chgdata_s[x,y,z]: スーパーセル FFT-MESH data
         :param: filename: ファイル名を入れたらファイル書き出し(CHGパートのみ)
@@ -813,9 +833,9 @@ class ReadVaspChgcar(Method):
             out = sys.stdout
 
         self.__logger.debug("write VASP style (new) %s files: plase wait..." % outname, file=sys.stdout)
-        ngx_max = self.ngxc * x_times
-        ngy_max = self.ngyz * y_times
-        ngz_max = self.ngzc * z_times
+        ngx_max = self.__ngxc * x_times
+        ngy_max = self.__ngyz * y_times
+        ngz_max = self.__ngzc * z_times
 
         inner_counter = 0
 
