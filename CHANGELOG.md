@@ -1,5 +1,10 @@
 # ChangeLog
 
+## Ver_0.0.55, 2025.11.07
+
+- bubfix
+  - Rvasp2cfg.py 検証テストで version.py 動作不良を発見
+ 
 ## Ver_0.0.54, 2025.11.07
 
 インストール環境の整備
