@@ -20,8 +20,10 @@
 #################################################################################
 
 from .copyright import *
-from .io import __init__
-from .Method import __init__
+# from StructureAnalysisEnvironment.io import __init__
+from .io import *
+# from StructureAnalysisEnvironment.Method import __init__
+from .Method import *
 
 from .util import __init__
 
