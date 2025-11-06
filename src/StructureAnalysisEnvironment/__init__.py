@@ -131,3 +131,5 @@ from .read_sets_param import *
 from .read_vasprun0 import *
 from .read_vasprun1 import *
 from .read_vasprun2 import *
+
+from .version import __version__

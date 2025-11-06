@@ -19,6 +19,8 @@ dependencies = [
 "ase",
 "numpy",
 "matplotlib",
+"humanfriendly",
+"coloredlogs",
 ]
 
 [tool.pytest.ini_options]

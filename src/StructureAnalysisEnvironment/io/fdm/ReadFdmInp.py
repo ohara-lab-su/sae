@@ -65,17 +65,19 @@ __version__ = "0.1.1"
 ###############################################################################
 
 import sys
+
 # import gzip
 # import os
 import re
 import optparse
 import numpy as np
+
 # import copy
 import collections
 
 # import SpaceGroupEnvironment as SGE
 try:
-    sys.path.append('../../../../../')
+    sys.path.append("../../../../../../../../../../")
     import StructureAnalysisEnvironment as SAE
     from StructureAnalysisEnvironment.Method import Method
 except ImportError:
@@ -94,32 +96,32 @@ class ReadFdmInp(Method):
     FDMNES の input ファイル名を読み込む
     """
 
-    def __init__(self, inpname, suffix='.inp', sort=True, atoms_index=None):
+    def __init__(self, inpname, suffix=".inp", sort=True, atoms_index=None):
 
         self.datlines, self.num = SAE.read_dataline(inpname)
         self.datlines, self.num = SAE.del_comment(self.datlines)
 
-        nonexec_reg = re.compile('.*Nonexc.*', re.IGNORECASE)
-        magnetism_reg = re.compile('.*Magnetism.*', re.IGNORECASE)
-        energygpho_reg = re.compile('.*Energpho.*', re.IGNORECASE)
-        absorber_reg = re.compile('.*Absorber.*', re.IGNORECASE)
+        nonexec_reg = re.compile(".*Nonexc.*", re.IGNORECASE)
+        magnetism_reg = re.compile(".*Magnetism.*", re.IGNORECASE)
+        energygpho_reg = re.compile(".*Energpho.*", re.IGNORECASE)
+        absorber_reg = re.compile(".*Absorber.*", re.IGNORECASE)
         # filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
-        filout_reg = re.compile('.*Fil.*out.*', re.IGNORECASE)
-        atom_reg = re.compile('^\S*Atom', re.IGNORECASE)
+        filout_reg = re.compile(".*Fil.*out.*", re.IGNORECASE)
+        atom_reg = re.compile("^\S*Atom", re.IGNORECASE)
 
         ## 2020.06.23 修正
-        #crystal_reg = re.compile('.*crystal .*', re.IGNORECASE)  # include space
-        crystal_reg = re.compile('.*crystal.*', re.IGNORECASE)  # include space
+        # crystal_reg = re.compile('.*crystal .*', re.IGNORECASE)  # include space
+        crystal_reg = re.compile(".*crystal.*", re.IGNORECASE)  # include space
 
-        crystal_p_reg = re.compile('.*crystal_p.*', re.IGNORECASE)  # include space
-        mole_reg = re.compile('.*molecule.*', re.IGNORECASE)
-        char_reg = re.compile('\D', re.IGNORECASE)
-        comment_reg = re.compile('^!.*', re.IGNORECASE)
-        allsite_reg = re.compile('^.*allsite.*', re.IGNORECASE)
-        calculation_reg = re.compile('^.*Calculation.*', re.IGNORECASE)
-        conv_out_reg = re.compile('^.*Conv_out.*', re.IGNORECASE)
-        convolution_reg = re.compile('^.*Convolution.*', re.IGNORECASE)
-        center_abs_reg = re.compile('^.*Center_abs.*', re.IGNORECASE)
+        crystal_p_reg = re.compile(".*crystal_p.*", re.IGNORECASE)  # include space
+        mole_reg = re.compile(".*molecule.*", re.IGNORECASE)
+        char_reg = re.compile("\D", re.IGNORECASE)
+        comment_reg = re.compile("^!.*", re.IGNORECASE)
+        allsite_reg = re.compile("^.*allsite.*", re.IGNORECASE)
+        calculation_reg = re.compile("^.*Calculation.*", re.IGNORECASE)
+        conv_out_reg = re.compile("^.*Conv_out.*", re.IGNORECASE)
+        convolution_reg = re.compile("^.*Convolution.*", re.IGNORECASE)
+        center_abs_reg = re.compile("^.*Center_abs.*", re.IGNORECASE)
 
         self.ispin = 1
         self.allsite = False
@@ -143,8 +145,9 @@ class ReadFdmInp(Method):
                 self.energygpho = True
 
             # Atom TAG があるときは停止(未対応)
-            if bool(atom_reg.match(self.datlines[i])) \
-                    and not bool(comment_reg.match(self.datlines[i])):
+            if bool(atom_reg.match(self.datlines[i])) and not bool(
+                comment_reg.match(self.datlines[i])
+            ):
                 sys.exit("STOP(ReadFdmInp): non support Atom tag")
 
             # Magnetism ( Atom タグがない Magnetism は SOC のみ )
@@ -189,7 +192,9 @@ class ReadFdmInp(Method):
             # START Crystal
             #
             # Crystal 行を検索 (position の スペース行コメント行も対応)
-            if bool(crystal_reg.match(self.datlines[i])) and not bool(comment_reg.match(self.datlines[i])):
+            if bool(crystal_reg.match(self.datlines[i])) and not bool(
+                comment_reg.match(self.datlines[i])
+            ):
 
                 # crystal 行を見つけたらそれは molecule モードではない
                 self.MOL = False
@@ -197,7 +202,9 @@ class ReadFdmInp(Method):
                 # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
                 if not len(self.datlines[i + 1].split()) >= 6:
                     print(self.datlines[i + 1].split())
-                    sys.exit("STOP(ReadFdmInp): a,b,c,alpha,beta,gamma INPUT LINE error")
+                    sys.exit(
+                        "STOP(ReadFdmInp): a,b,c,alpha,beta,gamma INPUT LINE error"
+                    )
 
                 i += 1
 
@@ -239,8 +246,9 @@ class ReadFdmInp(Method):
             # self.position = np.array(self.position)
 
             # Mol 行を検索 (position の スペース行コメント行も対応)
-            elif bool(mole_reg.match(self.datlines[i])) \
-                    and not bool(comment_reg.match(self.datlines[i])):
+            elif bool(mole_reg.match(self.datlines[i])) and not bool(
+                comment_reg.match(self.datlines[i])
+            ):
 
                 # molecule mode (ただし、現状ではcrystal と変わりない形式しか読まない)
                 self.MOL = True
@@ -264,7 +272,7 @@ class ReadFdmInp(Method):
                 self.t = coorsys(self.cellparam)
 
                 self.atoms_index_j = []
-                print('====')
+                print("====")
                 while 1:
                     i += 1
                     if len(self.datlines[i].split()) > 0:  # 空白行はスキップ
@@ -341,8 +349,7 @@ class ReadFdmInp(Method):
 
         self.atoms_number_j = np.zeros(self.natom, dtype=int)
         for i in range(self.natom):
-            self.atoms_number_j[i] = \
-                SAE.get_atomic_number1(str(self.atoms_index_j[i]))
+            self.atoms_number_j[i] = SAE.get_atomic_number1(str(self.atoms_index_j[i]))
 
         # natom までの通し番号で原子種(原子の種類番号を返す)
         self.atoms_j = np.zeros(self.natom, dtype=int)
@@ -354,26 +361,29 @@ class ReadFdmInp(Method):
 
         ########################################
         # fix 情報のダミー
-        self.fix = np.zeros((self.natom, 3), dtype='S')
-        self.fix[:, :] = 'F'
+        self.fix = np.zeros((self.natom, 3), dtype="S")
+        self.fix[:, :] = "F"
 
         ########################################
         # 原子種ごとのソートスイッチが入っているとき
         if sort:
-            self.sort_index, self.sort_index_r, \
-            self.atoms, \
-            self.atoms_index, \
-            self.atoms_index_j = \
-                SAE.sort_atom_index_j(self.atoms_index_j)
+            (
+                self.sort_index,
+                self.sort_index_r,
+                self.atoms,
+                self.atoms_index,
+                self.atoms_index_j,
+            ) = SAE.sort_atom_index_j(self.atoms_index_j)
 
-            self.sort_index, self.sort_index_r, \
-            self.atoms, \
-            self.atoms_index, \
-            self.atoms_number_j = \
-                SAE.sort_atom_number_j(self.atoms_number_j)
+            (
+                self.sort_index,
+                self.sort_index_r,
+                self.atoms,
+                self.atoms_index,
+                self.atoms_number_j,
+            ) = SAE.sort_atom_number_j(self.atoms_number_j)
 
-            self.position = \
-                SAE.sort_position(self.sort_index_r, self.position)
+            self.position = SAE.sort_position(self.sort_index_r, self.position)
             self.fix = SAE.sort_fix(self.sort_index_r, self.fix)
 
         ########################################
@@ -431,23 +441,22 @@ class ReadFdmInp(Method):
         return self.energygpho
 
     def get_absorber(self):
-        self.absorber = self.absorber if hasattr(self, 'absorber') else 1
+        self.absorber = self.absorber if hasattr(self, "absorber") else 1
         return self.absorber
 
     def get_convolution(self):
         return self.convolution
 
     def get_conv_out(self):
-        self.conv_out = self.conv_out if hasattr(self, 'conv_out') else None
+        self.conv_out = self.conv_out if hasattr(self, "conv_out") else None
         return self.conv_out
 
     def get_calculation(self):
-        self.calculation = \
-            self.calculation if hasattr(self, 'calculation') else None
+        self.calculation = self.calculation if hasattr(self, "calculation") else None
         return self.calculation
 
     def get_filout(self):
-        self.filout = self.filout if hasattr(self, 'filout') else None
+        self.filout = self.filout if hasattr(self, "filout") else None
         return self.filout
 
     # for structure infomation
@@ -459,16 +468,21 @@ class ReadFdmInp(Method):
 
     def sort_atoms_index_j(self):
 
-        self.sort_index, self.sort_index_r, \
-        self.atoms, \
-        self.atoms_index, \
-        self.atoms_index_j = \
-            SAE.sort_atom_index_j(self.atoms_index_j)
+        (
+            self.sort_index,
+            self.sort_index_r,
+            self.atoms,
+            self.atoms_index,
+            self.atoms_index_j,
+        ) = SAE.sort_atom_index_j(self.atoms_index_j)
 
-        return self.sort_index, self.sort_index_r, \
-               self.atoms, \
-               self.atoms_index, \
-               self.atoms_index_j
+        return (
+            self.sort_index,
+            self.sort_index_r,
+            self.atoms,
+            self.atoms_index,
+            self.atoms_index_j,
+        )
 
     def sort_position(self):
         if self.sort_index_r is None:
@@ -488,11 +502,16 @@ class ReadFdmInp(Method):
 ##########################################################################
 def options():
     #   name = 'POSCAR.inp'
-    name = 'read_pdb.inp'
+    name = "read_pdb.inp"
 
     parser = optparse.OptionParser()
 
-    parser.add_option('-i', '--input', dest='INPUT', default=name, )
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+        default=name,
+    )
     options, args = parser.parse_args()
 
     if options.INPUT:
@@ -504,7 +523,7 @@ def options():
 
 
 ##########################################################################
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     name = options()
 
@@ -532,23 +551,23 @@ if __name__ == '__main__':
     beta = out.cellparam[4]
     gamma = out.cellparam[5]
 
-    print('allsite    : %s' % str(allsite))
-    print('absorber   : %s' % str(absorber))
-    print('energygpho : %s' % str(energygpho))
+    print("allsite    : %s" % str(allsite))
+    print("absorber   : %s" % str(absorber))
+    print("energygpho : %s" % str(energygpho))
 
-    print('filout     : %s' % str(filout))
-    print('natom      : %s' % str(natom))
-    print('')
-    print('a          : %s' % str(out.cellparam[0]))
-    print('b          : %s' % str(out.cellparam[1]))
-    print('c          : %s' % str(out.cellparam[2]))
-    print('alpha      : %s' % str(out.cellparam[3]))
-    print('beta       : %s' % str(out.cellparam[4]))
-    print('gamma      : %s' % str(out.cellparam[5]))
-    print('')
-    print('t          :')
+    print("filout     : %s" % str(filout))
+    print("natom      : %s" % str(natom))
+    print("")
+    print("a          : %s" % str(out.cellparam[0]))
+    print("b          : %s" % str(out.cellparam[1]))
+    print("c          : %s" % str(out.cellparam[2]))
+    print("alpha      : %s" % str(out.cellparam[3]))
+    print("beta       : %s" % str(out.cellparam[4]))
+    print("gamma      : %s" % str(out.cellparam[5]))
+    print("")
+    print("t          :")
     print(out.t)
-    print('')
+    print("")
     print(out.atoms_number)
     print(out.atoms_index)
 
@@ -565,9 +584,16 @@ if __name__ == '__main__':
     #                ]).transpose()
 
     for i in range(natom):
-        print(" %s %d  %14.10f %14.10f %14.10f"
-              % (atoms_index_j[i], atoms_number_j[i],
-                 position[i, 0], position[i, 1], position[i, 2]))
+        print(
+            " %s %d  %14.10f %14.10f %14.10f"
+            % (
+                atoms_index_j[i],
+                atoms_number_j[i],
+                position[i, 0],
+                position[i, 1],
+                position[i, 2],
+            )
+        )
 
     #   out.sort_atoms_index_j()
 
@@ -578,16 +604,20 @@ if __name__ == '__main__':
     print(out.atoms_number)
     print(out.atoms_index)
 
-    print(" %s %d  %14.10f %14.10f %14.10f"
-          % (out.atoms_index_j[i],
-             out.atoms_number_j[i],
-             out.position[i, 0],
-             out.position[i, 1],
-             out.position[i, 2]))
+    print(
+        " %s %d  %14.10f %14.10f %14.10f"
+        % (
+            out.atoms_index_j[i],
+            out.atoms_number_j[i],
+            out.position[i, 0],
+            out.position[i, 1],
+            out.position[i, 2],
+        )
+    )
 
     if convolution:
         print("")
         print("convolution: %s" % str(convolution))
-        print('calculation: %s' % str(calculation))
-        print('conv_out   : %s' % str(conv_out))
+        print("calculation: %s" % str(calculation))
+        print("conv_out   : %s" % str(conv_out))
 #       print "NAME",name

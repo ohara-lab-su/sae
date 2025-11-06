@@ -11,20 +11,19 @@ Rmt 半径の変更
 
 import os
 import shutil
-from typing import AsyncIterator
 import subprocess
 from subprocess import PIPE
 
 from ase.io.vasp import *
 import StructureAnalysisEnvironment as SAE
 
-command = 'fdmnes'
-fdm_inp = 'read_pdb.inp'
-fdm_file = 'fdmfile.txt'
+command = "fdmnes"
+fdm_inp = "read_pdb.inp"
+fdm_file = "fdmfile.txt"
 base_name = "Pd"
-fileout = 'Pd'
+fileout = "Pd"
 
-folder_prefix = 'Rmt_'
+folder_prefix = "Rmt_"
 absorber = 1
 
 Rmt_list = [
@@ -35,40 +34,43 @@ Rmt_list = [
 ]
 
 cwd = os.getcwd()
-poscar = cwd + '/POSCAR'
+poscar = cwd + "/POSCAR"
 
 for Rmt in Rmt_list:
-    print('')
+    print("")
 
     # フォルダの作成
     folder_name = folder_prefix + str(Rmt)
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
-    print('=================================== %s (%s)' % (Rmt, folder_name))
+    print("=================================== %s (%s)" % (Rmt, folder_name))
 
     # POSCAR ファイルを読み込み
     atoms = read_vasp(poscar)
     fdm = SAE.io.WriteFdmInp(atoms)
 
     # fdmfile を フォルダにコピー
-    print('copy fdmfile to %s' % folder_name)
+    print("copy fdmfile to %s" % folder_name)
     shutil.copy2(fdm_file, folder_name)
 
-    fdm.write_fdmnes(name='POSCAR', MOL=True)
-    fdm.write_fdmnes(name=folder_name + '/POSCAR', STD=False, MOL=True)
+    fdm.write_fdmnes(name="POSCAR", MOL=True)
+    fdm.write_fdmnes(name=folder_name + "/POSCAR", STD=False, MOL=True)
     fdm.write_fdmnes_inp(
-        name=folder_name + '/' + fdm_inp,
+        name=folder_name + "/" + fdm_inp,
         absorber=absorber,
         fileout=fileout,
         e_range="-15. 0.2  0. 0.5 10. 1. 80.",
         radius=5,
         rmt=Rmt,
-        MOL=True)
+        MOL=True,
+    )
 
     # RUN FDMNES
     # 同期（終わるまで次に進まない）
     # 作業フォルダ work にて作業する
-    print('**** RUN FDMNES ***')
-    proc = subprocess.run(command, cwd=folder_name, shell=True, stdout=PIPE, stderr=PIPE, text=True)
+    print("**** RUN FDMNES ***")
+    proc = subprocess.run(
+        command, cwd=folder_name, shell=True, stdout=PIPE, stderr=PIPE, text=True
+    )
     date = proc.stdout
-    print('STDOUT: {}'.format(date))
+    print("STDOUT: {}".format(date))

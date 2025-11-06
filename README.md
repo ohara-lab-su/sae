@@ -94,7 +94,7 @@ Matplotlibモジュールは NumPy および SciPy を用いますが、それ�
 
 ```python
 #!/usr/bin/env python
-from src import StructureAnalysisEnvironment as SAE
+import StructureAnalysisEnvironment as SAE
 
 cell = SAE.io.Read(filename='POSCAR', code='VASP')
 cell.write(code='FDMNES')

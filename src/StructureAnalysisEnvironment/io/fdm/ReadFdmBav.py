@@ -42,6 +42,7 @@ __version__ = "0.0.1"
 ###############################################################################
 
 import sys
+
 # import gzip
 import os
 import re
@@ -49,11 +50,12 @@ import optparse
 import numpy as np
 
 try:
-    sys.path.append('../../../../..')
+    sys.path.append("../../../../../../../../../..")
     import StructureAnalysisEnvironment as SAE
 except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
     import StructureAnalysisEnvironment as SAE
+
     try:
         import StructureAnalysisEnvironment as SAE
     except ImportError:
@@ -68,7 +70,7 @@ except ImportError:
 
 class ReadFdmBav(object):
 
-    def __init__(self, cname, suffix='_bav.txt'):
+    def __init__(self, cname, suffix="_bav.txt"):
         """
 
         :param cname:  入力の bav ファイル(FDMNESの全ログ情報)
@@ -82,7 +84,7 @@ class ReadFdmBav(object):
 
         self.__datlines, self.__num = SAE.read_dataline(bav_name)
 
-        fdmnes_ver_reg = re.compile('.*FDMNES.*program,.*')
+        fdmnes_ver_reg = re.compile(".*FDMNES.*program,.*")
 
         # for default
         fdm_version = 2020
@@ -90,16 +92,16 @@ class ReadFdmBav(object):
         for i in range(self.__num):
             # Version チェック
             if bool(fdmnes_ver_reg.match(self.__datlines[i])):
-                print('')
+                print("")
                 print("get fdmnes version")
-                self.__fdmnes_ver = re.sub('.*,', '', self.__datlines[i]).strip()
-                fdm_version = self.__fdmnes_ver.strip('')
+                self.__fdmnes_ver = re.sub(".*,", "", self.__datlines[i]).strip()
+                fdm_version = self.__fdmnes_ver.strip("")
                 print("version = %s" % fdm_version)
                 break
 
         # FDMNES のバージョン取得
         try:
-            year = int(fdm_version.split(' ')[-1])
+            year = int(fdm_version.split(" ")[-1])
             print(year)
         except:
             print("*** fail *** get fdmnes version")
@@ -112,14 +114,18 @@ class ReadFdmBav(object):
 
         if new:
             # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
-            print('load NEW format: sd2020')
-            print('')
-            self.__bav = SAE.io.ReadFdmBav2020(cname, suffix, datline=self.__datlines, num=self.__num)
+            print("load NEW format: sd2020")
+            print("")
+            self.__bav = SAE.io.ReadFdmBav2020(
+                cname, suffix, datline=self.__datlines, num=self.__num
+            )
         else:
             #  〜2016.01.08
-            print('load OLD format: befor sd2016.01.08')
-            print('')
-            self.__bav = SAE.io.ReadFdmBav2016(cname, suffix, datline=self.__datlines, num=self.__num)
+            print("load OLD format: befor sd2016.01.08")
+            print("")
+            self.__bav = SAE.io.ReadFdmBav2016(
+                cname, suffix, datline=self.__datlines, num=self.__num
+            )
 
     def set_n_scf_loop(self, _val):
         self.__bav.n_scf_loop = _val
@@ -194,16 +200,20 @@ class ReadFdmBav(object):
 
 def options():
     #   name = 'POSCAR.txt'
-    name = 'Cu'
-    suffix = '_bav.txt'
+    name = "Cu"
+    suffix = "_bav.txt"
 
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT', )
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+    )
     options, args = parser.parse_args()
 
     if not os.path.exists(name + suffix):
         name0 = SAE.find_datfile1(suffix)
-        name = name0.replace(suffix, '')
+        name = name0.replace(suffix, "")
 
     if options.INPUT:
         name = options.INPUT
@@ -214,11 +224,11 @@ def options():
 
 
 ###############################################################################
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     name, suffix = options()
     bav = SAE.ReadFdmBav(name, suffix)
-    print('')
+    print("")
 
     natom = bav.get_natom()
     lmax = bav.get_lmax()
