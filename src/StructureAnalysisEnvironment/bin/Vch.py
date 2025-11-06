@@ -41,6 +41,7 @@ import sys
 import os
 import glob
 import optparse
+
 # import numpy as np
 
 # import re
@@ -48,28 +49,53 @@ import optparse
 
 import StructureAnalysisEnvironment as SAE
 
+try:
+    from x_logger import XLogger
+except ImportError:
+    pass
 
 # import SpaceGroupEnvironment as SGE
+
 
 ################################################################################
 def options():
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT', )
-    parser.add_option('-o', '--output', dest='OUTPUT', )
-    parser.add_option('-v', '--vacuum')
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+    )
+    parser.add_option(
+        "-o",
+        "--output",
+        dest="OUTPUT",
+    )
+    parser.add_option("-v", "--vacuum")
     options, args = parser.parse_args()
 
 
 ################################################################################
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    if not os.path.exists('INCAR'): sys.exit("STOP: INCAR not found")
-    if not os.path.exists('KPOINTS'): sys.exit("STOP: KPOINTS not found")
-    if not os.path.exists('POSCAR'): sys.exit("STOP: POSCAR not found")
-    if not os.path.exists('POTCAR'): sys.exit("STOP: POTCAR not found")
+    if not os.path.exists("INCAR"):
+        sys.exit("STOP: INCAR not found")
+    if not os.path.exists("KPOINTS"):
+        sys.exit("STOP: KPOINTS not found")
+    if not os.path.exists("POSCAR"):
+        sys.exit("STOP: POSCAR not found")
+    if not os.path.exists("POTCAR"):
+        sys.exit("STOP: POTCAR not found")
 
-    incar = SAE.io.ReadVaspIncar()
-    poscar = SAE.io.ReadVaspPoscar()
+    try:
+        logger = XLogger(log_level="debug")
+    except:
+        import logging
+
+        logger = logging.getLogger("dummy")
+        logger.addHandler(logging.NullHandler())
+
+    incar = SAE.io.ReadVaspIncar(logger=logger)
+    poscar = SAE.io.ReadVaspPoscar(logger=logger)
     potcar = SAE.io.ReadVaspPotcar()
 
     print("ISTART = %s" % str(incar.istart))

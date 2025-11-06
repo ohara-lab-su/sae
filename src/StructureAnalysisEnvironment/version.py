@@ -1,6 +1,23 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
 
-__version__ = "0.0.53"
+def read_version_from_toml() -> str:
+    with open("../../pyproject.toml", encoding="utf-8") as f:
+        for line in f:
+            if line.strip().startswith("version"):
+                m = re.search(r'version\s*=\s*["\']([^"\']+)["\']', line)
+                if m:
+                    return m.group(1)
+    raise RuntimeError("version not found in pyproject.toml")
+
+
+__version__ = read_version_from_toml()
+
+if __name__ == "__main__":
+    print(__version__)
+
+#__version__ = "0.0.54"
 
 # __version__ = "0.0.52"
 

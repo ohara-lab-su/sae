@@ -125,6 +125,7 @@ __version__ = "0.0.5"
 import sys
 import os
 import re
+
 # import gzip
 import numpy as np
 
@@ -132,7 +133,7 @@ import numpy as np
 # Environment as SGE
 try:
     # sys.path.append('../..')
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
     import StructureAnalysisEnvironment as SAEnv
     from StructureAnalysisEnvironment.io import *
     from StructureAnalysisEnvironment.Method import Method
@@ -141,13 +142,34 @@ except ImportError:
     from StructureAnalysisEnvironment.io import *
     from StructureAnalysisEnvironment.Method import Method
 
+from x_logger import XLogger
+
 
 ################################################################################
 class ReadVaspPoscar(Method):
 
     ###############################################
     # init and Read POSCAR
-    def __init__(self, POSCAR='POSCAR', suffix='.vasp', sort=False, atoms_index=None, code=None):
+    def __init__(
+        self,
+        POSCAR="POSCAR",
+        suffix=".vasp",
+        sort=False,
+        atoms_index=None,
+        code=None,
+        logger: XLogger = None,
+    ):
+        if logger is None:
+            try:
+                logger = XLogger(log_level="debug")
+            except:
+                import logging
+
+                logger = logging.getLogger("dummy")
+                logger.addHandler(logging.NullHandler())
+        self.logger = logger
+
+        self.logger.info("== ReadVaspPoscar() ==")
 
         self.datlines, self.num = SAEnv.read_dataline(POSCAR)
 
@@ -296,8 +318,8 @@ class ReadVaspPoscar(Method):
         else:
             i = 6 + 1
 
-        num_reg = re.compile('^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z')
-        selective_reg = re.compile('^S.*', re.IGNORECASE)
+        num_reg = re.compile("^[+-]?(\d*\.\d+|\d+\.?\d*)([eE][+-]?\d+|)\Z")
+        selective_reg = re.compile("^S.*", re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
             print("%s" % str(self.datlines[i].split()[0]))
@@ -315,10 +337,11 @@ class ReadVaspPoscar(Method):
             i = 5 + 1
         else:
             i = 6 + 1
-        if self.selective: i += 1
+        if self.selective:
+            i += 1
 
-        direct_reg = re.compile('^D.*', re.IGNORECASE)
-        car_reg = re.compile('^C.*', re.IGNORECASE)
+        direct_reg = re.compile("^D.*", re.IGNORECASE)
+        car_reg = re.compile("^C.*", re.IGNORECASE)
 
         if bool(num_reg.match(self.datlines[i].split()[0])):
             print("%s" % str(self.datlines[i].split()[0]))
@@ -337,10 +360,11 @@ class ReadVaspPoscar(Method):
             i = 5
         else:
             i = 6
-        if self.selective: i += 1
+        if self.selective:
+            i += 1
 
         self.position = np.zeros((int(self.natom), 3))
-        self.fix = np.zeros((int(self.natom), 3), dtype='S')
+        self.fix = np.zeros((int(self.natom), 3), dtype="S")
 
         i += 2
         for j in range(self.natom):
@@ -402,11 +426,13 @@ class ReadVaspPoscar(Method):
         #               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
         #               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
         #               ])
-        R_t = np.matrix([
-            [t1r[0, 0], t1r[0, 1], t1r[0, 2]],
-            [t2r[0, 0], t2r[0, 1], t2r[0, 2]],
-            [t3r[0, 0], t3r[0, 1], t3r[0, 2]]
-        ])
+        R_t = np.matrix(
+            [
+                [t1r[0, 0], t1r[0, 1], t1r[0, 2]],
+                [t2r[0, 0], t2r[0, 1], t2r[0, 2]],
+                [t3r[0, 0], t3r[0, 1], t3r[0, 2]],
+            ]
+        )
 
         # print "R_t"
         # print R_t
@@ -444,16 +470,12 @@ class ReadVaspPoscar(Method):
             ABS = False
         else:
             if isinstance(ABS, str):
-                if ABS == 'vasp' or ABS == 'VASP':
+                if ABS == "vasp" or ABS == "VASP":
                     ABS = True
 
         self.scale, self.__direct = SAEnv.conv_direct2cara(
-            ABS,
-            self.scale,
-            self.t,
-            self.natom,
-            self.__direct,
-            self.position)
+            ABS, self.scale, self.t, self.natom, self.__direct, self.position
+        )
 
     def conv_scale21(self):
         """
@@ -468,10 +490,11 @@ class ReadVaspPoscar(Method):
 
     ############################################################################
     # print POSCAR
-    def print_poscar(self, outname='POSCAR', STD=True):
+    def print_poscar(self, outname="POSCAR", STD=True):
 
         SAEnv.print_poscar(
-            outname, STD,
+            outname,
+            STD,
             self.title,
             self.scale,
             self.natom,
@@ -483,7 +506,8 @@ class ReadVaspPoscar(Method):
             self.atoms,
             self.atoms_index,
             self.position,
-            self.fix)
+            self.fix,
+        )
 
     ############################################################################
     # スーパーセル作成 Method
@@ -498,12 +522,8 @@ class ReadVaspPoscar(Method):
         if self.__direct:
             ABS = True
             self.scale, self.__direct = SAEnv.conv_direct2cara(
-                ABS,
-                self.scale,
-                self.t,
-                self.natom,
-                self.__direct,
-                self.position)
+                ABS, self.scale, self.t, self.natom, self.__direct, self.position
+            )
 
         # super 用の配列
         supers = super_x * super_y * super_x
@@ -511,7 +531,7 @@ class ReadVaspPoscar(Method):
         sp = np.zeros((self.natom * supers, 3))  # (super) position
         ion_sp = np.zeros(self.natom * supers)  # (super) ion
         ion_local_sp = np.zeros(self.natom * supers)  # (super) ion_local
-        fix_sp = np.zeros((self.natom * supers, 3), dtype='S')  # (super) fix
+        fix_sp = np.zeros((self.natom * supers, 3), dtype="S")  # (super) fix
         sp_j = np.zeros(self.natom * supers)  # super cell と orijinal cell の対応
 
         # super 用の内部座標作成
@@ -532,25 +552,21 @@ class ReadVaspPoscar(Method):
             sp_j,
             sp,
             self.fix,
-            fix_sp)
+            fix_sp,
+        )
 
         # super 用の基本並進ベクトル/原子種数を作る
         SAEnv.make_supercell_param(
-            super_x, super_y, super_z,
-            self.nion,
-            self.atoms,
-            self.t)
+            super_x, super_y, super_z, self.nion, self.atoms, self.t
+        )
 
         self.natom = self.natom * supers
 
         # cartesian --> direct
         if not self.__direct:
             self.scale, self.__direct = SAEnv.conv_car2direct(
-                self.scale,
-                self.t,
-                self.natom,
-                self.__direct,
-                sp)
+                self.scale, self.t, self.natom, self.__direct, sp
+            )
 
         self.ion = ion_sp
         self.ion_local = ion_local_sp
@@ -561,16 +577,18 @@ class ReadVaspPoscar(Method):
 
 
 ################################################################################
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import optparse
 
-    name = 'POSCAR'
+    name = "POSCAR"
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input',
-                      dest='INPUT',
-                      default=name,
-                      )
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+        default=name,
+    )
     options, args = parser.parse_args()
     name = options.INPUT
 
@@ -624,11 +642,18 @@ if __name__ == '__main__':
         print("Cartesian", file=out)
 
     for j in range(natom):
-        print(" %13.9f %13.9f %13.9f"
-              % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
+        print(
+            " %13.9f %13.9f %13.9f" % (position[j, 0], position[j, 1], position[j, 2]),
+            file=out,
+            end="",
+        )
         if selective:
             print("", file=out, end="")
-            print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
+            print(
+                "%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])),
+                file=out,
+                end="",
+            )
         print("", file=out)
     ############################################################################
 

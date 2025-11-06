@@ -28,6 +28,7 @@ __version__ = "0.0.1"
 import sys
 import os
 import re
+
 # import gzip
 import numpy as np
 
@@ -35,7 +36,7 @@ import optparse
 
 try:
     # sys.path.append('../..')
-    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
     import StructureAnalysisEnvironment as SAEnv
     from StructureAnalysisEnvironment.Method import *
     from StructureAnalysisEnvironment.io import *
@@ -43,6 +44,10 @@ except ImportError:
     import StructureAnalysisEnvironment as SAEnv
     from StructureAnalysisEnvironment.io import *
 
+try:
+    from x_logger import XLogger
+except ImportError:
+    pass
 
 # import SpaceGroupEnvironment as SGE
 
@@ -50,12 +55,26 @@ except ImportError:
 ################################################################################
 class ReadVaspPotcar(object):
 
-    def __init__(self, POTCAR='POTCAR'):
+    def __init__(
+        self,
+        POTCAR="POTCAR",
+        logger: XLogger = None,
+    ):
+        try:
+            logger = XLogger(log_level="debug")
+        except:
+            import logging
+
+            logger = logging.getLogger("dummy")
+            logger.addHandler(logging.NullHandler())
+
+        self.logger = logger
+        self.logger.info("== ReadVaspPotcar() ==")
 
         self.datlines, self.num = SAEnv.read_dataline(POTCAR)
 
-        vrhfin_reg = re.compile('.*VRHFIN')
-        zval_reg = re.compile('.*ZVAL')
+        vrhfin_reg = re.compile(".*VRHFIN")
+        zval_reg = re.compile(".*ZVAL")
 
         self.nion = 0
         self.atoms_index = []
@@ -63,12 +82,12 @@ class ReadVaspPotcar(object):
 
         for i in range(self.num):
             if bool(vrhfin_reg.match(self.datlines[i])):
-                atom0 = re.sub('.*VRHFIN =', '', self.datlines[i])
-                self.atoms_index.append(re.sub(':.*', '', atom0).strip())
+                atom0 = re.sub(".*VRHFIN =", "", self.datlines[i])
+                self.atoms_index.append(re.sub(":.*", "", atom0).strip())
                 self.nion += 1
             if bool(zval_reg.match(self.datlines[i])):
-                zval0 = re.sub('.*ZVAL', '', self.datlines[i])
-                self.atoms_zval.append(float(re.sub('^.*=', '', zval0).split()[0]))
+                zval0 = re.sub(".*ZVAL", "", self.datlines[i])
+                self.atoms_zval.append(float(re.sub("^.*=", "", zval0).split()[0]))
 
         if len(self.atoms_index) != len(self.atoms_zval):
             sys.exit("STOP: atoms_index != atoms_zval")
@@ -85,17 +104,22 @@ class ReadVaspPotcar(object):
 
 ################################################################################
 def options():
-    name = 'POTCAR'
+    name = "POTCAR"
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT', )
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+    )
     options, args = parser.parse_args()
-    if options.INPUT: name = options.INPUT
+    if options.INPUT:
+        name = options.INPUT
 
     return name
 
 
 ################################################################################
-if __name__ == '__main__':
+if __name__ == "__main__":
     name = options()
     potcar = ReadVaspPotcar(name)
 
