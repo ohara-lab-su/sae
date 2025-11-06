@@ -59,8 +59,8 @@
 *.gnuplot*
 *.dos*
 *.out
-_*
-*_
+#_*
+#*_
 
 # for VASP
 POSCAR*
