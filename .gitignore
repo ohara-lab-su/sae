@@ -92,6 +92,7 @@ BACKUP/
 build/
 dist/
 StructureAnalysisEnvironment.egg-info/
+*.egg-info
 
 IGZO*
 Graph*
