@@ -2,17 +2,35 @@
 # -*- coding: utf-8 -*-
 import re
 
-def read_version_from_toml() -> str:
-    with open("../../pyproject.toml", encoding="utf-8") as f:
-        for line in f:
-            if line.strip().startswith("version"):
-                m = re.search(r'version\s*=\s*["\']([^"\']+)["\']', line)
-                if m:
-                    return m.group(1)
-    raise RuntimeError("version not found in pyproject.toml")
+#def read_version_from_toml() -> str:
+#    with open("../../pyproject.toml", encoding="utf-8") as f:
+#        for line in f:
+#            if line.strip().startswith("version"):
+#                m = re.search(r'version\s*=\s*["\']([^"\']+)["\']', line)
+#                if m:
+#                    return m.group(1)
+#    raise RuntimeError("version not found in pyproject.toml")
 
+try:
+    # Python 3.8以降では importlib.metadata が標準だが、3.6では pkg_resources を使用
+    import pkg_resources
+    __version__ = pkg_resources.get_distribution("StructureAnalysisEnvironment").version
+except Exception:
+    # 開発時のみ pyproject.toml を読む
+    def read_version_from_toml() -> str:
+        toml_path = os.path.join(os.path.dirname(__file__), "../../pyproject.toml")
+        if not os.path.exists(toml_path):
+            return "0.0.0"  # fallback
+        with open(toml_path, encoding="utf-8") as f:
+            for line in f:
+                if line.strip().startswith("version"):
+                    m = re.search(r'version\s*=\s*["\']([^"\']+)["\']', line)
+                    if m:
+                        return m.group(1)
+        return "0.0.0"
 
-__version__ = read_version_from_toml()
+    __version__ = read_version_from_toml()
+
 
 if __name__ == "__main__":
     print(__version__)
