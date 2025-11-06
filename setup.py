@@ -5,13 +5,13 @@
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
-__email__ = "kengo.nakada@spring8.or.jp"
+__email__      = "kengo.nakada@gmail.com"
+# __email__ = "kengo.nakada@spring8.or.jp"
 __copyright__ = "Copyright 2014-2018 Kengo NAKADA"
 __license__ = "Apache2"
 __status__ = "alpha"
 
 # __version__    = "0.0.1"
-# __email__      = "kengo.nakada@gmail.com"
 # __license__    = "MIT"
 
 from setuptools import setup, find_packages
@@ -71,7 +71,8 @@ setup(
     author='K.NAKADA',
     #       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
     #       author_email = 'kengo.nakada@gmail.com',
-    author_email='kengo.nakada@spring8.or.jp',
+    #author_email='kengo.nakada@spring8.or.jp',
+    author_email='kengo.nakada@gmail.com',
     license='Apache2.0',
     install_requires=['numpy', 'matplotlib'],
     #       platforms = ['linux','OSX','Window'],

@@ -70,7 +70,7 @@ KPOINTS*
 INCAR*
 BASIS_SET
 GTH_POTENTIALS
-update.csh
+# update.csh
 # for HiLAPWS
 xsets
 wycoff
