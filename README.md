@@ -1,4 +1,4 @@
-# StructureAnalysisEnvironment
+# StructureAnalysisEnvironment (SAE)
 
 VASP, WIEN2k, Quantum ESPRESSO, OpenMX, CP2K, HiLAPW, FDMNES, RMC\_POT 
 等の第一原理計算および逆モンテカルロ法の各種計算コードに対応した入出力・解析の一元化を目指した
@@ -94,7 +94,7 @@ Matplotlibモジュールは NumPy および SciPy を用いますが、それ�
 
 ```python
 #!/usr/bin/env python
-import StructureAnalysisEnvironment as SAE
+from src import StructureAnalysisEnvironment as SAE
 
 cell = SAE.io.Read(filename='POSCAR', code='VASP')
 cell.write(code='FDMNES')

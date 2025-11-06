@@ -75,7 +75,7 @@ import collections
 
 # import SpaceGroupEnvironment as SGE
 try:
-    sys.path.append('../../')
+    sys.path.append('../../../../../')
     import StructureAnalysisEnvironment as SAE
     from StructureAnalysisEnvironment.Method import Method
 except ImportError:

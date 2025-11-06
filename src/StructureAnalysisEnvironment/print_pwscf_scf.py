@@ -54,7 +54,7 @@ def print_pwscf_scf(cname, STD,
     title = 'input'
     calculation = 'scf'
     title = 'input'
-    pseudo_dir = './'
+    pseudo_dir = '/'
     outdir = './work/'
     ecutwfc = 25.0
     ecutrho = 100.0  # ecutwfc*4.0
