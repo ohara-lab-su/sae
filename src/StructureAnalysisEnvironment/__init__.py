@@ -25,7 +25,8 @@ from .io import *
 # from StructureAnalysisEnvironment.Method import __init__
 from .Method import *
 
-from .util import __init__
+# from .util import __init__
+from .util import *
 
 # general
 from .write import *

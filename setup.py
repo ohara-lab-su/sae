@@ -16,9 +16,22 @@ __status__ = "alpha"
 
 from setuptools import setup, find_packages
 import glob
+import re
+
 
 # version = __version__
-from StructureAnalysisEnvironment import __version__
+# from StructureAnalysisEnvironment import __version__
+def read_version_from_toml() -> str:
+    with open("pyproject.toml", encoding="utf-8") as f:
+        for line in f:
+            if line.strip().startswith("version"):
+                m = re.search(r'version\s*=\s*["\']([^"\']+)["\']', line)
+                if m:
+                    return m.group(1)
+    raise RuntimeError("version not found in pyproject.toml")
+
+
+__version__ = read_version_from_toml()
 
 # スクリプト指定
 script = glob.glob("StructureAnalysisEnvironment/bin/*.py")
@@ -39,7 +52,8 @@ long_description = "Structure Analysis Environment"
 package_data = {"StructureAnalysisEnvironment": ["*.list"]}
 
 # パッケージ指定
-packages = find_packages()
+packages = find_packages(exclude=["StructureAnalysisEnvironment.bin"])
+# packages = find_packages()
 # packages = [
 #     package_src_dir,
 #     package_src_dir + '.Method',

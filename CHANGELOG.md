@@ -1,5 +1,18 @@
 # ChangeLog
 
+## Ver_0.0.54, 2025.11.07
+
+インストール環境の整備
+- python 3.6 環境で setup.py install でインストール可能
+- python >3.11 環境で pip install . (project.toml) でインストール可能
+- setup.py/toml の共存環境
+- setup.py/version.py の情報源(バージョン番号)を project.toml に一元化
+
+モジュール周りの生合成の整備
+- 何年もの間未調整だった整合性を調整し直している(途中)
+
+全体のパッケージ(Rvasp2cfg)とかの検証はこれから
+
 ## Ver_0.0.53, 2022.03.20
 
 Bader 体積が巨大だと（原子数が多いと）BvAt ファイルの原子情報が全部
