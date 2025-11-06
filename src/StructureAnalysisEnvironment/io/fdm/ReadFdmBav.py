@@ -49,7 +49,7 @@ import optparse
 import numpy as np
 
 try:
-    sys.path.append('../..')
+    sys.path.append('../../../../..')
     import StructureAnalysisEnvironment as SAE
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))

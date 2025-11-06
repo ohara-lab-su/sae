@@ -20,7 +20,7 @@ import glob
 # version = __version__
 from StructureAnalysisEnvironment.version import __version__
 
-script = glob.glob("StructureAnalysisEnvironment/bin/*.py")
+script = glob.glob("src/StructureAnalysisEnvironment/bin/*.py")
 
 long_description = 'Structure Analysis Environment'
 import os
@@ -28,7 +28,7 @@ import os
 #if os.path.exists('README.md'):
 #    long_description = open('README.md').read()
 
-package_src_dir = 'StructureAnalysisEnvironment'
+package_src_dir = 'src/StructureAnalysisEnvironment'
 files = glob.glob(package_src_dir + '/*.list')
 print('*****************************************')
 print(files)

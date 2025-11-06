@@ -64,13 +64,13 @@ class Read(object):
         class_name = 'ReadVaspPoscar'
         suffix = '.vasp'
         if filename is None:
-            filename = '../POSCAR'
+            filename = 'POSCAR'
 
         if code.upper() == 'VASP':
             class_name = 'ReadVaspPoscar'
             suffix = '.vasp'
             if filename is None:
-                filename = '../POSCAR'
+                filename = 'POSCAR'
 
         if code.upper() == 'FDMNES' or code.upper() == 'FDM':
             class_name = 'ReadFdmInp'
