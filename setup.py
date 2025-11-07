@@ -34,9 +34,9 @@ def read_version_from_toml() -> str:
 __version__ = read_version_from_toml()
 
 # スクリプト指定
-script = glob.glob("StructureAnalysisEnvironment/bin/*.py")
+__script__ = glob.glob("StructureAnalysisEnvironment/bin/*.py")
 
-long_description = "Structure Analysis Environment"
+__long_description__ = "Structure Analysis Environment"
 
 # if os.path.exists('README.md'):
 #    long_description = open('README.md').read()
@@ -49,45 +49,25 @@ long_description = "Structure Analysis Environment"
 
 # パッケージデータ
 # .list ファイルをデータファイルとして同梱
-package_data = {"StructureAnalysisEnvironment": ["*.list"]}
+__package_data__ = {"StructureAnalysisEnvironment": ["*.list"]}
 
 # パッケージ指定
-packages = find_packages(exclude=["StructureAnalysisEnvironment.bin"])
-# packages = find_packages()
-# packages = [
-#     package_src_dir,
-#     package_src_dir + '.Method',
-#     package_src_dir + '.gui',
-#     package_src_dir + '.io',
-#     package_src_dir + '.io',
-#     package_src_dir + '.io.athena',
-#     package_src_dir + '.io.fdm',
-#     package_src_dir + '.io.hilapw',
-#     package_src_dir + '.io.lob',
-#     package_src_dir + '.io.mx',
-#     package_src_dir + '.io.pf',
-#     package_src_dir + '.io.pwscf',
-#     package_src_dir + '.io.rmc',
-#     package_src_dir + '.io.vasp',
-#     package_src_dir + '.io.wien2k'
-# ]
-print("*****************************************")
-print(packages)
-print("*****************************************")
+__packages__ = find_packages("src", exclude=["StructureAnalysisEnvironment.bin"])
 
 setup(
     name="StructureAnalysisEnvironment",
     # packages=find_packages(),
-    packages=packages,
+    packages=__packages__,
     #       package_dir  = {'':'StructureAnalysisEnvironment'},
     #       include_package_data=True,
     #       package_data = { '': ['LICENSE.txt', 'README.md']},
-    package_data=package_data,
+    package_data=__package_data__,
+    package_dir={"": "src"},
     # data_files=[(package_src_dir, files)],
-    scripts=script,
+    scripts=__script__,
     version=__version__,
     description="Structure Analysis Environment",
-    long_description=long_description,
+    long_description=__long_description__,
     author="K.NAKADA",
     #       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
     #       author_email = 'kengo.nakada@gmail.com',
