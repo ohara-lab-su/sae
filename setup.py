@@ -34,47 +34,46 @@ def read_version_from_toml() -> str:
 __version__ = read_version_from_toml()
 
 # スクリプト指定
-__script__ = glob.glob("StructureAnalysisEnvironment/bin/*.py")
+script = glob.glob("StructureAnalysisEnvironment/bin/*.py")
 
-__long_description__ = "Structure Analysis Environment"
-
-# if os.path.exists('README.md'):
-#    long_description = open('README.md').read()
-
-# package_src_dir = "StructureAnalysisEnvironment"
-# files = glob.glob(package_src_dir + "/*.list")
-# print("*****************************************")
-# print(files)
-# print("*****************************************")
+description = "Structure Analysis Environment"
+long_description = "Structure Analysis Environment"
 
 # パッケージデータ
 # .list ファイルをデータファイルとして同梱
-__package_data__ = {"StructureAnalysisEnvironment": ["*.list"]}
+package_data = {"StructureAnalysisEnvironment": ["*.list"]}
+package_dir = {"": "src"}
 
 # パッケージ指定
-__packages__ = find_packages("src", exclude=["StructureAnalysisEnvironment.bin"])
+packages = find_packages(
+    "src",
+    exclude=["StructureAnalysisEnvironment.bin"],
+)
 
 setup(
     name="StructureAnalysisEnvironment",
-    # packages=find_packages(),
-    packages=__packages__,
-    #       package_dir  = {'':'StructureAnalysisEnvironment'},
-    #       include_package_data=True,
-    #       package_data = { '': ['LICENSE.txt', 'README.md']},
-    package_data=__package_data__,
-    package_dir={"": "src"},
+    packages=packages,
+    # package_dir  = {'':'StructureAnalysisEnvironment'},
+    # include_package_data=True,
+    # package_data = { '': ['LICENSE.txt', 'README.md']},
+    package_data=package_data,
+    package_dir=package_dir,
     # data_files=[(package_src_dir, files)],
-    scripts=__script__,
+    scripts=script,
     version=__version__,
-    description="Structure Analysis Environment",
-    long_description=__long_description__,
-    author="K.NAKADA",
-    #       author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
-    #       author_email = 'kengo.nakada@gmail.com',
+    description=description,
+    long_description=long_description,
+    author=__author__,
+    # author_email = ['kengo.nakada@gmail.com','kengo.nakada@spring8.or.jp'],
     # author_email='kengo.nakada@spring8.or.jp',
-    author_email="kengo.nakada@gmail.com",
-    license="Apache2.0",
-    install_requires=["numpy", "matplotlib"],
+    author_email=__email__,
+    license=__license__,
+    install_requires=[
+        "pandas",
+        "ase",
+        "numpy",
+        "matplotlib",
+    ],
     #       platforms = ['linux','OSX','Window'],
     #       classifiers = [
     #           'Programming Language :: Python :: 2.7',
