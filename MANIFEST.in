@@ -1,2 +1,3 @@
-include *.md *.txt *.list
-recursive-include StructureAnalysisEnvironment *.list
+include *.md *.txt *.list pyproject.toml
+recursive-include src/StructureAnalysisEnvironment *.list
+recursive-include src/StructureAnalysisEnvironment/bin *.py

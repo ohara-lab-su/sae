@@ -1,5 +1,13 @@
 # ChangeLog
 
+## Ver_0.0.57, 2025.11.12
+
+- pip install . (project.toml) では bin/*.py の導入が難しい
+- setup.py を修正(python3.6/python3.10でも動作させることを前提とする)
+  - setuptools が 古いと（特定のバージョン？） Vplot_TDOS.py のような
+    スクリプトの導入が失敗するので、setuptools をversionを上げる
+  - その他色々と setup.py 関係を修正
+
 ## Ver_0.0.56, 2025.11.07
 
 - symlink 構造が不要みたいなので(setup.pyの工夫だけで終わり)その方式を止める

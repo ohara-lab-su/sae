@@ -34,7 +34,7 @@ def read_version_from_toml() -> str:
 __version__ = read_version_from_toml()
 
 # スクリプト指定
-script = glob.glob("StructureAnalysisEnvironment/bin/*.py")
+script = glob.glob("src/StructureAnalysisEnvironment/bin/*.py")
 
 description = "Structure Analysis Environment"
 long_description = "Structure Analysis Environment"
@@ -73,6 +73,8 @@ setup(
         "ase",
         "numpy",
         "matplotlib",
+        "humanfriendly",
+        "coloredlogs",
     ],
     #       platforms = ['linux','OSX','Window'],
     #       classifiers = [
