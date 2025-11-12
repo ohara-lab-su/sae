@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
+import os
 
 #def read_version_from_toml() -> str:
 #    with open("../../pyproject.toml", encoding="utf-8") as f:

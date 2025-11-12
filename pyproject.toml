@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "StructureAnalysisEnvironment"
 
-version = "0.0.56"
+version = "0.0.57"
 
 description = "StructureAnalysisEnvironment (SAE)"
 authors = [
@@ -25,6 +25,10 @@ dependencies = [
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+# スクリプトをすべてインストール対象にする(*は使えないのでファイルを全部列挙する)
+# [tool.setuptools.script-files]
+# files = ["src/StructureAnalysisEnvironment/bin/*."]
 
 # ここでpytestのiniと同じようにオプションが書ける
 # 例えばテストマーク、フィルタ、カバレッジなども追記可能
