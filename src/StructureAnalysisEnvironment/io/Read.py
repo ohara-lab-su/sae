@@ -31,6 +31,7 @@ __version__ = "0.0.1"
 import sys
 
 import os
+
 # import re
 # import gzip
 # import numpy as np
@@ -53,59 +54,68 @@ import StructureAnalysisEnvironment as SAEnv
 
 class Read(object):
 
-    def __init__(self, filename=None, suffix=None,
-                 code='VASP', sort=False, atoms_index=None):
+    def __init__(
+        self,
+        filename=None,
+        suffix=None,
+        code="VASP",
+        sort=False,
+        atoms_index=None,
+    ):
 
         # module_name = 'StructureAnalysisEnvironment'
-        module_name = 'StructureAnalysisEnvironment.io'
+        module_name = "StructureAnalysisEnvironment.io"
 
         # for Default
         # class_name = 'ReadVaspPoscar'
-        class_name = 'ReadVaspPoscar'
-        suffix = '.vasp'
+        class_name = "ReadVaspPoscar"
+        suffix = ".vasp"
         if filename is None:
-            filename = 'POSCAR'
+            filename = "POSCAR"
 
-        if code.upper() == 'VASP':
-            class_name = 'ReadVaspPoscar'
-            suffix = '.vasp'
+        if code.upper() == "VASP":
+            class_name = "ReadVaspPoscar"
+            suffix = ".vasp"
             if filename is None:
-                filename = 'POSCAR'
+                filename = "POSCAR"
 
-        if code.upper() == 'FDMNES' or code.upper() == 'FDM':
-            class_name = 'ReadFdmInp'
-            suffix = '.inp'
+        if code.upper() == "FDMNES" or code.upper() == "FDM":
+            class_name = "ReadFdmInp"
+            suffix = ".inp"
             if filename is None:
-                filename = 'read_pdb.inp'
+                filename = "read_pdb.inp"
 
-        if code.upper() == 'OPENMX' or code.upper() == 'MX':
-            class_name = 'ReadMxDat'
-            suffix = '.dat'
+        if code.upper() == "OPENMX" or code.upper() == "MX":
+            class_name = "ReadMxDat"
+            suffix = ".dat"
             if filename is None:
-                filename = 'openmx.dat'
+                filename = "openmx.dat"
 
-        if code.upper() == 'RMC_POT' or code.upper() == 'RMC':
-            class_name = 'ReadRmcpotCfg'
-            suffix = '.cfg'
+        if code.upper() == "RMC_POT" or code.upper() == "RMC":
+            class_name = "ReadRmcpotCfg"
+            suffix = ".cfg"
             if filename is None:
-                filename = 'rmcpot.cfg'
+                filename = "rmcpot.cfg"
 
-        if code.upper() == 'PWSCF' or \
-                code.upper() == 'QE' or code.upper() == 'QUANTUMESPRESSO':
-            class_name = 'ReadPwIn'
-            suffix = '.in'
+        if (
+            code.upper() == "PWSCF"
+            or code.upper() == "QE"
+            or code.upper() == "QUANTUMESPRESSO"
+        ):
+            class_name = "ReadPwIn"
+            suffix = ".in"
             if filename is None:
-                filename = 'scf.in'
+                filename = "scf.in"
 
-        if code.upper() == 'WIEN2K' or code.upper() == 'WIEN':
-            suffix = '.struct'
+        if code.upper() == "WIEN2K" or code.upper() == "WIEN":
+            suffix = ".struct"
             if filename is None:
-                filename = 'case.struct'
+                filename = "case.struct"
 
-        if code.upper() == 'HILAPW' or code.upper() == 'HI':
-            suffix = '.in'
+        if code.upper() == "HILAPW" or code.upper() == "HI":
+            suffix = ".in"
             if filename is None:
-                filename = 'sets.in'
+                filename = "sets.in"
 
         # for debug
         print("class name = %s" % str(class_name))
@@ -222,39 +232,48 @@ class Read(object):
         return self.fix
 
     ###########################################################################
-    def write(self,
-              outname=None,
-              suffix=None,
-              code=None,
-              calinfo=None,
-              STD=False,
-              MOL=False,
-              FRAC=True):
+    def write(
+        self,
+        outname=None,
+        suffix=None,
+        code=None,
+        calinfo=None,
+        STD=False,
+        MOL=False,
+        FRAC=True,
+    ):
 
-        SAEnv.write(self.cell,
-                    outname=outname,
-                    suffix=suffix,
-                    code=code,
-                    calinfo=calinfo,
-                    STD=STD,
-                    MOL=MOL,
-                    FRAC=FRAC)
+        SAEnv.write(
+            self.cell,
+            outname=outname,
+            suffix=suffix,
+            code=code,
+            calinfo=calinfo,
+            STD=STD,
+            MOL=MOL,
+            FRAC=FRAC,
+        )
         return
 
 
 ###############################################################################
 # for TEST
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import optparse
 
-    name = 'POSCAR'
+    name = "POSCAR"
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT', default=name, )
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+        default=name,
+    )
     options, args = parser.parse_args()
     name = options.INPUT
 
-    cell = Read(filename=name, code='VASP')
+    cell = Read(filename=name, code="VASP")
 
     title = cell.get_title()
     scale = cell.get_scale()
@@ -310,11 +329,18 @@ if __name__ == '__main__':
         print("Cartesian", file=out)
 
     for j in range(natom):
-        print(" %13.9f %13.9f %13.9f"
-              % (position[j, 0], position[j, 1], position[j, 2]), file=out, end="")
+        print(
+            " %13.9f %13.9f %13.9f" % (position[j, 0], position[j, 1], position[j, 2]),
+            file=out,
+            end="",
+        )
         if selective:
             print("", file=out, end="")
-            print("%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])), file=out, end="")
+            print(
+                "%s %s %s" % (str(fix[j, 0]), str(fix[i, 1]), str(fix[i, 2])),
+                file=out,
+                end="",
+            )
         print("", file=out)
     ###########################################################################
 
