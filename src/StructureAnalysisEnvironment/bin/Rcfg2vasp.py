@@ -42,15 +42,17 @@ __version__ = "0.0.3"
 import sys
 import os
 import optparse
+
 # import numpy as np
 
-#try:
+# try:
 #    sys.path.append('../../')
 #    import StructureAnalysisEnvironment as SAE
-#except ImportError:
+# except ImportError:
 #    import StructureAnalysisEnvironment as SAE
 
 import StructureAnalysisEnvironment as SAE
+
 # import SpaceGroupEnvironment as SGE
 
 
@@ -59,12 +61,18 @@ def options():
     cname = "igzo"  # INPUT BASE filename
 
     parser = optparse.OptionParser()
-    parser.add_option('-i', '--input', dest='INPUT', )
-    parser.add_option('--atoms_index')
+    parser.add_option(
+        "-i",
+        "--input",
+        dest="INPUT",
+    )
+    parser.add_option("--atoms_index")
     options, args = parser.parse_args()
-    if options.INPUT: cname = options.INPUT
+    if options.INPUT:
+        cname = options.INPUT
 
-    if len(args) > 0: cname = args[0]
+    if len(args) > 0:
+        cname = args[0]
 
     if cname:
         print("INPUT file name : %s" % cname + ".cfg")
@@ -78,7 +86,7 @@ def options():
 
 
 ################################################################################
-if __name__ == '__main__':
+if __name__ == "__main__":
     """
     usage:
     V と O 原子の時
@@ -86,6 +94,23 @@ if __name__ == '__main__':
        ./Rcfg2vasp.py --atoms_index=V,O LVOF.cfg
     """
     cname, atoms_index0 = options()
+
+    #
+    # Usage:
+    #  Rcfg2vasp.py <name> --atoms_index=A,B,C,Da
+    #
+    # atoms_index = ['In', 'Ga', 'Zn', 'O']
+    # atoms_index0 = 'V,O'
+
+    atoms_index = []
+    if atoms_index0 == None:
+        # 原子の種類指定がない時
+        # cfg からの変換だとatoms_index を使わないので関係ない
+        pass
+    else:
+        for i in atoms_index0.split(","):
+            print(i)
+            atoms_index.append(i)
 
     name_, ext_ = os.path.splitext(cname)
     print("name = %s" % name_)
@@ -99,20 +124,7 @@ if __name__ == '__main__':
 
     outname = name_
 
-    # atoms_index = ['In', 'Ga', 'Zn', 'O']
-    #atoms_index0 = 'V,O'
+    print(f"atoms_index = {atoms_index}")
 
-    #
-    # Usage:
-    #  Rcfg2vasp.py <name> --atoms_index=A,B,C,Da
-    #
-
-    atoms_index = []
-    for i in atoms_index0.split(','):
-        print(i)
-        atoms_index.append(i)
-    print(atoms_index)
-
-    cell = SAE.io.Read(filename=filename, code='RMC', atoms_index=atoms_index)
-    cell.write(outname=outname, code='VASP')
-
+    cell = SAE.io.Read(filename=filename, code="RMC", atoms_index=atoms_index)
+    cell.write(outname=outname, code="VASP")

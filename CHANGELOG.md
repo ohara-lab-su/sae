@@ -1,5 +1,9 @@
 # ChangeLog
 
+## Ver_0.0.58, 2025.12.23
+
+Rcfgvasp.py: アホなミスを修正
+
 ## Ver_0.0.57, 2025.11.12
 
 - pip install . (project.toml) では bin/*.py の導入が難しい
