@@ -54,6 +54,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -91,15 +93,15 @@ def read_vasprun0(XMLFILE):
         f = gzip.open(XMLFILE + ".gz")
         ZIP_FLAG = True
     else:
-        sys.exit("STOP: " + XMLFILE + " or " + XMLFILE + ".gz file not found")
+        _legacy_error("STOP: " + XMLFILE + " or " + XMLFILE + ".gz file not found")
 
     try:
         tree = ET.parse(f)
     except:
         if ZIP_FLAG:
-            sys.exit("can't parse " + XMLFILE + ".gz")
+            _legacy_error("can't parse " + XMLFILE + ".gz")
         else:
-            sys.exit("can't parse " + XMLFILE)
+            _legacy_error("can't parse " + XMLFILE)
     finally:
         if ZIP_FLAG:
             f.close()
@@ -107,7 +109,7 @@ def read_vasprun0(XMLFILE):
     #   try:
     #       tree = ET.parse(XMLFILE)
     #   except:
-    #       sys.exit("can'nt parse "+XMLFILE)
+    #       _legacy_error("can'nt parse "+XMLFILE)
 
     root = tree.getroot()
 
@@ -136,7 +138,7 @@ def read_vasprun0(XMLFILE):
     #           print >> out, INCAR_TAG[i],"=",INCAR[i]
     #   except:
     #       out.close()
-    #       sys.exit("STOP: INCAR.rebuild can't open")
+    #       _legacy_error("STOP: INCAR.rebuild can't open")
     #   finally:
     #       out.close()
 
@@ -164,7 +166,7 @@ def read_vasprun0(XMLFILE):
     #           print >> out, es.text
     #   except:
     #       out.close()
-    #       sys.exit("STOP: KPOINTS.rebuild can't open")
+    #       _legacy_error("STOP: KPOINTS.rebuild can't open")
     #   finally:
     #       out.close()
 
@@ -333,7 +335,7 @@ if __name__ == '__main__':
             print("%s=%s" % (str(INCAR_TAG[i]), str(INCAR_TEXT[i])), file=out)
     except:
         out.close()
-        sys.exit("STOP: INCAR.rebuild can't open")
+        _legacy_error("STOP: INCAR.rebuild can't open")
     finally:
         out.close()
 
@@ -346,7 +348,7 @@ if __name__ == '__main__':
             print("%s" % str(KPOINTS[i]))
     except:
         out.close()
-        sys.exit("STOP: KPOINTS.rebuild can't open")
+        _legacy_error("STOP: KPOINTS.rebuild can't open")
     finally:
         out.close()
 

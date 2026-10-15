@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 # -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
@@ -76,7 +78,7 @@ def read_poscar(POSCAR, VASP, t, atoms, atoms_index, ion, ion_local, position, f
     elif os.path.exists(POSCAR + ".gz"):
         GZIP = True
     else:
-        sys.exit("STOP: " + POSCAR + " or " + POSCAR + ".gz file not found")
+        _legacy_error("STOP: " + POSCAR + " or " + POSCAR + ".gz file not found")
 
     try:
         if GZIP:
@@ -87,7 +89,7 @@ def read_poscar(POSCAR, VASP, t, atoms, atoms_index, ion, ion_local, position, f
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: " + POSCAR + " does'nt open")
+        _legacy_error("STOP: " + POSCAR + " does'nt open")
     finally:
         tmp.close()
 
@@ -145,7 +147,7 @@ def read_poscar(POSCAR, VASP, t, atoms, atoms_index, ion, ion_local, position, f
         i += 1
         atoms.extend(datlines[i].split())
     else:
-        sys.exit("Error: unknown VASP format")
+        _legacy_error("Error: unknown VASP format")
 
     ###############################################
     ## get number of atoms
@@ -187,7 +189,7 @@ def read_poscar(POSCAR, VASP, t, atoms, atoms_index, ion, ion_local, position, f
     tmp = datlines[i].split()
     if bool(num_reg.match(tmp[0])):
         print("%s" % str(tmp[0]))
-        sys.exit("Format Error")
+        _legacy_error("Format Error")
     else:
         if bool(selective_reg.match(tmp[0])):
             # print "selective True"
@@ -200,7 +202,7 @@ def read_poscar(POSCAR, VASP, t, atoms, atoms_index, ion, ion_local, position, f
 
         if bool(num_reg.match(tmp[0])):
             print("%s" % str(tmp[0]))
-            sys.exit("Format Error")
+            _legacy_error("Format Error")
         if bool(direct_reg.match(tmp[0])):
             # print "Direct Mode"
             direct = True

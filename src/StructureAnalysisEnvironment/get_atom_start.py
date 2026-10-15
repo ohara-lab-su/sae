@@ -19,6 +19,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -41,7 +43,7 @@ def get_atom_start(atom1, nion, atoms):
     k = 0
     for i in range(nion):
         if atom1 < 1:
-            sys.exit("STOP: unknown number, atom1 = " + str(atom1))
+            _legacy_error("STOP: unknown number, atom1 = " + str(atom1))
         if i == (atom1_0):
             start = k
             end = k + int(atoms[i]) - 1

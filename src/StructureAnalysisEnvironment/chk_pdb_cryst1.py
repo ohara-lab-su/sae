@@ -16,6 +16,8 @@
 #
 ################################################################################
 from __future__ import print_function
+
+from sae.errors import legacy_error as _legacy_error
 try:
     from .copyright import *
 except ImportError:
@@ -41,7 +43,7 @@ def chk_pdb_cryst1(filename):
         pdbfile = open(filename)
     except:
         pdbfile.close()
-        sys.exit("STOP(chk_cryst1):" + filename + "file can'nt open")
+        _legacy_error("STOP(chk_cryst1):" + filename + "file can'nt open")
 
     cryst1 = False
     for line in pdbfile.readlines():

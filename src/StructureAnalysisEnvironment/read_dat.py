@@ -19,6 +19,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -44,13 +46,13 @@ comment_reg = re.compile('^#.*', re.IGNORECASE)
 ##
 def read_dat(name, dimension, dat, cut):
     if not os.path.exists(name):
-        sys.exit("STOP(read_dat.py): " + name + " not found")
+        _legacy_error("STOP(read_dat.py): " + name + " not found")
 
     try:
         tmp = open(name)
     except:
         tmp.close()
-        sys.exit("STOP(read_dat.py): " + name + " does'nt open")
+        _legacy_error("STOP(read_dat.py): " + name + " does'nt open")
 
     datalist = tmp.read()
     tmp.close()
@@ -73,12 +75,12 @@ def read_dat(name, dimension, dat, cut):
 ##
 def read_dat2(name, dat, cut):
     if not os.path.exists(name):
-        sys.exit("STOP(read_dat.py): " + name + " not found")
+        _legacy_error("STOP(read_dat.py): " + name + " not found")
 
     try:
         tmp = open(name)
     except:
-        sys.exit("STOP(read_dat.py): " + name + " does'nt open")
+        _legacy_error("STOP(read_dat.py): " + name + " does'nt open")
     datalist = tmp.read()
     tmp.close
     datalines = datalist.split('\n')
@@ -100,12 +102,12 @@ def read_dat2(name, dat, cut):
 ##
 def read_dat5(name, dat, cut):
     if not os.path.exists(name):
-        sys.exit("STOP(read_dat.py): " + name + " not found")
+        _legacy_error("STOP(read_dat.py): " + name + " not found")
 
     try:
         tmp = open(name)
     except:
-        sys.exit("STOP(read_dat.py): " + name + " does'nt open")
+        _legacy_error("STOP(read_dat.py): " + name + " does'nt open")
     datalist = tmp.read()
     tmp.close
     datalines = datalist.split('\n')

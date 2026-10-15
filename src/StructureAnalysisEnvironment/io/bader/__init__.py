@@ -1,6 +1,16 @@
+"""Historical API. New code should import from sae.<calculation_code>."""
+from importlib import import_module as _import_module
 
-from .ReadBaderBcf import *
-from .ReadBaderAvf import *
-from .ReadBaderBvat import *
-from .WriteBaderVolume import *
-from .UtilBader import *
+_EXPORTS = {'ReadBaderBcf': ('sae.bader.charges', 'Charges'), 'ReadBaderAvf': ('sae.bader.volumes.atomic', 'AtomicVolumes'), 'ReadBaderBvat': ('sae.bader.volumes.grid', 'VolumeGrid'), 'WriteBaderVolume': ('sae.bader.volumes.writer', 'VolumeWriter'), 'UtilBader': ('sae.bader.volumes.operations', 'VolumeOperations')}
+__all__ = list(_EXPORTS)
+
+def __getattr__(name):
+    if name not in _EXPORTS:
+        raise AttributeError("{} has no attribute {!r}".format(__name__, name))
+    module, attribute = _EXPORTS[name]
+    value = getattr(_import_module(module), attribute)
+    globals()[name] = value
+    return value
+
+def __dir__():
+    return sorted(set(globals()) | set(__all__))

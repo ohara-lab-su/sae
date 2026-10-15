@@ -19,6 +19,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -60,7 +62,7 @@ def print_fdmnes0(outname='POSCAR', atoms=None, STD=True, MOL=False):
             out = open(outname + '.fdmnes', 'w')
         except:
             out.close()
-            sys.exit("STOP:" + outname + ".fdmnes file can't open")
+            _legacy_error("STOP:" + outname + ".fdmnes file can't open")
 
     #   atoms = atoms2.copy()
 
@@ -102,7 +104,7 @@ def print_fdmnes1(outname='POSCAR', cell=None, STD=True, MOL=False):
             out = open(outname + '.fdmnes', 'w')
         except:
             out.close()
-            sys.exit("STOP:" + outname + ".fdmnes file can't open")
+            _legacy_error("STOP:" + outname + ".fdmnes file can't open")
 
     # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
     a, b, c, alpha, beta, gamma, nat = SAEnv.conv_cellparam1(cell)

@@ -48,6 +48,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -88,15 +90,15 @@ def read_vasprun1(XMLFILE):
         f = gzip.open(XMLFILE + ".gz")
         ZIP_FLAG = True
     else:
-        sys.exit("STOP: " + XMLFILE + " or " + XMLFILE + ".gz file not found")
+        _legacy_error("STOP: " + XMLFILE + " or " + XMLFILE + ".gz file not found")
 
     try:
         tree = ET.parse(f)
     except:
         if ZIP_FLAG:
-            sys.exit("can't parse " + XMLFILE + ".gz")
+            _legacy_error("can't parse " + XMLFILE + ".gz")
         else:
-            sys.exit("can't parse " + XMLFILE)
+            _legacy_error("can't parse " + XMLFILE)
     finally:
         if ZIP_FLAG:
             f.close()
@@ -104,7 +106,7 @@ def read_vasprun1(XMLFILE):
     #   try:
     #       tree = ET.parse(XMLFILE)
     #   except:
-    #       sys.exit("can'nt parse "+XMLFILE)
+    #       _legacy_error("can'nt parse "+XMLFILE)
 
     root = tree.getroot()
 

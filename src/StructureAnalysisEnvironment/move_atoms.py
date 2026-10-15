@@ -32,6 +32,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -53,7 +55,7 @@ from numpy import *
 ##
 def move_atoms1(scale, t, direct, position, nlist, list_atoms):
     if direct:
-        sys.exit("STOP: direct mode")
+        _legacy_error("STOP: direct mode")
 
     for i in range(nlist):
         # 実座標系 list_atom を内部座標系 new_{x,y,z} に直すために 1/scale を掛ける
@@ -73,7 +75,7 @@ def move_atoms1(scale, t, direct, position, nlist, list_atoms):
 ## リスケールなし (そのまま)
 def move_atoms0(scale, t, direct, position, nlist, list_atoms):
     if direct:
-        sys.exit("STOP: direct mode")
+        _legacy_error("STOP: direct mode")
 
     for i in range(nlist):
         # 実座標系 list_atom を内部座標系 new_{x,y,z} に直すために 1/scale を掛ける

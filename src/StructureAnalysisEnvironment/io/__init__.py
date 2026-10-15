@@ -1,123 +1,16 @@
+"""Historical API. New code should import from sae.<calculation_code>."""
+from importlib import import_module as _import_module
 
-try:
-    from copyright import *
-except Exception:
-    from StructureAnalysisEnvironment.copyright import *
+_EXPORTS = {'Read': ('StructureAnalysisEnvironment.io.Read', 'Read'), 'write_fdmnes': ('StructureAnalysisEnvironment.io.ase_support.fdmnes', 'write_fdmnes'), 'write_fdmnes_inp': ('StructureAnalysisEnvironment.io.ase_support.fdmnes', 'write_fdmnes_inp'), 'options': ('sae.athena.spectra', 'options'), 'ReadVaspOutcar': ('sae.vasp.output.outcar', 'Outcar'), 'ReadVaspDoscar': ('sae.vasp.dos', 'DensityOfStates'), 'ReadVaspXdat': ('sae.vasp.trajectory', 'Trajectory'), 'ReadVaspVasprun': ('sae.vasp.output.vasprun', 'Vasprun'), 'ReadVaspOszicar': ('sae.vasp.output.oszicar', 'Oszicar'), 'ReadVaspEigenval': ('sae.vasp.bands.eigenval', 'Eigenvalues'), 'ReadVaspKpoints': ('sae.vasp.kpoints', 'Kpoints'), 'ReadVaspSymdat': ('sae.vasp.symmetry', 'Symmetry'), 'ReadProcar': ('sae.vasp.bands.procar', 'Projections'), 'ReadVaspPoscar': ('sae.vasp.structure_legacy', 'LegacyPoscar'), 'ReadVaspIncar': ('sae.vasp.parameters', 'Incar'), 'ReadVaspAcf': ('sae.vasp.charges', 'Charges'), 'ReadVaspPotcar': ('sae.vasp.pseudopotential', 'Potcar'), 'ReadVaspChgcar': ('sae.vasp.charge_density.reader', 'ChargeDensity'), 'WriteVaspChgcar': ('sae.vasp.charge_density.writer', 'Writer'), 'ReadVaspChgcarHeader': ('sae.vasp.charge_density.header', 'Header'), 'ReadVaspChgcarFooter': ('sae.vasp.charge_density.footer', 'Footer'), 'SumChgcar': ('sae.vasp.charge_density.operations', 'SumChargeDensity'), 'ReadLobCohp': ('sae.lobster.bonding', 'COHP'), 'ReadLobDos': ('sae.lobster.dos', 'DensityOfStates'), 'ReadLobOut': ('sae.lobster.output', 'Output'), 'ReadMd': ('sae.openmx.trajectory', 'Trajectory'), 'ReadMxVps': ('sae.openmx.pseudopotential.file', 'Pseudopotential'), 'ReadMxVpsList': ('sae.openmx.pseudopotential.catalog', 'PseudopotentialCatalog'), 'ReadMxDat': ('sae.openmx.input_legacy', 'LegacyInput'), 'ReadMxOut': ('sae.openmx.output', 'Output'), 'ReadMxDftscf': ('sae.openmx.scf', 'SCFHistory'), 'ReadMxDosMethod': ('sae.openmx.dos._base', 'DOSMethods'), 'ReadMxTdos': ('sae.openmx.dos.total_legacy', 'LegacyTotalDOS'), 'ReadMxPdos': ('sae.openmx.dos.projected', 'ProjectedDOS'), 'ReadWienDos': ('sae.wien2k.dos', 'DensityOfStates'), 'ReadWienOutput0': ('sae.wien2k.output.potential', 'PotentialOutput'), 'ReadWienOutputt': ('sae.wien2k.output.bands', 'BandOutput'), 'ReadWienXspec': ('sae.wien2k.spectra.xspec', 'XSpec'), 'ReadWienTxspec': ('sae.wien2k.spectra.txspec', 'TXSpec'), 'ReadWienScf': ('sae.wien2k.output.scf', 'SCFHistory'), 'ReadHiSets': ('sae.hilapw.input_legacy', 'LegacyInput'), 'ReadPwIn': ('sae.quantum_espresso.input', 'Input'), 'ReadPwOut': ('sae.quantum_espresso.output', 'Output'), 'ReadPwTdos': ('sae.quantum_espresso.dos.total', 'TotalDOS'), 'ReadPwPdos': ('sae.quantum_espresso.dos.projected', 'ProjectedDOS'), 'ReadPwXanes': ('sae.quantum_espresso.spectra', 'XANES'), 'ReadFdmTxt': ('sae.fdmnes.spectra.absorption', 'AbsorptionSpectrum'), 'plot_fdm_xas': ('sae.fdmnes.spectra.convolution', 'plot_fdm_xas'), 'ReadFdmConv': ('sae.fdmnes.spectra.convolution', 'ConvolvedSpectrum'), 'ReadFdmInp': ('sae.fdmnes.input', 'Input'), 'ReadFdmBav': ('sae.fdmnes.output.dispatch', 'Output'), 'ReadFdmBav2016': ('sae.fdmnes.output.v2016', 'Output2016'), 'ReadFdmBav2020': ('sae.fdmnes.output.v2020', 'Output2020'), 'ReadFdmSd': ('sae.fdmnes.dos.dispatch', 'DensityOfStates'), 'ReadFdmSd2016': ('sae.fdmnes.dos.v2016', 'DensityOfStates2016'), 'ReadFdmSd2020': ('sae.fdmnes.dos.v2020', 'DensityOfStates2020'), 'ReadFdmFdmfile': ('sae.fdmnes.batch', 'BatchInput'), 'WriteFdmInp': ('sae.fdmnes.writer', 'InputWriter'), 'WriteFdmfile': ('sae.fdmnes.batch_writer', 'BatchWriter'), 'ReadBaderAvf': ('sae.bader.volumes.atomic', 'AtomicVolumes'), 'ReadBaderBcf': ('sae.bader.charges', 'Charges'), 'ReadBaderBvat': ('sae.bader.volumes.grid', 'VolumeGrid'), 'WriteBaderVolume': ('sae.bader.volumes.writer', 'VolumeWriter'), 'UtilBader': ('sae.bader.volumes.operations', 'VolumeOperations'), 'ReadRmcpotCfg': ('sae.rmcpot.configuration', 'Configuration'), 'ReadAthenaNor': ('sae.athena.spectra', 'NormalizedSpectrum'), 'plot_athena_nor': ('sae.athena.spectra', 'plot_athena_nor'), 'ReadPfformat': ('sae.pf.document', 'Document')}
+__all__ = list(_EXPORTS)
 
-#
-# general class
-#
-from .Read import *
+def __getattr__(name):
+    if name not in _EXPORTS:
+        raise AttributeError("{} has no attribute {!r}".format(__name__, name))
+    module, attribute = _EXPORTS[name]
+    value = getattr(_import_module(module), attribute)
+    globals()[name] = value
+    return value
 
-#
-# ASE support function/class
-#
-from .ase_support.fdmnes import *
-
-#
-# class for VASP (+alpha)
-#
-from .vasp.ReadVaspOutcar import *
-from .vasp.ReadVaspDoscar import *
-from .vasp.ReadVaspXdat import *
-from .vasp.ReadVaspVasprun import *
-from .vasp.ReadVaspOszicar import *
-from .vasp.ReadVaspEigenval import *
-from .vasp.ReadVaspKpoints import *
-from .vasp.ReadVaspSymdat import *
-from .vasp.ReadVaspProcar import *
-from .vasp.ReadVaspPoscar import *
-from .vasp.ReadVaspIncar import *
-from .vasp.ReadVaspAcf import *
-from .vasp.ReadVaspPotcar import *
-from .vasp.ReadVaspChgcar import *
-from .vasp.WriteVaspChgcar import *
-
-from .vasp.ReadVaspChgcarHeader import *
-from .vasp.ReadVaspChgcarFooter import *
-from .vasp.UtilChgcar import *
-
-#
-# LOBSTER,COHP for VASP
-#
-from .lob.ReadLobCohp import *
-from .lob.ReadLobDos import *
-from .lob.ReadLobOut import *
-
-#
-# class for OpenMX
-#
-from .mx.ReadMd import *
-from .mx.ReadMxVps import *
-from .mx.ReadMxVpsList import *
-
-from .mx.ReadMxDat import *
-from .mx.ReadMxOut import *
-from .mx.ReadMxDftscf import *
-from .mx.ReadMxDosMethod import *
-from .mx.ReadMxTdos import *
-from .mx.ReadMxPdos import *
-
-#
-# class for WIEN2k
-#
-from .wien2k.ReadWienDos import *
-from .wien2k.ReadWienOutput0 import *
-from .wien2k.ReadWienOutputt import *
-from .wien2k.ReadWienXspec import *
-from .wien2k.ReadWienTxspec import *
-from .wien2k.ReadWienScf import *
-
-#
-# class for HiLAPW
-#
-from .hilapw.ReadHiSets import *
-
-#
-# class for PWScf (Quantum ESPRESSO)
-#
-from .pwscf.ReadPwIn import *
-from .pwscf.ReadPwOut import *
-from .pwscf.ReadPwTdos import *
-from .pwscf.ReadPwPdos import *
-from .pwscf.ReadPwXanes import *
-
-#
-# class for FDMNES
-#
-from .fdm.ReadFdmTxt import *
-from .fdm.ReadFdmConv import *
-from .fdm.ReadFdmInp import *
-from .fdm.ReadFdmBav import *
-from .fdm.ReadFdmBav2016 import *
-from .fdm.ReadFdmBav2020 import *
-from .fdm.ReadFdmSd import *
-from .fdm.ReadFdmSd2016 import *
-from .fdm.ReadFdmSd2020 import *
-from .fdm.ReadFdmFdmfile import *
-from .fdm.WriteFdmInp import *
-from .fdm.WriteFdmfile import *
-
-#
-# Bader
-#
-from .bader.ReadBaderAvf import *
-from .bader.ReadBaderBcf import *
-from .bader.ReadBaderBvat import *
-from .bader.WriteBaderVolume import *
-from .bader.UtilBader import *
-
-#
-# class for RMC
-#
-from .rmc.ReadRmcpotCfg import *
-
-#
-# class for Athena
-from .athena.ReadAthenaNor import *
-
-#
-# class for PF format
-#
-from .pf.ReadPfformat import *
-
+def __dir__():
+    return sorted(set(globals()) | set(__all__))

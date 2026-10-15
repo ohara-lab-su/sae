@@ -20,6 +20,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -121,7 +123,7 @@ def plot_sum_xas(case='case', dos_suffix='.dos1ev', outname='XAS', \
         out_xspecsum = open(case + '.xspecsum', 'w')
     except:
         out_xspecsum.cloase()
-        sys.exit("STOP: " + case + ".xspecsum file can'ntopen ")
+        _legacy_error("STOP: " + case + ".xspecsum file can'ntopen ")
 
     for xh in xas_head:
         print("%s" % str(xh), file=out_xspecsum)
@@ -135,7 +137,7 @@ def plot_sum_xas(case='case', dos_suffix='.dos1ev', outname='XAS', \
         out_dos1ev = open(case + '.dos1evsum', 'w')
     except:
         out_dos1ev.cloase()
-        sys.exit("STOP: " + case + ".dos1evsum file can'ntopen ")
+        _legacy_error("STOP: " + case + ".dos1evsum file can'ntopen ")
 
     for dos_h in dos_head[0]:
         print("%s" % str(dos_h), file=out_dos1ev)

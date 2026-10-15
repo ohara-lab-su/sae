@@ -28,6 +28,8 @@
 #
 ################################################################################
 from __future__ import print_function
+
+from sae.errors import legacy_error as _legacy_error
 try:
     from .copyright import *
 except ImportError:
@@ -52,7 +54,7 @@ def read_cfg(cname, t, atoms, ion_site, position):
         tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg.py): " + cname + ".cfg not open")
+        _legacy_error("Error(read_cfg.py): " + cname + ".cfg not open")
 
     datfile = tmp.read()
     tmp.close()

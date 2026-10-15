@@ -10,6 +10,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -56,7 +58,7 @@ def get_atomic_radius0(num):
     if not os.path.exists(name):
         name = ldir + '/' + base_py
         if not os.path.exists(name):
-            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+            _legacy_error("STOP: %s or %s file not found." % (base, base_py))
 
     # commented out 2020.06.23
     # ldir = os.path.dirname(SAE.__file__)
@@ -66,7 +68,7 @@ def get_atomic_radius0(num):
     #     else:
     #         name = 'atomic_radius.list.py'
     #         if not os.path.exists(name):
-    #             sys.exit("STOP: " + name + " file not found")
+    #             _legacy_error("STOP: " + name + " file not found")
 
     nlist = SAE.read_list_param(name)  # pre read
 
@@ -95,7 +97,7 @@ def get_atomic_radius1(atom):
     if not os.path.exists(name):
         name = ldir + '/' + base_py
         if not os.path.exists(name):
-            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+            _legacy_error("STOP: %s or %s file not found." % (base, base_py))
 
     # commented out 2020.06.23
     # ldir = os.path.dirname(SAE.__file__)
@@ -108,7 +110,7 @@ def get_atomic_radius1(atom):
     #             if os.path.exists(ldir + '/' + name):
     #                 name = ldir + '/' + name
     #             else:
-    #                 sys.exit("STOP: " + name + " file not found")
+    #                 _legacy_error("STOP: " + name + " file not found")
 
     nlist = SAE.read_list_param(name)  # pre read
 
@@ -142,7 +144,7 @@ def get_atomic_number1(atom):
     if not os.path.exists(name):
         name = ldir + '/' + base_py
         if not os.path.exists(name):
-            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+            _legacy_error("STOP: %s or %s file not found." % (base, base_py))
 
     # commented out 2020.06.23
     # ldir = os.path.dirname(SAE.__file__)
@@ -155,7 +157,7 @@ def get_atomic_number1(atom):
     #             if os.path.exists(ldir + '/' + name):
     #                 name = ldir + '/' + name
     #             else:
-    #                 sys.exit("STOP: " + name + " file not found")
+    #                 _legacy_error("STOP: " + name + " file not found")
 
     # ファイルの全行数を確保
     nlist = SAE.read_list_param(name)  # pre read
@@ -199,7 +201,7 @@ def get_atomic_symbol0(num):
     if not os.path.exists(name):
         name = ldir + '/' + base_py
         if not os.path.exists(name):
-            sys.exit("STOP: %s or %s file not found." % (base, base_py))
+            _legacy_error("STOP: %s or %s file not found." % (base, base_py))
 
     nlist = SAE.read_list_param(name)  # pre read
 

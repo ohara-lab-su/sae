@@ -1,0 +1,17 @@
+ FDMNES program, Revision 12th of June 2020        
+   Date = 24 07 2020                              
+   Time = 12 h 09 mn 56 s                         
+
+
+ Error opening the file:
+
+   fdmfile.txt
+
+          Status =   29
+
+          It does not exist or 
+          it is not in the good directory or
+          there is some bad spelling or
+          the line contains some extra hidden character !
+
+

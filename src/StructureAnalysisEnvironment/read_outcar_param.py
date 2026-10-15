@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ################################################################################
@@ -37,7 +39,7 @@ def read_outcar_param(cname, natom):
     elif os.path.exists(cname + ".gz"):
         GZIP = True
     else:
-        sys.exit("STOP: " + cname + " or " + cname + ".gz file not found")
+        _legacy_error("STOP: " + cname + " or " + cname + ".gz file not found")
 
     try:
         if GZIP:
@@ -47,7 +49,7 @@ def read_outcar_param(cname, natom):
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: " + cname + " or " + cname + ".gz does'nt open")
+        _legacy_error("STOP: " + cname + " or " + cname + ".gz does'nt open")
     finally:
         tmp.close()
 
@@ -70,7 +72,7 @@ def read_outcar_param(cname, natom):
             natom_outcar = int(lines[11])
 
     if natom != natom_outcar:
-        sys.exit("OUTCAR is inconsistent with POSCAR")
+        _legacy_error("OUTCAR is inconsistent with POSCAR")
 
     # 原子に働く力(およびステップごとの座標の読み込み
     loop = 0

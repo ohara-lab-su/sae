@@ -1,4 +1,2 @@
-pandas
-ase
-numpy
-matplotlib
+# Core only. Optional historical readers: pip install '.[analysis]'
+numpy>=1.17

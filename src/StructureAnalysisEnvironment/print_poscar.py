@@ -42,6 +42,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -91,7 +93,7 @@ def print_poscar(cname, STD,
             out = open(cname + '.vasp', 'w')
         except:
             out.close()
-            sys.exit("STOP:" + cname + ".vasp can't open")
+            _legacy_error("STOP:" + cname + ".vasp can't open")
 
     print("------------------------------------------------- START")
     print(title, file=out)

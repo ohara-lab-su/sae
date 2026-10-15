@@ -20,6 +20,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 ################################################################################
 
 import sys
@@ -61,7 +63,7 @@ if cname:
     print("OUTPUT file name:", cname + ".cfg")
 
 if not os.path.exists(cname + ".vasp"):
-    sys.exit(cname + ".vasp file not found")
+    _legacy_error(cname + ".vasp file not found")
 
 
 # def readcfg():

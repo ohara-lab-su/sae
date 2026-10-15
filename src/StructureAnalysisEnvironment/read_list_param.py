@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 # -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
@@ -33,13 +35,13 @@ from copy import deepcopy
 
 def read_list_param(name):
     if not os.path.exists(name):
-        sys.exit(name + " not found")
+        _legacy_error(name + " not found")
 
     try:
         tmp = open(name)
     except:
         tmp.close()
-        sys.exit("STOP: " + name + " does'nt open")
+        _legacy_error("STOP: " + name + " does'nt open")
 
     datalist = tmp.read()
     tmp.close()

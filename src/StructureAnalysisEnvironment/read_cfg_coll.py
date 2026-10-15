@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ################################################################################
@@ -55,7 +57,7 @@ def read_cfg_coll(cname, nloop, t, natom, nion, atoms, ion_site, position_loop):
         tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg_coll.py): " + cname + ".cfg not open")
+        _legacy_error("Error(read_cfg_coll.py): " + cname + ".cfg not open")
 
     datfile = tmp.read()
     tmp.close()
@@ -76,13 +78,13 @@ def read_cfg_coll(cname, nloop, t, natom, nion, atoms, ion_site, position_loop):
         tmp = datlines[lines + 7].split()
         natom0 = int(tmp[0])
         if natom0 != natom:
-            sys.exit("NATOM is inconsistent (read_cfg_coll.py)")
+            _legacy_error("NATOM is inconsistent (read_cfg_coll.py)")
 
         # 原子の種類の数
         tmp = datlines[lines + 8].split()
         nion0 = int(tmp[0])
         if nion0 != nion:
-            sys.exit("NION is inconsistent (read_cfg_coll.py)")
+            _legacy_error("NION is inconsistent (read_cfg_coll.py)")
 
         nmoles = datlines[lines + 9]
         angles = datlines[lines + 10]

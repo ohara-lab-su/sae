@@ -49,6 +49,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -78,13 +80,13 @@ def read_md(cname, nloop, atoms_index_j, position_loop):
     ## Open POSCAR file
     ##
     if not os.path.exists(cname):
-        sys.exit(cname + " file not found")
+        _legacy_error(cname + " file not found")
 
     try:
         tmp = open(cname)
     except:
         tmp.close()
-        sys.exit("STOP: " + cname + " does'nt open")
+        _legacy_error("STOP: " + cname + " does'nt open")
 
     datfile = tmp.read()
     tmp.close()
@@ -117,13 +119,13 @@ def read_md2(cname, nloop, atoms_index_j, position_loop, force_loop):
     ## Open POSCAR file
     ##
     if not os.path.exists(cname):
-        sys.exit(cname + " file not found")
+        _legacy_error(cname + " file not found")
 
     try:
         tmp = open(cname)
     except:
         tmp.close()
-        sys.exit("STOP: " + cname + " does'nt open")
+        _legacy_error("STOP: " + cname + " does'nt open")
 
     datfile = tmp.read()
     tmp.close()
@@ -161,13 +163,13 @@ def read_md3(cname, nloop, atoms_index_j, position_loop, force_loop):
     ## Open POSCAR file
     ##
     if not os.path.exists(cname):
-        sys.exit(cname + " file not found")
+        _legacy_error(cname + " file not found")
 
     try:
         tmp = open(cname)
     except:
         tmp.close()
-        sys.exit("STOP: " + cname + " does'nt open")
+        _legacy_error("STOP: " + cname + " does'nt open")
 
     datfile = tmp.read()
     tmp.close()

@@ -42,6 +42,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -65,7 +67,7 @@ import numpy as np
 # 引数版
 def conv_car2carABSa(scale0, t, natom, direct, position):
     if direct:
-        sys.exit("STOP: current is Direct.")
+        _legacy_error("STOP: current is Direct.")
 
     t1_x = t[0, 0]
     t1_y = t[1, 0]
@@ -121,7 +123,7 @@ def conv_car2carABSa(scale0, t, natom, direct, position):
 #
 def conv_car2carABS(scale0, t, natom, direct, position):
     if direct:
-        sys.exit("STOP: current is Direct.")
+        _legacy_error("STOP: current is Direct.")
 
     t1_x = t[0, 0]
     t1_y = t[1, 0]

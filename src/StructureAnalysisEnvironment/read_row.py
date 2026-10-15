@@ -15,6 +15,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -37,7 +39,7 @@ def read_row(name, column=0):
     elif os.path.exists(name + ".gz"):
         GZIP = True
     else:
-        sys.exit("STOP: " + name + " or " + name + ".gz file not found")
+        _legacy_error("STOP: " + name + " or " + name + ".gz file not found")
 
     try:
         if GZIP:
@@ -47,7 +49,7 @@ def read_row(name, column=0):
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: " + name + " or " + name + ".gz does'nt open")
+        _legacy_error("STOP: " + name + " or " + name + ".gz does'nt open")
     finally:
         tmp.close()
 

@@ -25,6 +25,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -52,7 +54,7 @@ def read_poscar_param(POSCAR):
     elif os.path.exists(POSCAR + ".gz"):
         GZIP = True
     else:
-        sys.exit("STOP: " + POSCAR + " or " + POSCAR + ".gz file not found")
+        _legacy_error("STOP: " + POSCAR + " or " + POSCAR + ".gz file not found")
 
     try:
         if GZIP:
@@ -63,7 +65,7 @@ def read_poscar_param(POSCAR):
         datfile = tmp.read()
     except:
         tmp.close()
-        sys.exit("STOP: " + POSCAR + " does'nt open")
+        _legacy_error("STOP: " + POSCAR + " does'nt open")
     finally:
         tmp.close()
 

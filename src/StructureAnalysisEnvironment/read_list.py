@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 # -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
@@ -33,13 +35,13 @@ comment_reg = re.compile('^#.*', re.IGNORECASE)
 ##
 def read_list1(name, find_list):
     if not os.path.exists(name):
-        sys.exit(name + " not found")
+        _legacy_error(name + " not found")
 
     try:
         tmp = open(name)
     except:
         tmp.close()
-        sys.exit("STOP: " + name + " does'nt open")
+        _legacy_error("STOP: " + name + " does'nt open")
 
     datalist = tmp.read()
     tmp.close()
@@ -62,7 +64,7 @@ def read_list1(name, find_list):
 ##
 def read_list3(name, find_list):
     if not os.path.exists(name):
-        sys.exit(name + " not found")
+        _legacy_error(name + " not found")
 
     tmp = open(name)
     datalist = tmp.read()
@@ -75,7 +77,7 @@ def read_list3(name, find_list):
         if not bool(comment_reg.match(datalines[i])):
             tmp = datalines[i].split()
             if not int(len(tmp)) >= 3:
-                sys.exit(name + " Format Error: datalines < 3 ")
+                _legacy_error(name + " Format Error: datalines < 3 ")
 
             find_list[j, 0] = tmp[0]
             find_list[j, 1] = tmp[1]
@@ -91,7 +93,7 @@ def read_list3(name, find_list):
 ##
 def read_list4(name, find_list):
     if not os.path.exists(name):
-        sys.exit(name + " not found")
+        _legacy_error(name + " not found")
 
     tmp = open(name)
     datalist = tmp.read()
@@ -104,7 +106,7 @@ def read_list4(name, find_list):
         if not bool(comment_reg.match(datalines[i])):
             tmp = datalines[i].split()
             if not int(len(tmp)) >= 4:
-                sys.exit(name + " Format Error: datalines < 4 ")
+                _legacy_error(name + " Format Error: datalines < 4 ")
 
             find_list[j, 0] = tmp[0]
             find_list[j, 1] = tmp[1]

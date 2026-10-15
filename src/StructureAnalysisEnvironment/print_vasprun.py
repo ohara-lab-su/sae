@@ -61,6 +61,8 @@
 #
 ################################################################################
 from __future__ import print_function
+
+from sae.errors import legacy_error as _legacy_error
 try:
     from .copyright import *
 except ImportError:
@@ -102,7 +104,7 @@ def print_vasprun0(OUTPUT, title, nloop, \
     #       out = open(name,'w')
     #   except:
     #       out.close()
-    #       sys.exit("STOP:"+name+" can't open")
+    #       _legacy_error("STOP:"+name+" can't open")
 
     SYSTEM = str(title)
 

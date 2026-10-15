@@ -73,6 +73,8 @@
 #
 ################################################################################
 from __future__ import print_function
+
+from sae.errors import legacy_error as _legacy_error
 try:
     from .copyright import *
 except ImportError:
@@ -108,7 +110,7 @@ def conv_direct2cara(ABS, scale0, t, natom, direct, position):
     :return:
     """
     if not direct:
-        sys.exit("STOP(conv_direct2car): current is not Direct.")
+        _legacy_error("STOP(conv_direct2car): current is not Direct.")
 
     ###############################################
     # 座標系を 1) direct --> cartesian
@@ -202,7 +204,7 @@ def conv_direct2cara(ABS, scale0, t, natom, direct, position):
 #
 def conv_direct2car(scale0, t, natom, direct, position):
     if not direct:
-        sys.exit("STOP(conv_direct2car): current is not Direct.")
+        _legacy_error("STOP(conv_direct2car): current is not Direct.")
 
     ###############################################
     # 座標系を 1) direct --> cartesian

@@ -18,6 +18,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -56,7 +58,7 @@ def print_fdmnes_inp0(outname='read_pdb.inp', atoms=None, MOL=False):
         out = open(outname, 'w')
     except:
         out.close()
-        sys.exit("STOP:" + outname + ".fdmnes file can't open")
+        _legacy_error("STOP:" + outname + ".fdmnes file can't open")
 
     # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
     a, b, c, alpha, beta, gamma, nat = SAEnv.conv_cellparam0(atoms)
@@ -164,7 +166,7 @@ def print_fdmnes_inp1(outname='read_pdb.inp', cell=None, MOL=False):
         out = open(outname, 'w')
     except:
         out.close()
-        sys.exit("STOP:" + outname + ".fdmnes file can't open")
+        _legacy_error("STOP:" + outname + ".fdmnes file can't open")
 
     # 基本並進系のセル情報をコンベンショナル系に変換(cellはASEの構造)
     a, b, c, alpha, beta, gamma, nat = SAEnv.conv_cellparam1(cell)

@@ -122,6 +122,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -183,7 +185,7 @@ def print_mx_dat(datname, STD,
         print("can't found OPENMXDATAPATH environment on yuur system")
         print("please export OPENMXDATAPATH=~/DFT_DATA13")
         print("STOP")
-        sys.exit()
+        _legacy_error()
 
     ############################################################################
     ## データーファイルパスとデフォルトPAO/VPS 情報のセット
@@ -218,7 +220,7 @@ def print_mx_dat(datname, STD,
     elif os.path.exists(HOMEPATH + '/openmx1/' + VPSLIST):
         vpslistpath = HOMEPATH + '/openmx1/' + VPSLIST
     else:
-        sys.exit("STOP: " + VPSLIST + " file not found")
+        _legacy_error("STOP: " + VPSLIST + " file not found")
 
     ############################################################################
     ## OpenMX(*.dat) 出力ファイル名をセット
@@ -276,7 +278,7 @@ def print_mx_dat(datname, STD,
         #        SUFFIX='H'
         #    fullname = vpspath+atoms_index_j[i]+'_'+pot+ver+SUFFIX+'.vps'
         #    if not os.path.exists(fullname):
-        #        sys.exit("STOP: VPS file not found")
+        #        _legacy_error("STOP: VPS file not found")
 
         vpsfile = SAEnv.ReadMxVps(fullname)
         electron[j] = vpsfile.get_valence_electron() / 2.0  # 初期なので非磁性を仮定
@@ -320,9 +322,9 @@ def print_mx_dat(datname, STD,
         pao_file = paopath + symbol + cutoff + '.pao'
 
         if not os.path.exists(pao_file):
-            sys.exit("STOP: " + pao_file + " not found")
+            _legacy_error("STOP: " + pao_file + " not found")
         if not os.path.exists(vps_file):
-            sys.exit("STOP: " + vps_file + " not found")
+            _legacy_error("STOP: " + vps_file + " not found")
 
         vps0 = symbol + cutoff + '-' + vps_orbit
         pao0 = symbol + '_' + pot + ver + opt

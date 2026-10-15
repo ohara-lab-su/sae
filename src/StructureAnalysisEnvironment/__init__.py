@@ -1,136 +1,18 @@
-﻿# -*- coding: utf-8 -*-
-################################################################################
-# __all__ = ["read_param_poscar", "read_poscar", "print_poscar", "conv_direct2car"]
+"""Historical API. New code should import from sae.<calculation_code>."""
+from importlib import import_module as _import_module
 
-################################################################################
-# gui function (using VPython and wxPython )
-# try:
-#    from gui.crystal_make_unit import *
-# except:
-#    pass
+_EXPORTS = {'Read': ('StructureAnalysisEnvironment.io.Read', 'Read'), 'write_fdmnes': ('StructureAnalysisEnvironment.io.ase_support.fdmnes', 'write_fdmnes'), 'write_fdmnes_inp': ('StructureAnalysisEnvironment.io.ase_support.fdmnes', 'write_fdmnes_inp'), 'options': ('sae.athena.spectra', 'options'), 'ReadVaspOutcar': ('sae.vasp.output.outcar', 'Outcar'), 'ReadVaspDoscar': ('sae.vasp.dos', 'DensityOfStates'), 'ReadVaspXdat': ('sae.vasp.trajectory', 'Trajectory'), 'ReadVaspVasprun': ('sae.vasp.output.vasprun', 'Vasprun'), 'ReadVaspOszicar': ('sae.vasp.output.oszicar', 'Oszicar'), 'ReadVaspEigenval': ('sae.vasp.bands.eigenval', 'Eigenvalues'), 'ReadVaspKpoints': ('sae.vasp.kpoints', 'Kpoints'), 'ReadVaspSymdat': ('sae.vasp.symmetry', 'Symmetry'), 'ReadProcar': ('sae.vasp.bands.procar', 'Projections'), 'ReadVaspPoscar': ('sae.vasp.structure_legacy', 'LegacyPoscar'), 'ReadVaspIncar': ('sae.vasp.parameters', 'Incar'), 'ReadVaspAcf': ('sae.vasp.charges', 'Charges'), 'ReadVaspPotcar': ('sae.vasp.pseudopotential', 'Potcar'), 'ReadVaspChgcar': ('sae.vasp.charge_density.reader', 'ChargeDensity'), 'WriteVaspChgcar': ('sae.vasp.charge_density.writer', 'Writer'), 'ReadVaspChgcarHeader': ('sae.vasp.charge_density.header', 'Header'), 'ReadVaspChgcarFooter': ('sae.vasp.charge_density.footer', 'Footer'), 'SumChgcar': ('sae.vasp.charge_density.operations', 'SumChargeDensity'), 'ReadLobCohp': ('sae.lobster.bonding', 'COHP'), 'ReadLobDos': ('sae.lobster.dos', 'DensityOfStates'), 'ReadLobOut': ('sae.lobster.output', 'Output'), 'ReadMd': ('sae.openmx.trajectory', 'Trajectory'), 'ReadMxVps': ('sae.openmx.pseudopotential.file', 'Pseudopotential'), 'ReadMxVpsList': ('sae.openmx.pseudopotential.catalog', 'PseudopotentialCatalog'), 'ReadMxDat': ('sae.openmx.input_legacy', 'LegacyInput'), 'ReadMxOut': ('sae.openmx.output', 'Output'), 'ReadMxDftscf': ('sae.openmx.scf', 'SCFHistory'), 'ReadMxDosMethod': ('sae.openmx.dos._base', 'DOSMethods'), 'ReadMxTdos': ('sae.openmx.dos.total_legacy', 'LegacyTotalDOS'), 'ReadMxPdos': ('sae.openmx.dos.projected', 'ProjectedDOS'), 'ReadWienDos': ('sae.wien2k.dos', 'DensityOfStates'), 'ReadWienOutput0': ('sae.wien2k.output.potential', 'PotentialOutput'), 'ReadWienOutputt': ('sae.wien2k.output.bands', 'BandOutput'), 'ReadWienXspec': ('sae.wien2k.spectra.xspec', 'XSpec'), 'ReadWienTxspec': ('sae.wien2k.spectra.txspec', 'TXSpec'), 'ReadWienScf': ('sae.wien2k.output.scf', 'SCFHistory'), 'ReadHiSets': ('sae.hilapw.input_legacy', 'LegacyInput'), 'ReadPwIn': ('sae.quantum_espresso.input', 'Input'), 'ReadPwOut': ('sae.quantum_espresso.output', 'Output'), 'ReadPwTdos': ('sae.quantum_espresso.dos.total', 'TotalDOS'), 'ReadPwPdos': ('sae.quantum_espresso.dos.projected', 'ProjectedDOS'), 'ReadPwXanes': ('sae.quantum_espresso.spectra', 'XANES'), 'ReadFdmTxt': ('sae.fdmnes.spectra.absorption', 'AbsorptionSpectrum'), 'plot_fdm_xas': ('sae.fdmnes.spectra.convolution', 'plot_fdm_xas'), 'ReadFdmConv': ('sae.fdmnes.spectra.convolution', 'ConvolvedSpectrum'), 'ReadFdmInp': ('sae.fdmnes.input', 'Input'), 'ReadFdmBav': ('sae.fdmnes.output.dispatch', 'Output'), 'ReadFdmBav2016': ('sae.fdmnes.output.v2016', 'Output2016'), 'ReadFdmBav2020': ('sae.fdmnes.output.v2020', 'Output2020'), 'ReadFdmSd': ('sae.fdmnes.dos.dispatch', 'DensityOfStates'), 'ReadFdmSd2016': ('sae.fdmnes.dos.v2016', 'DensityOfStates2016'), 'ReadFdmSd2020': ('sae.fdmnes.dos.v2020', 'DensityOfStates2020'), 'ReadFdmFdmfile': ('sae.fdmnes.batch', 'BatchInput'), 'WriteFdmInp': ('sae.fdmnes.writer', 'InputWriter'), 'WriteFdmfile': ('sae.fdmnes.batch_writer', 'BatchWriter'), 'ReadBaderAvf': ('sae.bader.volumes.atomic', 'AtomicVolumes'), 'ReadBaderBcf': ('sae.bader.charges', 'Charges'), 'ReadBaderBvat': ('sae.bader.volumes.grid', 'VolumeGrid'), 'WriteBaderVolume': ('sae.bader.volumes.writer', 'VolumeWriter'), 'UtilBader': ('sae.bader.volumes.operations', 'VolumeOperations'), 'ReadRmcpotCfg': ('sae.rmcpot.configuration', 'Configuration'), 'ReadAthenaNor': ('sae.athena.spectra', 'NormalizedSpectrum'), 'plot_athena_nor': ('sae.athena.spectra', 'plot_athena_nor'), 'ReadPfformat': ('sae.pf.document', 'Document'), 'Method': ('StructureAnalysisEnvironment.Method.Method', 'Method'), 'Logger': ('StructureAnalysisEnvironment.util.logger', 'Logger'), 'get_loglevel_object': ('StructureAnalysisEnvironment.util.logger_support', 'get_loglevel_object'), 'init_logger': ('StructureAnalysisEnvironment.util.logger_support', 'init_logger'), 'write': ('StructureAnalysisEnvironment.write', 'write'), 'sort_atom_index_j': ('StructureAnalysisEnvironment.sort_atoms_index_j', 'sort_atom_index_j'), 'sort_atom_number_j': ('StructureAnalysisEnvironment.sort_atoms_number_j', 'sort_atom_number_j'), 'sort_fix': ('StructureAnalysisEnvironment.sort_fix', 'sort_fix'), 'sort_position': ('StructureAnalysisEnvironment.sort_position', 'sort_position'), 'chk_pdb_cryst1': ('StructureAnalysisEnvironment.chk_pdb_cryst1', 'chk_pdb_cryst1'), 'print_poscar': ('StructureAnalysisEnvironment.print_poscar', 'print_poscar'), 'print_poscar4': ('StructureAnalysisEnvironment.print_poscar4', 'print_poscar4'), 'print_sets': ('StructureAnalysisEnvironment.print_sets', 'print_sets'), 'print_vasprun0': ('StructureAnalysisEnvironment.print_vasprun', 'print_vasprun0'), 'print_mx_dat': ('StructureAnalysisEnvironment.print_mx_dat', 'print_mx_dat'), 'print_fdmnes': ('StructureAnalysisEnvironment.print_fdmnes', 'print_fdmnes'), 'print_fdmnes0': ('StructureAnalysisEnvironment.print_fdmnes', 'print_fdmnes0'), 'print_fdmnes1': ('StructureAnalysisEnvironment.print_fdmnes', 'print_fdmnes1'), 'print_fdmnes_inp': ('StructureAnalysisEnvironment.print_fdmnes_inp', 'print_fdmnes_inp'), 'print_fdmnes_inp0': ('StructureAnalysisEnvironment.print_fdmnes_inp', 'print_fdmnes_inp0'), 'print_fdmnes_inp1': ('StructureAnalysisEnvironment.print_fdmnes_inp', 'print_fdmnes_inp1'), 'print_pwscf_scf': ('StructureAnalysisEnvironment.print_pwscf_scf', 'print_pwscf_scf'), 'print_rmcpot_cfg': ('StructureAnalysisEnvironment.print_rmcpot_cfg', 'print_rmcpot_cfg'), 'print_rmcpot_cfg_raw': ('StructureAnalysisEnvironment.print_rmcpot_cfg_raw', 'print_rmcpot_cfg_raw'), 'get_atom_start': ('StructureAnalysisEnvironment.get_atom_start', 'get_atom_start'), 'get_atomic_radius0': ('StructureAnalysisEnvironment.get_atomic_radius', 'get_atomic_radius0'), 'get_atomic_radius1': ('StructureAnalysisEnvironment.get_atomic_radius', 'get_atomic_radius1'), 'get_atomic_number1': ('StructureAnalysisEnvironment.get_atomic_radius', 'get_atomic_number1'), 'get_atomic_symbol0': ('StructureAnalysisEnvironment.get_atomic_radius', 'get_atomic_symbol0'), 'get_atomic_weight0': ('StructureAnalysisEnvironment.get_atomic_weight', 'get_atomic_weight0'), 'get_atomic_weight1': ('StructureAnalysisEnvironment.get_atomic_weight', 'get_atomic_weight1'), 'get_bond_info_param': ('StructureAnalysisEnvironment.get_bond_info', 'get_bond_info_param'), 'get_bond_info': ('StructureAnalysisEnvironment.get_bond_info', 'get_bond_info'), 'get_max_md': ('StructureAnalysisEnvironment.get_max_md', 'get_max_md'), 'get_vasp_orbital_info': ('StructureAnalysisEnvironment.get_vasp_orbital_info', 'get_vasp_orbital_info'), 'get_calinfo': ('StructureAnalysisEnvironment.get_calinfo', 'get_calinfo'), 'find_datfile': ('StructureAnalysisEnvironment.find_datfile', 'find_datfile'), 'find_datfile1': ('StructureAnalysisEnvironment.find_datfile', 'find_datfile1'), 'find_datfiles': ('StructureAnalysisEnvironment.find_datfile', 'find_datfiles'), 'find_suffix1': ('StructureAnalysisEnvironment.find_suffix', 'find_suffix1'), 'find_suffix2': ('StructureAnalysisEnvironment.find_suffix', 'find_suffix2'), 'find_suffix3': ('StructureAnalysisEnvironment.find_suffix', 'find_suffix3'), 'conv_car2carABSa': ('StructureAnalysisEnvironment.conv_car2carABS', 'conv_car2carABSa'), 'conv_car2carABS': ('StructureAnalysisEnvironment.conv_car2carABS', 'conv_car2carABS'), 'conv_car2directa': ('StructureAnalysisEnvironment.conv_car2direct', 'conv_car2directa'), 'conv_car2direct': ('StructureAnalysisEnvironment.conv_car2direct', 'conv_car2direct'), 'conv_cellparam': ('StructureAnalysisEnvironment.conv_cellparam', 'conv_cellparam'), 'conv_cellparam0': ('StructureAnalysisEnvironment.conv_cellparam', 'conv_cellparam0'), 'conv_cellparam1': ('StructureAnalysisEnvironment.conv_cellparam', 'conv_cellparam1'), 'plot_xas': ('StructureAnalysisEnvironment.plot_xas', 'plot_xas'), 'plot_sum_xas': ('StructureAnalysisEnvironment.plot_sum_xas', 'plot_sum_xas'), 'del_comment': ('StructureAnalysisEnvironment.del_commentout', 'del_comment'), 'read_row': ('StructureAnalysisEnvironment.read_row', 'read_row'), 'read_dataline': ('StructureAnalysisEnvironment.read_dataline', 'read_dataline'), 'read_dataline1': ('StructureAnalysisEnvironment.read_dataline', 'read_dataline1'), 'read_dat': ('StructureAnalysisEnvironment.read_dat', 'read_dat'), 'read_dat2': ('StructureAnalysisEnvironment.read_dat', 'read_dat2'), 'read_dat5': ('StructureAnalysisEnvironment.read_dat', 'read_dat5'), 'read_list1': ('StructureAnalysisEnvironment.read_list', 'read_list1'), 'read_list3': ('StructureAnalysisEnvironment.read_list', 'read_list3'), 'read_list4': ('StructureAnalysisEnvironment.read_list', 'read_list4'), 'read_list_param': ('StructureAnalysisEnvironment.read_list_param', 'read_list_param'), 'read_md': ('StructureAnalysisEnvironment.read_md', 'read_md'), 'read_md2': ('StructureAnalysisEnvironment.read_md', 'read_md2'), 'read_md3': ('StructureAnalysisEnvironment.read_md', 'read_md3'), 'read_md_param': ('StructureAnalysisEnvironment.read_md_param', 'read_md_param'), 'rotate_z': ('StructureAnalysisEnvironment.func_rotate', 'rotate_z'), 'rotate_y': ('StructureAnalysisEnvironment.func_rotate', 'rotate_y'), 'rotate_euler': ('StructureAnalysisEnvironment.func_rotate', 'rotate_euler'), 'sphere_integral_of_elf': ('StructureAnalysisEnvironment.sphere_integral_of_elf', 'sphere_integral_of_elf'), 'change_density': ('StructureAnalysisEnvironment.change_density', 'change_density'), 'conv_cfg2vaspa': ('StructureAnalysisEnvironment.conv_cfg2vasp', 'conv_cfg2vaspa'), 'conv_direct2cara': ('StructureAnalysisEnvironment.conv_direct2car', 'conv_direct2cara'), 'conv_direct2car': ('StructureAnalysisEnvironment.conv_direct2car', 'conv_direct2car'), 'conv_direct2carABSa': ('StructureAnalysisEnvironment.conv_direct2carABS', 'conv_direct2carABSa'), 'conv_direct2carABS': ('StructureAnalysisEnvironment.conv_direct2carABS', 'conv_direct2carABS'), 'conv_scale21a': ('StructureAnalysisEnvironment.conv_scale21', 'conv_scale21a'), 'conv_scale21': ('StructureAnalysisEnvironment.conv_scale21', 'conv_scale21'), 'conv_vasp2cfga': ('StructureAnalysisEnvironment.conv_vasp2cfg', 'conv_vasp2cfga'), 'conv_vasp2cfg': ('StructureAnalysisEnvironment.conv_vasp2cfg', 'conv_vasp2cfg'), 'extract_struct0': ('StructureAnalysisEnvironment.extract_struct0', 'extract_struct0'), 'extract_struct1': ('StructureAnalysisEnvironment.extract_struct1', 'extract_struct1'), 'extract_struct_param': ('StructureAnalysisEnvironment.extract_struct_param', 'extract_struct_param'), 'make_supercell0': ('StructureAnalysisEnvironment.make_supercell0', 'make_supercell0'), 'make_supercell1': ('StructureAnalysisEnvironment.make_supercell1', 'make_supercell1'), 'make_supercell_param': ('StructureAnalysisEnvironment.make_supercell_param', 'make_supercell_param'), 'make_supercell_zb': ('StructureAnalysisEnvironment.make_supercell_zb', 'make_supercell_zb'), 'move_atoms1': ('StructureAnalysisEnvironment.move_atoms', 'move_atoms1'), 'move_atoms0': ('StructureAnalysisEnvironment.move_atoms', 'move_atoms0'), 'read_cfg': ('StructureAnalysisEnvironment.read_cfg', 'read_cfg'), 'read_cfg_coll': ('StructureAnalysisEnvironment.read_cfg_coll', 'read_cfg_coll'), 'read_cfg_coll_param': ('StructureAnalysisEnvironment.read_cfg_coll_param', 'read_cfg_coll_param'), 'read_cfg_param': ('StructureAnalysisEnvironment.read_cfg_param', 'read_cfg_param'), 'read_outcar_param': ('StructureAnalysisEnvironment.read_outcar_param', 'read_outcar_param'), 'read_outcar_position': ('StructureAnalysisEnvironment.read_outcar_position', 'read_outcar_position'), 'read_poscar': ('StructureAnalysisEnvironment.read_poscar', 'read_poscar'), 'read_poscar_param': ('StructureAnalysisEnvironment.read_poscar_param', 'read_poscar_param'), 'read_sets': ('StructureAnalysisEnvironment.read_sets', 'read_sets'), 'read_sets_param': ('StructureAnalysisEnvironment.read_sets_param', 'read_sets_param'), 'read_vasprun0': ('StructureAnalysisEnvironment.read_vasprun0', 'read_vasprun0'), 'read_vasprun1': ('StructureAnalysisEnvironment.read_vasprun1', 'read_vasprun1'), 'read_vasprun2': ('StructureAnalysisEnvironment.read_vasprun2', 'read_vasprun2')}
+__all__ = list(_EXPORTS)
 
-################################################################################
-# current (using Numpy and Matplotlib )
+def __getattr__(name):
+    if name not in _EXPORTS:
+        raise AttributeError("{} has no attribute {!r}".format(__name__, name))
+    module, attribute = _EXPORTS[name]
+    value = getattr(_import_module(module), attribute)
+    globals()[name] = value
+    return value
 
-# Python3 のときはたとえば、
-# from Read import * ではダメで相対的に記述
-# from .Read improt * としないとほぼほぼうまく動かない
-# Python2 はどちらでも OK
+def __dir__():
+    return sorted(set(globals()) | set(__all__))
 
-#################################################################################
-
-from .copyright import *
-# from StructureAnalysisEnvironment.io import __init__
-from .io import *
-# from StructureAnalysisEnvironment.Method import __init__
-from .Method import *
-
-# from .util import __init__
-from .util import *
-
-# general
-from .write import *
-
-# general ( sort function )
-from .sort_atoms_index_j import *
-from .sort_atoms_number_j import *
-from .sort_fix import *
-from .sort_position import *
-
-from .chk_pdb_cryst1 import *
-
-# general (print function)
-from .print_poscar import *
-from .print_poscar4 import *
-from .print_sets import *
-from .print_vasprun import *
-from .print_mx_dat import *
-from .print_fdmnes import *
-from .print_fdmnes_inp import *
-from .print_pwscf_scf import *
-from .print_rmcpot_cfg import *
-from .print_rmcpot_cfg_raw import *
-
-# general (get function)
-from .get_atom_start import *
-from .get_atomic_radius import *
-from .get_atomic_weight import *
-from .get_bond_info import *
-from .get_max_md import *
-from .get_vasp_orbital_info import *
-from .get_calinfo import *
-
-# general (find file function)
-from .find_datfile import *
-from .find_suffix import *
-
-# general (structure converter)
-from .conv_car2carABS import *  # general
-from .conv_car2direct import *  # general
-from .conv_cellparam import *  # FDMNES
-
-# function for WIEN2k
-from .plot_xas import *
-from .plot_sum_xas import *
-
-# delete function
-from .del_commentout import *
-
-# read function
-from .read_row import *
-from .read_dataline import *
-from .read_dat import *
-from .read_list import *
-from .read_list_param import *
-from .read_md import *
-from .read_md_param import *
-
-# mathematica function
-from .func_rotate import *
-
-# ELF/CHG
-from .sphere_integral_of_elf import *
-
-################################################################################
-# function 2
-
-from .change_density import *
-
-from .conv_cfg2vasp import *
-
-from .conv_direct2car import *
-from .conv_direct2carABS import *
-from .conv_scale21 import *
-from .conv_vasp2cfg import *
-
-from .extract_struct0 import *
-from .extract_struct1 import *
-from .extract_struct_param import *
-
-from .make_supercell0 import *
-from .make_supercell1 import *
-from .make_supercell_param import *
-from .make_supercell_zb import *
-from .move_atoms import *
-
-# for RMC_pot
-from .read_cfg import *
-from .read_cfg_coll import *
-from .read_cfg_coll_param import *
-from .read_cfg_param import *
-
-# beta version
-from .read_outcar_param import *
-from .read_outcar_position import *
-
-from .read_poscar import *
-from .read_poscar_param import *
-
-from .read_sets import *
-from .read_sets_param import *
-
-from .read_vasprun0 import *
-from .read_vasprun1 import *
-from .read_vasprun2 import *
-
-from .version import __version__
+from sae import __version__

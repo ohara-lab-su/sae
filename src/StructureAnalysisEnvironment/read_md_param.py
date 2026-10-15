@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 # -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
@@ -45,13 +47,13 @@ def read_md_param(cname):
     ## Open MD file
     ##
     if not os.path.exists(cname):
-        sys.exit(cname + " file not found")
+        _legacy_error(cname + " file not found")
 
     try:
         tmp = open(cname)
     except:
         tmp.close()
-        sys.exit("STOP: " + cname + " does'nt open")
+        _legacy_error("STOP: " + cname + " does'nt open")
 
     datfile = tmp.read()
     tmp.close()

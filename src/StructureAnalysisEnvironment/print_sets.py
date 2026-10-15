@@ -8,6 +8,8 @@
 ################################################################################
 from __future__ import print_function
 
+from sae.errors import legacy_error as _legacy_error
+
 try:
     from .copyright import *
 except ImportError:
@@ -41,13 +43,13 @@ def print_sets(cname, STD,
         out = sys.stdout
     else:
         if os.path.exists(cname):
-            sys.exit("STOP(print_sets.py): " + cname + " exists")
+            _legacy_error("STOP(print_sets.py): " + cname + " exists")
         else:
             try:
                 out = open(cname, 'w')
             except:
                 out.close()
-                sys.exit("STOP(print_sets.py): " + cname + " does'nt open")
+                _legacy_error("STOP(print_sets.py): " + cname + " does'nt open")
 
     print(title, file=out)
     print("-----nspin", file=out)

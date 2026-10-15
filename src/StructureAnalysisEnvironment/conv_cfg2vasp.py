@@ -37,6 +37,8 @@
 #
 ################################################################################
 from __future__ import print_function
+
+from sae.errors import legacy_error as _legacy_error
 try:
     from .copyright import *
 except ImportError:
@@ -65,7 +67,7 @@ def conv_cfg2vaspa(scale, t, natom, direct, position):
     :return:
     """
     if not direct:
-        sys.exit("STOP: input file is not direct mode")
+        _legacy_error("STOP: input file is not direct mode")
 
     t1_x = t[0, 0]
     t1_y = t[1, 0]

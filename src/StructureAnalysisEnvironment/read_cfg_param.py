@@ -1,3 +1,5 @@
+
+from sae.errors import legacy_error as _legacy_error
 # -*- coding: utf-8 -*-
 ################################################################################
 # K.NAKADA, kengo.nakada@gmail.com
@@ -38,7 +40,7 @@ def read_cfg_param(cname):
         tmp = open(cname + '.cfg')
     except:
         tmp.close()
-        sys.exit("Error(read_cfg_param.py): " + cname + ".cfg not open")
+        _legacy_error("Error(read_cfg_param.py): " + cname + ".cfg not open")
 
     datfile = tmp.read()
     tmp.close()
