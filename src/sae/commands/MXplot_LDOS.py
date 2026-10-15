@@ -1,0 +1,221 @@
+#!/usr/bin/env python
+# Copyright Kengo NAKADA; SAE class library.
+from __future__ import print_function
+from sae.openmx.pdos import ReadMxPdos
+from sae.openmx.tdos import ReadMxTdos
+
+__author__ = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2015, Kengo NAKADA"
+__license__ = "MIT"
+import sys
+import os
+import optparse
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
+
+def options():
+    from sae.common.paths import FileDiscovery
+
+    name = "openmx"
+    suffix_tdos = ".DOS.Tetrahedron"
+    suffix_pdos = ".PDOS.Tetrahedron"
+    suffix_tdos_g = ".DOS.Gaussian"
+    suffix_pdos_g = ".PDOS.Gaussian"
+    parser = optparse.OptionParser()
+    parser.add_option("-i", "--input", dest="INPUT", default=name)
+    parser.add_option("-d", "--dat", dest="DATFILE")
+    parser.add_option("-n", "--nw", action="store_true", default=False)
+    parser.add_option("-g", "--gaussian", action="store_true", default=False)
+    parser.add_option("--emax", dest="EMAX")
+    parser.add_option("--emin", dest="EMIN")
+    parser.add_option("--ymax", dest="YMAX")
+    options, args = parser.parse_args()
+    plot_atoms = []
+    if len(args) > 0:
+        for i in range(0, len(args)):
+            plot_atoms.append(int(args[i]))
+    else:
+        plot_atoms = [1]
+    if options.gaussian:
+        print("GAUSSIAN MODE")
+        suffix_tdos = suffix_tdos_g
+        suffix_pdos = suffix_pdos_g
+    if not os.path.exists(name + ".out") or not os.path.exists(name + ".out.gz"):
+        try:
+            options.INPUT = FileDiscovery().find_datfile("out")
+        except:
+            pass
+    elif not os.path.exists(name + ".dat") or not os.path.exists(name + ".dat"):
+        try:
+            options.INPUT = FileDiscovery().find_datfile("dat")
+        except:
+            pass
+    if not options.DATFILE:
+        options.DATFILE = options.INPUT
+    return [
+        options.INPUT,
+        options.DATFILE,
+        suffix_tdos,
+        suffix_pdos,
+        options.nw,
+        options.EMAX,
+        options.EMIN,
+        options.YMAX,
+        plot_atoms,
+    ]
+
+
+if __name__ == "__main__":
+    (
+        name,
+        datname,
+        suffix_tdos,
+        suffix_pdos,
+        NO_WINDOW_FLAG,
+        OPT_EMAX,
+        OPT_EMIN,
+        OPT_YMAX,
+        plot_atoms,
+    ) = options()
+    if OPT_EMAX:
+        print("Emax=", OPT_EMAX)
+    if OPT_EMIN:
+        print("Emin=", OPT_EMIN)
+    if OPT_YMAX:
+        print("Ymax=", OPT_YMAX)
+    if len(plot_atoms) > 1:
+        print("Plot Atoms:")
+        for i in plot_atoms:
+            print(i, end="")
+        print("")
+    out = sys.stdout
+    pdos = ReadMxPdos(name, suffix_pdos)
+    NSPIN = pdos.get_ispin()
+    NATOM = pdos.get_natom()
+    TITLE = pdos.get_title()
+    EFERMI = 0.0
+    tdos = ReadMxTdos(name, suffix_tdos)
+    EMAX = tdos.get_emax()
+    EMIN = tdos.get_emin()
+    NEDOS = tdos.get_nedos()
+    ENG = tdos.get_eng()
+    module_name = "sae._class_registry"
+    FLAG_DATFILE = False
+    if os.path.exists(datname + ".out") or os.path.exists(datname + ".out" + ".gz"):
+        class_name = "ReadMxOut"
+        datname = datname + ".out"
+        FLAG_DATFILE = True
+    elif os.path.exists(datname + ".dat") or os.path.exists(datname + ".dat" + ".gz"):
+        class_name = "ReadMxDat"
+        datname = datname + ".dat"
+        FLAG_DATFILE = True
+    if FLAG_DATFILE:
+        try:
+            module = __import__(module_name, globals(), locals(), [class_name], 0)
+        except:
+            module = __import__(module_name, fromlist=[class_name])
+        klass = getattr(module, class_name)
+        dat = klass(datname)
+        NION = dat.get_nion()
+        atoms = dat.get_atoms_index()
+        atoms_j = dat.get_atoms_j()
+    plt.rcParams["font.size"] = 20
+    plt.rcParams["legend.fontsize"] = 10
+    plt.rcParams["axes.linewidth"] = 1.5
+    for spin in range(NSPIN):
+        if NSPIN == 1:
+            plt.axes([0.13, 0.13, 0.8, 0.8])
+            plt.title(TITLE)
+        if NSPIN == 2:
+            if spin == 0:
+                plt.axes([0.13, 0.53, 0.8, 0.4])
+                plt.title(TITLE)
+            if spin == 1:
+                plt.axes([0.13, 0.13, 0.8, 0.4])
+        j = 0
+        for atom in plot_atoms:
+            if len(plot_atoms) > 1:
+                if atom == 0:
+                    sys.exit("STOP:INPUT ERROR, atom= 0")
+            atom -= 1
+            if FLAG_DATFILE:
+                atom_label = str(atoms[atoms_j[atom]]) + str(atom + 1)
+                if NSPIN == 1:
+                    print("atom =", atom + 1, atom_label)
+                else:
+                    print(
+                        "atom(spin) =", atom + 1, "(" + str(spin + 1) + ")", atom_label
+                    )
+            else:
+                atom_label = str(atom)
+                if NSPIN == 1:
+                    print("atom =", atom + 1)
+                else:
+                    print("atom(spin) =", atom + 1, "(" + str(spin + 1) + ")")
+            INTTDOS = tdos.get_inttdos(spin)
+            TDOS = tdos.get_tdos(spin)
+            plt.fill_between(
+                ENG - EFERMI, TDOS, color="#cccccc", linewidth=2, label="total"
+            )
+            c = cm.prism(float(j) / (NATOM * 3))
+            LDOS = pdos.get_ldos(0, atom, spin)
+            plt.plot(
+                ENG - EFERMI,
+                LDOS,
+                linestyle=":",
+                color=c,
+                linewidth=2,
+                label=atom_label + "-s",
+            )
+            j += 1
+            c = cm.prism(float(j) / (NATOM * 3))
+            LDOS = pdos.get_ldos(1, atom, spin)
+            plt.plot(
+                ENG - EFERMI,
+                LDOS,
+                linestyle="-",
+                color=c,
+                linewidth=2,
+                label=atom_label + "-p",
+            )
+            j += 1
+            c = cm.prism(float(j) / (NATOM * 3))
+            LDOS = pdos.get_ldos(2, atom, spin)
+            plt.plot(
+                ENG - EFERMI,
+                LDOS,
+                linestyle="--",
+                color=c,
+                linewidth=2,
+                label=atom_label + "-d",
+            )
+            j += 1
+            plt.ylim(ymin=0)
+        if spin == 0:
+            yl = plt.ylabel("DOS/eV", fontsize=20)
+        if OPT_EMAX:
+            plt.xlim(xmax=int(OPT_EMAX))
+        if OPT_EMIN:
+            plt.xlim(xmin=int(OPT_EMIN))
+        if OPT_YMAX:
+            plt.ylim(ymax=int(OPT_YMAX))
+        if NSPIN == 2:
+            if spin == 0:
+                plt.xticks([])
+            if spin == 1:
+                xmin, xmax, ymin, ymax = plt.axis()
+                plt.ylim([ymax, 0])
+        plt.axvline(x=0, color="black", linewidth=1)
+    plt.xlabel("$E -  E_{\\mathrm{F}}$ [eV]", fontsize=20)
+    leg = plt.legend(fontsize=12)
+    leg.get_frame().set_alpha(0.5)
+    plt.savefig("LDOS.eps")
+    plt.savefig("LDOS.pdf")
+    plt.savefig("LDOS.png")
+    if not NO_WINDOW_FLAG:
+        plt.show()
+    plt.close("all")

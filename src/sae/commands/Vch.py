@@ -1,0 +1,130 @@
+#!/usr/bin/env python
+# Copyright Kengo NAKADA; SAE class library.
+from __future__ import print_function
+from sae.vasp.incar import ReadVaspIncar
+from sae.vasp.kpoints import ReadVaspKpoints
+from sae.vasp.poscar import ReadVaspPoscar
+from sae.vasp.potcar import ReadVaspPotcar
+
+__author__ = "Kengo NAKADA"
+__maintainer__ = "Kengo NAKADA"
+__credits__ = ["Kengo NAKADA"]
+__email__ = "kengo.nakada@gmail.com"
+__copyright__ = "Copyright 2014, Kengo NAKADA"
+__license__ = "MIT"
+import sys
+import os
+import glob
+import optparse
+
+try:
+    from x_logger import XLogger
+except ImportError:
+    pass
+
+
+def options():
+    parser = optparse.OptionParser()
+    parser.add_option("-i", "--input", dest="INPUT")
+    parser.add_option("-o", "--output", dest="OUTPUT")
+    parser.add_option("-v", "--vacuum")
+    options, args = parser.parse_args()
+
+
+if __name__ == "__main__":
+    if not os.path.exists("INCAR"):
+        sys.exit("STOP: INCAR not found")
+    if not os.path.exists("KPOINTS"):
+        sys.exit("STOP: KPOINTS not found")
+    if not os.path.exists("POSCAR"):
+        sys.exit("STOP: POSCAR not found")
+    if not os.path.exists("POTCAR"):
+        sys.exit("STOP: POTCAR not found")
+    try:
+        logger = XLogger(log_level="debug")
+    except:
+        import logging
+
+        logger = logging.getLogger("dummy")
+        logger.addHandler(logging.NullHandler())
+    incar = ReadVaspIncar(logger=logger)
+    poscar = ReadVaspPoscar(logger=logger)
+    potcar = ReadVaspPotcar()
+    print("ISTART = %s" % str(incar.istart))
+    print("ICHARG = %s" % str(incar.icharg))
+    if incar.ispin > 1:
+        print("")
+        print("ISPIN  = %s" % str(incar.ispin))
+    if incar.gga:
+        print("GGA    = %s" % str(incar.gga))
+    print("")
+    print("ISMEAR = %s" % str(incar.ismear))
+    print("SIGMA  = %s" % str(incar.sigma))
+    if incar.nbands is not None:
+        print("NBANDS = %s" % str(incar.nbands))
+    print("")
+    print("NELM   = %s" % str(incar.nelm))
+    print("NSW    = %s" % str(incar.nsw))
+    if incar.nsw > 0:
+        print("")
+        print("IBRION = %s" % str(incar.ibrion))
+        print("")
+    print("EDIFF  = %s" % str(incar.ediff))
+    print("EDIFFG = %s" % str(incar.ediffg))
+    kpoints = ReadVaspKpoints()
+    kx, ky, kz = kpoints.get_kpoints()
+    if kpoints.FLAGS[5]:
+        gamma_FLAG = True
+        monk_FLAG = False
+        print("")
+        print("Gamma")
+    else:
+        gamma_FLAG = False
+        monk_FLAG = True
+        print("")
+        print("Monk")
+    print("")
+    print("Kx     = %s" % str(kx))
+    print("Ky     = %s" % str(ky))
+    print("Kz     = %s" % str(kz))
+    if incar.nsw > 0:
+        poscar.get_selective()
+        print("")
+        if poscar.selective:
+            print("Selective Dynamics")
+        else:
+            print("non Selective Dynamics")
+    if incar.isym != 1:
+        print("")
+        print("ISYM   = %s" % str(incar.isym))
+    if incar.laechg:
+        print("")
+        print("LAECHG = %s" % str(incar.laechg))
+        print("NGXF   = %s" % str(incar.ngxf))
+        print("NGYF   = %s" % str(incar.ngyf))
+        print("NGZF   = %s" % str(incar.ngzf))
+    print("")
+    print("LREAL  = %s" % str(incar.lreal))
+    print("")
+    print("NPAR   = %s" % str(incar.npar))
+    print("")
+    print("---- POSCAR ----")
+    print("", end="")
+    for i in range(len(poscar.atoms_index)):
+        print("%s " % str(poscar.atoms_index[i]), end="")
+    print("")
+    print("", end="")
+    for i in range(len(poscar.atoms)):
+        print("%s " % str(poscar.atoms[i]), end="")
+    print("")
+    print("")
+    print("---- POTCAR ----")
+    print("", end="")
+    for i in range(len(poscar.atoms_index)):
+        print("%s " % str(potcar.atoms_index[i]), end="")
+    print("")
+    print(" (zval)")
+    print("", end="")
+    for i in range(len(potcar.atoms_zval)):
+        print("%s " % str(potcar.atoms_zval[i]), end="")
+    print("")

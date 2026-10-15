@@ -1,0 +1,61 @@
+{
+  "result": {
+    "atoms": {
+      "dtype": "int64",
+      "shape": [
+        1
+      ],
+      "values": [
+        1
+      ]
+    },
+    "atoms_index": {
+      "dtype": "|S2",
+      "shape": [
+        1
+      ],
+      "values": [
+        {
+          "bytes": "4375"
+        }
+      ]
+    },
+    "kpoints": {
+      "dtype": "int64",
+      "shape": [
+        3
+      ],
+      "values": [
+        2,
+        2,
+        2
+      ]
+    },
+    "lattices": {
+      "dtype": "float64",
+      "shape": [
+        6
+      ],
+      "values": [
+        3.0,
+        4.0,
+        5.0,
+        90.0,
+        90.0,
+        90.0
+      ]
+    },
+    "natom": 1,
+    "nspin": 1,
+    "position": [
+      [
+        0.1,
+        0.2,
+        0.3
+      ]
+    ],
+    "sgn": "P1",
+    "title": "sample"
+  },
+  "files": {}
+}

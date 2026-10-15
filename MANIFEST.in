@@ -1,6 +1,5 @@
-include LICENSE LICENSE_MIT.txt README.md CHANGELOG.md requirements.txt
-recursive-include src *.py *.list
-recursive-include docs *.md *.json
-recursive-include tests *.py
+include LICENSE LICENSE_MIT.txt
+recursive-include docs *.json *.md *.patch
 recursive-include examples *.py
-recursive-include samples *.py *.md
+recursive-include tests *.py *.json
+global-exclude __pycache__ *.pyc

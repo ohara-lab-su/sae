@@ -1,0 +1,45 @@
+# Copyright Kengo NAKADA; SAE class library.
+from __future__ import print_function
+import sys
+import os
+import re
+import optparse
+import numpy as np
+
+
+class ReadPwXanes(object):
+
+    def __init__(self, cname="xanes.dat"):
+        from sae.common.text import TextFiles
+
+        self.datlines, self.num = TextFiles().read_dataline(cname)
+        self.xas = np.zeros(self.num - 4)
+        self.eng = np.zeros(self.num - 4)
+        comment_reg = re.compile("^#.*")
+        space_reg = re.compile("^$")
+        broad_reg = re.compile("^#.*broadening")
+        absorber_reg = re.compile("^#.*absorbing")
+        j = 0
+        for line in self.datlines:
+            if bool(broad_reg.match(line)):
+                self.broad = float(line.split()[5])
+            if bool(absorber_reg.match(line)):
+                self.absorber = int(line.split()[4])
+            if not bool(comment_reg.match(line)):
+                if not bool(space_reg.match(line)):
+                    self.eng[j] = float(line.split()[0])
+                    self.xas[j] = float(line.split()[1])
+                    j += 1
+        self.num = j
+
+    def get_xas(self):
+        return self.xas
+
+    def get_eng(self):
+        return self.eng
+
+    def get_absorber(self):
+        return self.absorber
+
+    def get_broad(self):
+        return self.broad

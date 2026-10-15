@@ -1,30 +1,5 @@
 # ChangeLog
 
-## Ver_0.1.0, 2026.10.15
-
-0.0.58 系まで継続してきた StructureAnalysisEnvironment (SAE) を基礎として、
-現在の Python 環境で継続して利用・開発できるようにパッケージ全体を整理した。
-
-これは既存 SAE とは別の新規プロジェクトではなく、
-2015 年から続く SAE の開発を継承したバージョンである。
-
-主な変更:
-
-- Python 3.7 以降で利用できる構文へ統一
-- `src` レイアウトへ整理
-- 新しいトップレベル名前空間 `sae` を導入
-- 計算コードごとの API を `sae.openmx`, `sae.vasp`, `sae.fdmnes` などへ整理
-- 旧 `StructureAnalysisEnvironment` 名前空間を互換 shim として維持
-- 既存クラスを新名前空間へ移行し、新旧 API の二重実装を回避
-- 共通構造操作を `sae.structure.Structure` へ整理
-- 主要ドキュメントクラスへ `Class.read(path)` API を導入
-- `pyproject.toml` を中心とする Python パッケージングへ整理
-- 必須依存と `analysis` / `test` の追加依存を分離
-- 従来の用途別スクリプトを保存しつつ、一律に PATH へ導入する方式を廃止
-- API、移植範囲、互換性および旧 README のドキュメントを整理
-
-以下、0.0.58 以前の変更履歴は従来の ChangeLog を継承する。
-
 ## Ver_0.0.58, 2025.12.23
 
 Rcfgvasp.py: アホなミスを修正

@@ -1,0 +1,1098 @@
+[
+  {
+    "source": "change_density.py",
+    "symbol": "change_density",
+    "module": "sae.rmcpot.conversion",
+    "class": "RmcConversions",
+    "method": "change_density"
+  },
+  {
+    "source": "conv_cfg2vasp.py",
+    "symbol": "conv_cfg2vaspa",
+    "module": "sae.rmcpot.conversion",
+    "class": "RmcConversions",
+    "method": "conv_cfg2vaspa"
+  },
+  {
+    "source": "conv_vasp2cfg.py",
+    "symbol": "conv_vasp2cfga",
+    "module": "sae.rmcpot.conversion",
+    "class": "RmcConversions",
+    "method": "conv_vasp2cfga"
+  },
+  {
+    "source": "conv_vasp2cfg.py",
+    "symbol": "conv_vasp2cfg",
+    "module": "sae.rmcpot.conversion",
+    "class": "RmcConversions",
+    "method": "conv_vasp2cfg"
+  },
+  {
+    "source": "chk_pdb_cryst1.py",
+    "symbol": "chk_pdb_cryst1",
+    "module": "sae.structure.extract",
+    "class": "StructureExtraction",
+    "method": "chk_pdb_cryst1"
+  },
+  {
+    "source": "extract_struct0.py",
+    "symbol": "extract_struct0",
+    "module": "sae.structure.extract",
+    "class": "StructureExtraction",
+    "method": "extract_struct0"
+  },
+  {
+    "source": "extract_struct1.py",
+    "symbol": "extract_struct1",
+    "module": "sae.structure.extract",
+    "class": "StructureExtraction",
+    "method": "extract_struct1"
+  },
+  {
+    "source": "extract_struct_param.py",
+    "symbol": "extract_struct_param",
+    "module": "sae.structure.extract",
+    "class": "StructureExtraction",
+    "method": "extract_struct_param"
+  },
+  {
+    "source": "conv_car2carABS.py",
+    "symbol": "conv_car2carABSa",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_car2carABSa"
+  },
+  {
+    "source": "conv_car2carABS.py",
+    "symbol": "conv_car2carABS",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_car2carABS"
+  },
+  {
+    "source": "conv_car2direct.py",
+    "symbol": "conv_car2directa",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_car2directa"
+  },
+  {
+    "source": "conv_car2direct.py",
+    "symbol": "conv_car2direct",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_car2direct"
+  },
+  {
+    "source": "conv_cellparam.py",
+    "symbol": "conv_cellparam",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_cellparam"
+  },
+  {
+    "source": "conv_cellparam.py",
+    "symbol": "conv_cellparam0",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_cellparam0"
+  },
+  {
+    "source": "conv_cellparam.py",
+    "symbol": "conv_cellparam1",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_cellparam1"
+  },
+  {
+    "source": "conv_direct2car.py",
+    "symbol": "conv_direct2cara",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_direct2cara"
+  },
+  {
+    "source": "conv_direct2car.py",
+    "symbol": "conv_direct2car",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_direct2car"
+  },
+  {
+    "source": "conv_direct2carABS.py",
+    "symbol": "conv_direct2carABSa",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_direct2carABSa"
+  },
+  {
+    "source": "conv_direct2carABS.py",
+    "symbol": "conv_direct2carABS",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_direct2carABS"
+  },
+  {
+    "source": "conv_scale21.py",
+    "symbol": "conv_scale21a",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_scale21a"
+  },
+  {
+    "source": "conv_scale21.py",
+    "symbol": "conv_scale21",
+    "module": "sae.geometry.coordinates",
+    "class": "CoordinateTransforms",
+    "method": "conv_scale21"
+  },
+  {
+    "source": "del_commentout.py",
+    "symbol": "del_comment",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "del_comment"
+  },
+  {
+    "source": "read_dat.py",
+    "symbol": "read_dat",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_dat"
+  },
+  {
+    "source": "read_dat.py",
+    "symbol": "read_dat2",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_dat2"
+  },
+  {
+    "source": "read_dat.py",
+    "symbol": "read_dat5",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_dat5"
+  },
+  {
+    "source": "read_dataline.py",
+    "symbol": "read_dataline",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_dataline"
+  },
+  {
+    "source": "read_dataline.py",
+    "symbol": "read_dataline1",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_dataline1"
+  },
+  {
+    "source": "read_list.py",
+    "symbol": "read_list1",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_list1"
+  },
+  {
+    "source": "read_list.py",
+    "symbol": "read_list3",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_list3"
+  },
+  {
+    "source": "read_list.py",
+    "symbol": "read_list4",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_list4"
+  },
+  {
+    "source": "read_list_param.py",
+    "symbol": "read_list_param",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_list_param"
+  },
+  {
+    "source": "read_row.py",
+    "symbol": "read_row",
+    "module": "sae.common.text",
+    "class": "TextFiles",
+    "method": "read_row"
+  },
+  {
+    "source": "find_datfile.py",
+    "symbol": "find_datfile",
+    "module": "sae.common.paths",
+    "class": "FileDiscovery",
+    "method": "find_datfile"
+  },
+  {
+    "source": "find_datfile.py",
+    "symbol": "find_datfile1",
+    "module": "sae.common.paths",
+    "class": "FileDiscovery",
+    "method": "find_datfile1"
+  },
+  {
+    "source": "find_datfile.py",
+    "symbol": "find_datfiles",
+    "module": "sae.common.paths",
+    "class": "FileDiscovery",
+    "method": "find_datfiles"
+  },
+  {
+    "source": "find_suffix.py",
+    "symbol": "find_suffix1",
+    "module": "sae.common.paths",
+    "class": "FileDiscovery",
+    "method": "find_suffix1"
+  },
+  {
+    "source": "find_suffix.py",
+    "symbol": "find_suffix2",
+    "module": "sae.common.paths",
+    "class": "FileDiscovery",
+    "method": "find_suffix2"
+  },
+  {
+    "source": "find_suffix.py",
+    "symbol": "find_suffix3",
+    "module": "sae.common.paths",
+    "class": "FileDiscovery",
+    "method": "find_suffix3"
+  },
+  {
+    "source": "func_rotate.py",
+    "symbol": "rotate_z",
+    "module": "sae.geometry.rotation",
+    "class": "Rotations",
+    "method": "rotate_z"
+  },
+  {
+    "source": "func_rotate.py",
+    "symbol": "rotate_y",
+    "module": "sae.geometry.rotation",
+    "class": "Rotations",
+    "method": "rotate_y"
+  },
+  {
+    "source": "func_rotate.py",
+    "symbol": "rotate_euler",
+    "module": "sae.geometry.rotation",
+    "class": "Rotations",
+    "method": "rotate_euler"
+  },
+  {
+    "source": "get_atom_start.py",
+    "symbol": "get_atom_start",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atom_start"
+  },
+  {
+    "source": "get_atomic_radius.py",
+    "symbol": "get_atomic_radius0",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atomic_radius0"
+  },
+  {
+    "source": "get_atomic_radius.py",
+    "symbol": "get_atomic_radius1",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atomic_radius1"
+  },
+  {
+    "source": "get_atomic_radius.py",
+    "symbol": "get_atomic_number1",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atomic_number1"
+  },
+  {
+    "source": "get_atomic_radius.py",
+    "symbol": "get_atomic_symbol0",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atomic_symbol0"
+  },
+  {
+    "source": "get_atomic_weight.py",
+    "symbol": "get_atomic_weight0",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atomic_weight0"
+  },
+  {
+    "source": "get_atomic_weight.py",
+    "symbol": "get_atomic_weight1",
+    "module": "sae.structure.elements",
+    "class": "ElementTable",
+    "method": "get_atomic_weight1"
+  },
+  {
+    "source": "get_bond_info.py",
+    "symbol": "get_bond_info_param",
+    "module": "sae.geometry.bonds",
+    "class": "BondAnalysis",
+    "method": "get_bond_info_param"
+  },
+  {
+    "source": "get_bond_info.py",
+    "symbol": "get_bond_info",
+    "module": "sae.geometry.bonds",
+    "class": "BondAnalysis",
+    "method": "get_bond_info"
+  },
+  {
+    "source": "get_calinfo.py",
+    "symbol": "get_calinfo",
+    "module": "sae.structure.calculation_settings",
+    "class": "CalculationSettings",
+    "method": "get_calinfo"
+  },
+  {
+    "source": "get_max_md.py",
+    "symbol": "get_max_md",
+    "module": "sae.openmx.md_fields",
+    "class": "MolecularDynamicsFields",
+    "method": "get_max_md"
+  },
+  {
+    "source": "read_md.py",
+    "symbol": "read_md",
+    "module": "sae.openmx.md_fields",
+    "class": "MolecularDynamicsFields",
+    "method": "read_md"
+  },
+  {
+    "source": "read_md.py",
+    "symbol": "read_md2",
+    "module": "sae.openmx.md_fields",
+    "class": "MolecularDynamicsFields",
+    "method": "read_md2"
+  },
+  {
+    "source": "read_md.py",
+    "symbol": "read_md3",
+    "module": "sae.openmx.md_fields",
+    "class": "MolecularDynamicsFields",
+    "method": "read_md3"
+  },
+  {
+    "source": "read_md_param.py",
+    "symbol": "read_md_param",
+    "module": "sae.openmx.md_fields",
+    "class": "MolecularDynamicsFields",
+    "method": "read_md_param"
+  },
+  {
+    "source": "get_vasp_orbital_info.py",
+    "symbol": "get_vasp_orbital_info",
+    "module": "sae.vasp.orbitals",
+    "class": "VaspOrbitals",
+    "method": "get_vasp_orbital_info"
+  },
+  {
+    "source": "make_supercell0.py",
+    "symbol": "make_supercell0",
+    "module": "sae.geometry.supercell",
+    "class": "SupercellOperations",
+    "method": "make_supercell0"
+  },
+  {
+    "source": "make_supercell1.py",
+    "symbol": "make_supercell1",
+    "module": "sae.geometry.supercell",
+    "class": "SupercellOperations",
+    "method": "make_supercell1"
+  },
+  {
+    "source": "make_supercell_param.py",
+    "symbol": "make_supercell_param",
+    "module": "sae.geometry.supercell",
+    "class": "SupercellOperations",
+    "method": "make_supercell_param"
+  },
+  {
+    "source": "make_supercell_zb.py",
+    "symbol": "make_supercell_zb",
+    "module": "sae.geometry.supercell",
+    "class": "SupercellOperations",
+    "method": "make_supercell_zb"
+  },
+  {
+    "source": "move_atoms.py",
+    "symbol": "move_atoms1",
+    "module": "sae.geometry.positions",
+    "class": "PositionOperations",
+    "method": "move_atoms1"
+  },
+  {
+    "source": "move_atoms.py",
+    "symbol": "move_atoms0",
+    "module": "sae.geometry.positions",
+    "class": "PositionOperations",
+    "method": "move_atoms0"
+  },
+  {
+    "source": "plot_sum_xas.py",
+    "symbol": "plot_sum_xas",
+    "module": "sae.wien2k.spectra_plot",
+    "class": "SpectraPlot",
+    "method": "plot_sum_xas"
+  },
+  {
+    "source": "plot_xas.py",
+    "symbol": "plot_xas",
+    "module": "sae.wien2k.spectra_plot",
+    "class": "SpectraPlot",
+    "method": "plot_xas"
+  },
+  {
+    "source": "print_fdmnes.py",
+    "symbol": "print_fdmnes",
+    "module": "sae.fdmnes.structure_writer",
+    "class": "FdmnesStructureWriter",
+    "method": "print_fdmnes"
+  },
+  {
+    "source": "print_fdmnes.py",
+    "symbol": "print_fdmnes0",
+    "module": "sae.fdmnes.structure_writer",
+    "class": "FdmnesStructureWriter",
+    "method": "print_fdmnes0"
+  },
+  {
+    "source": "print_fdmnes.py",
+    "symbol": "print_fdmnes1",
+    "module": "sae.fdmnes.structure_writer",
+    "class": "FdmnesStructureWriter",
+    "method": "print_fdmnes1"
+  },
+  {
+    "source": "print_fdmnes_inp.py",
+    "symbol": "print_fdmnes_inp",
+    "module": "sae.fdmnes.structure_writer",
+    "class": "FdmnesStructureWriter",
+    "method": "print_fdmnes_inp"
+  },
+  {
+    "source": "print_fdmnes_inp.py",
+    "symbol": "print_fdmnes_inp0",
+    "module": "sae.fdmnes.structure_writer",
+    "class": "FdmnesStructureWriter",
+    "method": "print_fdmnes_inp0"
+  },
+  {
+    "source": "print_fdmnes_inp.py",
+    "symbol": "print_fdmnes_inp1",
+    "module": "sae.fdmnes.structure_writer",
+    "class": "FdmnesStructureWriter",
+    "method": "print_fdmnes_inp1"
+  },
+  {
+    "source": "print_mx_dat.py",
+    "symbol": "print_mx_dat",
+    "module": "sae.openmx.dat_writer",
+    "class": "OpenMXInputWriter",
+    "method": "print_mx_dat"
+  },
+  {
+    "source": "print_poscar.py",
+    "symbol": "print_poscar",
+    "module": "sae.vasp.poscar_writer",
+    "class": "PoscarWriter",
+    "method": "print_poscar"
+  },
+  {
+    "source": "print_poscar4.py",
+    "symbol": "print_poscar4",
+    "module": "sae.vasp.poscar_writer",
+    "class": "PoscarWriter",
+    "method": "print_poscar4"
+  },
+  {
+    "source": "print_pwscf_scf.py",
+    "symbol": "print_pwscf_scf",
+    "module": "sae.pwscf.inp_writer",
+    "class": "PWscfInputWriter",
+    "method": "print_pwscf_scf"
+  },
+  {
+    "source": "print_rmcpot_cfg.py",
+    "symbol": "print_rmcpot_cfg",
+    "module": "sae.rmcpot.cfg_writer",
+    "class": "RmcConfigWriter",
+    "method": "print_rmcpot_cfg"
+  },
+  {
+    "source": "print_rmcpot_cfg_raw.py",
+    "symbol": "print_rmcpot_cfg_raw",
+    "module": "sae.rmcpot.cfg_writer",
+    "class": "RmcConfigWriter",
+    "method": "print_rmcpot_cfg_raw"
+  },
+  {
+    "source": "print_sets.py",
+    "symbol": "print_sets",
+    "module": "sae.hilapw.sets_writer",
+    "class": "SetsWriter",
+    "method": "print_sets"
+  },
+  {
+    "source": "print_vasprun.py",
+    "symbol": "print_vasprun0",
+    "module": "sae.vasp.vasprun_writer",
+    "class": "VasprunWriter",
+    "method": "print_vasprun0"
+  },
+  {
+    "source": "read_cfg.py",
+    "symbol": "read_cfg",
+    "module": "sae.rmcpot.cfg_fields",
+    "class": "RmcConfigFields",
+    "method": "read_cfg"
+  },
+  {
+    "source": "read_cfg_coll.py",
+    "symbol": "read_cfg_coll",
+    "module": "sae.rmcpot.cfg_fields",
+    "class": "RmcConfigFields",
+    "method": "read_cfg_coll"
+  },
+  {
+    "source": "read_cfg_coll_param.py",
+    "symbol": "read_cfg_coll_param",
+    "module": "sae.rmcpot.cfg_fields",
+    "class": "RmcConfigFields",
+    "method": "read_cfg_coll_param"
+  },
+  {
+    "source": "read_cfg_param.py",
+    "symbol": "read_cfg_param",
+    "module": "sae.rmcpot.cfg_fields",
+    "class": "RmcConfigFields",
+    "method": "read_cfg_param"
+  },
+  {
+    "source": "read_outcar_param.py",
+    "symbol": "read_outcar_param",
+    "module": "sae.vasp.outcar_fields",
+    "class": "OutcarFields",
+    "method": "read_outcar_param"
+  },
+  {
+    "source": "read_outcar_position.py",
+    "symbol": "read_outcar_position",
+    "module": "sae.vasp.outcar_fields",
+    "class": "OutcarFields",
+    "method": "read_outcar_position"
+  },
+  {
+    "source": "read_poscar.py",
+    "symbol": "read_poscar",
+    "module": "sae.vasp.poscar_fields",
+    "class": "PoscarFields",
+    "method": "read_poscar"
+  },
+  {
+    "source": "read_poscar_param.py",
+    "symbol": "read_poscar_param",
+    "module": "sae.vasp.poscar_fields",
+    "class": "PoscarFields",
+    "method": "read_poscar_param"
+  },
+  {
+    "source": "read_sets.py",
+    "symbol": "read_sets",
+    "module": "sae.hilapw.sets_fields",
+    "class": "SetsFields",
+    "method": "read_sets"
+  },
+  {
+    "source": "read_sets_param.py",
+    "symbol": "read_sets_param",
+    "module": "sae.hilapw.sets_fields",
+    "class": "SetsFields",
+    "method": "read_sets_param"
+  },
+  {
+    "source": "read_vasprun0.py",
+    "symbol": "read_vasprun0",
+    "module": "sae.vasp.vasprun_fields",
+    "class": "VasprunFields",
+    "method": "read_vasprun0"
+  },
+  {
+    "source": "read_vasprun1.py",
+    "symbol": "read_vasprun1",
+    "module": "sae.vasp.vasprun_fields",
+    "class": "VasprunFields",
+    "method": "read_vasprun1"
+  },
+  {
+    "source": "read_vasprun2.py",
+    "symbol": "read_vasprun2",
+    "module": "sae.vasp.vasprun_fields",
+    "class": "VasprunFields",
+    "method": "read_vasprun2"
+  },
+  {
+    "source": "sort_atoms_index_j.py",
+    "symbol": "sort_atom_index_j",
+    "module": "sae.structure.ordering",
+    "class": "AtomOrdering",
+    "method": "sort_atom_index_j"
+  },
+  {
+    "source": "sort_atoms_number_j.py",
+    "symbol": "sort_atom_number_j",
+    "module": "sae.structure.ordering",
+    "class": "AtomOrdering",
+    "method": "sort_atom_number_j"
+  },
+  {
+    "source": "sort_fix.py",
+    "symbol": "sort_fix",
+    "module": "sae.structure.ordering",
+    "class": "AtomOrdering",
+    "method": "sort_fix"
+  },
+  {
+    "source": "sort_position.py",
+    "symbol": "sort_position",
+    "module": "sae.structure.ordering",
+    "class": "AtomOrdering",
+    "method": "sort_position"
+  },
+  {
+    "source": "sphere_integral_of_elf.py",
+    "symbol": "sphere_integral_of_elf",
+    "module": "sae.vasp.elf",
+    "class": "ElfIntegration",
+    "method": "sphere_integral_of_elf"
+  },
+  {
+    "source": "write.py",
+    "symbol": "write",
+    "module": "sae.structure.writer",
+    "class": "StructureWriter",
+    "method": "write"
+  },
+  {
+    "source": "util/logger_support.py",
+    "symbol": "get_loglevel_object",
+    "module": "sae.common.logging_setup",
+    "class": "LoggingSetup",
+    "method": "get_loglevel_object"
+  },
+  {
+    "source": "util/logger_support.py",
+    "symbol": "init_logger",
+    "module": "sae.common.logging_setup",
+    "class": "LoggingSetup",
+    "method": "init_logger"
+  },
+  {
+    "source": "io/vasp/ReadVaspPoscar.py",
+    "symbol": "ReadVaspPoscar",
+    "module": "sae.vasp.poscar",
+    "class": "ReadVaspPoscar"
+  },
+  {
+    "source": "io/vasp/ReadVaspIncar.py",
+    "symbol": "ReadVaspIncar",
+    "module": "sae.vasp.incar",
+    "class": "ReadVaspIncar"
+  },
+  {
+    "source": "io/vasp/ReadVaspKpoints.py",
+    "symbol": "ReadVaspKpoints",
+    "module": "sae.vasp.kpoints",
+    "class": "ReadVaspKpoints"
+  },
+  {
+    "source": "io/vasp/ReadVaspPotcar.py",
+    "symbol": "ReadVaspPotcar",
+    "module": "sae.vasp.potcar",
+    "class": "ReadVaspPotcar"
+  },
+  {
+    "source": "io/vasp/ReadVaspOutcar.py",
+    "symbol": "ReadVaspOutcar",
+    "module": "sae.vasp.outcar",
+    "class": "ReadVaspOutcar"
+  },
+  {
+    "source": "io/vasp/ReadVaspOszicar.py",
+    "symbol": "ReadVaspOszicar",
+    "module": "sae.vasp.oszicar",
+    "class": "ReadVaspOszicar"
+  },
+  {
+    "source": "io/vasp/ReadVaspVasprun.py",
+    "symbol": "ReadVaspVasprun",
+    "module": "sae.vasp.vasprun",
+    "class": "ReadVaspVasprun"
+  },
+  {
+    "source": "io/vasp/ReadVaspXdat.py",
+    "symbol": "ReadVaspXdat",
+    "module": "sae.vasp.xdatcar",
+    "class": "ReadVaspXdat"
+  },
+  {
+    "source": "io/vasp/ReadVaspDoscar.py",
+    "symbol": "ReadVaspDoscar",
+    "module": "sae.vasp.doscar",
+    "class": "ReadVaspDoscar"
+  },
+  {
+    "source": "io/vasp/ReadVaspEigenval.py",
+    "symbol": "ReadVaspEigenval",
+    "module": "sae.vasp.eigenval",
+    "class": "ReadVaspEigenval"
+  },
+  {
+    "source": "io/vasp/ReadVaspProcar.py",
+    "symbol": "ReadProcar",
+    "module": "sae.vasp.procar",
+    "class": "ReadProcar"
+  },
+  {
+    "source": "io/vasp/ReadVaspSymdat.py",
+    "symbol": "ReadVaspSymdat",
+    "module": "sae.vasp.symdat",
+    "class": "ReadVaspSymdat"
+  },
+  {
+    "source": "io/vasp/ReadVaspAcf.py",
+    "symbol": "ReadVaspAcf",
+    "module": "sae.vasp.acf",
+    "class": "ReadVaspAcf"
+  },
+  {
+    "source": "io/vasp/ReadVaspChgcar.py",
+    "symbol": "ReadVaspChgcar",
+    "module": "sae.vasp.chgcar",
+    "class": "ReadVaspChgcar"
+  },
+  {
+    "source": "io/vasp/ReadVaspChgcarHeader.py",
+    "symbol": "ReadVaspChgcarHeader",
+    "module": "sae.vasp.chgcar_header",
+    "class": "ReadVaspChgcarHeader"
+  },
+  {
+    "source": "io/vasp/ReadVaspChgcarFooter.py",
+    "symbol": "ReadVaspChgcarFooter",
+    "module": "sae.vasp.chgcar_footer",
+    "class": "ReadVaspChgcarFooter"
+  },
+  {
+    "source": "io/vasp/WriteVaspChgcar.py",
+    "symbol": "WriteVaspChgcar",
+    "module": "sae.vasp.chgcar_writer",
+    "class": "WriteVaspChgcar"
+  },
+  {
+    "source": "io/vasp/UtilChgcar.py",
+    "symbol": "SumChgcar",
+    "module": "sae.vasp.chgcar_sum",
+    "class": "SumChgcar"
+  },
+  {
+    "source": "io/mx/ReadMxDat.py",
+    "symbol": "ReadMxDat",
+    "module": "sae.openmx.dat",
+    "class": "ReadMxDat"
+  },
+  {
+    "source": "io/mx/ReadMxOut.py",
+    "symbol": "ReadMxOut",
+    "module": "sae.openmx.out",
+    "class": "ReadMxOut"
+  },
+  {
+    "source": "io/mx/ReadMxDftscf.py",
+    "symbol": "ReadMxDftscf",
+    "module": "sae.openmx.dftscf",
+    "class": "ReadMxDftscf"
+  },
+  {
+    "source": "io/mx/ReadMd.py",
+    "symbol": "ReadMd",
+    "module": "sae.openmx.md",
+    "class": "ReadMd"
+  },
+  {
+    "source": "io/mx/ReadMxTdos.py",
+    "symbol": "ReadMxTdos",
+    "module": "sae.openmx.tdos",
+    "class": "ReadMxTdos"
+  },
+  {
+    "source": "io/mx/ReadMxPdos.py",
+    "symbol": "ReadMxPdos",
+    "module": "sae.openmx.pdos",
+    "class": "ReadMxPdos"
+  },
+  {
+    "source": "io/mx/ReadMxVps.py",
+    "symbol": "ReadMxVps",
+    "module": "sae.openmx.vps",
+    "class": "ReadMxVps"
+  },
+  {
+    "source": "io/mx/ReadMxVpsList.py",
+    "symbol": "ReadMxVpsList",
+    "module": "sae.openmx.vps_list",
+    "class": "ReadMxVpsList"
+  },
+  {
+    "source": "io/fdm/ReadFdmInp.py",
+    "symbol": "ReadFdmInp",
+    "module": "sae.fdmnes.inp",
+    "class": "ReadFdmInp"
+  },
+  {
+    "source": "io/fdm/ReadFdmBav.py",
+    "symbol": "ReadFdmBav",
+    "module": "sae.fdmnes.bav",
+    "class": "ReadFdmBav"
+  },
+  {
+    "source": "io/fdm/ReadFdmBav2016.py",
+    "symbol": "ReadFdmBav2016",
+    "module": "sae.fdmnes.bav_2016",
+    "class": "ReadFdmBav2016"
+  },
+  {
+    "source": "io/fdm/ReadFdmBav2020.py",
+    "symbol": "ReadFdmBav2020",
+    "module": "sae.fdmnes.bav_2020",
+    "class": "ReadFdmBav2020"
+  },
+  {
+    "source": "io/fdm/ReadFdmSd.py",
+    "symbol": "ReadFdmSd",
+    "module": "sae.fdmnes.sd",
+    "class": "ReadFdmSd"
+  },
+  {
+    "source": "io/fdm/ReadFdmSd2016.py",
+    "symbol": "ReadFdmSd2016",
+    "module": "sae.fdmnes.sd_2016",
+    "class": "ReadFdmSd2016"
+  },
+  {
+    "source": "io/fdm/ReadFdmSd2020.py",
+    "symbol": "ReadFdmSd2020",
+    "module": "sae.fdmnes.sd_2020",
+    "class": "ReadFdmSd2020"
+  },
+  {
+    "source": "io/fdm/ReadFdmTxt.py",
+    "symbol": "ReadFdmTxt",
+    "module": "sae.fdmnes.txt",
+    "class": "ReadFdmTxt"
+  },
+  {
+    "source": "io/fdm/ReadFdmConv.py",
+    "symbol": "ReadFdmConv",
+    "module": "sae.fdmnes.conv",
+    "class": "ReadFdmConv"
+  },
+  {
+    "source": "io/fdm/ReadFdmFdmfile.py",
+    "symbol": "ReadFdmFdmfile",
+    "module": "sae.fdmnes.fdmfile",
+    "class": "ReadFdmFdmfile"
+  },
+  {
+    "source": "io/fdm/WriteFdmInp.py",
+    "symbol": "WriteFdmInp",
+    "module": "sae.fdmnes.inp_writer",
+    "class": "WriteFdmInp"
+  },
+  {
+    "source": "io/fdm/WriteFdmfile.py",
+    "symbol": "WriteFdmfile",
+    "module": "sae.fdmnes.fdmfile_writer",
+    "class": "WriteFdmfile"
+  },
+  {
+    "source": "io/hilapw/ReadHiSets.py",
+    "symbol": "ReadHiSets",
+    "module": "sae.hilapw.sets",
+    "class": "ReadHiSets"
+  },
+  {
+    "source": "io/pwscf/ReadPwIn.py",
+    "symbol": "ReadPwIn",
+    "module": "sae.pwscf.inp",
+    "class": "ReadPwIn"
+  },
+  {
+    "source": "io/pwscf/ReadPwOut.py",
+    "symbol": "ReadPwOut",
+    "module": "sae.pwscf.out",
+    "class": "ReadPwOut"
+  },
+  {
+    "source": "io/pwscf/ReadPwTdos.py",
+    "symbol": "ReadPwTdos",
+    "module": "sae.pwscf.tdos",
+    "class": "ReadPwTdos"
+  },
+  {
+    "source": "io/pwscf/ReadPwPdos.py",
+    "symbol": "ReadPwPdos",
+    "module": "sae.pwscf.pdos",
+    "class": "ReadPwPdos"
+  },
+  {
+    "source": "io/pwscf/ReadPwXanes.py",
+    "symbol": "ReadPwXanes",
+    "module": "sae.pwscf.xanes",
+    "class": "ReadPwXanes"
+  },
+  {
+    "source": "io/wien2k/ReadWienOutput0.py",
+    "symbol": "ReadWienOutput0",
+    "module": "sae.wien2k.output0",
+    "class": "ReadWienOutput0"
+  },
+  {
+    "source": "io/wien2k/ReadWienOutputt.py",
+    "symbol": "ReadWienOutputt",
+    "module": "sae.wien2k.outputt",
+    "class": "ReadWienOutputt"
+  },
+  {
+    "source": "io/wien2k/ReadWienScf.py",
+    "symbol": "ReadWienScf",
+    "module": "sae.wien2k.scf",
+    "class": "ReadWienScf"
+  },
+  {
+    "source": "io/wien2k/ReadWienDos.py",
+    "symbol": "ReadWienDos",
+    "module": "sae.wien2k.dos",
+    "class": "ReadWienDos"
+  },
+  {
+    "source": "io/wien2k/ReadWienXspec.py",
+    "symbol": "ReadWienXspec",
+    "module": "sae.wien2k.xspec",
+    "class": "ReadWienXspec"
+  },
+  {
+    "source": "io/wien2k/ReadWienTxspec.py",
+    "symbol": "ReadWienTxspec",
+    "module": "sae.wien2k.txspec",
+    "class": "ReadWienTxspec"
+  },
+  {
+    "source": "io/rmc/ReadRmcpotCfg.py",
+    "symbol": "ReadRmcpotCfg",
+    "module": "sae.rmcpot.cfg",
+    "class": "ReadRmcpotCfg"
+  },
+  {
+    "source": "io/lob/ReadLobOut.py",
+    "symbol": "ReadLobOut",
+    "module": "sae.lobster.out",
+    "class": "ReadLobOut"
+  },
+  {
+    "source": "io/lob/ReadLobDos.py",
+    "symbol": "ReadLobDos",
+    "module": "sae.lobster.doscar",
+    "class": "ReadLobDos"
+  },
+  {
+    "source": "io/lob/ReadLobCohp.py",
+    "symbol": "ReadLobCohp",
+    "module": "sae.lobster.cohpcar",
+    "class": "ReadLobCohp"
+  },
+  {
+    "source": "io/bader/ReadBaderAvf.py",
+    "symbol": "ReadBaderAvf",
+    "module": "sae.bader.avf",
+    "class": "ReadBaderAvf"
+  },
+  {
+    "source": "io/bader/ReadBaderBcf.py",
+    "symbol": "ReadBaderBcf",
+    "module": "sae.bader.bcf",
+    "class": "ReadBaderBcf"
+  },
+  {
+    "source": "io/bader/ReadBaderBvat.py",
+    "symbol": "ReadBaderBvat",
+    "module": "sae.bader.bvat",
+    "class": "ReadBaderBvat"
+  },
+  {
+    "source": "io/bader/UtilBader.py",
+    "symbol": "UtilBader",
+    "module": "sae.bader.volume_operations",
+    "class": "UtilBader"
+  },
+  {
+    "source": "io/bader/WriteBaderVolume.py",
+    "symbol": "WriteBaderVolume",
+    "module": "sae.bader.volume_writer",
+    "class": "WriteBaderVolume"
+  },
+  {
+    "source": "io/athena/ReadAthenaNor.py",
+    "symbol": "ReadAthenaNor",
+    "module": "sae.athena.nor",
+    "class": "ReadAthenaNor"
+  },
+  {
+    "source": "io/pf/ReadPfformat.py",
+    "symbol": "ReadPfformat",
+    "module": "sae.pf.pf_format",
+    "class": "ReadPfformat"
+  },
+  {
+    "source": "Method/Method.py",
+    "symbol": "Method",
+    "module": "sae.structure.base",
+    "class": "Method"
+  },
+  {
+    "source": "io/mx/ReadMxDatMethod.py",
+    "symbol": "ReadMxDatMethod",
+    "module": "sae.openmx.dat_methods",
+    "class": "ReadMxDatMethod"
+  },
+  {
+    "source": "io/mx/ReadMxDosMethod.py",
+    "symbol": "ReadMxDosMethod",
+    "module": "sae.openmx.dos_methods",
+    "class": "ReadMxDosMethod"
+  },
+  {
+    "source": "io/Read.py",
+    "symbol": "Read",
+    "module": "sae.structure.document",
+    "class": "Read"
+  },
+  {
+    "source": "util/logger.py",
+    "symbol": "Logger",
+    "module": "sae.common.logger",
+    "class": "Logger"
+  }
+]

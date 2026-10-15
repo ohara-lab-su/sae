@@ -1,0 +1,2403 @@
+[
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_structure",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.poscar",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_incar",
+    "component": "incar",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspIncar.ReadVaspIncar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.incar",
+    "implementation": "sae.vasp.incar.ReadVaspIncar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_kpoints",
+    "component": "kpoints",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspKpoints.ReadVaspKpoints",
+    "kind": "constructor",
+    "public_module": "sae.vasp.kpoints",
+    "implementation": "sae.vasp.kpoints.ReadVaspKpoints"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_potcar",
+    "component": "potcar",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPotcar.ReadVaspPotcar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.potcar",
+    "implementation": "sae.vasp.potcar.ReadVaspPotcar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_output",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspOutcar.ReadVaspOutcar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.outcar",
+    "implementation": "sae.vasp.outcar.ReadVaspOutcar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_oszicar",
+    "component": "oszicar",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspOszicar.ReadVaspOszicar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.oszicar",
+    "implementation": "sae.vasp.oszicar.ReadVaspOszicar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_vasprun",
+    "component": "vasprun",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspVasprun.ReadVaspVasprun",
+    "kind": "constructor",
+    "public_module": "sae.vasp.vasprun",
+    "implementation": "sae.vasp.vasprun.ReadVaspVasprun"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_trajectory",
+    "component": "trajectory",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspXdat.ReadVaspXdat",
+    "kind": "constructor",
+    "public_module": "sae.vasp.xdatcar",
+    "implementation": "sae.vasp.xdatcar.ReadVaspXdat"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_dos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.doscar",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_eigenval",
+    "component": "eigenval",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspEigenval.ReadVaspEigenval",
+    "kind": "constructor",
+    "public_module": "sae.vasp.eigenval",
+    "implementation": "sae.vasp.eigenval.ReadVaspEigenval"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_procar",
+    "component": "procar",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspProcar.ReadProcar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.procar",
+    "implementation": "sae.vasp.procar.ReadProcar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_symmetry",
+    "component": "symmetry",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspSymdat.ReadVaspSymdat",
+    "kind": "constructor",
+    "public_module": "sae.vasp.symdat",
+    "implementation": "sae.vasp.symdat.ReadVaspSymdat"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_charges",
+    "component": "charges",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspAcf.ReadVaspAcf",
+    "kind": "constructor",
+    "public_module": "sae.vasp.acf",
+    "implementation": "sae.vasp.acf.ReadVaspAcf"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_charge_density",
+    "component": "charge_density",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspChgcar.ReadVaspChgcar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.chgcar",
+    "implementation": "sae.vasp.chgcar.ReadVaspChgcar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_charge_header",
+    "component": "charge_header",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspChgcarHeader.ReadVaspChgcarHeader",
+    "kind": "constructor",
+    "public_module": "sae.vasp.chgcar_header",
+    "implementation": "sae.vasp.chgcar_header.ReadVaspChgcarHeader"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "read_charge_footer",
+    "component": "charge_footer",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspChgcarFooter.ReadVaspChgcarFooter",
+    "kind": "constructor",
+    "public_module": "sae.vasp.chgcar_footer",
+    "implementation": "sae.vasp.chgcar_footer.ReadVaspChgcarFooter"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "prepare_charge_writer",
+    "component": "charge_writer",
+    "original": "StructureAnalysisEnvironment.io.vasp.WriteVaspChgcar.WriteVaspChgcar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.chgcar_writer",
+    "implementation": "sae.vasp.chgcar_writer.WriteVaspChgcar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "prepare_charge_sum",
+    "component": "charge_sum",
+    "original": "StructureAnalysisEnvironment.io.vasp.UtilChgcar.SumChgcar",
+    "kind": "constructor",
+    "public_module": "sae.vasp.chgcar_sum",
+    "implementation": "sae.vasp.chgcar_sum.SumChgcar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "conv_rot_euler",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.conv_rot_euler",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.conv_rot_euler"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "conv_direct2car",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.conv_direct2car",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.conv_direct2car"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "conv_scale21",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.conv_scale21",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.conv_scale21"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "print_poscar",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.print_poscar",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.print_poscar"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "conv_supercell",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.conv_supercell",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.conv_supercell"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_title",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_title",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_title"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_system",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_system",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_system"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_scale",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_scale",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_scale"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_t",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_t",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_t"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_vasp_version",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_vasp_version",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_vasp_version"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_atoms",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_atoms",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_atoms"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_atoms_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_atoms_j",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_atoms_j"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_atoms_index",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_atoms_index",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_atoms_index"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_atoms_number",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_atoms_number",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_atoms_number"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_atoms_index_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_atoms_index_j",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_atoms_index_j"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_atoms_number_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_atoms_number_j",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_atoms_number_j"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_nion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_nion",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_nion"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_natom",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_natom",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_natom"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_ion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_ion",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_ion"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_ion_local",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_ion_local",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_ion_local"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_selective",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_selective",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_selective"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_direct",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_direct",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_direct"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_position",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_position",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_position"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_fix",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspPoscar.ReadVaspPoscar.get_fix",
+    "kind": "method",
+    "implementation": "sae.vasp.poscar.ReadVaspPoscar.get_fix"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_toten",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspOutcar.ReadVaspOutcar.get_toten",
+    "kind": "method",
+    "implementation": "sae.vasp.outcar.ReadVaspOutcar.get_toten"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_efermi",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspOutcar.ReadVaspOutcar.get_efermi",
+    "kind": "method",
+    "implementation": "sae.vasp.outcar.ReadVaspOutcar.get_efermi"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_tdos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar.get_tdos",
+    "kind": "method",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar.get_tdos"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_inttdos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar.get_inttdos",
+    "kind": "method",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar.get_inttdos"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_ldos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar.get_ldos",
+    "kind": "method",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar.get_ldos"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_pdos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar.get_pdos",
+    "kind": "method",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar.get_pdos"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_tdos_spd",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar.get_tdos_spd",
+    "kind": "method",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar.get_tdos_spd"
+  },
+  {
+    "code": "VASP",
+    "namespace": "vasp",
+    "method": "get_ldos_ion",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.vasp.ReadVaspDoscar.ReadVaspDoscar.get_ldos_ion",
+    "kind": "method",
+    "implementation": "sae.vasp.doscar.ReadVaspDoscar.get_ldos_ion"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_structure",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat",
+    "kind": "constructor",
+    "public_module": "sae.openmx.dat",
+    "implementation": "sae.openmx.dat.ReadMxDat"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_output",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxOut.ReadMxOut",
+    "kind": "constructor",
+    "public_module": "sae.openmx.out",
+    "implementation": "sae.openmx.out.ReadMxOut"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_scf",
+    "component": "scf",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDftscf.ReadMxDftscf",
+    "kind": "constructor",
+    "public_module": "sae.openmx.dftscf",
+    "implementation": "sae.openmx.dftscf.ReadMxDftscf"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_trajectory",
+    "component": "trajectory",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMd.ReadMd",
+    "kind": "constructor",
+    "public_module": "sae.openmx.md",
+    "implementation": "sae.openmx.md.ReadMd"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_tdos",
+    "component": "tdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxTdos.ReadMxTdos",
+    "kind": "constructor",
+    "public_module": "sae.openmx.tdos",
+    "implementation": "sae.openmx.tdos.ReadMxTdos"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_pdos",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxPdos.ReadMxPdos",
+    "kind": "constructor",
+    "public_module": "sae.openmx.pdos",
+    "implementation": "sae.openmx.pdos.ReadMxPdos"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_vps",
+    "component": "vps",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxVps.ReadMxVps",
+    "kind": "constructor",
+    "public_module": "sae.openmx.vps",
+    "implementation": "sae.openmx.vps.ReadMxVps"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "read_vps_list",
+    "component": "vps_list",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxVpsList.ReadMxVpsList",
+    "kind": "constructor",
+    "public_module": "sae.openmx.vps_list",
+    "implementation": "sae.openmx.vps_list.ReadMxVpsList"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_utot",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxOut.ReadMxOut.get_utot",
+    "kind": "method",
+    "implementation": "sae.openmx.out.ReadMxOut.get_utot"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_n_ion_loop",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxOut.ReadMxOut.get_n_ion_loop",
+    "kind": "method",
+    "implementation": "sae.openmx.out.ReadMxOut.get_n_ion_loop"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_max_n_scf",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxOut.ReadMxOut.get_max_n_scf",
+    "kind": "method",
+    "implementation": "sae.openmx.out.ReadMxOut.get_max_n_scf"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_uele",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxOut.ReadMxOut.get_uele",
+    "kind": "method",
+    "implementation": "sae.openmx.out.ReadMxOut.get_uele"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_tdos",
+    "component": "tdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxTdos.ReadMxTdos.get_tdos",
+    "kind": "method",
+    "implementation": "sae.openmx.tdos.ReadMxTdos.get_tdos"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_inttdos",
+    "component": "tdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxTdos.ReadMxTdos.get_inttdos",
+    "kind": "method",
+    "implementation": "sae.openmx.tdos.ReadMxTdos.get_inttdos"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_pdos",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxPdos.ReadMxPdos.get_pdos",
+    "kind": "method",
+    "implementation": "sae.openmx.pdos.ReadMxPdos.get_pdos"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_ldos",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxPdos.ReadMxPdos.get_ldos",
+    "kind": "method",
+    "implementation": "sae.openmx.pdos.ReadMxPdos.get_ldos"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_tdos_spd",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxPdos.ReadMxPdos.get_tdos_spd",
+    "kind": "method",
+    "implementation": "sae.openmx.pdos.ReadMxPdos.get_tdos_spd"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_ldos_ion",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxPdos.ReadMxPdos.get_ldos_ion",
+    "kind": "method",
+    "implementation": "sae.openmx.pdos.ReadMxPdos.get_ldos_ion"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_title",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_title",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_title"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_system",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_system",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_system"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_scale",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_scale",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_scale"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_t",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_t",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_t"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_vasp_version",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_vasp_version",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_vasp_version"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_atoms",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_atoms",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_atoms"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_atoms_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_atoms_j",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_atoms_j"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_atoms_index",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_atoms_index",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_atoms_index"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_atoms_number",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_atoms_number",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_atoms_number"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_atoms_index_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_atoms_index_j",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_atoms_index_j"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_atoms_number_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_atoms_number_j",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_atoms_number_j"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_nion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_nion",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_nion"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_natom",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_natom",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_natom"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_ion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_ion",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_ion"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_ion_local",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_ion_local",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_ion_local"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_selective",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_selective",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_selective"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_direct",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_direct",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_direct"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_position",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_position",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_position"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_fix",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_fix",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_fix"
+  },
+  {
+    "code": "OpenMX",
+    "namespace": "openmx",
+    "method": "get_ispin",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.mx.ReadMxDat.ReadMxDat.get_ispin",
+    "kind": "method",
+    "implementation": "sae.openmx.dat.ReadMxDat.get_ispin"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_structure",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.inp",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_output",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmBav.ReadFdmBav",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.bav",
+    "implementation": "sae.fdmnes.bav.ReadFdmBav"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_output_2016",
+    "component": "output_2016",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmBav2016.ReadFdmBav2016",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.bav_2016",
+    "implementation": "sae.fdmnes.bav_2016.ReadFdmBav2016"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_output_2020",
+    "component": "output_2020",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmBav2020.ReadFdmBav2020",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.bav_2020",
+    "implementation": "sae.fdmnes.bav_2020.ReadFdmBav2020"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_sd",
+    "component": "sd",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd.ReadFdmSd",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.sd",
+    "implementation": "sae.fdmnes.sd.ReadFdmSd"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_sd_2016",
+    "component": "sd_2016",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd2016.ReadFdmSd2016",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.sd_2016",
+    "implementation": "sae.fdmnes.sd_2016.ReadFdmSd2016"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_sd_2020",
+    "component": "sd_2020",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd2020.ReadFdmSd2020",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.sd_2020",
+    "implementation": "sae.fdmnes.sd_2020.ReadFdmSd2020"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_xas",
+    "component": "xas",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmTxt.ReadFdmTxt",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.txt",
+    "implementation": "sae.fdmnes.txt.ReadFdmTxt"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_convolution",
+    "component": "convolution",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmConv.ReadFdmConv",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.conv",
+    "implementation": "sae.fdmnes.conv.ReadFdmConv"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "read_batch",
+    "component": "batch",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmFdmfile.ReadFdmFdmfile",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.fdmfile",
+    "implementation": "sae.fdmnes.fdmfile.ReadFdmFdmfile"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "prepare_writer",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.inp_writer",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "prepare_batch_writer",
+    "component": "batch_writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmfile.WriteFdmfile",
+    "kind": "constructor",
+    "public_module": "sae.fdmnes.fdmfile_writer",
+    "implementation": "sae.fdmnes.fdmfile_writer.WriteFdmfile"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_absorber",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_absorber",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_absorber"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_absorber",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_absorber",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_absorber"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_fileout",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_fileout",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_fileout"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_fileout",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_fileout",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_fileout"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_e_range",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_e_range",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_e_range"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_e_range",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_e_range",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_e_range"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_edge",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_edge",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_edge"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_edge",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_edge",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_edge"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_radius",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_radius",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_radius"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_radius",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_radius",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_radius"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_rmt",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_rmt",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_rmt"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_rmt",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_rmt",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_rmt"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_energpho",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_energpho",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_energpho"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_energpho",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_energpho",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_energpho"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_MOL",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.get_MOL",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.get_MOL"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "set_MOL",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.set_MOL",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.set_MOL"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "write_inp",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.write_inp",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.write_inp"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "write_fdmnes_inp",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.write_fdmnes_inp",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.write_fdmnes_inp"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "write_fdmnes",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.write_fdmnes",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.write_fdmnes"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "write_structure_inp",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.write_structure_inp",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.write_structure_inp"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "write_conv_inp",
+    "component": "writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmInp.WriteFdmInp.write_conv_inp",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp_writer.WriteFdmInp.write_conv_inp"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "write_fdmfile",
+    "component": "batch_writer",
+    "original": "StructureAnalysisEnvironment.io.fdm.WriteFdmfile.WriteFdmfile.write_fdmfile",
+    "kind": "method",
+    "implementation": "sae.fdmnes.fdmfile_writer.WriteFdmfile.write_fdmfile"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_pdos",
+    "component": "sd",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd.ReadFdmSd.get_pdos",
+    "kind": "method",
+    "implementation": "sae.fdmnes.sd.ReadFdmSd.get_pdos"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_ldos",
+    "component": "sd",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd.ReadFdmSd.get_ldos",
+    "kind": "method",
+    "implementation": "sae.fdmnes.sd.ReadFdmSd.get_ldos"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_tdos",
+    "component": "sd",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd.ReadFdmSd.get_tdos",
+    "kind": "method",
+    "implementation": "sae.fdmnes.sd.ReadFdmSd.get_tdos"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_inttdos",
+    "component": "sd",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmSd.ReadFdmSd.get_inttdos",
+    "kind": "method",
+    "implementation": "sae.fdmnes.sd.ReadFdmSd.get_inttdos"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_xas",
+    "component": "xas",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmTxt.ReadFdmTxt.get_xas",
+    "kind": "method",
+    "implementation": "sae.fdmnes.txt.ReadFdmTxt.get_xas"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_eng",
+    "component": "xas",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmTxt.ReadFdmTxt.get_eng",
+    "kind": "method",
+    "implementation": "sae.fdmnes.txt.ReadFdmTxt.get_eng"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "average",
+    "component": "xas",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmTxt.ReadFdmTxt.average",
+    "kind": "method",
+    "implementation": "sae.fdmnes.txt.ReadFdmTxt.average"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "average_conv",
+    "component": "convolution",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmConv.ReadFdmConv.average_conv",
+    "kind": "method",
+    "implementation": "sae.fdmnes.conv.ReadFdmConv.average_conv"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_title",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_title",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_title"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_system",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_system",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_system"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_scale",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_scale",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_scale"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_t",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_t",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_t"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_vasp_version",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_vasp_version",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_vasp_version"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_atoms",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_atoms",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_atoms"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_atoms_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_atoms_j",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_atoms_j"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_atoms_index",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_atoms_index",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_atoms_index"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_atoms_number",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_atoms_number",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_atoms_number"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_atoms_index_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_atoms_index_j",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_atoms_index_j"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_atoms_number_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_atoms_number_j",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_atoms_number_j"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_nion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_nion",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_nion"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_natom",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_natom",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_natom"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_ion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_ion",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_ion"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_ion_local",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_ion_local",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_ion_local"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_selective",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_selective",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_selective"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_direct",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_direct",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_direct"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_position",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_position",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_position"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_fix",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_fix",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_fix"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_ispin",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_ispin",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_ispin"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_nonexc",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_nonexc",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_nonexc"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_allsite",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_allsite",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_allsite"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_energygpho",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_energygpho",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_energygpho"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_convolution",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_convolution",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_convolution"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_conv_out",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_conv_out",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_conv_out"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_calculation",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_calculation",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_calculation"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_filout",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_filout",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_filout"
+  },
+  {
+    "code": "FDMNES",
+    "namespace": "fdmnes",
+    "method": "get_cellparam",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.fdm.ReadFdmInp.ReadFdmInp.get_cellparam",
+    "kind": "method",
+    "implementation": "sae.fdmnes.inp.ReadFdmInp.get_cellparam"
+  },
+  {
+    "code": "HiLAPW",
+    "namespace": "hilapw",
+    "method": "read_structure",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.hilapw.ReadHiSets.ReadHiSets",
+    "kind": "constructor",
+    "public_module": "sae.hilapw.sets",
+    "implementation": "sae.hilapw.sets.ReadHiSets"
+  },
+  {
+    "code": "HiLAPW",
+    "namespace": "hilapw",
+    "method": "get_title",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.hilapw.ReadHiSets.ReadHiSets.get_title",
+    "kind": "method",
+    "implementation": "sae.hilapw.sets.ReadHiSets.get_title"
+  },
+  {
+    "code": "HiLAPW",
+    "namespace": "hilapw",
+    "method": "get_position",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.hilapw.ReadHiSets.ReadHiSets.get_position",
+    "kind": "method",
+    "implementation": "sae.hilapw.sets.ReadHiSets.get_position"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "read_structure",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn",
+    "kind": "constructor",
+    "public_module": "sae.pwscf.inp",
+    "implementation": "sae.pwscf.inp.ReadPwIn"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "read_output",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwOut.ReadPwOut",
+    "kind": "constructor",
+    "public_module": "sae.pwscf.out",
+    "implementation": "sae.pwscf.out.ReadPwOut"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "read_tdos",
+    "component": "tdos",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwTdos.ReadPwTdos",
+    "kind": "constructor",
+    "public_module": "sae.pwscf.tdos",
+    "implementation": "sae.pwscf.tdos.ReadPwTdos"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "read_pdos",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwPdos.ReadPwPdos",
+    "kind": "constructor",
+    "public_module": "sae.pwscf.pdos",
+    "implementation": "sae.pwscf.pdos.ReadPwPdos"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "read_xanes",
+    "component": "xanes",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwXanes.ReadPwXanes",
+    "kind": "constructor",
+    "public_module": "sae.pwscf.xanes",
+    "implementation": "sae.pwscf.xanes.ReadPwXanes"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_toten_ion",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwOut.ReadPwOut.get_toten_ion",
+    "kind": "method",
+    "implementation": "sae.pwscf.out.ReadPwOut.get_toten_ion"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_energy_loop",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwOut.ReadPwOut.get_energy_loop",
+    "kind": "method",
+    "implementation": "sae.pwscf.out.ReadPwOut.get_energy_loop"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_force_loop",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwOut.ReadPwOut.get_force_loop",
+    "kind": "method",
+    "implementation": "sae.pwscf.out.ReadPwOut.get_force_loop"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_tdos",
+    "component": "tdos",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwTdos.ReadPwTdos.get_tdos",
+    "kind": "method",
+    "implementation": "sae.pwscf.tdos.ReadPwTdos.get_tdos"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_inttdos",
+    "component": "tdos",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwTdos.ReadPwTdos.get_inttdos",
+    "kind": "method",
+    "implementation": "sae.pwscf.tdos.ReadPwTdos.get_inttdos"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_ldos",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwPdos.ReadPwPdos.get_ldos",
+    "kind": "method",
+    "implementation": "sae.pwscf.pdos.ReadPwPdos.get_ldos"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_pdos",
+    "component": "pdos",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwPdos.ReadPwPdos.get_pdos",
+    "kind": "method",
+    "implementation": "sae.pwscf.pdos.ReadPwPdos.get_pdos"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_xas",
+    "component": "xanes",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwXanes.ReadPwXanes.get_xas",
+    "kind": "method",
+    "implementation": "sae.pwscf.xanes.ReadPwXanes.get_xas"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_title",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_title",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_title"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_system",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_system",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_system"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_scale",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_scale",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_scale"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_t",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_t",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_t"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_vasp_version",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_vasp_version",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_vasp_version"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_atoms",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_atoms",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_atoms"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_atoms_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_atoms_j",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_atoms_j"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_atoms_index",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_atoms_index",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_atoms_index"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_atoms_number",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_atoms_number",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_atoms_number"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_atoms_index_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_atoms_index_j",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_atoms_index_j"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_atoms_number_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_atoms_number_j",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_atoms_number_j"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_nion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_nion",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_nion"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_natom",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_natom",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_natom"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_ion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_ion",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_ion"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_ion_local",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_ion_local",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_ion_local"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_selective",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_selective",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_selective"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_direct",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_direct",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_direct"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_position",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_position",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_position"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_fix",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_fix",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_fix"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_ispin",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_ispin",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_ispin"
+  },
+  {
+    "code": "PWscf",
+    "namespace": "pwscf",
+    "method": "get_ibrav",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.pwscf.ReadPwIn.ReadPwIn.get_ibrav",
+    "kind": "method",
+    "implementation": "sae.pwscf.inp.ReadPwIn.get_ibrav"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "read_output0",
+    "component": "output0",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienOutput0.ReadWienOutput0",
+    "kind": "constructor",
+    "public_module": "sae.wien2k.output0",
+    "implementation": "sae.wien2k.output0.ReadWienOutput0"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "read_outputt",
+    "component": "outputt",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienOutputt.ReadWienOutputt",
+    "kind": "constructor",
+    "public_module": "sae.wien2k.outputt",
+    "implementation": "sae.wien2k.outputt.ReadWienOutputt"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "read_scf",
+    "component": "scf",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienScf.ReadWienScf",
+    "kind": "constructor",
+    "public_module": "sae.wien2k.scf",
+    "implementation": "sae.wien2k.scf.ReadWienScf"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "read_dos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienDos.ReadWienDos",
+    "kind": "constructor",
+    "public_module": "sae.wien2k.dos",
+    "implementation": "sae.wien2k.dos.ReadWienDos"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "read_xspec",
+    "component": "xspec",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienXspec.ReadWienXspec",
+    "kind": "constructor",
+    "public_module": "sae.wien2k.xspec",
+    "implementation": "sae.wien2k.xspec.ReadWienXspec"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "read_txspec",
+    "component": "txspec",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienTxspec.ReadWienTxspec",
+    "kind": "constructor",
+    "public_module": "sae.wien2k.txspec",
+    "implementation": "sae.wien2k.txspec.ReadWienTxspec"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "get_raw_dos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienDos.ReadWienDos.get_raw_dos",
+    "kind": "method",
+    "implementation": "sae.wien2k.dos.ReadWienDos.get_raw_dos"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "get_ldos_ion",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienDos.ReadWienDos.get_ldos_ion",
+    "kind": "method",
+    "implementation": "sae.wien2k.dos.ReadWienDos.get_ldos_ion"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "get_eng",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienDos.ReadWienDos.get_eng",
+    "kind": "method",
+    "implementation": "sae.wien2k.dos.ReadWienDos.get_eng"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "write_epl",
+    "component": "scf",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienScf.ReadWienScf.write_epl",
+    "kind": "method",
+    "implementation": "sae.wien2k.scf.ReadWienScf.write_epl"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "write_eph",
+    "component": "scf",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienScf.ReadWienScf.write_eph",
+    "kind": "method",
+    "implementation": "sae.wien2k.scf.ReadWienScf.write_eph"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "write_epar",
+    "component": "scf",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienScf.ReadWienScf.write_epar",
+    "kind": "method",
+    "implementation": "sae.wien2k.scf.ReadWienScf.write_epar"
+  },
+  {
+    "code": "WIEN2k",
+    "namespace": "wien2k",
+    "method": "get_xas",
+    "component": "xspec",
+    "original": "StructureAnalysisEnvironment.io.wien2k.ReadWienXspec.ReadWienXspec.get_xas",
+    "kind": "method",
+    "implementation": "sae.wien2k.xspec.ReadWienXspec.get_xas"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "read_structure",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg",
+    "kind": "constructor",
+    "public_module": "sae.rmcpot.cfg",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_comment",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_comment",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_comment"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "conv_cfg2vasp",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.conv_cfg2vasp",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.conv_cfg2vasp"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_title",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_title",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_title"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_system",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_system",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_system"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_scale",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_scale",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_scale"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_t",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_t",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_t"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_vasp_version",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_vasp_version",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_vasp_version"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_atoms",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_atoms",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_atoms"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_atoms_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_atoms_j",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_atoms_j"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_atoms_index",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_atoms_index",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_atoms_index"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_atoms_number",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_atoms_number",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_atoms_number"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_atoms_index_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_atoms_index_j",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_atoms_index_j"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_atoms_number_j",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_atoms_number_j",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_atoms_number_j"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_nion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_nion",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_nion"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_natom",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_natom",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_natom"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_ion",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_ion",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_ion"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_ion_local",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_ion_local",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_ion_local"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_selective",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_selective",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_selective"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_direct",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_direct",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_direct"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_position",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_position",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_position"
+  },
+  {
+    "code": "RMC_POT",
+    "namespace": "rmcpot",
+    "method": "get_fix",
+    "component": "structure",
+    "original": "StructureAnalysisEnvironment.io.rmc.ReadRmcpotCfg.ReadRmcpotCfg.get_fix",
+    "kind": "method",
+    "implementation": "sae.rmcpot.cfg.ReadRmcpotCfg.get_fix"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "read_output",
+    "component": "output",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobOut.ReadLobOut",
+    "kind": "constructor",
+    "public_module": "sae.lobster.out",
+    "implementation": "sae.lobster.out.ReadLobOut"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "read_dos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobDos.ReadLobDos",
+    "kind": "constructor",
+    "public_module": "sae.lobster.doscar",
+    "implementation": "sae.lobster.doscar.ReadLobDos"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "read_cohp",
+    "component": "cohp",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobCohp.ReadLobCohp",
+    "kind": "constructor",
+    "public_module": "sae.lobster.cohpcar",
+    "implementation": "sae.lobster.cohpcar.ReadLobCohp"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_tdos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobDos.ReadLobDos.get_tdos",
+    "kind": "method",
+    "implementation": "sae.lobster.doscar.ReadLobDos.get_tdos"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_ldos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobDos.ReadLobDos.get_ldos",
+    "kind": "method",
+    "implementation": "sae.lobster.doscar.ReadLobDos.get_ldos"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_pdos",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobDos.ReadLobDos.get_pdos",
+    "kind": "method",
+    "implementation": "sae.lobster.doscar.ReadLobDos.get_pdos"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_pdos_sum",
+    "component": "dos",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobDos.ReadLobDos.get_pdos_sum",
+    "kind": "method",
+    "implementation": "sae.lobster.doscar.ReadLobDos.get_pdos_sum"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_cohp",
+    "component": "cohp",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobCohp.ReadLobCohp.get_cohp",
+    "kind": "method",
+    "implementation": "sae.lobster.cohpcar.ReadLobCohp.get_cohp"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_icohp",
+    "component": "cohp",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobCohp.ReadLobCohp.get_icohp",
+    "kind": "method",
+    "implementation": "sae.lobster.cohpcar.ReadLobCohp.get_icohp"
+  },
+  {
+    "code": "LOBSTER",
+    "namespace": "lobster",
+    "method": "get_bond_leng",
+    "component": "cohp",
+    "original": "StructureAnalysisEnvironment.io.lob.ReadLobCohp.ReadLobCohp.get_bond_leng",
+    "kind": "method",
+    "implementation": "sae.lobster.cohpcar.ReadLobCohp.get_bond_leng"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "read_atomic_volumes",
+    "component": "atomic_volumes",
+    "original": "StructureAnalysisEnvironment.io.bader.ReadBaderAvf.ReadBaderAvf",
+    "kind": "constructor",
+    "public_module": "sae.bader.avf",
+    "implementation": "sae.bader.avf.ReadBaderAvf"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "read_charges",
+    "component": "charges",
+    "original": "StructureAnalysisEnvironment.io.bader.ReadBaderBcf.ReadBaderBcf",
+    "kind": "constructor",
+    "public_module": "sae.bader.bcf",
+    "implementation": "sae.bader.bcf.ReadBaderBcf"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "read_volume",
+    "component": "volume",
+    "original": "StructureAnalysisEnvironment.io.bader.ReadBaderBvat.ReadBaderBvat",
+    "kind": "constructor",
+    "public_module": "sae.bader.bvat",
+    "implementation": "sae.bader.bvat.ReadBaderBvat"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "prepare_volume_operations",
+    "component": "volume_operations",
+    "original": "StructureAnalysisEnvironment.io.bader.UtilBader.UtilBader",
+    "kind": "constructor",
+    "public_module": "sae.bader.volume_operations",
+    "implementation": "sae.bader.volume_operations.UtilBader"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "prepare_volume_writer",
+    "component": "volume_writer",
+    "original": "StructureAnalysisEnvironment.io.bader.WriteBaderVolume.WriteBaderVolume",
+    "kind": "constructor",
+    "public_module": "sae.bader.volume_writer",
+    "implementation": "sae.bader.volume_writer.WriteBaderVolume"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "get_charge",
+    "component": "charges",
+    "original": "StructureAnalysisEnvironment.io.bader.ReadBaderBcf.ReadBaderBcf.get_charge",
+    "kind": "method",
+    "implementation": "sae.bader.bcf.ReadBaderBcf.get_charge"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "get_distance",
+    "component": "charges",
+    "original": "StructureAnalysisEnvironment.io.bader.ReadBaderBcf.ReadBaderBcf.get_distance",
+    "kind": "method",
+    "implementation": "sae.bader.bcf.ReadBaderBcf.get_distance"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "sum_bader_volume",
+    "component": "volume_operations",
+    "original": "StructureAnalysisEnvironment.io.bader.UtilBader.UtilBader.sum_bader_volume",
+    "kind": "method",
+    "implementation": "sae.bader.volume_operations.UtilBader.sum_bader_volume"
+  },
+  {
+    "code": "Bader",
+    "namespace": "bader",
+    "method": "write_bader_volume",
+    "component": "volume_writer",
+    "original": "StructureAnalysisEnvironment.io.bader.WriteBaderVolume.WriteBaderVolume.write_bader_volume",
+    "kind": "method",
+    "implementation": "sae.bader.volume_writer.WriteBaderVolume.write_bader_volume"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "read_spectrum",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor",
+    "kind": "constructor",
+    "public_module": "sae.athena.nor",
+    "implementation": "sae.athena.nor.ReadAthenaNor"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "get_nor",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.get_nor",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.get_nor"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "set_nor",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.set_nor",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.set_nor"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "get_xas",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.get_xas",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.get_xas"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "set_xas",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.set_xas",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.set_xas"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "get_eng",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.get_eng",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.get_eng"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "set_eng",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.set_eng",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.set_eng"
+  },
+  {
+    "code": "Athena",
+    "namespace": "athena",
+    "method": "get_e0",
+    "component": "spectrum",
+    "original": "StructureAnalysisEnvironment.io.athena.ReadAthenaNor.ReadAthenaNor.get_e0",
+    "kind": "method",
+    "implementation": "sae.athena.nor.ReadAthenaNor.get_e0"
+  },
+  {
+    "code": "PF",
+    "namespace": "pf",
+    "method": "read_data",
+    "component": "data",
+    "original": "StructureAnalysisEnvironment.io.pf.ReadPfformat.ReadPfformat",
+    "kind": "constructor",
+    "public_module": "sae.pf.pf_format",
+    "implementation": "sae.pf.pf_format.ReadPfformat"
+  },
+  {
+    "code": "PF",
+    "namespace": "pf",
+    "method": "write_head",
+    "component": "data",
+    "original": "StructureAnalysisEnvironment.io.pf.ReadPfformat.ReadPfformat.write_head",
+    "kind": "method",
+    "implementation": "sae.pf.pf_format.ReadPfformat.write_head"
+  },
+  {
+    "code": "PF",
+    "namespace": "pf",
+    "method": "write_pf",
+    "component": "data",
+    "original": "StructureAnalysisEnvironment.io.pf.ReadPfformat.ReadPfformat.write_pf",
+    "kind": "method",
+    "implementation": "sae.pf.pf_format.ReadPfformat.write_pf"
+  }
+]

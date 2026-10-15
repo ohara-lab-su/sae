@@ -1,0 +1,65 @@
+{
+  "result": {
+    "changed": [
+      {
+        "dtype": "float64",
+        "shape": [
+          3
+        ],
+        "values": [
+          2.0,
+          3.0,
+          4.0
+        ]
+      },
+      {
+        "dtype": "float64",
+        "shape": [
+          3
+        ],
+        "values": [
+          2.0,
+          3.0,
+          4.0
+        ]
+      }
+    ],
+    "initial": [
+      8979.0,
+      {
+        "dtype": "float64",
+        "shape": [
+          3
+        ],
+        "values": [
+          8970.0,
+          8979.0,
+          8990.0
+        ]
+      },
+      {
+        "dtype": "float64",
+        "shape": [
+          3
+        ],
+        "values": [
+          0.1,
+          0.5,
+          1.0
+        ]
+      },
+      {
+        "dtype": "float64",
+        "shape": [
+          3
+        ],
+        "values": [
+          0.1,
+          0.5,
+          1.0
+        ]
+      }
+    ]
+  },
+  "files": {}
+}
