@@ -1,3 +1,6 @@
-include *.md *.txt *.list pyproject.toml
-recursive-include src/StructureAnalysisEnvironment *.list
-recursive-include src/StructureAnalysisEnvironment/bin *.py
+include README.md CHANGELOG.md requirements.txt
+include LICENSE LICENSE_MIT.txt
+recursive-include docs *.json *.md *.patch *.txt
+recursive-include examples *.py *.md
+recursive-include tests *.py *.json
+global-exclude __pycache__ *.pyc

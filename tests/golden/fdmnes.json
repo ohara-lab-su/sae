@@ -1,0 +1,19 @@
+{
+  "result": {
+    "defaults": [
+      5,
+      "Cu",
+      "-15. 0.2  0. 0.5 10. 1. 45.",
+      null
+    ],
+    "parameters": [
+      6,
+      1.5,
+      "Pd"
+    ]
+  },
+  "files": {
+    "result.inp": "834af1dd17ccf76571567cbd2439a11927128790e740708bb6be601fa474e59a",
+    "structure.fdmnes": "10b000ca1781b6b4d19b054598f6ec684a2376831b26bf81c3230dba51e69e1c"
+  }
+}

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "StructureAnalysisEnvironment"
+
+version = "0.0.58"
+
+description = "StructureAnalysisEnvironment (SAE)"
+authors = [
+  { name="Kengo NAKADA", email="kengo.nakada@email.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+#requires-python = ">=3.11"
+dependencies = [
+"pandas",
+"ase",
+"numpy",
+"matplotlib",
+"humanfriendly",
+"coloredlogs",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+# スクリプトをすべてインストール対象にする(*は使えないのでファイルを全部列挙する)
+# [tool.setuptools.script-files]
+# files = ["src/StructureAnalysisEnvironment/bin/*."]
+
+# ここでpytestのiniと同じようにオプションが書ける
+# 例えばテストマーク、フィルタ、カバレッジなども追記可能
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"

@@ -1,40 +1,232 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61,<68", "wheel<0.42"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "StructureAnalysisEnvironment"
-
-version = "0.0.58"
-
+version = "0.1.0"
 description = "StructureAnalysisEnvironment (SAE)"
-authors = [
-  { name="Kengo NAKADA", email="kengo.nakada@email.com" }
-]
 readme = "README.md"
-requires-python = ">=3.8"
-#requires-python = ">=3.11"
-dependencies = [
-"pandas",
-"ase",
-"numpy",
-"matplotlib",
-"humanfriendly",
-"coloredlogs",
+requires-python = ">=3.7"
+authors = [{name = "Kengo NAKADA", email = "kengo.nakada@email.com"}]
+dependencies = ["numpy", "pandas", "ase", "matplotlib", "humanfriendly", "coloredlogs", "xlogger-py>=0.3.0"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+script-files = [
+  "src/sae/commands/Rvasp2cfg_nonLIB.py",
+  "src/sae/commands/ASchangeVacuum_ALL.py",
+  "src/sae/commands/AScif2surface111.py",
+  "src/sae/commands/AScif2vasp.py",
+  "src/sae/commands/ASpdb2vasp.py",
+  "src/sae/commands/ASstruct2vasp.py",
+  "src/sae/commands/ASvasp2cif.py",
+  "src/sae/commands/ASvasp2fdm.py",
+  "src/sae/commands/ASvasp2pdb.py",
+  "src/sae/commands/ASvasp2struct.py",
+  "src/sae/commands/ASvasp2supercell.py",
+  "src/sae/commands/ASvasp2surface111.py",
+  "src/sae/commands/ASvasp2vasp.py",
+  "src/sae/commands/ASvasp2xyz.py",
+  "src/sae/commands/CPfindINP.py",
+  "src/sae/commands/CPvasp2inp.py",
+  "src/sae/commands/FDbav2xyz.py",
+  "src/sae/commands/FDcif2fdm.py",
+  "src/sae/commands/FDclean.py",
+  "src/sae/commands/FDconv_e2photoe.py",
+  "src/sae/commands/FDfdm2vasp.py",
+  "src/sae/commands/FDgetfermi.py",
+  "src/sae/commands/FDmakeCconvAllsite.py",
+  "src/sae/commands/FDmove.py",
+  "src/sae/commands/FDpbd2fdm.py",
+  "src/sae/commands/FDplot_LDOS.py",
+  "src/sae/commands/FDplot_PDOS.py",
+  "src/sae/commands/FDplot_XAS.py",
+  "src/sae/commands/FDplot_XAS_LDOS.py",
+  "src/sae/commands/FDplot_XASs.py",
+  "src/sae/commands/FDvasp2fdm.py",
+  "src/sae/commands/FDvasp2fdm_BUG.py",
+  "src/sae/commands/FDvasp2fdm_NEW_20151125_BUGversion.py",
+  "src/sae/commands/FDxyz2fdm.py",
+  "src/sae/commands/LAread.py",
+  "src/sae/commands/LAread0.py",
+  "src/sae/commands/LAspg.py",
+  "src/sae/commands/MXEE.py",
+  "src/sae/commands/MXEI.py",
+  "src/sae/commands/MXdat2vasp.py",
+  "src/sae/commands/MXdat2xyz.py",
+  "src/sae/commands/MXdosall.py",
+  "src/sae/commands/MXfindDAT.py",
+  "src/sae/commands/MXfindPAO.py",
+  "src/sae/commands/MXgetvalence.py",
+  "src/sae/commands/MXjoinxyz.py",
+  "src/sae/commands/MXmd2vasprun.py",
+  "src/sae/commands/MXplot_ADOS.py",
+  "src/sae/commands/MXplot_ADOS_portrait.py",
+  "src/sae/commands/MXplot_LDOS.py",
+  "src/sae/commands/MXplot_MXEI.py",
+  "src/sae/commands/MXplot_PDOS.py",
+  "src/sae/commands/MXplot_TDOS+.py",
+  "src/sae/commands/MXplot_TDOS.py",
+  "src/sae/commands/MXplot_temperature.py",
+  "src/sae/commands/MXreadMD.py",
+  "src/sae/commands/MXtemp.py",
+  "src/sae/commands/MXvasp2mx.py",
+  "src/sae/commands/PFformat.py",
+  "src/sae/commands/PWgetfermi.py",
+  "src/sae/commands/PWin2vasp.py",
+  "src/sae/commands/PWmakePPinp.py",
+  "src/sae/commands/PWout2vasp.py",
+  "src/sae/commands/PWout2vasprun.py",
+  "src/sae/commands/PWplot_TDOS.py",
+  "src/sae/commands/PWplot_XAS.py",
+  "src/sae/commands/PWvasp2in.py",
+  "src/sae/commands/Rcfg2vasp.py",
+  "src/sae/commands/Rcfg2vasp_nonLIB.py",
+  "src/sae/commands/RchangeDensity.py",
+  "src/sae/commands/RcollSplit.py",
+  "src/sae/commands/RcollSplit_nonSplit.py",
+  "src/sae/commands/RgetDensity.py",
+  "src/sae/commands/Rmove.py",
+  "src/sae/commands/Rmove1.py",
+  "src/sae/commands/Rplot_Crystal.py",
+  "src/sae/commands/Rplot_Crystal0.py",
+  "src/sae/commands/Rplot_CrystalAnimeCFG.py",
+  "src/sae/commands/Rplot_fit.py",
+  "src/sae/commands/Rplot_ppcf.py",
+  "src/sae/commands/Rplot_ppcf2.py",
+  "src/sae/commands/Rplot_ppcf3.py",
+  "src/sae/commands/Rplot_ppcf_IGZO.py",
+  "src/sae/commands/Rplot_psq.py",
+  "src/sae/commands/Rplot_psq_IGZO_Ga.py",
+  "src/sae/commands/Rplot_psq_IGZO_In.py",
+  "src/sae/commands/Rplot_psq_IGZO_Zn.py",
+  "src/sae/commands/Rvasp2cfg.py",
+  "src/sae/commands/Vacf.py",
+  "src/sae/commands/Vados.py",
+  "src/sae/commands/Vbader.py",
+  "src/sae/commands/VbaderVolumeNum.py",
+  "src/sae/commands/VbaderVolumeSum.py",
+  "src/sae/commands/Vband.py",
+  "src/sae/commands/Vcar2direct.py",
+  "src/sae/commands/Vch.py",
+  "src/sae/commands/VchangeLattice.py",
+  "src/sae/commands/VchangeVacumm.py",
+  "src/sae/commands/VchgInverse.py",
+  "src/sae/commands/Vdirect2car.py",
+  "src/sae/commands/Vextract0.py",
+  "src/sae/commands/VfindBond.py",
+  "src/sae/commands/VfindNN0.py",
+  "src/sae/commands/VfindNN1_library0.py",
+  "src/sae/commands/VfindNN1_library1.py",
+  "src/sae/commands/VfindNN1_nonLIB.py",
+  "src/sae/commands/VfindNN2FNC.py",
+  "src/sae/commands/Vforce.py",
+  "src/sae/commands/Vforce2md.py",
+  "src/sae/commands/VgetCOHPinfo.py",
+  "src/sae/commands/Vldos.py",
+  "src/sae/commands/Vldos_COHP.py",
+  "src/sae/commands/VmakeSuperCell2.py",
+  "src/sae/commands/VmodifyAtomPosition.py",
+  "src/sae/commands/Vpdos.py",
+  "src/sae/commands/Vplot_ADOS.py",
+  "src/sae/commands/Vplot_ADOS_portrait.py",
+  "src/sae/commands/Vplot_Bader.py",
+  "src/sae/commands/Vplot_COHP.py",
+  "src/sae/commands/Vplot_COHP_LDOSm.py",
+  "src/sae/commands/Vplot_COHP_PDOS.py",
+  "src/sae/commands/Vplot_COHP_tate.py",
+  "src/sae/commands/Vplot_COHP_yoko.py",
+  "src/sae/commands/Vplot_Crystal.py",
+  "src/sae/commands/Vplot_CrystalAnimeMD.py",
+  "src/sae/commands/Vplot_CrystalAnimePOSCAR.py",
+  "src/sae/commands/Vplot_LDOS.py",
+  "src/sae/commands/Vplot_LDOSm.py",
+  "src/sae/commands/Vplot_PDOS.py",
+  "src/sae/commands/Vplot_TDOS.py",
+  "src/sae/commands/Vplot_VDEI.py",
+  "src/sae/commands/Vplot_VEE.py",
+  "src/sae/commands/Vplot_VEI.py",
+  "src/sae/commands/Vplot_band.py",
+  "src/sae/commands/Vplot_com.py",
+  "src/sae/commands/Vplot_temperature.py",
+  "src/sae/commands/Vread.py",
+  "src/sae/commands/VrotPOSCAR.py",
+  "src/sae/commands/Vtdos.py",
+  "src/sae/commands/Vtemp.py",
+  "src/sae/commands/Vvasp2sets.py",
+  "src/sae/commands/Vvasp2sets_nonLIB.py",
+  "src/sae/commands/Vvasp2xyz.py",
+  "src/sae/commands/Vxdat2MD.py",
+  "src/sae/commands/Vxml2CONTCAR_ALL.py",
+  "src/sae/commands/Vxml2MD.py",
+  "src/sae/commands/Vxml2POSCAR.py",
+  "src/sae/commands/Vxmlread.py",
+  "src/sae/commands/WchkEparm.py",
+  "src/sae/commands/Wgeteparm.py",
+  "src/sae/commands/Wgeteph.py",
+  "src/sae/commands/Wgetepl.py",
+  "src/sae/commands/Wldos.py",
+  "src/sae/commands/Wplot_ADOS.py",
+  "src/sae/commands/Wplot_ADOS_portrait.py",
+  "src/sae/commands/Wplot_LDOS.py",
+  "src/sae/commands/Wplot_LDOS_portrait.py",
+  "src/sae/commands/Wplot_LDOSm.py",
+  "src/sae/commands/Wplot_TDOS.py",
+  "src/sae/commands/Wplot_XAS.py",
+  "src/sae/commands/Wstruct2vasp.py",
+  "src/sae/commands/Wvasp2struct.py",
+  "src/sae/commands/_RcollSplit_nonLIB.py",
+  "src/sae/commands/dd.py",
+  "src/sae/commands/dd_simple.py",
+  "src/sae/commands/fdExp_comp_XAS.py",
+  "src/sae/commands/fdLDOS.py",
+  "src/sae/commands/fdLDOS0_specified.py",
+  "src/sae/commands/fdLDOS_color.py",
+  "src/sae/commands/fdLDOSmulti.py",
+  "src/sae/commands/fdMulti_2_XAS+LDOS+EXP.py",
+  "src/sae/commands/fdMulti_3.py",
+  "src/sae/commands/fdPDOS_XAS_av.py",
+  "src/sae/commands/fdXAS.py",
+  "src/sae/commands/fdXAS_specified.py",
+  "src/sae/commands/makepfheader.py",
+  "src/sae/commands/makexml.py",
+  "src/sae/commands/makexml_GUI.py",
+  "src/sae/commands/makexml_GUI_simple.py",
+  "src/sae/commands/md2vasprun.py",
+  "src/sae/commands/mxDOS1.py",
+  "src/sae/commands/pwPDOS.py",
+  "src/sae/commands/pwTDOS.py",
+  "src/sae/commands/readMD.py",
+  "src/sae/commands/vLDOSm_3d.py",
+  "src/sae/commands/vLDOSm_4d.py",
+  "src/sae/commands/vLDOSmulti.py",
+  "src/sae/commands/vLDOSs.py",
+  "src/sae/commands/wLCOS_core.py",
+  "src/sae/commands/wLDOS_core.py",
+  "src/sae/commands/wLDOSm_3d.py",
+  "src/sae/commands/wLDOSm_4d.py",
+  "src/sae/commands/wXAS.py",
+  "src/sae/commands/wconv_dos2gnuplotdata.py",
+  "src/sae/commands/wconv_gnuplot_number.py",
+  "src/sae/commands/wconv_intdos2gnuplotdata.py",
+  "src/sae/commands/wfch_XAS.py"
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sae = ["*.list", "POSCAR", "sample_input/*.txt", "vasp/sample_input/*"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 pythonpath = ["src"]
 
-# スクリプトをすべてインストール対象にする(*は使えないのでファイルを全部列挙する)
-# [tool.setuptools.script-files]
-# files = ["src/StructureAnalysisEnvironment/bin/*."]
-
-# ここでpytestのiniと同じようにオプションが書ける
-# 例えばテストマーク、フィルタ、カバレッジなども追記可能
-
+# 旧版の整形設定を保持する。
 [tool.black]
 line-length = 88
+target-version = ["py37"]
 
 [tool.isort]
 profile = "black"
