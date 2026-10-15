@@ -3,6 +3,37 @@
 from __future__ import print_function
 from sae.vasp.poscar import ReadVaspPoscar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VrotPOSCAR
+#  基本並進ベクトル（および内部座標）を回転させる
+#
+#  例) x-y 面内に広がる graphene ,真空層(z軸方向) のスラブモデルで構築した
+#      Graphene を x軸方向真空層で、z-y 軸面に広がるグラフェン構造へ
+#      変換する
+#      (たとえば　openMX の ESM は x軸方向へ EMS を積む必要がある)
+#
+################################################################################
+#
+# 2018.08.15, 2018.08.23
+#  Python2/3 両対応
+#
+# 2015.03.09
+#   direct 呼び出し method を間違えていた（違うmethodを呼んでいた)のを修正
+#
+# 2015.03.03
+#  引数処理のバグを修正
+#  デバッグモードを追加
+#
+# 2015.03.03
+#   startup
+#   selective dynamic はすべて OFF
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -12,6 +43,51 @@ __license__ = "MIT"
 import sys
 import optparse
 
+#
+################################################################################
+#import os
+#import re
+#import gzip
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# makes instance
+################################################################################
+# ORIGINAL POSCAR
+################################################################################
+#   print >> out, title
+#
+#   if vasp >= 5:
+#       print >> out, " ",
+#       for i in range(nion):
+#           print >> out,atoms_index[i],
+#       print >> out, " "
+#
+#   print >> out, " ",
+#   for i in range(nion):
+#       print >> out, atoms[i],
+#   print >> out, " "
+#
+#   if selective:
+#       print >> out, "Selective Dynamics"
+#   if direct:
+#       print >> out, "Direct"
+#   else:
+#       print >> out, "Cartesian"
+#
+#   for j in range(natom):
+#       print >> out, " %13.9f %13.9f %13.9f" \
+#               %(position[j,0], position[j,1], position[j,2]),
+#       if selective:
+#           print >> out, "",
+#           print >> out, fix[j,0],fix[i,1],fix[i,2],
+#       print >> out, ""
+################################################################################
+################################################################################
+# Rotated  POSCAR
+################################################################################
+# オイラー角(deg)
+# オイラー角で回した時の基本並進ベクトル
 if __name__ == "__main__":
     poscarname = "POSCAR"
     outputname = poscarname + ".vasp"

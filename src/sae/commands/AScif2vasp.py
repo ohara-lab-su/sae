@@ -10,6 +10,33 @@ from ase.io.vasp import *
 from ase.io.xyz import *
 
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#  using ASE
+#
+#  read: format='cif'
+#  write: format='vasp'
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
+#import numpy as np
+################################ ASE
+#from ase.lattice import bulk
+#from ase.dft.kpoints import ibz_points, get_bandpath
+###############################
+#from gpaw import GPAW, PW, FermiDirac, setup_paths
+#from gpaw import GPAW, PW
+#setup_paths.insert(0,'.')
+################################################################################
+##############################################
+##############################################
 def options():
     from sae.common.paths import FileDiscovery
 
@@ -40,9 +67,12 @@ def options():
     return (name, base, in_suffix, out_suffix)
 
 
+################################################################################
 if __name__ == "__main__":
     cifname, base, in_suffix, out_suffix = options()
+    # inputname
     cifname = cifname
+    # outputname
     poscarname = cifname + out_suffix
     print("INPUT CIF file  = ", cifname)
     print("OUTPUT POSCAR file = ", poscarname)

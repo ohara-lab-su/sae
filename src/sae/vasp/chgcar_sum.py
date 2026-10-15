@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# coding:utf-8
+# print(chgdata)
+# print(type(chgdata))
+# print(chgdata.shape)
+# print(type(chgdata[0,0,139]))
 # Copyright Kengo NAKADA; SAE class library.
 import multiprocessing
 import numpy as np

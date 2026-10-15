@@ -3,6 +3,29 @@
 from __future__ import print_function
 from sae.structure.document import Read
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#   convert PWScf (Quantum ESPRESSO ) to *.in
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.08.24
+#  統合化
+#
+# 2015.08.24
+#  統合化の前に print 部分の分離・関数化
+#
+# 2015.03.20
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +38,13 @@ import os
 import re
 
 
+#
+################################################################################
+#import numpy as np
+#import glob
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
 def options():
     poscarname = "POSCAR"
     outbase = "POSCAR"
@@ -42,6 +72,7 @@ def options():
     return [poscarname, outbase, inpsuffix, options.stdout]
 
 
+################################################################################
 if __name__ == "__main__":
     poscarname, outbase, inpsuffix, OPT_STD = options()
     cname = outbase + inpsuffix

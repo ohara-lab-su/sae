@@ -1,3 +1,34 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# WIEK2k case.txspec
+#
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2015.06.30
+#   == None --> is None
+#
+# 2015.04.06
+#  suffix を変更可能にした(以前のままでも使える)
+#
+# 2015.03.28(sat)
+#  startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import optparse
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+# case = 'Cu'
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -6,8 +37,15 @@ import re
 import numpy as np
 
 
+############################################################################
+## init
+#   def get_s(self):
+#       return self.s
+#   def get_gamma(self):
+#       return self.g
 class ReadWienTxspec(object):
 
+    #       suffix = '.txspec'
     def __init__(self, case="case", spin=None, suffix=".txspec"):
         from sae.common.text import TextFiles
 
@@ -18,6 +56,10 @@ class ReadWienTxspec(object):
         g_reg = re.compile(" #GAMMA=.*")
         self.eng = []
         self.unbroad_xas = []
+        # if bool(s_reg.match(line)):
+        #    self.s = float(line.split()[1])
+        # if bool(g_reg.match(line)):
+        #    self.g = float(line.split()[1])
         for i in range(self.num):
             line = self.datlines[i]
             if not bool(s_reg.match(line)) and (not bool(g_reg.match(line))):

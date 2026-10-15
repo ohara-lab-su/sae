@@ -1,9 +1,70 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.openmx.pdos import ReadMxPdos
 from sae.openmx.tdos import ReadMxTdos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# MXplot_LDOS.py
+#
+#   Vplot_LDOS.py (2015.02.25) ベースで作成
+#   using ReadMxPdos
+#
+#   DosMain にて Tetrahedron , PDOS モードによる出力を仮定
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.02
+#  Gaussian スメアリングの時のオプション追加
+#
+# 2015.02.26
+#  デフォルトファイル名 or 入力ファイル名が存在しない時には
+#  カレントの *.out ファイルを検出して、もしカレントの *.out がひとつのときに
+#  デフォルト名を変更する仕組みを導入
+#
+#  注意) *.out ファイルもしくは *.dat ファイルをキーにしているので
+#        これらは必須となる
+#        もととも、DOS系のクラスは実質的には *.out or *.dat  は必須
+#
+# 2015.02.25
+#  MXplot_LDOS.py startup
+#  Vplot_LDOS.py ベースで MXplot_LDOS.py を作成start
+#
+#
+# ----------------------------- Vplot_LDOS.py (2015.02.25)
+# 2015.01.29
+#    Y軸(DOS軸) の下限の設定のバグを修正
+#
+# 2015.01.14
+#    SPIN 対応版,option EMAX,EMIN,YMAX 対応
+#
+# 2015.01.14
+#    OUTCAR が存在すれば atom (番号) から原子種情報を引っ張って
+#    元素名として記述する
+#    色設定の自動化
+#
+# 2015.01.13
+#    引数処理&デフォルト動作を変更
+#    1) デフォルト 1 番目の原子の局所状態密度のみプロット(vplot_LDOSシリーズ互換)
+#    2) 引数にスペース区切りで連続した数字を与える(数字=原子種番号)
+#       そのままその原子種の局所状態密度をプロット
+#    注意)
+#       引数に数字以外は想定してない
+#
+# 2015.01.11 (sun) startup
+#    基本機能はほぼ完成,まったりと作成
+#    非スピン版
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,9 +78,20 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
+# 'openmx' より最適なデフォルトファイル名の推定ルーチン
 def options():
     from sae.common.paths import FileDiscovery
 
+    # input data name
     name = "openmx"
     suffix_tdos = ".DOS.Tetrahedron"
     suffix_pdos = ".PDOS.Tetrahedron"
@@ -69,6 +141,24 @@ def options():
     ]
 
 
+################################################################################
+# set input file
+# ION の種類ではなくて原子種の通し番号で入力
+# set output device
+# makes instance ( Read PDOS.Tetrahedron )
+# makes instance ( Read DOS.Tetrahedron )
+# makes instance ( Read *.out or *.dat )
+#       for atom in range(NATOM):
+#           print atom,atoms_j[atom], atoms[atoms_j[atom]]
+#       print ""
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+############################################################################
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         name,
@@ -113,7 +203,12 @@ if __name__ == "__main__":
         class_name = "ReadMxDat"
         datname = datname + ".dat"
         FLAG_DATFILE = True
+    #       module = __import__(module_name,globals(),locals(),[class_name],-1)
+    # module の動的ロード
+    # class の動的ロード
     if FLAG_DATFILE:
+        # このリフレクションは python2 方式なので注意
+        # for Python3
         try:
             module = __import__(module_name, globals(), locals(), [class_name], 0)
         except:
@@ -123,20 +218,31 @@ if __name__ == "__main__":
         NION = dat.get_nion()
         atoms = dat.get_atoms_index()
         atoms_j = dat.get_atoms_j()
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 10
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # EF0
     for spin in range(NSPIN):
         if NSPIN == 1:
+            # 一段組の原点(x,y), 幅(x,y)
             plt.axes([0.13, 0.13, 0.8, 0.8])
             plt.title(TITLE)
         if NSPIN == 2:
             if spin == 0:
+                # 二段組の上側(y幅半分) up-spin
                 plt.axes([0.13, 0.53, 0.8, 0.4])
                 plt.title(TITLE)
             if spin == 1:
+                # 二段組の下段( down-spin )
                 plt.axes([0.13, 0.13, 0.8, 0.4])
         j = 0
+        #           plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
+        # autumn, bone, cool, copper, flag, gray, hot, hsv,
+        # jet, pink, prism, spring, summer, winter, spectral
+        # Y軸の調整
         for atom in plot_atoms:
             if len(plot_atoms) > 1:
                 if atom == 0:
@@ -206,12 +312,15 @@ if __name__ == "__main__":
         if NSPIN == 2:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0])
         plt.axvline(x=0, color="black", linewidth=1)
     plt.xlabel("$E -  E_{\\mathrm{F}}$ [eV]", fontsize=20)
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     plt.savefig("LDOS.eps")
     plt.savefig("LDOS.pdf")

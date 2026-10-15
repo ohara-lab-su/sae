@@ -1,8 +1,34 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+# atom END
+#####################################################
+################################################################################
 from __future__ import print_function
 from sae.lobster.doscar import ReadLobDos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_COHP_LDOSm.py
+#
+#  Vplot_LDOSm.py とほぼ同じ
+#   DOSCAR の代わりに DOSCAR.lobster を読み込む
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.03
+#    lobster version startup
+#
+# 2015.04.22
+#    Vplot_LDOS.py を参考にして作成
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,8 +40,25 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import sys
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
+# atom は 1番から(内部的には0番からなので内部的に変換している)
+# 全サイトの原子のLDOSをまとめてプロット(大量にあると意味不明になる)
+# s-orbital のみプロット
+# p-orbital のみプロット
+# sp-orbital のみプロット
 def options():
     dname = "DOSCAR.lobster"
+    # 0番から始まる
     atom = 1
     parser = optparse.OptionParser()
     parser.add_option("-d", "--doscar", dest="DOSCAR", default=dname)
@@ -57,6 +100,22 @@ def options():
     ]
 
 
+################################################################################
+#####################################################
+# set input file
+#####################################################
+# オプションの確認
+#   ysize = 0.74/4
+#####################################################
+# plot する l軌道のリスト
+#####################################################
+# makes instance ( Read DOSCAR )
+#   dos = SAE.io.ReadVaspDoscar(dname)
+#   dos = SAE.io.ReadLobDos()
+#   title =  dos.title
+#####################################################
+# makes label
+#####################################################
 if __name__ == "__main__":
     (
         dname,
@@ -125,10 +184,24 @@ if __name__ == "__main__":
     else:
         a1 = int(atom)
         a2 = int(atom) + 1
+    #####################################################
+    #
+    #       plt.rcParams['font.size']         = 16
+    #       plt.rcParams['legend.fontsize']   = 10
+    #       plt.rcParams['axes.linewidth']    = 1.5
+    #####################################################
+    # plot TDOS
+    #####################################################
+    # plot LDOS
+    #       for orbit in range(0,3): # s(0),p(1),d(2)
+    #####################################################
+    #       plt.xlim([-10,10])
+    #       plt.ylim([0,200])
     for atom in range(a1, a2):
         plt.rcParams["font.size"] = 14
         plt.rcParams["legend.fontsize"] = 5
         plt.rcParams["axes.linewidth"] = 1.5
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
         plt.axes([orgx, orgy, xsize, ysize])
         tdos = dos.get_tdos(spin)
@@ -149,6 +222,7 @@ if __name__ == "__main__":
             plt.ylim(ymax=int(OPT_YMAX))
         orgy = orgy + ysize + off
         j = 1
+        #                   color=c, linewidth=2, label=atom_label+"-"+orbit_list[orbit])
         for orbit in orbit_list:
             plt.axes([orgx, orgy, xsize, ysize])
             c = cm.prism(j * 20 / 4)

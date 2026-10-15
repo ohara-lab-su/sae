@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+# coding:utf-8
+#for a in self.__df['ATOM'][1]:
+#    print(a)
+# Bader Volume の調査
+# volume_list = bcf.search_atomic_volume_num(atom)
+# print(volume_list)
+# # Bader Volume の足し合わせ
+# util = SAE.io.UtilBader()
+# util.sum_bader_volume(volume_list)
+# # Bader Volume の書き出し
+# wbv = SAE.io.WriteBaderVolume()
+# wbv.chgdata = util.bader_volume
+# wbv.poscar_info = util.poscar_info
+# wbv.write_bader_volume('CHGCAR_BvA_%s' % atom)
 # Copyright Kengo NAKADA; SAE class library.
 """
 Bader BCF.dat
@@ -23,11 +38,14 @@ class ReadBaderBcf(object):
         self.__ngy_max = 150
         self.__ngz_max = 150
 
+    # df = pd.read_csv(name, sep='\s+')
     def open(self, name="BCF.dat"):
         self.__df = pd.read_csv(
             name, skiprows=[1, 1], skipfooter=1, delim_whitespace=True, engine="python"
         )
 
+    # DF は numpy.float64 で入ってしまうので、atom番号を INT にする
+    # volume 番号でループして探す
     def get_distance(self, atom):
         """
         BCF にて、atom 番号を指定して、distance を取り出す。
@@ -39,6 +57,7 @@ class ReadBaderBcf(object):
         distance = None
         charge = None
         index_n = len(self.__df["ATOM"])
+        # atom の番号と同じ volume を探す
         for i in range(index_n):
             bader_atom = self.__df["ATOM"][i]
             if np.isclose(bader_atom, int(atom)):
@@ -51,6 +70,8 @@ class ReadBaderBcf(object):
                 )
         return distance
 
+    # DF は numpy.float64 で入ってしまうので、atom番号を INT にする
+    # volume 番号でループして探す
     def get_charge(self, atom):
         """
         BCF にて、atom 番号を指定して、charge を取り出す。
@@ -62,6 +83,7 @@ class ReadBaderBcf(object):
         distance = None
         charge = None
         index_n = len(self.__df["ATOM"])
+        # atom の番号と同じ volume を探す
         for i in range(index_n):
             bader_atom = self.__df["ATOM"][i]
             if np.isclose(bader_atom, int(atom)):
@@ -74,6 +96,8 @@ class ReadBaderBcf(object):
                 )
         return charge
 
+    # print(self.__df.head(3))
+    # DF は numpy.float64 で入ってしまうので、atom番号を INT にする
     def search_atomic_volume_num(self, atom):
         """
         [注意]
@@ -86,6 +110,7 @@ class ReadBaderBcf(object):
         self.__df["ATOM"] = self.__df["ATOM"].astype(int)
         volumes_n = []
         total_n = len(self.__df["ATOM"])
+        # 入力した atom 番号の BaderVolume 番号を探す（複数ある場合がある)
         for i in range(total_n):
             if np.isclose(self.__df["ATOM"][i], int(atom)):
                 self.__logger.debug(

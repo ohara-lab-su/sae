@@ -1,3 +1,166 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+################################################################################
+# CHGCAR/ELFCAR 読み込み class
+#
+# 先頭部分は POSCAR と同じなので以下は同じ
+#
+# t[3,3]            :  基本並進ベクトル(注意:配列内indexは0から)
+#
+#                              x   y   z
+#                        t1 = a11 a21 a31  ! lattice vector t1
+#                        t2 = a12 a22 a32  ! lattice vector t2
+#                        t3 = a13 a23 a33  ! lattice vector t3
+# 注意)
+#    t(基本並進行列)
+#                             t11, t12, t13
+#                             t21, t22, t23
+#                             t31, t32, t33
+#
+# atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+# atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+# ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す
+# ion_local[j]      : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+#
+# position[j,3]     : 通し番号(max=natom)とx,y,z 指定で内部座標
+# fix[j,3]          : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定
+#
+# title             : タイトル
+# scale             : 格子定数(スケールファクター)
+# selective         : selective mode
+# direct            : direct or cartesian
+#
+################################################################################
+# 2018.08.18 新インスタンス変数
+#
+# t1_len         : 格子定数a
+# t2_len         : 格子定数b
+# t3_len         : 格子定数c
+#
+# 2018.08.18 新Method
+#
+# get_lattice_a()
+# get_lattice_b()
+# get_lattice_c()
+#
+# get_t1_len()
+# get_t2_len()
+# get_t3_len()
+#
+################################################################################
+#
+# 1) 基本構造情報読み込み Method : get_*()
+#
+# 2) 並進ベクトル回転Method
+#     conv_rot_euler(self,alpha,beta,gamma)
+#
+# 3) POSCAR print method
+#     print_poscar()
+#
+# 4) conv Direct --> Cartesian
+#     conv_direct2car()
+#
+# 5) makes SuperCell method
+#     conv_supercell()
+#
+################################################################################
+#
+# 2022.03.13:
+#   メモリ消費が多くて実質使ってないルーチンを止
+#
+# 2018.08.17
+#  startup
+#
+################################################################################
+################################################################################
+# import gzip
+# sys.path.append('../..')
+# スーパーセルに関していくつかルーチンを殺す。メモリ消費を少なくするため。
+# reduced_memory = True
+# import SpaceGroupEnvironment as SGE
+# from numba import jit
+# super の通し番号を与えると元cellの通し番号を与える)
+################################################################################
+# name = 'POSCAR'
+# 反転した CHGCAR を作る
+#   poscar = ReadVaspChgcar(name)
+#   poscar.print_chgcar(outname='ELFCAR_NEW') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   poscar.init_ave_elf()  # ELF 積算のための準備
+#   print('================================================= 1.0')
+#   newchg = poscar.sphere_integral_elf(r_diff=1.0)  # 半径 1.0A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_1.0') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 1.5')
+#   newchg = poscar.sphere_integral_elf(r_diff=1.5)  # 半径 1.5A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_1.5') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 2.0')
+#   newchg = poscar.sphere_integral_elf(r_diff=2.0)  # 半径 1.5A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_2.0') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   print('================================================= 0.5')
+#   newchg = poscar.sphere_integral_elf(r_diff=0.5)  # 半径 1.5A にて積算サーチ
+#   poscar.print_chgcar(chgcar=newchg, outname='ELFCAR_NEW_0.5') # 読み込んだメモリ上の内容をそのまま書き出す(for TEST)
+#   poscar.print_super_chgcar(outname='ELFCAR_NEW')    # 積算結果をVASP形式にて(FFT-mesh上)保存
+##     title = poscar.get_title()
+##     scale = poscar.get_scale()
+##     t = poscar.get_t()
+##     vasp = poscar.get_vasp_version()
+##     nion = poscar.get_nion()
+##     atoms = poscar.get_atoms()
+##     atoms_index = poscar.get_atoms_index()
+##     natom = poscar.get_natom()
+##     selective = poscar.get_selective()
+##     direct = poscar.get_direct()
+##     position = poscar.get_position()
+##     fix = poscar.get_fix()
+##
+##     ion = poscar.get_ion()
+##     ion_local = poscar.get_ion_local()
+##     atoms_index_j = poscar.get_atoms_index_j()
+##
+## #   for i in range(natom):
+## #       print i, atoms_index_j[i]
+##
+##     ############################################################################
+##     out = sys.stdout
+##
+##     print("%s" % str(title), file=out)
+##     print(" %s" % str(scale), file=out)
+##     print("  %13.9f %13.9f %13.9f" %(t[0,0],t[1,0],t[2,0]), file=out)
+##     print("  %13.9f %13.9f %13.9f" %(t[0,1],t[1,1],t[2,1]), file=out)
+##     print("  %13.9f %13.9f %13.9f" %(t[0,2],t[1,2],t[2,2]), file=out)
+##
+##     if vasp >= 5:
+##         print(" ", file=out, end="")
+##         for i in range(nion):
+##             print("%s " % str(atoms_index[i]), file=out, end="")
+##         print(" ", file=out)
+##
+##     print(" ", file=out, end="")
+##     for i in range(nion):
+##         print("%s " % str(atoms[i]), file=out, end="")
+##     print(" ", file=out)
+##
+##     if selective:
+##         print("Selective Dynamics", file=out)
+##     if direct:
+##         print("Direct", file=out)
+##     else:
+##         print("Cartesian", file=out)
+##
+##     for j in range(natom):
+##         print(" %13.9f %13.9f %13.9f"
+##                 %(position[j,0], position[j,1], position[j,2]), file=out, end="")
+##         if selective:
+##             print("", file=out, end="")
+##             print("%s %s %s" % (str(fix[j,0]), str(fix[i,1]), str(fix[i,2])), file=out, end="")
+##         print("", file=out)
+##     ############################################################################
+##
+## #   print ion
+#   print ion_local
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.structure.base import Method
@@ -15,6 +178,10 @@ except ImportError:
 reduced_memory = False
 
 
+#   @jit
+# @jit
+############################################################################
+# direct to cartesian method
 class ReadVaspChgcar(Method):
 
     def __init__(
@@ -33,14 +200,17 @@ class ReadVaspChgcar(Method):
         self.open(CHGCAR=CHGCAR, suffix=suffix, sort=sort, atoms_index=sort)
 
     @property
+    # self.__logger.debug("Ngxc = %s" % self.__ngxc)
     def ngxc(self):
         return self.__ngxc
 
     @property
+    # self.__logger.debug("Ngyz = %s" % self.__ngyz)
     def ngyz(self):
         return self.__ngyz
 
     @property
+    # self.__logger.debug("Ngzc = %s" % self.__ngzc)
     def ngzc(self):
         return self.__ngzc
 
@@ -54,6 +224,88 @@ class ReadVaspChgcar(Method):
         """POSCAR 情報の取り出し"""
         return self.get_poscar_info()
 
+    ###############################################
+    # Read Translation Vector
+    #         x   y   z
+    #   t1 = t11 t21 t31
+    #   t2 = t12 t22 t32
+    #   t3 = t13 t23 t33
+    #
+    ###############################################
+    # 単位胞の長さの計算
+    #
+    # print("lattice a = %s " % str(self.t1_len))
+    # print("lattice b = %s " % str(self.t2_len))
+    # print("lattice c = %s " % str(self.t3_len))
+    ###############################################
+    # VASP のバージョン番号確認(記号があるか否か)
+    #
+    ###############################################
+    # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+    # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+    #
+    ###############################################
+    # atoms_number[i]
+    #   atoms_index の原子番号版
+    ###############################################
+    # atoms_index の通し番号版
+    #    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+    # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+    # print('makes atoms_index_j[i]')
+    # self.atoms_index_j = []
+    # if self.vasp_version == 5:
+    #     for k in range(self.nion):
+    #         for l in range(int(self.atoms[k])):
+    #             self.atoms_index_j.append(str(self.atoms_index[k]))
+    ###############################################
+    # atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
+    # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+    # print('makes atoms_number_j[]')
+    # self.atoms_number_j = []
+    # if self.vasp_version == 5:
+    #     for k in range(self.nion):
+    #         for l in range(int(self.atoms[k])):
+    #             num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
+    #             self.atoms_number_j.append(num0)
+    ###############################################
+    # 全原子数の確認
+    ###############################################
+    # get ion (makes index)
+    # ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+    #
+    # print tmp, int(ion[tmp])
+    ###############################################
+    # ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+    #
+    # print tmp, int(ion[tmp]), int(ion_local[tmp])
+    ###############################################
+    # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
+    #                               <---> atoms_index_j() は元素記号を返す
+    # ReadOutcar.py, ReadMxDatMethod.py 互換
+    #
+    # 通常使ってないので停止しても問題は無い
+    # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+    # print('Create atoms_j[j]')
+    # self.atoms_j = np.zeros(self.natom, dtype=int)
+    # j = 0
+    # for ion in range(self.nion):
+    #     for atom in range(self.atoms[ion]):
+    #         self.atoms_j[j] = int(ion)
+    #         j += 1
+    ###############################################
+    # get atomc coordinate mode
+    #
+    ###############################################
+    # 内部座標のモードを取得
+    #
+    ###############################################
+    # get atomic coordinate position
+    #
+    # self.position = np.zeros((int(self.natom), 3), dtype='float32')
+    # print j,
+    # print " %16.12f %16.12f %16.12f" \
+    #        %(self.position[j,0],self.position[j,1],self.position[j,2]),
+    # print ""
     def open(self, CHGCAR="CHGCAR", suffix=".vasp", sort=False, atoms_index=None):
         from sae.common.text import TextFiles
         from sae.structure.elements import ElementTable
@@ -88,6 +340,7 @@ class ReadVaspChgcar(Method):
         i = 5
         self.vasp_version = 5
         atoms = self.datlines[i].split()
+        # 数字ならば
         if atoms[0].isdigit():
             self.vasp_version = 4
         del atoms
@@ -193,6 +446,55 @@ class ReadVaspChgcar(Method):
         self.__logger.debug("--- END (readline = %s)" % current_datlines)
         self.read_mesh_data(startline=current_datlines + 2)
 
+    # print(current_datlines)
+    # print(self.datlines[current_datlines+2])
+    ####################
+    # FFT Mesh の読み込み
+    #
+    ####################
+    # FFT-Mesh 一つあたりの長さ(インスタンス変数の定義)
+    #
+    # print(self.rate_x)
+    # print(self.rate_y)
+    # print(self.rate_z)
+    ####################
+    # 総Mesh数および読み込むべき総ライン数の算出 (一行に10個のデータがある)
+    #
+    # self.__logger.debug("Ngxc = %s" % self.__ngxc)
+    # self.__logger.debug("Ngyz = %s" % self.__ngyz)
+    # self.__logger.debug("Ngzc = %s" % self.__ngzc)
+    # CHACAR 形式のメッシュデータの読み込み開始行のセット
+    ####################
+    # アホループ(numpyのmethodを使うと一行で高速に書けるので注意) START
+    # 行を全部 join
+    # chglist += ''.join(self.datlines[start_mesh_index + i])
+    # join後のデーターを split して LIST化
+    # 一行足りないケースがあるのでその場合は追加する
+    # 読み取りの確認
+    # 最終データーの確認
+    # ( python だと 0 から index start なので -1 するのを忘れない)
+    # print(chgarray[mesh_max-1])
+    # 元の Matrix は 1 から始まるので注意
+    # WRITE(IU, FORM)(((C(NX, NY, NZ), NX=1, NGXC), NY=1, NGYZ), NZ=1, NGZC)
+    #       # CHGCAR 形式でのデータ吐き出しテスト
+    #       print("write VASP style CHGCAR files: plase waite...")
+    #       ngx_max = self.__ngxc
+    #       ngy_max = self.__ngyz
+    #       ngz_max = self.__ngzc
+    #       inner_counter = 0
+    #       for nx in range(0, ngx_max):
+    #           for ny in range(0, ngy_max):
+    #               for nz in range(0, ngz_max):
+    #                   inner_counter += 1
+    #                   if self.__chgdata[nx, ny, nz] >= 0.001:
+    #                       print("{:<12.5f}".format(self.__chgdata[nx, ny, nz]), end="")
+    #                      #print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
+    #                   else:
+    #                      print("{:<12.5e}".format(self.__chgdata[nx, ny, nz]), end="")
+    #                      #print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
+    #                   if inner_counter >= 10:
+    #                       inner_counter = 0
+    #                       print("")
     def read_mesh_data(self, startline=None, mode="CHGCAR"):
         """
         電荷密度構造 の読み込み (2018.08.18)
@@ -231,6 +533,7 @@ class ReadVaspChgcar(Method):
         start_mesh_index = startline + 1
         self.__chgdata = np.zeros((self.__ngxc, self.__ngyz, self.__ngzc))
         chglist = ""
+        # print(tmp_)
         for i in range(mesh_max_line):
             tmp_ = self.datlines[start_mesh_index + i]
             chglist += "".join(tmp_)
@@ -246,12 +549,15 @@ class ReadVaspChgcar(Method):
         i = 0
         for nx in range(0, self.__ngxc):
             for ny in range(0, self.__ngyz):
+                # print(self.__chgdata[nx,ny,nz], chgarray[i])
                 for nz in range(0, self.__ngzc):
                     self.__chgdata[nx, ny, nz] = float(chgarray[i])
                     i += 1
         self.__logger.debug("--- END: read_mesh_data()")
         self.__logger.debug("")
 
+    # title = self.get_title()
+    # scale = self.get_scale()
     def get_poscar_info(self):
         """POSCAR 情報の取り出し
         リストなので順番維持
@@ -284,6 +590,47 @@ class ReadVaspChgcar(Method):
             fix,
         ]
 
+    #
+    # (test) 電荷密度をスーパーセル化する 3x3x3
+    # 2018.08.18 12:36 正しく計算されるのを確認
+    #
+    # 3x3 の super-cell を作った場合の原点 shift
+    #
+    # 基本セル情報 chgdata[nx,ny,nz] のループを new-cell 内で行う
+    #######################################################################
+    # ある原点からのある半径内での ELF の平均値 (単独テスト用)
+    #  原点 0,0,0 mesh 上を中心とした積算
+    #
+    #  super-cell さえ作れば計算可能
+    #
+    # base となる(中心となる) cell = [ nx + sx[2], ny + sy[2], nz + sz[2])
+    # ある cell の中心 nx=0, ny=0, nz=0 からある半径 r 内の mesh ポイントを探す
+    #
+    # 1. 原点と cell 内 mesh 点の差をとする
+    #    その際、mesh-mesh の distance を実長さ換算する
+    # 2. super_cell と 原点の差を全て探す(mesh-dataのみ)
+    #
+    #######################################################################
+    #       print("search ...")
+    #       org = [0 + sx[2], 0 + sy[2], 0 + sz[2]]
+    #       r_diff = 2.0 # Angstrom
+    #       elf_sum = 0
+    #       v = 4.0/3.0*math.pi*r_diff**3 # Volume /A^3
+    #       for nx in range(0, self.__ngxc*3):
+    #           for ny in range(0, self.__ngyz*3):
+    #               for nz in range(0, self.ngzc*3):
+    #                   # 二点間の距離
+    #                   r = (((org[0] - nx)*self.rate_x)**2
+    #                      + ((org[1] - ny)*self.rate_y)**2
+    #                      + ((org[2] - nz)*self.rate_z)**2)
+    #                   if r < r_diff:
+    #                       elf_sum += self.chgdata_s[nx, ny, nz]
+    #                       print(nx, ny, nz, self.chgdata_s[nx, ny, nz])
+    #       # 体積中のELFの平均値(ELF/A^3)
+    #       ave_elf = elf_sum/v
+    #       print("Volume         %f" % v)
+    #       print("sum elf        %f" % elf_sum)
+    #       print("sum elf/Volume %f" % ave_elf)
     def init_ave_elf(self):
         """
         ELF 積算解析（ある原点を中心としたELFの球積分値の解析)用のために
@@ -294,6 +641,7 @@ class ReadVaspChgcar(Method):
         :return: chgdata_s[nx, ny, nz]: 3x3x3 スーパーセル化した chgdata のマトリックス
         """
         self.chgdata_s = np.zeros((self.__ngxc * 3, self.__ngyz * 3, self.__ngzc * 3))
+        # supre-cell 用の Meth 原点
         sx = [0, self.__ngxc, self.__ngxc * 2]
         sy = [0, self.__ngyz, self.__ngyz * 2]
         sz = [0, self.__ngzc, self.__ngzc * 2]
@@ -367,6 +715,10 @@ class ReadVaspChgcar(Method):
             chgcar = self.__chgdata
         return chgcar
 
+    # 元のPOSCAR情報を取得
+    # POSCAR 相当情報の書き込み
+    #
+    # WRITE CHGCAR/ELFCAR DATA
     def print_chgcar(
         self, chgcar=None, ngx_max=None, ngy_max=None, ngz_max=None, outname=None
     ):
@@ -464,8 +816,10 @@ class ReadVaspChgcar(Method):
                     inner_counter += 1
                     if chgcar[nx, ny, nz] < 0.001:
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
+                    # print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
                     elif 0.001 <= chgcar[nx, ny, nz] < 10:
                         print("{:<12.5f}".format(chgcar[nx, ny, nz]), file=out, end="")
+                    # print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
                     elif chgcar[nx, ny, nz] >= 10.0:
                         print("{:<12.5e}".format(chgcar[nx, ny, nz]), file=out, end="")
                     else:
@@ -492,6 +846,10 @@ class ReadVaspChgcar(Method):
             outname=outname,
         )
 
+    #
+    # (test) CHGCAR 形式でのデータ吐き出しテスト type 1 (super)
+    # 2018.08.18 12:36 正しく出力されるのを確認
+    #
     def print_super_chgcar(self, x_times=3, y_times=3, z_times=3, outname=None):
         """
         (test) 3x3x3 スーパーセルとして作成した CHGCAR mesh を CHGCAR 形式で出力する
@@ -522,8 +880,10 @@ class ReadVaspChgcar(Method):
         print("%d %d %d" % (ngx_max, ngy_max, ngz_max), file=out)
         for nx in range(0, ngx_max):
             for ny in range(0, ngy_max):
+                # print("%12.5e " % self.chgdata[nx, ny, nz], end="")
                 for nz in range(0, ngz_max):
                     inner_counter += 1
+                    # print("%11.5f " % self.chgdata[nx, ny, nz], end="")
                     if self.chgdata_s[nx, ny, nz] >= 0.001:
                         print(
                             "{:<12.5f}".format(self.chgdata_s[nx, ny, nz]),
@@ -541,6 +901,26 @@ class ReadVaspChgcar(Method):
                         print("", file=out)
         out.close()
 
+    # 基本並進ベクトルの変換
+    # print "t"
+    # print t
+    # print ""
+    # t1 = np.matrix( [ t[0,0],t[1,0],t[2,0] ] )
+    # print " t1r = %14.8f %14.8f %14.8f" % (t1r[0,0],t1r[0,1],t1r[0,2])
+    # t2 = np.matrix( [ t[0,1],t[1,1],t[2,1] ] )
+    # print " t2r = %14.8f %14.8f %14.8f" % (t2r[0,0],t2r[0,1],t2r[0,2])
+    # t3 = np.matrix( [ t[0,2],t[1,2],t[2,2] ] )
+    # print " t3r = %14.8f %14.8f %14.8f" % (t3r[0,0],t3r[0,1],t3r[0,2])
+    # print ""
+    # オイラー角で基本並進ベクトルを回したときの基本並進ベクトル
+    #       R_t = np.matrix([
+    #               [ t1r[0,0],t2r[0,0],t3r[0,0] ],
+    #               [ t1r[0,1],t2r[0,1],t3r[0,1] ],
+    #               [ t1r[0,2],t2r[0,2],t3r[0,2] ]
+    #               ])
+    # print "R_t"
+    # print R_t
+    # 内部座標の変換
     def conv_rot_euler(self, alpha, beta, gamma):
         """
         基本並進ベクトルを、alpha, beta, gamma で回す
@@ -618,6 +998,11 @@ class ReadVaspChgcar(Method):
             self.fix,
         )
 
+    # direct --> cartesian
+    # super 用の配列
+    # super 用の内部座標作成
+    # super 用の基本並進ベクトル/原子種数を作る
+    # cartesian --> direct
     def conv_supercell(self, times=(1, 1, 1)):
         """
         スーパーセル作成 Method
@@ -638,11 +1023,17 @@ class ReadVaspChgcar(Method):
                 ABS, self.scale, self.t, self.natom, self.direct, self.position
             )
         supers = super_x * super_y * super_x
+        # (super) t
         sv = np.zeros((supers, 3))
+        # (super) position
         sp = np.zeros((self.natom * supers, 3))
+        # (super) ion
         ion_sp = np.zeros(self.natom * supers)
+        # (super) ion_local
         ion_local_sp = np.zeros(self.natom * supers)
+        # (super) fix
         fix_sp = np.zeros((self.natom * supers, 3), dtype="S")
+        # super cell と orijinal cell の対応
         sp_j = np.zeros(self.natom * supers)
         SupercellOperations().make_supercell1(
             super_x,
@@ -675,4 +1066,5 @@ class ReadVaspChgcar(Method):
         self.ion_local = ion_local_sp
         self.position = sp
         self.fix = fix_sp
+        # super cell と orijinal cell の対応
         self.sp_j = sp_j

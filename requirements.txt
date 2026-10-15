@@ -1,2 +1,4 @@
-# Core only. Optional historical readers: pip install '.[analysis]'
-numpy>=1.17
+pandas
+ase
+numpy
+matplotlib

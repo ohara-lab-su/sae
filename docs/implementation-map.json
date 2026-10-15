@@ -1094,5 +1094,18 @@
     "symbol": "Logger",
     "module": "sae.common.logger",
     "class": "Logger"
+  },
+  {
+    "source": "gui/CrystalMaker.py",
+    "symbol": "CrystalMaker",
+    "module": "sae.gui.crystal",
+    "class": "CrystalMaker"
+  },
+  {
+    "source": "gui/crystal_make_unit.py",
+    "symbol": "crystal_make_unit",
+    "module": "sae.gui.unit_cell",
+    "class": "UnitCellDrawing",
+    "method": "crystal_make_unit"
   }
 ]

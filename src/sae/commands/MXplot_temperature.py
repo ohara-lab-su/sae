@@ -1,9 +1,30 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.openmx.md import ReadMd
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# MXplot_temperature.py
+#   MXtemp.py ベースで matplotlib  (基本は Vplot_temperature.py ベース)
+#
+#   *.md
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.03
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +37,23 @@ import optparse
 import numpy as np
 import matplotlib.pyplot as plt
 
+#
+################################################################################
+#import re
+#from LIB_vasp.read_dat import *
+#import SpaceGroupEnvironment as SGE 
+################################################################################
+# デフォルト名 or 入力名が存在しない時の入力ファイル名自動探索
+#   for i in range(n_ion_loop):
+#       print "%5d %6.2f  %15.8f" % (i+1, temperature[i], etotal[i])
+############################################################################
+# matplitlib
+#   plt.rcParams['font.family']       = 'Times New Roman'                       
+# ax1(tempture) の描画
+#   ax1 = fig.add_subplot(111)
+# ax1(Temperature) 描画軸の上限下限の変更
+# ax2(energy) の描画
+# ax2(ETOT) 描画軸の上限下限の変更
 if __name__ == "__main__":
     name = "openmx"
     suffix = "md"
@@ -45,15 +83,22 @@ if __name__ == "__main__":
     tmp_min = min(temp)
     etot_max = max(energy)
     etot_min = min(energy)
+    # 整数化
     int_etot_max = abs(int(etot_max))
+    # 小数点以下取り出し
     dec_etot_max = abs(int_etot_max) - abs(etot_max)
+    # 整数化
     int_etot_min = abs(int(etot_min))
+    # 小数点以下取り出し
     dec_etot_min = abs(int_etot_min) - abs(etot_min)
     md_x = np.zeros(nloop)
     for i in range(nloop):
         md_x[i] = i
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 14
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 5
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
     rect = [0.155, 0.105, 0.69, 0.8]
     fig = plt.figure()

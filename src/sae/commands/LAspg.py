@@ -4,6 +4,22 @@ from __future__ import print_function
 from sae.hilapw.sets_fields import SetsFields
 from sae.hilapw.sets_writer import SetsWriter
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# sets.in (HiLPAW) 読み込みルーチンの基本
+#
+# 群論対応版(試験中)
+#
+################################################################################
+#
+# 2018.08.23
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -18,6 +34,10 @@ import numpy as np
 import SpaceGroupEnvironment as SGE
 
 
+#
+################################################################################
+#import re
+################################################################################
 def options():
     cname = "sets.in"
     parser = optparse.OptionParser()
@@ -32,6 +52,40 @@ def options():
     return cname
 
 
+################################################################################
+# constant
+# sets.in 読み込みの準備&前段階
+# sets.in 読み込み
+# spgrdata を読み込んで 生成元/格子の型/SpaceGroup 番号等の情報をゲット
+# 群の名前から格子の型を入手(格子の情報との矛盾のチェック)
+# TPMT 行列: 格子の型, BRMT = TCMT * TPMT
+# TCMT 行列: コンベンショナルな基本並進ベクトル, BRMT = TCMT * TPMT
+# BRMT 行列: プリミティブなセルの基本並進ベクトル(POSCARでのTベクトルのこと)
+# TCMT (コンベンショナル) の逆格子
+# RBMT (プリミティブ) の逆格子
+# 生成元によるコンベンショナル基本並進(TCMT)ベクトルの操作
+#   car = np.zeros((sg_natom,3))
+#   for i in range(sg_natom):
+#       car[i] = dot(TCMT,sg_position[i])
+#       print car[i]
+#   for i in range(sg_natom):
+#       print " %14.8f %14.8f %14.8f" % (car[i,0],car[i,1],car[i,2])
+# rotation[0] Oh cubic (48)
+# rotation[1] D6h hexagonal (24)
+# rotation[2] D3h rhombohedral (12)
+# 小口多美夫, 遷移金属のバンド理論, p93
+# number 0 --> Oh  : cubic, tetragonal, orthorhombic, monoclicnic, triclinic
+# number 1 --> D6h : hexagonal
+# number 2 --> D3h : trigonal
+# makes rotatin matrix using Euler Angle
+#   print rotation [0] # Oh
+#   print rotation [1] # D6h
+#   print rotation [2] # D3h
+#   print rotation[0][0]  # Oh (E)
+#   print rotation[0][0][0]  # Oh (E) x
+#   # sets.in 書き込み
+#  #cname='sets.in_out'
+#STD=False
 if __name__ == "__main__":
     cname = options()
     PI = math.pi

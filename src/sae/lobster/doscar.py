@@ -1,3 +1,52 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# ReadLobDos.py
+#
+#  ROBSTER の DOS 計算の出力である DOSCAR.lobster のパースするクラス
+#  基本構造は DOSCAR と同じなのだが、
+#
+#    1) 原子ごと(natom)に射影している軌道成分の数が異なる
+#    2) SPIN 情報が列挙されている
+#
+#  などの点が本来の DOSCAR と異なり、拡張されている。
+#
+##########################################################################
+#
+# 2015.09.07
+#  get_pdos() メッソッドの大規模な修正（lm引数モードの大規模修正)
+#
+# 2015.09.01
+#  TDOS パート down-spin にバグ(INT-DOSを読んでいた) を発見、修正
+#
+# 2015.08.26
+#   PDOS パートに対応
+#
+# 2015.06.05 startup
+#   TDOS パートのみ対応
+#
+##########################################################################
+##########################################################################
+# import gzip
+# import optparse
+# from copy import deepcopy
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+##########################################################################
+##########################################################################
+#   dos.get_ldos()
+#   dos.get_ldos_all()
+#   dos.get_pdos(lm = 'r2')
+#   # atom=0, spin=0 の lm: 1 から 3 まで足し合わせた pdos を出力
+#   pdos = dos.get_pdos_sum(1,3,atom=0,spin=0)
+#   for i in range(dos.nedos):
+#       print pdos[i]
+#   print "ISPIN:",dos.get_nspin()
+#   print "NATOM:",dos.get_natom()
+#   print "NEDOS:",dos.get_nedos()
+##########################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -6,8 +55,37 @@ import re
 import numpy as np
 
 
+##########################################################################
+# 原子ごとの原子種記号リスト
+# 原子ごとの射影軌道リスト
+################################################################
+# 2015.09.07
+#   lm=数字、以外にも軌道成分の記号で指定できるように変更した
+#   主量子数の異なるものは通常は足し合わせる
+#   s 軌道を指定したら 4s と 5s 軌道あったら足し合わせる
+#   もしくは lm の記号に主量子数を付けたとき（ 4s と指定したら）
+#   軌道は主量子数も含めて選択的になる
+#
+################################################################
+#   0 からスタート
+#   特定原子の特定軌道から特定の軌道までのPDOS成分を足し合わせる
+################################################################
+#   l軌道に対応するlm軌道成分のリストをorbit_index_jから作成する
+#   PDOS成分の足し合わせ
+#   原子ごと(atomごと) に実際に射影しているlm成分が異なるので
+#   l軌道ごとに毎回調査する必要があるためにこのルーチンを動かす
+# get_ldos を原子種、スピンごとにすべて行う
 class ReadLobDos(object):
 
+    # total DOS part
+    #  energy  DOS(up) DOS(dwn)  integrated DOS(up) integrated DOS(dwn)
+    # total DOS パート&ヘッダをスキップ(PDOSパートの先頭行)
+    # partial DOS part
+    # energy s-DOS(up) s-DOS(down) p-DOS(up) p-DOS(dwn) d-DOS(up) d-DOS(dwn)
+    #    _pv などの擬ポテンシャルの時は軌道の数が9を超えるので注意)
+    # _pv などの擬ポテンシャル対応
+    #    最大のnorbit (lm_max) を求める --> pdos の最大サイズ見積もり
+    # 中身はMethodで計算される(引数で選択して PDOS を部分的に足し合わせる)
     def __init__(self, name="DOSCAR.lobster"):
         from sae.common.text import TextFiles
         from sae.structure.elements import ElementTable
@@ -21,6 +99,7 @@ class ReadLobDos(object):
         self.emin = float(self.datlines[5].split()[1])
         self.nedos = int(self.datlines[5].split()[2])
         self.efermi = float(self.datlines[5].split()[3])
+        # DOSCAR.lobster は LORBIT11 のみ(変則的)
         self.lorbit = 11
         self.eng = np.zeros(self.nedos)
         self.tdos_all = np.zeros((self.nedos, self.nspin))
@@ -37,6 +116,7 @@ class ReadLobDos(object):
                     ]
                 )
         j0 = 6 + i + 1
+        # 最大(s, px, py, pz, dxy, dyz, dzx, dx2-y2, d3z2-r2)
         lm_max = 9
         lm_max = 0
         i = 0
@@ -144,6 +224,7 @@ class ReadLobDos(object):
                 spin = 1
             if spin == "down":
                 spin = 1
+        #                   print lm,orbit_name
         if isinstance(lm, str):
             orbit_name = lm
             lml = lm.lower()
@@ -259,6 +340,7 @@ class ReadLobDos(object):
             if l == 3:
                 l = "f"
         ldos = np.zeros(self.nedos)
+        # 計算した lm 成分の数
         norbit = len(self.orbit_index_j[atom])
         orbit_list = []
         for orb in range(norbit):
@@ -274,6 +356,7 @@ class ReadLobDos(object):
 
     def get_ldos_all(self):
         ldos_all = np.zeros((self.nedos, 3, self.natom, self.nspin))
+        #           print norbit,self.orbit_index_j[atom]
         for atom in range(self.natom):
             norbit = len(self.orbit_index_j[atom])
             orbit_list_s = []

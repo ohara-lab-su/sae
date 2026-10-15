@@ -1,8 +1,23 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   plt.close('all')
+#   print "NAME",name
 from __future__ import print_function
 from sae.pwscf.xanes import ReadPwXanes
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# PWplot_XAS.py
+#
+################################################################################
+#
+# 2015.07.22 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -13,6 +28,15 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import sys
+#import gzip
+#import os
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "xanes.dat"
     parser = optparse.OptionParser()
@@ -34,12 +58,30 @@ def options():
     return (name, options.EMAX, options.EMIN, options.YMAX)
 
 
+################################################################################
+#   ###########################################################################
+#   times = 1.0
+#   conv = SAE.ReadFdmConv('Au',suffix='_conv.txt')
+#   plt.plot(conv.eng+E_edge,conv.xas*times,color='red',linewidth=1,label='FDM Green R3')
+#   ###########################################################################
+#   nor = SAE.ReadAthenaNor('Q14B_Au001_Aufoil.txt.nor')
+#   plt.plot(nor.eng,nor.nor,color='blue',linewidth=1,label='exp.')
+###########################################################################
+#   plt.xlabel("Photon Energy [eV]")
+#   plt.xlim( xmax=12100 )
+#   plt.xlim( xmin=11900 )
+#   plt.xlim( xmax=200 )
+#   plt.xlim( xmin=-10 )
 if __name__ == "__main__":
     name, OPT_EMAX, OPT_EMIN, OPT_YMAX = options()
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.17
     orgy = 0.08

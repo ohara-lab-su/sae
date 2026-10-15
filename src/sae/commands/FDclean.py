@@ -3,6 +3,26 @@
 from __future__ import print_function
 from sae.fdmnes.inp import ReadFdmInp
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDclean
+# *.in ファイルを読み込んで Filout タグから名前を取得し
+# Filout* ファイルを消す
+#
+################################################################################
+#
+# 2020.08.11: filout 処理でのセーフティーを導入
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.06.19 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +35,15 @@ import optparse
 import glob
 
 
+#
+################################################################################
+# import gzip
+# import re
+# import numpy as np
+################################################################################
+#   name = 'read_pdb.inp'
+#   name = 'POSCAR.inp'
+###### default inpname
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -35,6 +64,8 @@ def options():
     return inpname
 
 
+#   filelist = glob.glob(filout+'*.txt')
+#   print ""
 if __name__ == "__main__":
     name = options()
     out = ReadFdmInp(name)

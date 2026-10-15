@@ -1,3 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# VASP to FDMNES crystal 情報
+#
+# 構造ファイル & INPUT file
+#
+# (注意)
+#  1) ASE のルーチン(cellconst) を使っている
+#  2) ASE のmodule を呼び出している
+#  3) atoms は ASE オブジェクトが前提
+#
+# FDvasp2fdm.py がベース --> class 化
+#
+################################################################################
+################################################################################
+#
+################################################################################
+## using cellconst
+# from ase.io.xyz import *
+################################################################################
+# atoms.write('POSCAR.pdb',format='pdb')
+# print atoms.positions
+# print ""
+# print atoms.cell
+# print ""
+# print atoms.get_scaled_positions()
+# fdm.write_fdmnes(atoms=atoms, MOL=MOL)
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 
@@ -17,6 +45,9 @@ import optparse
 import numpy as np
 
 
+#
+# 書き出し
+#
 class WriteFdmInp(object):
 
     def __init__(self, atoms=None):
@@ -110,6 +141,7 @@ class WriteFdmInp(object):
             atoms = self.__atoms
         cell = atoms.get_cell()
         metT = np.dot(cell, np.transpose(cell))
+        # from ASE module
         cell2 = cellconst(metT)
         a = cell2[0]
         b = cell2[1]
@@ -126,6 +158,7 @@ class WriteFdmInp(object):
             "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
             file=out,
         )
+        # pos = atoms.get_positions()[ii]
         for ii in range(nat):
             zza = atoms.get_atomic_numbers()[ii]
             pos = atoms.get_scaled_positions()[ii]
@@ -202,6 +235,10 @@ class WriteFdmInp(object):
             MOL=MOL,
         )
 
+    # print("", file=out)
+    # convolution 情報
+    # print("", file=out)
+    # 構造情報
     def write_fdmnes_inp(
         self,
         atoms=None,
@@ -363,6 +400,7 @@ class WriteFdmInp(object):
         print("", file=out)
         out.close()
 
+    #  atoms = atoms2.copy()
     def write_fdmnes(
         self, atoms=None, prefix_name="POSCAR", name=None, STD=True, MOL=False
     ):

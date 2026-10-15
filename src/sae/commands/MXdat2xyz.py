@@ -4,6 +4,35 @@ from __future__ import print_function
 from sae.geometry.coordinates import CoordinateTransforms
 from sae.openmx.dat import ReadMxDat
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# OpenMX 3.7 *.dat 形式ファイル 読み込み class
+#
+# 必須クラス
+#
+#  ReadDatMx
+#    *.dat 名の重複があるので DatMx とする( 例 RMC_POT の *.dat 形式 )
+#
+################################################################################
+#
+# 2018.08.23
+#  Python2/3 両対応
+#
+# 2015.03.10
+#   NEGF モードの時の Left と Right の出力に対応
+#
+# 2015.03.09
+#   starup
+#   MXdat2vasp ベース
+#
+#   1) 基本並進ベクトルがないときに xyz モードで出力
+#   2) 基本並進ベクトルがあるときは cartesian の絶対座標モードで出力
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +45,14 @@ import re
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# デフォルトの入力ファイル名設定
+# デフォルト名より最適なデフォルトファイル名の推定ルーチン
 def options():
     from sae.common.paths import FileDiscovery
 
@@ -40,6 +77,7 @@ def options():
     if options.INPUT:
         mxname = options.INPUT
         xyzname = mxname + ".xyz"
+    # もし出力ファイル名のsuffixに .xyz がついていたら安全のためにそれを消す
     if options.OUTPUT:
         xyzname = options.OUTPUT
         xyzname = re.sub("\\.xyz", "", xyzname)
@@ -48,6 +86,22 @@ def options():
     return [mxname, xyzname, options.STDOUT]
 
 
+################################################################################
+#       sys.stdout = outputfile
+# OpenMX 読み込みインスタンス生成
+#   if OPT_DIRECT:
+#       if not direct:
+# 分子系でない場合も座標系を絶対座標に直して無理やり xyz 表記する
+############################################################################
+## print xyz  style
+##
+# for Molecule
+############################################################################
+## Left print xyz style
+##
+############################################################################
+## Right print xyz style
+##
 if __name__ == "__main__":
     mxname, xyzname, OPT_STDOUT = options()
     if not OPT_STDOUT:

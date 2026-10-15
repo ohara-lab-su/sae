@@ -1,9 +1,26 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#############################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# LDOS_core.py
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.21 : Wplot_LDOS.py ベース
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +33,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import sys
+#import re
+#import gzip
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     parser = optparse.OptionParser(os.getcwd())
     parser.add_option("-n", "--nw", action="store_true", default=False)
@@ -25,6 +52,34 @@ def options():
     return [options.nw, options.EMAX, options.EMIN]
 
 
+################################################################################
+############################################
+# set input file
+############################################
+# options()
+############################################
+# non-spin 専用
+########################################################
+#   plt.title(title)
+############################################
+############################################
+############################################################################
+# matplotlib
+#plt.rcParams['font.family'] = 'Times New Roman'
+############################################################################
+# total
+#plt.ylim( ymax=38 )
+############################################################################
+## d
+#plt.ylim( ymax=2.5 )
+############################################################################
+## p
+#plt.ylim( ymax=0.20 )
+############################################################################
+## S
+#plt.ylim( ymax=0.17 )
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     OPT_EMIN0 = "-5"
     OPT_EMAX0 = "30"
@@ -47,6 +102,7 @@ if __name__ == "__main__":
     else:
         OPT_EMIN = OPT_EMIN0
     nspin = 1
+    # 1 から始める (0番はtotal-DOSの意味になる)
     ion = 1
     FLAG_SPIN = False
     orgx = 0.155
@@ -68,9 +124,13 @@ if __name__ == "__main__":
     print("")
     dos2 = ReadWienDos(lists2)
     eng2 = dos2.get_eng()
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 10
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     plt.axes([orgx, orgy, xsize, ysize])
     tdos1 = np.array(dos1.get_raw_dos(atom=ion, orbit="total-DOS"))
@@ -103,7 +163,9 @@ if __name__ == "__main__":
     plt.axvline(x=0, color="black", linewidth=1)
     plt.ylim(ymin=0)
     plt.xticks([])
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     if OPT_EMAX:
         plt.xlim(xmax=int(OPT_EMAX))
@@ -120,7 +182,9 @@ if __name__ == "__main__":
     plt.ylim(ymin=0)
     plt.xticks([])
     yl = plt.ylabel("DOS/" + unit, fontsize=20)
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     if OPT_EMAX:
         plt.xlim(xmax=int(OPT_EMAX))
@@ -136,7 +200,9 @@ if __name__ == "__main__":
     plt.axvline(x=0, color="black", linewidth=1)
     plt.ylim(ymin=0)
     plt.xticks([])
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     if OPT_EMAX:
         plt.xlim(xmax=int(OPT_EMAX))

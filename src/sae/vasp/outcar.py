@@ -1,3 +1,196 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+# OUTCAR 読み込み (汎用,その他)
+#   情報はすべて return で返す
+#
+##########################################################################
+# 共通基本変数
+#
+# atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+# atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+# ion[j]            : 通し番号(max=natom)を与えると原子の種類番号を返す
+# ion_local[j]      : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+#
+# position[j,3]     : 通し番号(max=natom)とx,y,z 指定で内部座標
+# fix[j,3]          : 通し番号(max=natom)とx,y,z 指定でForceのFix/non-Fix 指定
+#
+# title             : タイトル
+# scale             : 格子定数(スケールファクター)
+# selective         : selective mode
+# direct            : direct or cartesian
+#
+##########################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.09.03
+#  インスタンス変数を少し整理
+#
+# 2015.09.02
+#  逆格子の基本ベクトルor Direct lattice vectorの読み込みで
+#  split() だと失敗することがある事が判明
+#  (行列要素がスペースで分離されていない)
+#  固定フォーマットでスライスする方法に変更
+#
+# 2015.06.15
+#  nbands 及び natom の 読み込みでの複数の Dimension of array があったときに
+#  最初の dim. of array のみ有効にするように変更（ OUTCAR 出力のバグ対応)
+#
+# 2015.06.15
+#
+#  OUTCAR 出力のバグをうけて、NION が 10 以上ならば間違った出力の可能性があるので
+#  vasprun.xml からの読み込みに切り替える様にする(vasprun.xml がもしあれば)
+#
+# 2015.06.15
+#
+#  atoms_index_j() 実装
+#
+# 2015.06.15
+#
+#  VASP の OUTCR の出力にバグを発見 ( ions per type が正しい出力をされない )
+#
+#  ION の TYPE がめっちゃ多いと途中までしか ions per type に出力されない
+#  全部で 10 種類の原子まで
+#  計算自体は内部でしっかりやっているようなのだが、OUTCAR の出力が途中
+#  vasprun.xml は正常
+#
+# 2015.06.15
+#
+#   OUTCAR 中に複数尾 Dimension of array 項目が出てくることがある
+#     ex. monoclinic ZrO2 (111) surface
+#   vasprun.xml を見ていると 最初に出てきたモノが正解？っぽいので
+#   二度目以降は読まないようにする
+#
+# 2015.06.15
+#
+#  master を version 0.1.00 へアップデート
+#  （旧バージョンは old_class_method としてブランチしておく)
+#
+#  class の使い方を2015年中版での方法論へ全面的にアップデート
+#  (いくつかのバグの荒い直しでコードを読み直すためのアップデートでもある)
+#
+#  クラスのリファクタリング
+#
+#  パースの方法論としてはむしろクラスを使わずに一括処理していた時代に近い
+#  method と constracta での処理の比率を constracta 比重を多くして、ほとんど
+#  constracta で一括処理をする。method は get_* アクセスのための立ち位置。
+#  シンプル化が目的。--> 2015中期だとそのバランスの方が自分の中での主流
+#
+#  ただし、速度が遅い（たぶん失敗）、DOS などのデーターパースだと constracta
+#  重視の方がかなり高速なのだが、莫大なテキストを正規表現で毎回マッチするのは
+#  たぶんアホ。元に戻す必要があるかもしれない。
+#
+##########################################################################
+#
+# 2015.02.24
+#  method 名ルール変更に伴い get_iter_num() --> get_n_ion_loop()
+#
+# 2015.01.31
+#  title 取得における末尾までの空白削除を追加(ReadDoscarに準ずる)
+#
+# 2015.01.29
+#  get_nkpts() 追加
+#  get_nbands() 追加
+#  get_title() 追加
+#
+# 2015.01.29
+#   get_tmode() の名前を get_md_mode に変更(意味のある名前にした)
+#   ReadOszicar.get_tmode() も同様に ReadOszicar.get_md_mode() へ変更
+#
+# 2015.01.29
+#   get_kpoints_type() method が KPOINTS が auto mesh だと
+#   生成されない（原理的に生成しない)事に気がついたので、
+#   KPOINTS auto mesh のときは disable にする
+#
+#   get_kpoints_mode()
+#   上記のフラグを取得する
+#   ReadKpoints.get_kpoints_mode() と基本互換(まだ実装自体は一部のフラグのみ)
+#
+#     OUTCAR の KPOINTS セッションから KPOINTS ファイルの内容(動作モード)の類推
+#     かなり未完成。SCF でのオートmesh と band での line-mode の区別くらい
+#     def get_kpoints_mode(self):
+#
+# 2015.01.29
+#   get_atoms_index で用いている OUTCAR かの PP 情報入手に使っている
+#   VRHFIN は NWRITE 2 以上でないと記述されないため
+#   POTCAR: タグから PP 情報を入手する方針へ method を変更
+#   旧method は get_atoms_index0 と命名変更して残す
+#
+# 2015.01.29
+#   NWRITE を返すmethod , get_nwrite()
+#
+# 2015.01.28
+#   # Fermi Leve をゲット E-fermi から
+#   def get_efermi(self):
+#
+# 2015.01.27
+#   逆格子の情報を吸い出すmethodを追加
+#
+# 2015.01.26
+#   ISYM =0 の時の処理のために get_isym メソッドを追加し,
+#   get_pint_sym method を修正した
+#
+#   IBRION ゲット method 追加
+#
+#   実際に計算した ion_loop 数をゲットするmethod (get_iter_num)追加
+#
+#   ETOTAL (MDモード FreeEnergy + EKIN ) ゲット method
+#   free energy TOTEN ゲット method
+#
+# 2015.01.15
+#   結晶点群を吸い出すmethodを追加
+#
+# 2015.01.13
+#   nion, atoms, atoms_index 対応
+#
+# 2015.01.09
+#   startup, 圧縮ファイル対応版
+#
+##########################################################################
+##########################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+##########################################################################
+##########################################################################
+#   NION = outcar.get_nion()
+#   NSPIN = outcar.get_ispin()
+#   LORBIT = outcar.get_lorbit()
+#   NATOM = outcar.get_natom()
+#   NSW = outcar.get_nsw()
+#   NKPTS = outcar.get_nkpts()
+#   NBANDS = outcar.get_nbands()
+#   TITLE = outcar.get_title()
+#   ISYM = outcar.get_isym()
+#   IBRION = outcar.get_ibrion()
+#   NWRITE = outcar.get_nwrite()
+#   point_sym = outcar.get_point_symmetry()
+#   n_ion_loop = outcar.get_n_ion_loop()
+#   efermi = outcar.get_efermi()
+#   atoms = outcar.get_atoms()
+#   atoms_index = outcar.get_atoms_index()
+#   atoms_j = outcar.get_atoms_j()
+#   atoms_index_j = outcar.get_atoms_index_j()
+#   temperature = outcar.get_temperature()
+#   for j in range(n_ion_loop):
+#       print temperature[j]
+#   outcar.get_etotal()
+#   ETOTAL = outcar.get_etotal()
+#   for j in range(n_ion_loop):
+#       print ETOTAL[j]
+#   etotal_ion = outcar.get_toten_ion()
+#   for j in range(n_ion_loop):
+#       print etotal_ion[j]
+#   kpoints_FLAGS = outcar.get_kpoints_mode()
+#   kpoints_type = outcar.get_kpoints_type()
+#   print kpoints_type
+#   print " reciprocal lattice vectors "
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -11,8 +204,47 @@ except ImportError:
     import sae as SAEnv
 
 
+##########################################################################
+# 逆格子ベクトルを吸い出す
+# x   y   z
+# t1 = t11 t21 t31
+# t2 = t12 t22 t32
+# t3 = t13 t23 t33
+##
+# 本来の基本並進ベクトルの定義は
+# t1  t2   t3
+# x = t11 t12 t13
+# y = t21 t22 t23
+# z = t31 t32 t33
+##
+# >> 正常なmatrixの添字とは転置した添字となるが、
+# 正しいmatrixの添字で見直すときに正しい並進ベクトルになるためである
+# VASP の入力(表示)形式が縦横逆なため
+##
+# get_mode
+# IBRION=0 or それ以外
+# MD-mode のときに temperature をゲットする
+# MD-mode のときに ETOTAL をゲットする
+# (非MDのときは free energy TOTENを返す)
 class ReadVaspOutcar(object):
 
+    #isym_reg = re.compile('.*ISYM', re.IGNORECASE)
+    # for Iter
+    # for default
+    ####################### Iter ループ前の情報 #######################
+    #       for j in range(self.num):
+    ###################### for Iter and Ion ##########################
+    ##################### after Iter Loop #############################
+    # last total_energy
+    # last Volume # initial 状態(計算前)があるので loop + 1
+    # makes atoms_index
+    # VRHFIN ではなく POTCAR: から PP の原子種情報を引っ張る
+    # makes atoms_j
+    # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
+    # makes atoms_index_j
+    # point symmetry
+    # OUTCAR から 結晶点群を吸い出す
+    # ISYM=0 のときは None を返す
     def __init__(self, cname):
         from sae.common.text import TextFiles
 
@@ -44,6 +276,21 @@ class ReadVaspOutcar(object):
         self.atoms_index = []
         self.volume_ion = []
         i = 0
+        # title
+        # nkpts (複数の dim. of array 項目があったときに最初のみ有効)
+        # natom ( VASP 公式では NSIONS に相当 , 複数の dim. 対応)
+        # nbands (複数の dim. of array 項目があったときに最初のみ有効)
+        # spin
+        # lorbit
+        # nsw
+        # isym
+        # ibrion
+        # nwrite
+        # ENCUT
+        # nion ( VASP 公式では TYPES に相当 )
+        # atoms[i] : 原子の種類番号(max=nion)を与えるとその原子種の数を返す
+        # t and recipcola
+        # Volume ( Befor Iter )
         while not bool(iter_reg.match(self.datlines[i])):
             if bool(title_reg.match(self.datlines[i])):
                 self.title = re.sub(" *$", "", self.datlines[i][9:])
@@ -61,6 +308,8 @@ class ReadVaspOutcar(object):
                 try:
                     self.nbands = self.nbands
                 except:
+                    # for VASP5
+                    # for VASP4
                     try:
                         self.nbands = int(self.datlines[i].split()[14])
                     except:
@@ -74,6 +323,7 @@ class ReadVaspOutcar(object):
                 self.lorbit = int(self.datlines[i].split()[2])
             if bool(nsw_reg.match(self.datlines[i])):
                 self.nsw = int(self.datlines[i].split()[2])
+            # print("debug: %s" % self.datlines[i].split()[2])
             if bool(isym_reg.match(self.datlines[i])):
                 self.isym = int(self.datlines[i].split()[2])
             if bool(ibrion_reg.match(self.datlines[i])):
@@ -82,9 +332,11 @@ class ReadVaspOutcar(object):
                 self.nwrite = int(self.datlines[i].split()[2])
             if bool(encut_reg.match(self.datlines[i])):
                 self.encut = float(self.datlines[i].split()[2])
+            # 大きなNION のときのバグ対策
             if bool(ion_type_reg.match(self.datlines[i])):
                 tmp = self.datlines[i].split()
                 self.nion = len(tmp) - 4
+                # OUTCAR出力バグ対策
                 if self.nion >= 10:
                     if os.path.exists("vasprun.xml"):
                         from sae.vasp.vasprun import ReadVaspVasprun
@@ -96,6 +348,24 @@ class ReadVaspOutcar(object):
             if bool(ion_type_reg.match(self.datlines[i])):
                 for ion in range(self.nion):
                     self.atoms.append(int(self.datlines[i].split()[4 + ion]))
+            #               t1_x = float(self.datlines[i+1].split()[0])
+            #               t1_y = float(self.datlines[i+1].split()[1])
+            #               t1_z = float(self.datlines[i+1].split()[2])
+            #               rec1_x = float(self.datlines[i+1].split()[3])
+            #               rec1_y = float(self.datlines[i+1].split()[4])
+            #               rec1_z = float(self.datlines[i+1].split()[5])
+            #               t2_x = float(self.datlines[i+2].split()[0])
+            #               t2_y = float(self.datlines[i+2].split()[1])
+            #               t2_z = float(self.datlines[i+2].split()[2])
+            #               rec2_x = float(self.datlines[i+2].split()[3])
+            #               rec2_y = float(self.datlines[i+2].split()[4])
+            #               rec2_z = float(self.datlines[i+2].split()[5])
+            #               t3_x = float(self.datlines[i+3].split()[0])
+            #               t3_y = float(self.datlines[i+3].split()[1])
+            #               t3_z = float(self.datlines[i+3].split()[2])
+            #               rec3_x = float(self.datlines[i+3].split()[3])
+            #               rec3_y = float(self.datlines[i+3].split()[4])
+            #               rec3_z = float(self.datlines[i+3].split()[5])
             if bool(rec_reg.match(self.datlines[i])):
                 t1_x = float(self.datlines[i + 1][3:16])
                 t1_y = float(self.datlines[i + 1][16:29])
@@ -137,6 +407,11 @@ class ReadVaspOutcar(object):
                 self.volume_ion.append(float(self.datlines[i].split()[4]))
             i += 1
         self.toten_ion = []
+        # current の iter number をゲット(最後には全Iter番号が入る)
+        # get_n_ion_loop (旧名) get_iter_num
+        # Total Free Energy
+        # Volume (Iter)
+        # Fermi Energy
         for j in range(self.num - i):
             if bool(iter_reg.match(self.datlines[i])):
                 self.n_ion_loop = int(self.datlines[i].split()[2].replace("(", ""))
@@ -173,6 +448,7 @@ class ReadVaspOutcar(object):
             for atom in range(self.atoms[ion]):
                 self.atoms_index_j[j] = self.atoms_index[ion]
                 j += 1
+        #           point_sym = 'sym_off'
         if self.isym != 0 and self.isym != -1:
             point_sym_text = ".*The.*tic.*fig.*ion.*ha.* point symmetry "
             point_sym_reg = re.compile(point_sym_text, re.IGNORECASE)
@@ -210,9 +486,11 @@ class ReadVaspOutcar(object):
     def get_nsw(self):
         return self.nsw
 
+    # 注意) VASP 公式では NIONS に相当
     def get_natom(self):
         return self.natom
 
+    # 注意) VASP 公式では TYPES に相当
     def get_nion(self):
         return self.nion
 
@@ -311,6 +589,7 @@ class ReadVaspOutcar(object):
             sys.exit("STOP(get_atoms_index): NION !=%s" % NION)
         return self.atoms_index
 
+    # 注意)  NWRITE が 2(default) 以上でないと VRHFIN 項目が出てこない
     def get_atoms_index0(self):
         """
         atoms_index (My配列) の情報を引っ張るMethod
@@ -342,6 +621,7 @@ class ReadVaspOutcar(object):
 
     def get_temperature(self):
         IBRION = self.get_ibrion()
+        # MD-mode
         if IBRION == 0:
             n_ion_loop = self.get_n_ion_loop()
             self.temperature = np.zeros(n_ion_loop)
@@ -358,6 +638,7 @@ class ReadVaspOutcar(object):
 
     def get_etotal(self):
         IBRION = self.get_ibrion()
+        # MD-mode
         if IBRION == 0:
             n_ion_loop = self.get_n_ion_loop()
             self.ETOTAL = np.zeros(n_ion_loop)

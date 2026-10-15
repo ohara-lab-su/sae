@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   atoms.write(structname,format='struct')
 from __future__ import print_function
 import sys
 import re
@@ -10,6 +11,36 @@ from ase.io.vasp import *
 from ase.io.xyz import *
 
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#  using ASE
+#
+#  format='pdb' で読み込んで froamt='vasp' で書き込み
+#
+# !!!!!!!!!!!!!!!!
+# 注意) このままだと分子系の構造が変になるので使わないこと！！！！
+# !!!!!!!!!!!!!!!!
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
+#import numpy as np
+################################ ASE
+#from ase.lattice import bulk
+#from ase.dft.kpoints import ibz_points, get_bandpath
+###############################
+#from gpaw import GPAW, PW, FermiDirac, setup_paths
+#from gpaw import GPAW, PW
+#setup_paths.insert(0,'.')
+################################################################################
+##############################################
+##############################################
 def options():
     base = "case"
     in_suffix = ".pdb"
@@ -30,6 +61,8 @@ def options():
     return (name, base, in_suffix, out_suffix)
 
 
+################################################################################
+#   atoms.write(poscarname,format='vasp',direct=True,vasp5=True)
 if __name__ == "__main__":
     pdbname, base, in_suffix, out_suffix = options()
     poscarname = pdbname + out_suffix

@@ -1,3 +1,47 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# WIEK2k case.xspec
+#
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.07.22
+#  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
+#  どちらでも動作するように変更。
+#
+# 2015.07.22
+#  インスタンス変数重視の体制へ変更
+#
+# 2015.06.30
+#   == None --> is None
+#
+# 2015.04.06
+#  .xspec のヘッダを返すようにした
+#
+# 2015.04.06
+#  suffix を引数で与えるように(オプショナル)した。
+#
+# 2015.03.30
+#  get_ymax_xas() 追加
+#
+# 2015.03.28(sat)
+#  startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import optparse
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+# case = 'Cu'
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -45,18 +89,23 @@ class ReadWienXspec(object):
     def get_head(self):
         return self.head
 
+    # self.eng = np.array(self.eng)
     def get_eng(self):
         return self.eng
 
+    # self.xas = np.array(self.xas)
     def get_xas(self):
         return self.xas
 
+    # self.ymax_xas = max(self.xas)
     def get_ymax_xas(self):
         return self.ymax_xas
 
+    # self.emin = min(self.eng)
     def get_emin(self):
         return self.emin
 
+    # self.emax = max(self.eng)
     def get_emax(self):
         return self.emax
 

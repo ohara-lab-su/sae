@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding:utf-8
 # Copyright Kengo NAKADA; SAE class library.
 """
 Bader Volume の書き出し

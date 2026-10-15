@@ -1,3 +1,45 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+# *_bav.txt ファイル
+#
+###############################################################################
+#
+# 2020.08.11: バージョン切り替えのバグフィックス
+#
+# 2020.07.17
+#  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
+#  - バージョンチェック(ReadFdmBav.py) のための改修
+#  - バージョン切り替えのために ReadFdmBav2016()
+#  - バージョン切り替えのために ReadFdmBav2020() 切り替え
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.11
+#  scf ループ関係の情報吸い出しを追加
+#
+# 2015.06.25
+#  R2 bases に対応した cluster: atom positions 吸い出しに対応
+#
+# 2015.06.23 startup
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+#   name = 'POSCAR.txt'
+###############################################################################
+#   for i in range(natom):
+#       print "%s %10.6f %10.6f %10.6f" \
+#         % (atoms_index_j[i], position[i, 0], position[i, 1], position[i, 2])
+#       print position[i][0],position[i][1],position[i][2]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +49,14 @@ import optparse
 import numpy as np
 
 
+#
+# get attribute
+#
 class ReadFdmBav(object):
 
+    # suffix がすでにセットされているときと、suffix がセットされてないときで切り替える
+    # for default
+    # FDMNES のバージョン取得
     def __init__(self, cname, suffix="_bav.txt"):
         """
 
@@ -26,6 +74,7 @@ class ReadFdmBav(object):
         self.__datlines, self.__num = TextFiles().read_dataline(bav_name)
         fdmnes_ver_reg = re.compile(".*FDMNES.*program,.*")
         fdm_version = 2020
+        # Version チェック
         for i in range(self.__num):
             if bool(fdmnes_ver_reg.match(self.__datlines[i])):
                 print("")
@@ -45,6 +94,8 @@ class ReadFdmBav(object):
                 new = True
             else:
                 new = False
+        # 2016.09.01 〜 (動作テストは 2020.06.12-2 version)
+        #  〜2016.01.08
         if new:
             print("load NEW format: sd2020")
             print("")

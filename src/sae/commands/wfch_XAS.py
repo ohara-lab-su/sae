@@ -5,6 +5,23 @@ from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.txspec import ReadWienTxspec
 from sae.wien2k.xspec import ReadWienXspec
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# fch_XAS.py
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.21 : wplot_XAS.py ベース、特化版( non-spin ), K-edge
+#              matplotlib の(numpyの) loadtxt() を用いて極限まで簡素化したバージョン
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -20,6 +37,13 @@ import pylab
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import gzip
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     parser = optparse.OptionParser(os.getcwd())
     parser.add_option("--emax", dest="EMAX")
@@ -29,6 +53,39 @@ def options():
     return [options.EMAX, options.EMIN, options.YMAX]
 
 
+################################################################################
+# set input file
+############################################
+# dos instance
+############################################
+# txspec instance ( unbroad XAS )
+#   eng_unbroad = txspec.get_eng()
+#   eng_unbroad_emin = txspec.get_emin()
+#   eng_unbroad_emax = txspec.get_emax()
+############################################
+# xspec instance ( XAS )
+#   eng_xas_min = xspec.get_emin()
+#   eng_xas_max = xspec.get_emax()
+############################################################################
+# matplotlib
+############################################################################
+#orgx = 0.130
+#orgy = 0.100
+####################################################################
+# 軸調整
+####################################################################
+# DOS (*.dos1) TOTAL
+#
+####################################################################
+# DOS (*.dos1) p-orbital
+#
+############################################################################
+# XAS ( *.xspec and *.txspec )
+# broad (XAS)
+#plt.fill_between(eng_xas,xas, color='#cccccc', linewidth=2, label='XAS')
+# unbroad (XAS)
+#plt.xlabel("")
+############################################################################
 if __name__ == "__main__":
     case1 = "111/111"
     case2 = "222fch/222fch"
@@ -69,9 +126,13 @@ if __name__ == "__main__":
     eng_xas = xspec.get_eng()
     xas = xspec.get_xas()
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.15
     orgy = 0.08
@@ -88,6 +149,7 @@ if __name__ == "__main__":
         emin = float(OPT_EMIN)
     else:
         emin = eng2_emin
+    # 原点位置を自動調整
     plt.axes([orgx, orgy, xsize, ysize_dos])
     eng1 = eng1 - efermi1
     eng2 = eng2 - efermi2
@@ -110,6 +172,7 @@ if __name__ == "__main__":
     leg = plt.legend(fontsize=12)
     leg.get_frame().set_alpha(0.5)
     orgy = orgy + ysize_dos + off
+    # 原点位置を自動調整
     plt.axes([orgx, orgy, xsize, ysize_dos])
     eng1 = eng1 - efermi1
     eng2 = eng2 - efermi2
@@ -124,6 +187,7 @@ if __name__ == "__main__":
     leg = plt.legend(fontsize=12)
     leg.get_frame().set_alpha(0.5)
     orgy = orgy + ysize + off + off + off + off
+    # 原点位置を自動調整
     plt.axes([orgx, orgy, xsize, ysize])
     plt.plot(eng_xas, xas, color="black", linewidth=2, label="XAS")
     plt.plot(

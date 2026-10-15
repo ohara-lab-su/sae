@@ -1,10 +1,45 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.output0 import ReadWienOutput0
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Wplot_TDOS.py
+#
+# MXplot_TDOS.py (2015.03.26ベース)
+#
+#   拙作シェルスクリプト版 vplot_TDOS* モドキ(小文字 vplot 系)
+#   をベースにした Vplot_TDOS.py をベースにして OpenMX に対応した
+#
+#   DosMain にて Tetrahedron , DOS モードにる出力を仮定
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.27
+#  unit の表示
+#
+# 2015.03.27
+#  total-DOS がないときの処理と原子毎のtotal の処理
+#
+# 2015.03.26
+#  get_ldos_ion() にて読んでいる case.output0 は並列計算すると
+#  output0000 になるので注意、修正した
+#
+# 2015.03.26
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -18,6 +53,16 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.ticker as tic
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     unit = "ev"
@@ -51,6 +96,27 @@ def options():
     ]
 
 
+################################################################################
+############################################
+# set input file
+############################################
+# case.dos ファイルを抽出
+############################################
+# check SPIN
+############################################
+# SPIN 有りの時に list のスピン毎の作り直し
+############################################
+# unit の書き直し
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+############################################################################
+##########################################################################
+#   leg = plt.legend(fontsize=12)   # 凡例Box
+#   leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     case, unit, FERMI, NO_WINDOW_FLAG, PORTRAIT_FLAG, OPT_EMAX, OPT_EMIN, OPT_YMAX = (
         options()
@@ -97,11 +163,32 @@ if __name__ == "__main__":
         FERMI = True
     else:
         unit = "Ry"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 18
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+    #       plt.figure(figsize=(8.27, 11.69)) # for portrait
     if PORTRAIT_FLAG:
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
+    ############################
+    # makes instance
+    #plot_ions = dos.get_plot_ions()
+    ########################################################
+    ########################################################
+    #s = dos.get_raw_dos(atom=ion,orbit='s')
+    #p = dos.get_raw_dos(atom=ion,orbit='s')
+    #d = dos.get_raw_dos(atom=ion,orbit='d')
+    ########################################################
+    # Y軸の調整
+    # EF0
+    ## for BCC-Fe
+    #plt.xlim([-10,10])
+    #plt.ylim([0,2.5])
+    # EF0
     for spin in range(nspin):
         if FLAG_SPIN and spin == 0:
             lists = up_lists
@@ -116,12 +203,15 @@ if __name__ == "__main__":
         eng = dos.get_eng()
         title = case
         if nspin == 1:
+            # 一段組の原点(x,y), 幅(x,y) nonmag
             plt.axes([0.13, 0.13, 0.8, 0.8])
             plt.title(title)
         if nspin == 2:
             if spin == 0:
+                # 二段組の上側(y幅半分) up-spin
                 plt.axes([0.13, 0.53, 0.8, 0.4])
             if spin == 1:
+                # 二段組の下段( down-spin )
                 plt.axes([0.13, 0.13, 0.8, 0.4])
         if dos.chk_raw_dos(atom=0, orbit="total-DOS"):
             tdos = dos.get_raw_dos(atom=0, orbit="total-DOS")
@@ -150,6 +240,7 @@ if __name__ == "__main__":
         if nspin == 2:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0.0])

@@ -3,6 +3,22 @@
 from __future__ import print_function
 from sae.fdmnes.bav import ReadFdmBav
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+#
+# *_bav.txt to xyz format
+#
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2015.06.24 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +30,14 @@ import os
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
+#   name = 'POSCAR.txt'
 def options():
     from sae.common.paths import FileDiscovery
 
@@ -33,6 +57,12 @@ def options():
     return (name, suffix, options.std)
 
 
+################################################################################
+#   print "natom =",natom
+#   print "lmax = ",lmax
+#   print "edge = ",edge
+#   print "t    = "
+#   print t
 if __name__ == "__main__":
     name, suffix, STD_FLAG = options()
     bav = ReadFdmBav(name, suffix)

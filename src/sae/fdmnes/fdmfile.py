@@ -1,3 +1,28 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+# *.txt ファイル
+#
+###############################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.11.12 startup
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# import optparse
+# import numpy as np
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+###############################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,6 +32,8 @@ import re
 
 class ReadFdmFdmfile(object):
 
+    # 複数入力ファイルの場合は未対応(Noneを返す)
+    #
     def __init__(self, cname="fdmfile", suffix=".txt"):
         from sae.common.text import TextFiles
 

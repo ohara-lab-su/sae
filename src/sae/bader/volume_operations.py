@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding:utf-8
 # Copyright Kengo NAKADA; SAE class library.
 """
 Bader Volume の足し算などを行うサポート Method がまとめられた class
@@ -11,6 +13,15 @@ Bader Volume の足し算などを行うサポート Method がまとめられ�
 import multiprocessing
 
 
+# @property
+# def chgdata(self):
+#     return self.__chgdata
+# @chgdata.setter
+# def chgdata(self, val):
+#     self.__chgdata = val
+#
+# Method
+#
 class UtilBader(object):
 
     def __init__(self, logger=None):
@@ -58,6 +69,8 @@ class UtilBader(object):
     def poscar_info(self, val):
         self.__poscar_info = val
 
+    # print(volume_list)
+    # volume が複数あるとき
     def sum_bader_volume(self, volume_list, split_chgcar=False):
         """
         指定原子の番号のBader Volume を積算する
@@ -72,9 +85,13 @@ class UtilBader(object):
 
         self.__logger.debug("")
         self.__logger.debug("=== sum_bader_volumes")
+        # BvAtxxx.dat の読み込み
+        # BvAtxxx.dat の足し合わせ
         if len(volume_list) > 1:
             poscar_info_data = []
             bader_volume_data = []
+            # Bader にバグがあるときは BvAt ファイルの構造情報などにバグが出てくるので
+            # POSCAR 上を別ファイルから読んで構造情報とFFTmesh上などを別々に読む必要がある。
             for i in volume_list:
                 self.__logger.debug("")
                 self.__logger.debug("=== Read Bader volume = %s" % i)

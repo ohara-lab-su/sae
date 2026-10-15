@@ -1,3 +1,28 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# WIEK2k case.outputt を読み込む class  ( for tetra )
+#
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.03.24
+#  startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import numpy as np
+# import optparse
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -5,6 +30,8 @@ import os
 import re
 
 
+###############################################
+## init and Read POSCAR
 class ReadWienOutputt(object):
 
     def __init__(self, name):

@@ -1,11 +1,35 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.geometry.coordinates import CoordinateTransforms
 from sae.structure.extract import StructureExtraction
 from sae.vasp.poscar_fields import PoscarFields
 from sae.vasp.poscar_writer import PoscarWriter
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# セル内の特定領域の原子のみを吸い出す
+#   (*) 一応 Force 情報もまとめて POSCAR.vasp に吸い出すはず(未テスト14.11.13)
+#
+# 入力(1)  POSCAR
+# 入力(2)  セル内の選択範囲（ソース中に記述, 2014.11.13 c軸の範囲を直指定)
+#
+# 出力(1)  POSCAR.vasp  (指定した範囲のみ出力した POSCAR)
+# 出力(2)  LIST.ext     (Rmove や VmodifyAtomPosition などで使えるような形式)
+#
+################################################################################
+#
+# 2018.08.15, 08.23
+#  Python2/3 両対応
+#
+# 2014.11.13 1st
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -18,8 +42,23 @@ import optparse
 import numpy as np
 
 
+#
+################################################################################
+#import SpaceGroupEnvironment as SGE
+#import re
+#from copy import deepcopy
+################################################################################
+###############################################
+## default parameter
+##
+###############################################
+## optparse
+##
+#print args,options
 def options():
+    # OUTPUT BASE filename
     cname = "POSCAR"
+    # INPUT (BASE) filename
     POSCAR = "POSCAR"
     parser = optparse.OptionParser()
     parser.add_option("-i", "--input", dest="INPUT", default=POSCAR)
@@ -29,6 +68,9 @@ def options():
         POSCAR = options.INPUT
     if options.OUTPUT:
         cname = options.OUTPUT
+    #print "script name:",argvs[0]
+    #POSCAR=argv[0]
+    #distance = float(args[0])
     if len(args) > 0:
         cname = args[0]
     if not os.path.exists(POSCAR):
@@ -42,6 +84,33 @@ def options():
     return [POSCAR, cname]
 
 
+################################################################################
+# Default & OptionParser
+# POSCAR の事前読み込み
+# POSCAR 読み込みのための準備
+# POSCAR の読み込み
+# POSCAR からの範囲指定での抽出(c軸のみ指定)
+#####################################################################
+#####################################################################
+# all layer
+#   c1[2] = 1.0
+#   c0[2] = 0.0
+# top layer
+# bottom layer
+#   c1[2] = 0.40732
+#   c0[2] = 0.09268
+#####################################################################
+#####################################################################
+# 事前準備 ( if direct: direct to car and scale =1.0 )
+## 特定原子の抽出(フォース情報未対応)
+#ex_nion = extract_struct0(scale,t,natom,direct,position,c0,c1,\
+#                          atoms,atoms_index,ion,ion_local,\
+#                          ex_j,ex_natom,ex_atoms,ex_atoms_index,ex_position)
+# 特定原子の抽出 (フォース情報(VASP)対応版)
+# Cartesian to Direct
+# 抽出した原子の一覧出力
+# POSCAR の標準出力(特定原子のみの POSCAR)
+#STD=True
 if __name__ == "__main__":
     POSCAR, cname = options()
     nion, natom, VASP = PoscarFields().read_poscar_param(POSCAR)
@@ -92,6 +161,7 @@ if __name__ == "__main__":
         scale, direct = CoordinateTransforms().conv_car2directa(
             scale, t, ex_natom, direct, ex_position
         )
+    #out = sys.stdout
     try:
         out = open("LIST.ext", "w")
     except:

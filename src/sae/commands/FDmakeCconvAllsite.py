@@ -3,6 +3,27 @@
 from __future__ import print_function
 from sae.fdmnes.inp import ReadFdmInp
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDmakeConvAllsite.py
+#
+#  allsite 計算用
+#
+#   -i conv.inp
+#    を参照して すべてのサイトの conv を行う conv.inp と fdmfile.txt を作成する
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.06.30 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +37,21 @@ import re
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import fnmatch
+#import argparse
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+#from matplotlib.ticker import FuncFormatter
+#import matplotlib.pyplot as plt
+#import matplotlib.ticker as ptick
+################################################################################
+#   name = 'POSCAR.inp'
+#   parser = argparse.ArgumentParser()
+#   parser.add_argument(  '-i','--input', dest='INPUT',)
+#   options = parser.parse_args()
 def options():
     name = "read_pdb.inp"
     parser = optparse.OptionParser()
@@ -28,6 +64,7 @@ def options():
     return name
 
 
+###############################################################################
 if __name__ == "__main__":
     inpname = options()
     inp = ReadFdmInp(inpname)

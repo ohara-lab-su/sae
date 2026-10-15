@@ -1,8 +1,31 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.lobster.doscar import ReadLobDos
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vldos_COHP.py
+#
+#  Vldos.py とほぼ同等
+#  DOSCAR の代わりに DOSCAR.lobster を読み込む
+#
+#  original の DOSCAR より DOSCAR.lobster は三桁少ないので注意
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.03
+#    startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -13,6 +36,15 @@ import sys
 import optparse
 
 
+#
+################################################################################
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "DOSCAR.lobster"
     parser = optparse.OptionParser()
@@ -25,6 +57,10 @@ def options():
     return name
 
 
+################################################################################
+# set input file
+#   dos = SAE.io.ReadVaspDoscar(name)
+# set output device
 if __name__ == "__main__":
     name = options()
     dos = ReadLobDos(name)

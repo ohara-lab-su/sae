@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding:utf-8
+# Bader Volume の調査
 # Copyright Kengo NAKADA; SAE class library.
 """
 Bader AVF.dat
@@ -18,6 +21,13 @@ class ReadBaderAvf(object):
         if name is not None:
             self.open(name)
 
+    # 最初の二行を消して、index を自分で作る
+    # Atom を index にする
+    # Atom 列（ ... の文字）となるを消す
+    # self.__df = self.__df.drop('arrow', axis=1)
+    # print('****')
+    # print(self.__df.at[2, 'Volume(s)'])
+    # print('****')
     def open(self, name="AVF.dat"):
         """
          Atom                     Volume(s)
@@ -28,6 +38,10 @@ class ReadBaderAvf(object):
         :param name:
         :return:
         """
+        # 読み込みskip行
+        # 読み込む列の指定
+        # 行の読み込みを消したので手動で加える
+        # 最後に読まない行
         self.__df = pd.read_csv(
             name,
             header=None,

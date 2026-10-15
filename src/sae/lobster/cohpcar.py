@@ -1,3 +1,36 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# ReadLobCohp.py
+#  ROBSTER の pCOHP 計算の出力である COHPCAR.lobster のパースするクラス
+#
+################################################################################
+#
+# 2015.08.25
+#   あらゆるタイプのCOHPデータを読めるように変更
+#   (ボンドタイプの数をカウントする)
+#
+# 2015.06.05
+#   startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import optparse
+# from copy import deepcopy
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+# bond=0 は平均値
+#   nedos = cohp.get_nedos()
+#   eng = cohp.get_eng()
+#   ave = cohp.get_ave()
+#   for i in range(nedos):
+#       print eng[i],ave[i]
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -6,8 +39,35 @@ import re
 import numpy as np
 
 
+############################################################################
+# 全ボンドペアの原子種の情報(0番はAverage)
+# ボンドのペア情報[i][j], iボンドの数, jボンドペア(基本的に0,1のみ)
+# ボンドのペア情報[i][j], iボンドの数, jボンドペア(基本的に0,1のみ)
+# 最大のボンド長を持つ原子ペアの添え字
+# 全ボンドペアの平均値
+###################
+# pCOHP の平均
+#
+###################
+# pCOHP 積分の平均
+#
+###################
+# pCOHP ボンドごと
+#
+###################
+# pCOHP 積分のボンドごと
+#
 class ReadLobCohp(object):
 
+    # nbond = 0 のときを Average とする
+    # ボンドの各情報(ボンドしている原子のペア、平均値、最大のボンド)
+    #       print self.bond_max_index,self.bond_index[self.bond_max_index],\
+    #                                  self.bond_leng[self.bond_max_index]
+    #       for i in range(self.nbond):
+    #           print self.bond_index[i],':',self.bond_leng[i]
+    # ペア情報を分解して保存
+    #       print self.bond_par
+    #       print self.bond_par_index
     def __init__(self, name="COHPCAR.lobster"):
         from sae.common.text import TextFiles
 
@@ -114,6 +174,7 @@ class ReadLobCohp(object):
         self.ave = self.icohp_all[:, 0, spin]
         return self.ave
 
+    # bond=0 は平均
     def get_cohp(self, bond=0, spin=0):
         if isinstance(spin, str):
             if spin == "nonmag":
@@ -129,6 +190,7 @@ class ReadLobCohp(object):
         self.cohp = self.cohp_all[:, bond, spin]
         return self.cohp
 
+    # bond=0 は平均
     def get_icohp(self, bond=0, spin=0):
         if isinstance(spin, str):
             if spin == "nonmag":

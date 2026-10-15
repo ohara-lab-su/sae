@@ -1,10 +1,42 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   time.sleep(1)
+#   os.system("screencapture screen.png")
+#   app.MainLoop()
 from __future__ import print_function
 from sae.vasp.acf import ReadVaspAcf
 from sae.vasp.poscar import ReadVaspPoscar
 from sae.vasp.potcar import ReadVaspPotcar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_Bader.py の電荷数描画プログラム
+#
+#  デフォルトではChargeの変化量（絶対値）変化を示す。
+#  モードを変えて(-cオプション) で Charge の正負で色の濃淡モードに変更
+#
+# 基本的にコマンドラインオプションで制御。
+# GUI は表示だけ
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.07.08
+#  CrystalMaker クラスを分離
+#
+# 2015.07.08
+#   スーパーセル表示対応
+#
+# 2015.07.06 1st
+#    vpython,wxpython 利用
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -12,12 +44,26 @@ __email__ = "kengo.nakada@gmail.com"
 __copyright__ = "Copyright 2014, Kengo NAKADA"
 __license__ = "MIT"
 import sys
-import sae as SAEG
+from sae.gui.crystal import CrystalMaker
 import wx
 import os
 import optparse
 
 
+#
+################################################################################
+#from __future__ import division
+#import SpaceGroupEnvironment as SGE
+#from crystal_make_unit import *
+#import numpy as np
+#import visual as vp
+# wxpython-3.x0 までは python2 専用なので注意 (python3 対応は wxpython4.0)
+#import time
+#import Image
+#import ImageGrab
+#import re
+#from copy import deepcopy
+################################################################################
 def options():
     inpname = "POSCAR"
     parser = optparse.OptionParser()
@@ -37,6 +83,7 @@ def options():
             sys.exit("STOP: " + inpname + " and " + inpname0 + " file not found")
         else:
             inpname = inpname0
+    #print "Super Cell         : [",super_x,",",super_y,",",super_z,"]"
     if len(args) < 3:
         super_x = 1
         super_y = 1
@@ -63,6 +110,26 @@ def options():
     )
 
 
+################################################################################
+#####################################
+# オプション処理
+#
+#####################################
+# wxPython の基本インスタンスの生成
+#
+#   app = wx.App(True,None)
+#####################################
+# 入出力&モード確認
+#
+#####################################
+# POSCAR/CONTCAR 読み込み
+#
+#####################################
+# 結晶描画フレーム(vpython)インスタンス作成
+#
+#####################################
+# 描画メッソド
+#
 if __name__ == "__main__":
     (
         readfile,
@@ -92,7 +159,7 @@ if __name__ == "__main__":
     poscar = ReadVaspPoscar(readfile)
     potcar = ReadVaspPotcar()
     acf = ReadVaspAcf(poscar=poscar, potcar=potcar)
-    crystal = SAEG.CrystalMaker(
+    crystal = CrystalMaker(
         poscar, origin=[-0.5, -0.5, 0], times=[super_x, super_y, super_z]
     )
     crystal.plot_atoms()

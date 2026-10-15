@@ -1,3 +1,102 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+# FDMNES 2020.06.16-2 を解析できるように修正したバージョン
+# それ以前特に 2016.01.08 などとは大きく異なるので注意
+# データ読み込み整理に Pandas を使って大幅に簡略化
+#
+# FDMNES
+#   *_sd*.txt ファイル( pw.x 入力ファイル 読み込み)
+#   Ver_0.0.2 以降 FDMNS のバージョンの違いによるログの違いを吸収
+#
+# 2016,2019 までと異なっていて、積算部分状態密度の情報がごっそり消されている。
+#
+# Energy
+# (0, 0)  s
+#        Int(s)
+# (1, 1) px
+# (1,-1) py
+# (1, 0) pz
+#        p
+#        Int(p)
+# (2, 2) dx2 - y2
+# (2, 0) dz2
+# (2,-1) dyz
+# (2, 1) dxz
+# (2,-2) dxy
+#        d
+#        Int(d)
+# total
+# Int(total)
+#
+###############################################################################
+#
+# 2020.07.17-19 (Ver_0.0.2)
+#  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
+#  - バージョンチェック(ReadFdmBav.py) を用いる
+#  - sd0 ファイルそれ自体のフォーマットが2020では大きく変わっている
+#  - pandas 利用に全面書き換え
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.11
+#   lmax 判定の新バージョン(2015.08.18)が
+#   spin に対して動作が不完全だったので修正
+#
+# 2015.09.09
+#   TDOS および INTTDOS が未完成だったので修正した
+#
+# 2015.09.08
+#   DOS の最大レンジ自動取得
+#
+# 2015.09.08
+#   非平均化もーどで DOS の Weight の計算が出来るようにした
+#
+# 2015.09.08
+#  sd 平均化情報の出力（ファイル出力）を修正
+#  それにあせて sd ファイルのヘッダー出力なども追加
+#
+# 2015.09.07
+#  pdos を軌道成分名 or l,m の指定でゲットできるようにした
+#
+# 2015.08.18
+#  lmax の抽出を _bav.txt ファイルではなくて 実際に計算している _sd*.txt
+#  のヘッダから行うように変更。それに伴って _bav.txt の利用を前面停止
+#  ただし、内部的には bavname はそのまま用いる(averageなどで使う)
+#  --> 明示的に指定しない限り bavname は自動で sdname となる
+#
+# 2015.07.02
+#  spin,ylm,intt,等の全出力の対応を含めた一般化
+#
+# 2015.07.01
+#  spin対応版 startup
+#
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
+#  --> 平均化ルーチンはコンストラクタで処理
+#
+# 2015.07.01
+#   absorber 複数のファイル結合モードを追加
+#
+# 2015.05.21
+#   startup (スピン未対応)
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+#   name = 'Fe'
+###############################################################################
+#tmp = sd.get_pdos(l=0,lm='s', spin=0)
+#print(tmp)
+#   eng = conv.get_eng()
+#   xas = conv.get_xas()
+#   print "NAME",name
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -8,8 +107,63 @@ import numpy as np
 import pandas as pd
 
 
+############################## self.datlines ##########################
+# END OF __init__()_
+#
+# get/set attribute (2)
+#
+#
+# property
+#
 class ReadFdmSd2020(object):
 
+    # input に書かれている情報を取得する
+    # オービタルの情報(bav) とスピンの情報(inp) を入手
+    # bav = SAE.ReadFdmBav(bavname)
+    # 複数の sd ファイルを読んで平均化する
+    #   --> weight があるときは各要素を割る
+    # 2016版と比べるとこちらの num はヘッダ無しの value値になるので
+    # num の数は2016版と比べると常に -1 がかかったものになる
+    ################################################
+    #
+    # lmax
+    #
+    # 他:     Energy + total + int(total) = 3
+    # s軌道:   s, int(S)  = 2
+    # p軌道:   px, py, pz, p, int(p) = 5
+    # d軌道:   x2-y2, z2, yz, xz, xy, d, int(d) = 7
+    #
+    # もし、num = 5 ならば lmax = 0
+    #      num = 10 ならば lmax = 1
+    #      num = 17 ならば lmax = 2
+    ################################################
+    # トータルのオービタル数を計算
+    # _sd0.txt で出力される列数
+    # 定義
+    # 2020 版では存在しない
+    ####################################################
+    # PDOS
+    #    DataFrame を ylm 構造に直す
+    #
+    # lm の順番は -1,0,1, -2,-1,0,2,,,,,
+    #
+    #  Ylm : 「real」 spherical harmonics
+    # l=1
+    #  m=-1: p_y
+    #  m= 0: p_z
+    #  m= 1: p_x
+    #
+    # l=2
+    #  m=-2: d_xy
+    #  m=-1: d_yz
+    #  m= 0: d_z2
+    #  m= 1: d_xz
+    #  m= 2: d_x2-y2
+    #
+    # s (l=0, m=0, spin=0)
+    # 全席分状態密度(LDOS分解からの結果と思われる)
+    # エネルギー
+    # DataFrame の保存 ( header を含む )
     def __init__(
         self,
         sdname,
@@ -50,6 +204,15 @@ class ReadFdmSd2020(object):
         print("")
         print("******************************")
         inp = ReadFdmInp(inpname)
+        #
+        # Absorbet が None のときは、読み込んだファイルが一つだけの時
+        #
+        # sd ファイルを読み込んで dataFrame にする
+        # Absorber 指定があるときは指定の sd ファイルを読み込む
+        # absoer not None --> 読み込んだファイルが複数の時
+        # read sd0
+        # read from sd1 to absorber
+        # 平均値を出す
         if absorber is None:
             print("")
             print("---- ReadFdmSd ----")
@@ -107,6 +270,7 @@ class ReadFdmSd2020(object):
         print("-----------")
         print("")
         print("index num = %d" % self.__num)
+        # 意味が無い定義(標識をあわせるためだけ)
         self.__eng = np.zeros(self.__num)
         self.ylm = np.zeros((self.__num, self.__lmax + 1, self.__mmax, self.__ispin))
         self.ldos_all = np.zeros((self.__num, self.__lmax + 1, self.__ispin))
@@ -115,20 +279,31 @@ class ReadFdmSd2020(object):
         self.inttdos_all = np.zeros((self.__num, self.__ispin))
         self.intylm = np.zeros((self.__num, self.__lmax + 1, self.__mmax, self.__ispin))
         self.ylm[:, 0, 0, 0] = df["s"].values
+        # s
         self.ldos_all[:, 0, 0] = df["s"].values
         self.intldos_all[:, 0, 0] = df["Int(s)"].values
         if self.__lmax >= 1:
+            # py (l=1, m=-1, spin=0)
             self.ylm[:, 1, -1, 0] = df["py"].values
+            # pz (l=1, m=0, spin=0)
             self.ylm[:, 1, 0, 0] = df["pz"].values
+            # px (l=1, m=1, spin=0)
             self.ylm[:, 1, 1, 0] = df["px"].values
+            # p
             self.ldos_all[:, 1, 0] = df["p"].values
             self.intldos_all[:, 1, 0] = df["Int(p)"].values
         if self.__lmax >= 2:
+            # dxy (l=2, m=-2, spin=0)
             self.ylm[:, 2, -2, 0] = df["dxy"].values
+            # dyz (l=2, m=-1, spin=0)
             self.ylm[:, 2, -1, 0] = df["dyz"].values
+            # dz2 (l=2, m=0, spin=0)
             self.ylm[:, 2, 0, 0] = df["dz2"].values
+            # dxz (l=2, m=1, spin=0)
             self.ylm[:, 2, 1, 0] = df["dxz"].values
+            # dx2-y2 (l=2, m=2, spin=0)
             self.ylm[:, 2, 2, 0] = df["dx2-y2"].values
+            # d
             self.ldos_all[:, 2, 0] = df["d"].values
             self.intldos_all[:, 2, 0] = df["Int(d)"].values
         self.inttdos_all[:, 0] = df["Int(total)"].values
@@ -138,6 +313,16 @@ class ReadFdmSd2020(object):
         self.__emin = min(self.__eng)
         self.__ymax = 0.0
 
+    # pandas を用いてデーター構造を取り込む
+    # 一行目をヘッダ情報とする, スペース区切り,先頭のスペースを無視する
+    # for TEST
+    # print(df)
+    # print(df.values)
+    # print(df['Energy'])   # 列指定
+    # print(df['s'])   # 列指定
+    # print(df[['s', 'Energy']])   # 列指定
+    # a = df[['s', 'Energy']].values
+    # print(a)
     def __read_sd_file(self, name):
         """
         :param name:  sdname + suffix

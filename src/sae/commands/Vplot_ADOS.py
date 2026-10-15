@@ -1,9 +1,55 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 from sae.vasp.outcar import ReadVaspOutcar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_ADOS.py
+#
+#   原子の種類ごとのオービタル足しあわせ LDOS + TODOS 出力
+#
+#   1) gnuplot の代わりに matplotlib を用いる
+#   2) Vldos.py などは用いない
+#   3) 内部的には直接 ReadDoscar クラス(ReadDoscar.py)を用いる
+#      そもそも ReadDoscar クラスは matplotlib からの利用を念頭に構造化している
+#
+#   注意) ION 毎の情報が必要なので、OUTCAR の読み込みは必須となる
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.10.29
+#    キャプション移動オプション
+#    LMAX 判定による f軌道オプション
+#
+# 2015.01.29
+#    Y軸(DOS軸) の下限の設定のバグを修正
+#
+# 2015.01.14
+#      SPIN対応,option XMAX,XMIN,YMAX 対応
+#
+# 2015.01.14
+#      元素名判別＆ラベルの自動出力
+#
+# 2015.01.13
+#      とりあえず完成
+#      色設定の自動化
+#      むしろ、ReadDoscar, ReadOutcar を中心に修正・改良
+#
+# 2015.01.11 (sun) startup
+#      原子種ごとのs成分,p成分,d成分をsumしたものを TDOS と一緒にプロット
+#      非スピン版
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +62,24 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
+# title
+# up-spin のみプロット
+# dn-spin のみプロット
+# total を描かないスイッチ(default はFalse で、total を描く
+# efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+# efermi を 0 ではなく shift した値を使う
+# legend の right と left の切り替え
+# EF0 のラインを消す
 def options():
     dname = "DOSCAR"
     oname = "OUTCAR"
@@ -57,6 +121,24 @@ def options():
     ]
 
 
+################################################################################
+# set input file
+# set output device
+# makes instance ( Read DOSCAR )
+# makes instance ( Read OUTCAR )
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+#   off = 0.015
+############################################################################
+############################################################################
+#   for spin in range(NSPIN):
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
+#   plt.savefig("ADOS"+out_suffix+".eps")
+#   plt.savefig("ADOS"+out_suffix+".png")
 if __name__ == "__main__":
     (
         dname,
@@ -113,8 +195,11 @@ if __name__ == "__main__":
     print("END READ")
     NION = outcar.get_nion()
     atoms = outcar.get_atoms_index()
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 18
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
     orgx = 0.15
     orgy = 0.143
@@ -135,6 +220,7 @@ if __name__ == "__main__":
             ysize = ysize0
             FLAG_BOTH_SPIN = False
         else:
+            # down, up と'積む'
             spin_list = [1, 0]
             out_suffix = ""
             ysize = ysize0 / 2.0
@@ -146,8 +232,13 @@ if __name__ == "__main__":
         ysize = ysize0
         FLAG_BOTH_SPIN = False
     FLAG_YTICKS = False
+    # 最初のプロット(一番下に積んだブロック)における ylabel and xlabel 処理
+    # 両スピン描画の時はdown-spin を反転表示させる
+    # EF0
+    # 次のスピンの時の原点位置修正
     for spin in spin_list:
         plt.axes([orgx, orgy, xsize, ysize])
+        #       plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
         if not FLAG_TOT:
             INTTDOS = dos.get_inttdos(spin)
             TDOS = dos.get_tdos(spin)
@@ -155,8 +246,12 @@ if __name__ == "__main__":
                 ENG - EFERMI, TDOS, color="#cccccc", linewidth=2, label="total"
             )
         j = 0
+        # autumn, bone, cool, copper, flag, gray, hot, hsv,
+        # jet, pink, prism, spring, summer, winter, spectral
+        # Y軸の調整
         for ion in range(NION):
             atom = str(atoms[ion])
+            #print "ion (spin) : ",ion+1,"("+spin_index[spin]+")",atom
             if NSPIN == 1:
                 print("ion = %d %s" % (ion + 1, str(atom)))
             else:
@@ -224,6 +319,7 @@ if __name__ == "__main__":
         if FLAG_BOTH_SPIN:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0])
@@ -237,9 +333,12 @@ if __name__ == "__main__":
     else:
         plt.title(TITLE)
     if FLAG_LEFT:
+        # 凡例Box
         leg = plt.legend(fontsize=12, loc="upper left")
     else:
+        # 凡例Box
         leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     plt.savefig("ADOS" + out_suffix + ".pdf")
     if not FLAG_NW:

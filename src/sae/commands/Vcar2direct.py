@@ -1,10 +1,28 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.geometry.coordinates import CoordinateTransforms
 from sae.vasp.poscar_fields import PoscarFields
 from sae.vasp.poscar_writer import PoscarWriter
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# POSCAR の direct 変換
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2014.10.31
+#   関数化 & ライブラリ化 テスト用テストプログラム
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,8 +35,24 @@ import optparse
 import numpy as np
 
 
+#
+################################################################################
+# import SpaceGroupEnvironment as SGE
+# import re
+# from copy import deepcopy
+# from numpy import *
+################################################################################
+###############################################
+# default parameter
+#
+###############################################
+# optparse
+#
+# print args,options
 def options():
+    # OUTPUT BASE filename
     cname = "POSCAR"
+    # INPUT (BASE) filename
     POSCAR = "POSCAR"
     parser = optparse.OptionParser()
     parser.add_option("-i", "--input", dest="INPUT")
@@ -29,6 +63,9 @@ def options():
         cname = options.INPUT
     if options.OUTPUT:
         cname = options.OUTPUT
+    # print "script name:",argvs[0]
+    # POSCAR=argv[0]
+    # distance = float(args[0])
     if len(args) > 0:
         cname = args[0]
         POSCAR = args[0]
@@ -43,6 +80,14 @@ def options():
     return [POSCAR, cname]
 
 
+################################################################################
+# Default & OptionParser
+# POSCAR の事前読み込み
+# POSCAR 読み込みのための準備
+# POSCAR の読み込み
+# Cartesian to Direct
+# POSCAR の標準出力
+# POSCAR のファイル出力
 if __name__ == "__main__":
     POSCAR, cname = options()
     nion, natom, VASP = PoscarFields().read_poscar_param(POSCAR)

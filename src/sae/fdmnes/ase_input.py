@@ -1,6 +1,40 @@
 # Copyright Kengo NAKADA; SAE class library.
+# atoms.write('POSCAR.pdb',format='pdb')
+# print atoms.positions
+# print ""
+# print atoms.cell
+# print ""
+# print atoms.get_scaled_positions()
 from __future__ import print_function
 
+#!/usr/bin/env python
+# coding:utf-8
+################################################################################
+# VASP to FDMNES crystal
+#
+# using ASE version
+#
+#  1) using ASE cellconst
+#  2) call ASE-module
+#
+################################################################################
+# 2021.04.27
+#  move toSAE 内の ASE support へ移植
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2016.01.16
+#  出力形式だけ新バージョンに合わせる
+#
+# 2016.01.16
+#  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
+#  バグを発見。旧バージョンを復帰させる
+#
+# 2015.05.18 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -29,6 +63,11 @@ class AseInputOperations:
         :param MOL:
         :return:
         """
+        #
+        ################################################################################
+        #
+        ## using cellconst
+        # from ase.io.xyz import *
         if STD:
             out = sys.stdout
         else:
@@ -37,8 +76,10 @@ class AseInputOperations:
             except:
                 out.close()
                 sys.exit("STOP:" + name + ".fdmnes file can't open")
+        #   atoms = atoms2.copy()
         cell = atoms.get_cell()
         metT = np.dot(cell, np.transpose(cell))
+        # from ASE module
         cell2 = cellconst(metT)
         a = cell2[0]
         b = cell2[1]
@@ -55,6 +96,7 @@ class AseInputOperations:
             "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
             file=out,
         )
+        # pos = atoms.get_positions()[ii]
         for ii in range(nat):
             zza = atoms.get_atomic_numbers()[ii]
             pos = atoms.get_scaled_positions()[ii]
@@ -100,8 +142,11 @@ class AseInputOperations:
         )
         if e_range is None:
             e_range = "-15. 0.2  0. 0.5 10. 1. 45."
+        #   atoms = atoms2.copy()
+        # from ASE
         cell = atoms.get_cell()
         metT = np.dot(cell, np.transpose(cell))
+        # from ASE module
         cell2 = cellconst(metT)
         a = cell2[0]
         b = cell2[1]
@@ -182,6 +227,7 @@ class AseInputOperations:
             "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
             file=out,
         )
+        # pos = atoms.get_positions()[ii]
         for ii in range(nat):
             zza = atoms.get_atomic_numbers()[ii]
             pos = atoms.get_scaled_positions()[ii]

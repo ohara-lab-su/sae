@@ -1,9 +1,24 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   plt.close('all')
+#   print "NAME",name
 from __future__ import print_function
 from sae.pwscf.out import ReadPwOut
 from sae.pwscf.pdos import ReadPwPdos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# TDOS plot
+#
+################################################################################
+#
+# 2015.07.22 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +29,15 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import sys
+#import gzip
+#import os
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     prefix = "input"
     outname = None
@@ -31,14 +55,24 @@ def options():
     return (prefix, outname)
 
 
+################################################################################
+#   leg = plt.legend(fontsize=12,loc='lower right')
+#   plt.xlim( xmax=12100 )
+#   plt.xlim( xmin=11900 )
+#   plt.xlim( xmax=200 )
+#   plt.xlim( xmin=-10 )
 if __name__ == "__main__":
     prefix, outname = options()
     if outname is not None:
         out = ReadPwOut(outname)
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.17
     orgy = 0.08
@@ -47,6 +81,10 @@ if __name__ == "__main__":
     ysize = 0.83 / 2.0
     plt.axes([orgx, orgy, xsize, ysize])
     pw = ReadPwPdos(prefix)
+    #       pw.pdos = pw.get_ldos(l=1, atom = 0, spin=0)
+    #       plt.plot(pw.eng,pw.pdos,linewidth=1,label='p')
+    #       pw.pdos = pw.get_ldos(l=1, atom = 0, spin=0)
+    #       plt.plot(pw.eng-out.efermi,pw.pdos,linewidth=1,label='p')
     if outname is None:
         pw.pdos = pw.get_ldos(l=0, atom=0, spin=0)
         plt.plot(pw.eng, pw.pdos, linewidth=1, label="s")

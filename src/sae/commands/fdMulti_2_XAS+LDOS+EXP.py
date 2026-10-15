@@ -1,11 +1,31 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print "NAME",name
 from __future__ import print_function
 from sae.athena.nor import ReadAthenaNor
 from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.sd import ReadFdmSd
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+# *_conv.txt plot program
+#
+# Athena のデーターと一緒に比較する
+#
+################################################################################
+#
+# 2015.06.30
+#  == None --> is None
+#
+# 2015.05.21 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,6 +37,14 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+# import sys
+# import gzip
+# import re
+# import numpy as np
+# import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     from sae.common.paths import FileDiscovery
 
@@ -36,11 +64,25 @@ def options():
     return name
 
 
+################################################################################
+#   name = options()
+#######################################################
+#   conv = SAE.io.ReadFdmConv('Au_conv_Fermi.txt')
+#######################################################
+###########################################################################
+#   plt.xlabel("Energy above Fermi [eV]")
+###########################################################################
+#   plt.yticks([])
+###########################################################################
 if __name__ == "__main__":
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.17
     orgy = 0.08

@@ -3,6 +3,25 @@
 from __future__ import print_function
 from sae.vasp.xdatcar import ReadVaspXdat
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  Vxml2MD は vasprun.xml --> *.xyz (MD) 形式
+#  Vxdat2MD は XDATCAR --> *.xyz (MD) 形式
+#
+#  ただし、OUTCAR が存在しない時は Vxdat2MD は エネルギーの項目は追加しない
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.01.22 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -12,6 +31,16 @@ __license__ = "MIT"
 import optparse
 
 
+#
+################################################################################
+#import sys
+#import xml.etree.ElementTree as ET
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+#import os
+#import re
+#from copy import deepcopy
+################################################################################
 def options():
     XDATCAR = "XDATCAR"
     parser = optparse.OptionParser()
@@ -24,6 +53,8 @@ def options():
     return XDATCAR
 
 
+################################################################################
+#   name = 'XDATCAR'
 if __name__ == "__main__":
     name = options()
     xdat = ReadVaspXdat(name)

@@ -1,3 +1,81 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  MD(xyz) 形式の読み込み class
+#
+#   read_md.py
+#     def read_md3(): 座標(x,y,z) + フォース(x,y,z) + Energy 形式に対応
+#   をベースとして作成
+#
+#   エネルギーの取得に関しては OpenMX の *.md 形式が念頭
+#   ただし、それ以外は基本的には *.xyz (*.md) 形式に準じているので、
+#   ReadMd.py の名前のままにしておく ( ゆえに ReadMxMd.py とはしない)
+#
+################################################################################
+#
+# get_natom()
+# get_nloop()
+# get_n_ion_loop()
+# get_atoms_index_j()
+# get_atoms_index()
+# get_nion()
+# get_atoms()
+# get_energy_loop()
+# get_position_loop()
+# get_selective()
+# get_force_loop()
+#
+# get_temp_loop()
+# get_temp_given_loop()
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.06.30
+#   == None --> is None
+#
+# 2015.06.26
+#  get_position() 追加: get_position_loop の loop=0 のみ対応
+#
+# 2015.03.03
+#  get_temp(), get_temp_given()
+#
+#     OpenMX *.md 形式: Temperature, Given Temp 吸い出し対応
+#
+# 2015.02.13 1st
+#
+################################################################################
+################################################################################
+# from numpy import *
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+#   MD = "co.md"  # default name
+#   MD = "C60_position.xyz"
+#   MD = "graphene_N.md"
+############################################################################
+############################################################################
+#   for i in range(nloop):
+#       print " ",i," ", energy_loop[i]
+#   for l in range(nloop):
+#       print "===============loop===============",l
+#       for j in range(natom):
+#           print atoms_index_j[j],\
+#                   position_loop[l,j,0],\
+#                   position_loop[l,j,1],\
+#                   position_loop[l,j,2],
+#           if selective:
+#                   print force_loop[l,j,0],\
+#                         force_loop[l,j,1],\
+#                         force_loop[l,j,2],
+#           print ""
+#   for l in range(nloop):
+#       print temp_loop[l]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -8,6 +86,38 @@ import re
 import numpy as np
 
 
+###############################################
+# MD ファイル読み込み
+###############################################
+# NATOM
+###############################################
+# LOOP 数 (IONループ数)
+# 互換
+###############################################
+# atoms_index_j
+###############################################
+# atoms_index(擬似)作成
+#    連続して同種の元素記号が並んでいるときは同じion-typeとする
+###############################################
+# nion(擬似)作成
+#    連続して同種の元素記号が並んでいるときは同じion-typeとする
+###############################################
+# atoms(擬似)作成
+#    連続して同種の元素記号が並んでいるときは同じion-typeとする
+###############################################
+# データー読み込み
+###############################################
+# position_loop データー読み込み
+###############################################
+# position (initial) データー読み込み
+###############################################
+# position_loop データー読み込み
+###############################################
+# force_loop データー読み込み
+###############################################
+# OpenMX *.md 形式, MD モード
+###############################################
+# OpenMX *.md 形式, MD モード
 class ReadMd(object):
 
     def __init__(self, cname):
@@ -29,9 +139,11 @@ class ReadMd(object):
         finally:
             tmp.close()
         self.datlines = datfile.split("\n")
+        # トータルの行数
         self.num = len(self.datlines) - 1
 
     def get_natom(self):
+        # 総原子数
         self.natom = int(self.datlines[0])
         return self.natom
 
@@ -64,6 +176,7 @@ class ReadMd(object):
         for a in range(natom):
             i = i + 2
             atoms_tmp = ""
+            # atoms_index_j[j] = str(self.datlines[i].split()[0])
             for j in range(natom):
                 if atoms_index_j[j] != atoms_tmp:
                     atoms_tmp = atoms_index_j[j]
@@ -99,6 +212,7 @@ class ReadMd(object):
             atoms_tmp = ""
             nion = 0
             local = 0
+            # makes atoms[ion]
             for j in range(natom):
                 if atoms_index_j[j] != atoms_tmp:
                     local = 0
@@ -115,6 +229,8 @@ class ReadMd(object):
         nloop = self.get_nloop()
         i = 0
         self.energy_loop = np.zeros(nloop)
+        # get Energy
+        # print energy_loop[l]
         for l in range(nloop):
             tmp = self.datlines[i + 1].split()
             if len(tmp) >= 5:
@@ -130,11 +246,18 @@ class ReadMd(object):
         i = 0
         self.position_loop = np.zeros((nloop, natom, 3))
         energy_loop = np.zeros(nloop)
+        # get Energy
+        # print energy_loop[l]
         for l in range(nloop):
             tmp = self.datlines[i + 1].split()
             if len(tmp) >= 5:
                 energy_loop[l] = tmp[4]
             i = i + 2
+            #               nlist = len(tmp)
+            #               if nlist >= 7:
+            #                   force_loop[l,j,0]     = float(tmp[4])
+            #                   force_loop[l,j,1]     = float(tmp[5])
+            #                   force_loop[l,j,2]     = float(tmp[6])
             for j in range(natom):
                 self.position_loop[l, j, 0] = float(self.datlines[i].split()[1])
                 self.position_loop[l, j, 1] = float(self.datlines[i].split()[2])

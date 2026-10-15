@@ -1,3 +1,208 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  読み込んだ vasprun.xml の initial の情報を元に
+#  INCAR
+#  KPOINTS
+#  POSCAR
+#  CONTCAR
+#  相当の情報をretrunする
+#  
+# それぞれの内容は下記
+#
+#   POSCAR=[title,scale,natom,nion,selective,direct,VASP,\
+#      t_initial,atoms,atoms_index,position_initial,fix_initial]
+#
+#   CONTCAR=[title,scale,natom,nion,selective,direct,VASP,\
+#      t_final,atoms,atoms_index,position_final,fix_final]
+#
+#   return [INCAR,KPOINTS,POSCAR,CONTCAR]
+#
+#  テスト用の Vxmread_nonLIB.py --> Vxmread_LIB0.py がベース
+#
+#  注意)
+#    VASP の cartesian は scale=1.0 で基本並進で絶対座標化
+#    されてないので、scale=1.0 ならば Direct=Car となる・・・はず？
+#    direct は True としておく
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.01.07
+#  ION ループごとの出力ルーチンを別関数へ分離
+#     read_vasprn0.py  (INCAR,KPOINTS,POSCAR,CONTCAR)
+#     read_vasprn1.py  (CONTCAR_ALL)
+#
+# 2015.01.07
+#   完全分離版 read_vasprun.py (<-- Vxmlread_LIB0.py ベース)
+#
+# 2015.01.07
+#   rebuild 系の出力を追加
+#   関数化(引数でのやりとりではなく、戻り値をすべて一つのリストで返す方向性で)
+#   INCAR と KPOINTS 出力は暫定処置
+#
+#   旧バージョン(非関数) Vxmlread_nonLIB.py
+#   新バージョン(関数)   Vxmlread_LIB0.py
+#
+# 2015.01.06 1st edtion
+#   Vxmlread.py
+#
+################################################################################
+################################################################################
+# import optparse
+# import SpaceGroupEnvironment as SGE
+# import os
+# import re
+# from copy import deepcopy
+################################################################################
+################################################################################
+# テスト用
+################################################################################
+# Default & OptionParser
+# XMLFILE = options()
+# default name
+# vasprun.xml parse
+###################################################
+# INCAR の出力
+# print >> out, INCAR_TAG[i],"=",INCAR_TEXT[i]
+###################################################
+# KPOINTS の出力
+###################################################
+# POSCAR の出力 (Initial をアウトプット)
+###################################################
+# CONTCAR の出力 (Final をアウトプット)
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  読み込んだ vasprun.xml の initial の情報を元に
+#  CONTCAR
+#  相当の情報を loop 毎にretrunする
+#  
+# それぞれの内容は下記
+#
+#   CONTCAR_ALL=[title,scale,natom,nion,selective,direct,VASP,\
+#      t_loop,atoms,atoms_index,position_loop,fix_final]
+#
+#   return [INCAR,KPOINTS,POSCAR,CONTCAR]
+#
+#  テスト用の Vxmread_nonLIB.py --> Vxmread_LIB0.py がベース
+#
+#  注意)
+#    VASP の cartesian は scale=1.0 で基本並進で絶対座標化
+#    されてないので、scale=1.0 ならば Direct=Car となる・・・はず？
+#    direct は True としておく
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.01.07
+#  ION ループごとの出力ルーチンを別関数へ分離
+#     read_vasprn0.py  (INCAR,KPOINTS,POSCAR,CONTCAR)
+#     read_vasprn1.py  (CONTCAR_ALL)
+#
+# 2015.01.07
+#   完全分離版 read_vasprun.py (<-- Vxmlread_LIB0.py ベース)
+#
+# 2015.01.07
+#   rebuild 系の出力を追加
+#   関数化(引数でのやりとりではなく、戻り値をすべて一つのリストで返す方向性で)
+#   INCAR と KPOINTS 出力は暫定処置
+#
+#   旧バージョン(非関数) Vxmlread_nonLIB.py
+#   新バージョン(関数)   Vxmlread_LIB0.py
+#
+# 2015.01.06 1st edtion
+#   Vxmlread.py
+#
+################################################################################
+################################################################################
+# import optparse
+# import SpaceGroupEnvironment as SGE
+# import os
+# import re
+# from copy import deepcopy
+################################################################################
+################################################################################
+# テスト用
+################################################################################
+# Default & OptionParser
+# XMLFILE = options()
+# default name
+# vasprun.xml parse
+###################################################
+# loop 毎のCONTCAR の出力
+# print "Makes CONTCAR."+str(ion_loop+1)+".rebuild"
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  読み込んだ vasprun.xml の initial の情報を元に
+#  Energy に関係した項目を吸い出すルーチン
+#
+#     read_vasprn2.py  (CONTCAR_ALL)
+#
+#  関連ルーチン)
+#
+#     read_vasprn0.py  (INCAR,KPOINTS,POSCAR,CONTCAR)
+#     read_vasprn1.py  (CONTCAR_ALL)
+#     read_vasprn2.py  (energy_ALL) 独自形式(データー抽出専用)
+#
+#  注意)
+#    VASP の cartesian は scale=1.0 で基本並進で絶対座標化
+#    されてないので、scale=1.0 ならば Direct=Car となる。
+#    direct は True としておく
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.01.20
+#  gzip 対応
+#
+# 2015.01.07
+#  ION ループごとの出力ルーチンを別関数へ分離
+#     read_vasprn0.py  (INCAR,KPOINTS,POSCAR,CONTCAR)
+#     read_vasprn1.py  (CONTCAR_ALL)
+#     read_vasprn2.py  (energy_ALL,force_ALL,その他)
+#
+# 2015.01.07
+#   完全分離版 read_vasprun.py (<-- Vxmlread_LIB0.py ベース)
+#
+# 2015.01.07
+#   rebuild 系の出力を追加
+#   関数化(引数でのやりとりではなく、戻り値をすべて一つのリストで返す方向性で)
+#   INCAR と KPOINTS 出力は暫定処置
+#
+#   旧バージョン(非関数) Vxmlread_nonLIB.py
+#   新バージョン(関数)   Vxmlread_LIB0.py
+#
+# 2015.01.06 1st edtion
+#   Vxmlread.py
+#
+################################################################################
+################################################################################
+# import SpaceGroupEnvironment as SGE
+# import os
+# import re
+# from copy import deepcopy
+################################################################################
+################################################################################
+# テスト用
+################################################################################
+# Default & OptionParser
+# XMLFILE = options()
+# default name
+# vasprun.xml parse
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -29,10 +234,18 @@ class VasprunFields:
         finally:
             if ZIP_FLAG:
                 f.close()
+        #   try:
+        #       tree = ET.parse(XMLFILE)
+        #   except:
+        #       sys.exit("can'nt parse "+XMLFILE)
         root = tree.getroot()
+        ###################################################
+        # from generator
         program = root.findtext("generator/i[@name='program']")
         version = root.findtext("generator/i[@name='version']")
         subversion = root.findtext("generator/i[@name='subversion']")
+        ###################################################
+        # from incar
         SYSTEM = root.findtext("incar/i[@name='SYSTEM']")
         INCAR_TAG = []
         INCAR_TEXT = []
@@ -40,6 +253,19 @@ class VasprunFields:
             INCAR_TAG.append(i.attrib.get("name"))
             INCAR_TEXT.append(i.text)
         INCAR = [INCAR_TAG, INCAR_TEXT]
+        #   try:
+        #       out = open('INCAR.rebuild','w')
+        #       print "Makes INCAR.rebuild"
+        #       for i in range(len(root.find('incar'))):
+        #          #print >> out, i.attrib.get("name"),"=",i.text
+        #           print >> out, INCAR_TAG[i],"=",INCAR[i]
+        #   except:
+        #       out.close()
+        #       sys.exit("STOP: INCAR.rebuild can't open")
+        #   finally:
+        #       out.close()
+        ###################################################
+        # from kpoints
         generation = root.find("kpoints/generation").get("param")
         divition = root.find("kpoints/generation/v[@name='divisions']").text
         KPOINTS = []
@@ -49,9 +275,32 @@ class VasprunFields:
         KPOINTS.append(divition)
         for es in root.find("kpoints/varray[@name='kpointlist']"):
             KPOINTS.append(es.text)
+        #   try:
+        #       out = open('KPOINTS.rebuild','w')
+        #       print "Makes KPOINTS.rebuild"
+        #       print >> out, 'K-POINTS'
+        #       print >> out, '0'
+        #       print >> out, generation
+        #       print >> out, divition
+        #       for es in root.find("kpoints/varray[@name='kpointlist']"):
+        #           print >> out, es.text
+        #   except:
+        #       out.close()
+        #       sys.exit("STOP: KPOINTS.rebuild can't open")
+        #   finally:
+        #       out.close()
+        ###################################################
+        # Number of ION-LOOP
         n_ion_loop = len(root.findall("calculation"))
+        ###################################################
+        # Get Number of atom
+        # atoms
         natom = int(root.findtext("atominfo/atoms"))
+        # types
         nion = int(root.findtext("atominfo/types"))
+        ###################################################
+        # atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+        # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
         atoms = np.zeros(nion, dtype=int)
         atoms_index = np.zeros(nion, dtype="S2")
         number = 0
@@ -71,8 +320,21 @@ class VasprunFields:
                         number = number_tmp
             atoms[number - 1] = local_nion
             atoms_index[number - 1] = name
+        #  for i in range(nion):
+        #      print atoms_index[i],atoms[i]
+        ###################################################
+        # [initial] [lattice vector]
+        #     基本並進ベクトル(注意:配列内indexは0から)          
+        #     POSCAR 入力形式                                    
+        #                                                        
+        #           x   y   z                                    
+        #     t1 = a11 a21 a31  ! lattice vector t1              
+        #     t2 = a12 a22 a32  ! lattice vector t2              
+        #     t3 = a13 a23 a33  ! lattice vector t3    
+        #                                                        
         t_initial = np.zeros((3, 3))
         j = 0
+        # print t_initial[0,j],t_initial[1,j],t_initial[2,j]
         for e in root.find(
             "structure[@name='initialpos']/crystal/varray[@name='basis']"
         ):
@@ -81,14 +343,19 @@ class VasprunFields:
             t_initial[1, j] = tmp[1]
             t_initial[2, j] = tmp[2]
             j += 1
+        ###################################################
+        # [initial] [position]
         position_initial = np.zeros((natom, 3))
         j = 0
+        # print position_initial[j,0],position_initial[j,1],position_initial[j,2]
         for e in root.find("structure[@name='initialpos']/varray[@name='positions']"):
             tmp = e.text.split()
             position_initial[j, 0] = tmp[0]
             position_initial[j, 1] = tmp[1]
             position_initial[j, 2] = tmp[2]
             j += 1
+        ###################################################
+        # [initial] [selective]
         fix_initial = np.zeros((natom, 3), dtype="S")
         selective = False
         if root.find("structure[@name='initialpos']").findall(
@@ -97,6 +364,7 @@ class VasprunFields:
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in root.find(
                 "structure[@name='initialpos']/varray[@name='selective']"
             ):
@@ -105,6 +373,8 @@ class VasprunFields:
                 fix_initial[j, 1] = str(tmp[1])
                 fix_initial[j, 2] = str(tmp[2])
                 j += 1
+        ###################################################
+        # [final] [lattice vector]
         t_final = np.zeros((3, 3))
         j = 0
         for e in root.find("structure[@name='finalpos']/crystal/varray[@name='basis']"):
@@ -113,14 +383,19 @@ class VasprunFields:
             t_final[1, j] = tmp[1]
             t_final[2, j] = tmp[2]
             j += 1
+        ###################################################
+        # [final] [position]
         position_final = np.zeros((natom, 3))
         j = 0
+        # print position_final[j,0],position_final[j,1],position_final[j,2]
         for e in root.find("structure[@name='finalpos']/varray[@name='positions']"):
             tmp = e.text.split()
             position_final[j, 0] = tmp[0]
             position_final[j, 1] = tmp[1]
             position_final[j, 2] = tmp[2]
             j += 1
+        ###################################################
+        # [final] [selective]
         fix_final = np.zeros((natom, 3), dtype="S")
         selective = False
         if root.find("structure[@name='finalpos']").findall(
@@ -129,6 +404,7 @@ class VasprunFields:
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in root.find("structure[@name='finalpos']/varray[@name='selective']"):
                 tmp = e.text.split()
                 fix_final[j, 0] = str(tmp[0])
@@ -137,6 +413,7 @@ class VasprunFields:
                 j += 1
         title = SYSTEM
         scale = 1.0
+        # VASP4 の vasprun.xml でも出力はVASP5形式にする
         VASP = 5
         direct = True
         POSCAR = [
@@ -188,14 +465,31 @@ class VasprunFields:
         finally:
             if ZIP_FLAG:
                 f.close()
+        #   try:
+        #       tree = ET.parse(XMLFILE)
+        #   except:
+        #       sys.exit("can'nt parse "+XMLFILE)
         root = tree.getroot()
+        ###################################################
+        # from generator
         program = root.findtext("generator/i[@name='program']")
         version = root.findtext("generator/i[@name='version']")
         subversion = root.findtext("generator/i[@name='subversion']")
+        ###################################################
+        # from incar
         SYSTEM = root.findtext("incar/i[@name='SYSTEM']")
+        ###################################################
+        # Number of ION-LOOP
         n_ion_loop = len(root.findall("calculation"))
+        ###################################################
+        # Get Number of atom
+        # atoms
         natom = int(root.findtext("atominfo/atoms"))
+        # types
         nion = int(root.findtext("atominfo/types"))
+        ###################################################
+        # atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+        # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
         atoms = np.zeros(nion, dtype=int)
         atoms_index = np.zeros(nion, dtype="S2")
         number = 0
@@ -215,6 +509,8 @@ class VasprunFields:
                         number = number_tmp
             atoms[number - 1] = local_nion
             atoms_index[number - 1] = name
+        ###################################################
+        # [final] [selective]
         fix_final = np.zeros((natom, 3), dtype="S")
         selective = False
         if root.find("structure[@name='finalpos']").findall(
@@ -223,16 +519,22 @@ class VasprunFields:
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in root.find("structure[@name='finalpos']/varray[@name='selective']"):
                 tmp = e.text.split()
                 fix_final[j, 0] = str(tmp[0])
                 fix_final[j, 1] = str(tmp[1])
                 fix_final[j, 2] = str(tmp[2])
                 j += 1
+        ###################################################
+        # [ion_loop] [lattice vector]
         t_loop = np.zeros((3, 3, n_ion_loop))
         ion_loop = 0
         for cal in root.findall("calculation/structure/crystal/varray[@name='basis']"):
             j = 0
+            # print t_loop[0,j,ion_loop],\
+            #      t_loop[1,j,ion_loop],\
+            #      t_loop[2,j,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 t_loop[0, j, ion_loop] = tmp[0]
@@ -240,10 +542,16 @@ class VasprunFields:
                 t_loop[2, j, ion_loop] = tmp[2]
                 j += 1
             ion_loop += 1
+        ###################################################
+        # [ion_loop] [position]
+        #   for cal in root.findall("calculation/structure/varray[@name='positions']/v"):
         ion_loop = 0
         position_loop = np.zeros((natom, 3, n_ion_loop))
         for cal in root.findall("calculation/structure/varray[@name='positions']"):
             j = 0
+            # print position_loop[j,0,ion_loop],\
+            #      position_loop[j,1,ion_loop],\
+            #      position_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 position_loop[j, 0, ion_loop] = tmp[0]
@@ -253,6 +561,7 @@ class VasprunFields:
             ion_loop += 1
         title = SYSTEM
         scale = 1.0
+        # VASP4 の vasprun.xml でも出力はVASP5形式にする
         VASP = 5
         direct = True
         CONTCAR_ALL = [
@@ -291,9 +600,13 @@ class VasprunFields:
             if ZIP_FLAG:
                 f.close()
         root = tree.getroot()
+        ###################################################
+        # from generator
         program = root.findtext("generator/i[@name='program']")
         version = root.findtext("generator/i[@name='version']")
         subversion = root.findtext("generator/i[@name='subversion']")
+        ###################################################
+        # from incar
         SYSTEM = root.findtext("incar/i[@name='SYSTEM']")
         INCAR_TAG = []
         INCAR_TEXT = []
@@ -301,6 +614,8 @@ class VasprunFields:
             INCAR_TAG.append(i.attrib.get("name"))
             INCAR_TEXT.append(i.text)
         INCAR = [INCAR_TAG, INCAR_TEXT]
+        ###################################################
+        # from kpoints
         generation = root.find("kpoints/generation").get("param")
         divition = root.find("kpoints/generation/v[@name='divisions']").text
         KPOINTS = []
@@ -310,9 +625,18 @@ class VasprunFields:
         KPOINTS.append(divition)
         for es in root.find("kpoints/varray[@name='kpointlist']"):
             KPOINTS.append(es.text)
+        ###################################################
+        # Number of ION-LOOP
         n_ion_loop = len(root.findall("calculation"))
+        ###################################################
+        # Get Number of atom
+        # atoms
         natom = int(root.findtext("atominfo/atoms"))
+        # types
         nion = int(root.findtext("atominfo/types"))
+        ###################################################
+        # atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+        # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
         atoms = np.zeros(nion, dtype=int)
         atoms_index = np.zeros(nion, dtype="S2")
         number = 0
@@ -332,8 +656,21 @@ class VasprunFields:
                         number = number_tmp
             atoms[number - 1] = local_nion
             atoms_index[number - 1] = name
+        #  for i in range(nion):
+        #      print atoms_index[i],atoms[i]
+        ###################################################
+        # [initial] [lattice vector]
+        #     基本並進ベクトル(注意:配列内indexは0から)          
+        #     POSCAR 入力形式                                    
+        #                                                        
+        #           x   y   z                                    
+        #     t1 = a11 a21 a31  ! lattice vector t1              
+        #     t2 = a12 a22 a32  ! lattice vector t2              
+        #     t3 = a13 a23 a33  ! lattice vector t3    
+        #                                                        
         t_initial = np.zeros((3, 3))
         j = 0
+        # print t_initial[0,j],t_initial[1,j],t_initial[2,j]
         for e in root.find(
             "structure[@name='initialpos']/crystal/varray[@name='basis']"
         ):
@@ -342,14 +679,19 @@ class VasprunFields:
             t_initial[1, j] = tmp[1]
             t_initial[2, j] = tmp[2]
             j += 1
+        ###################################################
+        # [initial] [position]
         position_initial = np.zeros((natom, 3))
         j = 0
+        # print position_initial[j,0],position_initial[j,1],position_initial[j,2]
         for e in root.find("structure[@name='initialpos']/varray[@name='positions']"):
             tmp = e.text.split()
             position_initial[j, 0] = tmp[0]
             position_initial[j, 1] = tmp[1]
             position_initial[j, 2] = tmp[2]
             j += 1
+        ###################################################
+        # [initial] [selective]
         fix_initial = np.zeros((natom, 3), dtype="S")
         selective = False
         if root.find("structure[@name='initialpos']").findall(
@@ -358,6 +700,7 @@ class VasprunFields:
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in root.find(
                 "structure[@name='initialpos']/varray[@name='selective']"
             ):
@@ -366,6 +709,8 @@ class VasprunFields:
                 fix_initial[j, 1] = str(tmp[1])
                 fix_initial[j, 2] = str(tmp[2])
                 j += 1
+        ###################################################
+        # [final] [lattice vector]
         t_final = np.zeros((3, 3))
         j = 0
         for e in root.find("structure[@name='finalpos']/crystal/varray[@name='basis']"):
@@ -374,14 +719,19 @@ class VasprunFields:
             t_final[1, j] = tmp[1]
             t_final[2, j] = tmp[2]
             j += 1
+        ###################################################
+        # [final] [position]
         position_final = np.zeros((natom, 3))
         j = 0
+        # print position_final[j,0],position_final[j,1],position_final[j,2]
         for e in root.find("structure[@name='finalpos']/varray[@name='positions']"):
             tmp = e.text.split()
             position_final[j, 0] = tmp[0]
             position_final[j, 1] = tmp[1]
             position_final[j, 2] = tmp[2]
             j += 1
+        ###################################################
+        # [final] [selective]
         fix_final = np.zeros((natom, 3), dtype="S")
         selective = False
         if root.find("structure[@name='finalpos']").findall(
@@ -390,16 +740,22 @@ class VasprunFields:
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in root.find("structure[@name='finalpos']/varray[@name='selective']"):
                 tmp = e.text.split()
                 fix_final[j, 0] = str(tmp[0])
                 fix_final[j, 1] = str(tmp[1])
                 fix_final[j, 2] = str(tmp[2])
                 j += 1
+        ###################################################
+        # [ion_loop] [lattice vector]
         t_loop = np.zeros((3, 3, n_ion_loop))
         ion_loop = 0
         for cal in root.findall("calculation/structure/crystal/varray[@name='basis']"):
             j = 0
+            # print t_loop[0,j,ion_loop],\
+            #      t_loop[1,j,ion_loop],\
+            #      t_loop[2,j,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 t_loop[0, j, ion_loop] = tmp[0]
@@ -407,10 +763,16 @@ class VasprunFields:
                 t_loop[2, j, ion_loop] = tmp[2]
                 j += 1
             ion_loop += 1
+        ###################################################                         
+        # [ion_loop] [position]
+        #   for cal in root.findall("calculation/structure/varray[@name='positions']/v"):
         ion_loop = 0
         position_loop = np.zeros((natom, 3, n_ion_loop))
         for cal in root.findall("calculation/structure/varray[@name='positions']"):
             j = 0
+            # print position_loop[j,0,ion_loop],\
+            #      position_loop[j,1,ion_loop],\
+            #      position_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 position_loop[j, 0, ion_loop] = tmp[0]
@@ -418,10 +780,15 @@ class VasprunFields:
                 position_loop[j, 2, ion_loop] = tmp[2]
                 j += 1
             ion_loop += 1
+        ###################################################
+        # [ion_loop] [forces]
         ion_loop = 0
         force_loop = np.zeros((natom, 3, n_ion_loop))
         for cal in root.findall("calculation/varray[@name='forces']"):
             j = 0
+            # print force_loop[j,0,ion_loop],\
+            #      force_loop[j,1,ion_loop],\
+            #      force_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 force_loop[j, 0, ion_loop] = tmp[0]
@@ -429,10 +796,15 @@ class VasprunFields:
                 force_loop[j, 2, ion_loop] = tmp[2]
                 j += 1
             ion_loop += 1
+        ###################################################                         
+        # [ion_loop] [stress]
         ion_loop = 0
         stress_loop = np.zeros((natom, 3, n_ion_loop))
         for cal in root.findall("calculation/varray[@name='stress']"):
             j = 0
+            # print stress_loop[j,0,ion_loop],\
+            #      stress_loop[j,1,ion_loop],\
+            #      stress_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 stress_loop[j, 0, ion_loop] = tmp[0]
@@ -440,6 +812,9 @@ class VasprunFields:
                 stress_loop[j, 2, ion_loop] = tmp[2]
                 j += 1
             ion_loop += 1
+        ###################################################
+        # [ion_loop] [energy]
+        # ion loop 毎の Energy (without entropy)
         e_wo_entrp_loop = np.zeros(n_ion_loop)
         e_fr_energy_loop = np.zeros(n_ion_loop)
         i = 0
@@ -452,6 +827,7 @@ class VasprunFields:
             i += 1
         title = SYSTEM
         scale = 1.0
+        # VASP4 の vasprun.xml でも出力はVASP5形式にする
         VASP = 5
         direct = True
         ENERGY_ALL = [e_wo_entrp_loop, e_fr_energy_loop]

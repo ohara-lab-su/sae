@@ -2,6 +2,40 @@
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com, kengo.nakada@spring8.or.jp
+#
+# [機能]
+#   D&D で登録したディレクトリ以下のファイルツリーをまとめて XML 形式で
+#   リスト化するスクリプト。
+#
+# [Note(makexml.py)]
+#
+#   出力ファイルの改行はない。改行コードによる動作の違いを吸収する
+#   のには実は XML としては正しい仕様。ただし，素でテキストエディタ
+#   でみるとわけがわからん。生成した XML ファイルは、XML を理解する
+#   ブラウザやエディタで見るとよい
+#
+#   ElementTree を使うと、アトリビュートは勝手にソートされるので注意
+#   XML の仕様としてアトリビュート(プロパティ)の順番はどうでもよい。
+#   のでXMLの仕様を満たしているリーダーで読んでいる限りは問題はない
+#
+#   ファイルパス区切りは Unix/mac では / だが、Windows では \ となる
+#   Python はどっちでも（混ざっても）勝手に認識するので問題はない(はず)
+#
+################################################################################
+#
+# 2014.12.09
+#   UserID などの各項目を GUI 上から修正できるように改変
+#
+# 2014.12.04 startup
+#   makexml.py (2014.12.04 version )をベースにして
+#   D&D でディレクトリ名を取得してリストを作る GUI を実装
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -12,19 +46,46 @@ import os
 import wx
 import xml.etree.ElementTree as ET
 
+#
+################################################################################
+# import sys
+# import optparse
+# import re
+# import numpy as np
+# from copy import deepcopy
+################################################################################
+# default
+#
 dtype_OTHER = "binary"
 dtype_PF = "/home/dspace/PF9809"
 destdir_sucess = "/home/dspace/cr/compdir"
 destdir_fail = "/home/dspace/cr/retrydir"
+# 最後には / を忘れない
 dfile_BASE = "/storage/data/"
+# ID             = '2014T1343'
 ID = "2014S0000 "
+# CREATER        = '0001343'
 CREATER = "0011765"
+#
+# exception      = [ '.DS_Store' ]
 exception = ".DS_Store"
 
 
+################################################################################
+# xml ファイル生成部分
+#
+# self.ID      = ID
+# self.userID  = CREATER
+# self.sucess  = destdir_sucess
+# self.fail    = destdir_fail
+# self.storage = dfile_BASE
+#
 def makes_xmlfile(dirname, ID, CREATER, destdir_sucess, destdir_fail, dfile_BASE):
+    #       tree.write('data.xml')
     if os.path.isdir(dirname):
+        # D&D されたディレクトリの絶対パス
         PWD = dirname
+        # ディレクトリのベース(つまり一つ上のDir)
         PWD_BASE = os.path.basename(PWD)
         bl14b2 = ET.Element("BL14B2", {"version": "1.0", "newline": "CRLF"})
         post = ET.SubElement(bl14b2, "postregist")
@@ -59,25 +120,52 @@ def makes_xmlfile(dirname, ID, CREATER, destdir_sucess, destdir_fail, dfile_BASE
 
 
 def fild_all_files(directory):
+    # yield root
     for root, dirs, files in os.walk(directory):
         for i in files:
             yield os.path.join(root, i)
 
 
+# yield os.path.join(i)
+# print root,i
 class MyFileDropTarget(wx.FileDropTarget):
 
     def __init__(self, window):
         wx.FileDropTarget.__init__(self)
+        # ファイルをドロップする対象
         self.window = window
 
+    # ファイルをドロップするときの処理
     def OnDropFiles(self, x, y, filenames):
         self.filenames = filenames
         for file in filenames:
             self.window.text.SetValue(file)
 
 
+# makes_xmlfile(file)
+# print self.ID
+# print self.ID
+# print self.fail
+# print self.sucess
 class MyFrame(wx.Frame):
 
+    # set default
+    # makes Frame & Panel
+    # projectID
+    # userID
+    # sucess ,destdir (src)
+    # self.inpSucessButton.SetLabel("open") # Open
+    # self.inpSucessButton.Bind(wx.EVT_BUTTON,self.OnOpen)
+    # destdir (fail)
+    # self.inpFailButton.SetLabel("open")
+    # self.inpFailButton.Bind(wx.EVT_BUTTON,self.OnOpen)
+    # storatg
+    # self.inpStorageButton.SetLabel("open")
+    # self.inpStorageButton.Bind(wx.EVT_BUTTON,self.OnOpen)
+    # D&D area
+    # Button
+    # メインのsizerに配置
+    # Frame にsizerを追加する
     def __init__(self):
         self.ID = ID
         self.userID = CREATER
@@ -107,6 +195,7 @@ class MyFrame(wx.Frame):
         self.inpSucessLabel = wx.StaticText(self.panel, -1, "destdir sources:")
         self.inpSucessText = wx.TextCtrl(self.panel, -1, self.sucess, size=(200, -1))
         self.inpSucessButton = wx.Button(self.panel)
+        # Open
         self.inpSucessButton.SetLabel("submit")
         self.inpSucessButton.Bind(wx.EVT_BUTTON, self.sucessOnSubmit)
         self.inpSucessBox = wx.BoxSizer(wx.HORIZONTAL)
@@ -139,18 +228,29 @@ class MyFrame(wx.Frame):
         self.startButton = wx.Button(self.panel, -1, "Start")
         self.startButton.Bind(wx.EVT_BUTTON, self.makeXml)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
+        # ProjectID
         self.sizer.Add(self.inpProjectIdBox, 0, wx.ALIGN_LEFT)
+        # UserID
         self.sizer.Add(self.inpUserIdBox, 0, wx.ALIGN_LEFT)
+        # dest-src
         self.sizer.Add(self.inpSucessBox, 0, wx.ALIGN_LEFT)
+        # dest-fail
         self.sizer.Add(self.inpFailBox, 0, wx.ALIGN_LEFT)
+        # Storage-BASE
         self.sizer.Add(self.inpStorageBox, 0, wx.ALIGN_LEFT)
         self.sizer.Add(self.ddBox, 0, wx.ALIGN_CENTER)
         self.sizer.Add(self.startButton, 0, wx.ALIGN_CENTER)
         self.panel.SetSizer(self.sizer)
+        # ドロップする対象をこのフレーム全体にする
         self.dt = MyFileDropTarget(self)
         self.SetDropTarget(self.dt)
 
     def makeXml(self, event):
+        # self.ID      = ID
+        # self.userID  = CREATER
+        # self.sucess  = destdir_sucess
+        # self.fail    = destdir_fail
+        # self.storage = dfile_BASE
         for name in self.dt.filenames:
             makes_xmlfile(
                 name, self.ID, self.userID, self.sucess, self.fail, self.storage
@@ -172,17 +272,24 @@ class MyFrame(wx.Frame):
     def sucessOnSubmit(self, event):
         self.sucess = self.inpSucessText.GetValue()
 
+    # file = open(os.path.join(self.dirName, self.fileName), 'r')
+    ##ファイルデータ読み込み
+    # file.close()
+    # ダイアログの破棄
     def OnOpen(self, e):
         self.dirName = ""
         dialog = wx.FileDialog(
             self, "Choose a directory", self.dirName, "", "*.*", wx.OPEN
         )
+        # OKボタンが押されるまで表示
         if dialog.ShowModal() == wx.ID_OK:
             self.fileName = dialog.GetFilename()
             self.dirName = dialog.GetDirectory()
         dialog.Destroy()
 
 
+################################################################################
+#   app = wx.PySimpleApp()
 if __name__ == "__main__":
     app = wx.App()
     frm = MyFrame()

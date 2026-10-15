@@ -4,6 +4,30 @@ from __future__ import print_function
 from sae.geometry.coordinates import CoordinateTransforms
 from sae.vasp.poscar import ReadVaspPoscar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#   convert VASP POSCAR to *.xyz (*.md)
+#
+#   拙作 Vdirect2car で変換するとVASPのCartesianモードになるので
+#   基本並進で内部座標がスケールされない
+#
+#   *.xyz 形式というよりは 内部座標がスケールされた cartesian 表記が
+#   VASP の POSCAR からの出力で欲しかったためのプログラム
+#   --> その形式はズバリ *.xyz 形式
+#
+################################################################################
+#
+# 2018.08.15, 08.23
+#  Python2/3 両対応
+#
+# 2015.03.12
+#   startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +40,13 @@ import os
 import re
 
 
+#
+################################################################################
+#import numpy as np
+#import glob
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
 def options():
     poscarname = "POSCAR"
     xyzname = "POSCAR"
@@ -40,6 +71,8 @@ def options():
     return [poscarname, xyzname, suffix, options.stdout]
 
 
+################################################################################
+## POSCAR 読み込み
 if __name__ == "__main__":
     poscarname, xyzname, suffix, OPT_STD = options()
     poscar = ReadVaspPoscar(poscarname)

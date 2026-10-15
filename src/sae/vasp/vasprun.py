@@ -1,3 +1,64 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+#  vasprun.xml 読み込み用の class ファイル
+#  関数 read_vasprun2.py がベース
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.06.15
+#  追加実装
+#  get_atoms()
+#  get_atoms_index()
+#  get_atoms_j()
+#  get_atoms_index_j()
+#
+# 2015.01.20
+#  gzip 対応
+#
+# 2015.01.11 (sun) startup
+#  read_vasprun2.py --> ReadVasprun.py (クラス化)
+#  まったりと作業
+#
+################################################################################
+################################################################################
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+# import re
+# from copy import deepcopy
+################################################################################
+#   title=SYSTEM
+#   scale=1.0
+#   VASP=5 # VASP4 の vasprun.xml でも出力はVASP5形式にする
+#   direct=True
+#   POSCAR=[title,scale,natom,nion,selective,direct,VASP,\
+#      t_initial,atoms,atoms_index,position_initial,fix_initial]
+#   CONTCAR=[title,scale,natom,nion,selective,direct,VASP,\
+#      t_final,atoms,atoms_index,position_final,fix_final]
+#   CONTCAR_ALL=[title,scale,natom,nion,selective,direct,VASP,\
+#      t_loop,atoms,atoms_index,position_loop,fix_final]
+#   return [n_ion_loop,POSCAR,CONTCAR,CONTCAR_ALL,FORCE_ALL,ENERGY_ALL]
+################################################################################
+# テスト用
+################################################################################
+# Default & OptionParser
+# XMLFILE = options()
+# default name
+# vasprun.xml parse
+#   print ""
+#   print "atom_j"
+#   for atom in range(natom):
+#       print atom,atoms_j[atom]
+#   print ""
+#   print "atoms_index_j"
+#   for atom in range(natom):
+#       print atom,atoms_index_j[atom]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import os
@@ -7,6 +68,49 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 
+###################################################
+# from generator
+###################################################
+# from incar
+###################################################
+# from kpoints
+###################################################
+# Get Number of atom
+###################################################
+# atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+# atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+###################################################
+# [initial] [lattice vector]
+#     基本並進ベクトル(注意:配列内indexは0から)
+#     POSCAR 入力形式
+#
+#           x   y   z
+#     t1 = a11 a21 a31  ! lattice vector t1
+#     t2 = a12 a22 a32  ! lattice vector t2
+#     t3 = a13 a23 a33  ! lattice vector t3
+#
+###################################################
+# [initial] [position]
+###################################################
+# [initial] [selective]
+###################################################
+# [final] [lattice vector]
+###################################################
+# [final] [position]
+###################################################
+# [final] [selective]
+###################################################
+# [ion_loop] [lattice vector]
+###################################################
+# [ion_loop] [position]
+#   for cal in root.findall("calculation/structure/varray[@name='positions']/v"):
+###################################################
+# [ion_loop] [forces]
+###################################################
+# [ion_loop] [stress]
+###################################################
+# [ion_loop] [energy]
+# ion loop 毎の Energy (without entropy)
 class ReadVaspVasprun(object):
 
     def __init__(self, name="vasprun.xml"):
@@ -64,13 +168,16 @@ class ReadVaspVasprun(object):
         return [KPOINTS]
 
     def get_natom(self):
+        # atoms
         self.natom = int(self.root.findtext("atominfo/atoms"))
         return self.natom
 
     def get_nion(self):
+        # types
         self.nion = int(self.root.findtext("atominfo/types"))
         return self.nion
 
+    #       NION = self.nion()
     def get_types(self):
         NION = self.get_nion()
         atoms = np.zeros(NION, dtype=int)
@@ -130,6 +237,7 @@ class ReadVaspVasprun(object):
     def get_t_initial(self):
         t_initial = np.zeros((3, 3))
         j = 0
+        # print t_initial[0,j],t_initial[1,j],t_initial[2,j]
         for e in self.root.find(
             "structure[@name='initialpos']/crystal/varray[@name='basis']"
         ):
@@ -140,10 +248,12 @@ class ReadVaspVasprun(object):
             j += 1
         return [t_initial]
 
+    #       NATOM = self.natom()
     def get_position_initial(self):
         NATOM = self.get_natom()
         position_initial = np.zeros((NATOM, 3))
         j = 0
+        # print position_initial[j,0],position_initial[j,1],position_initial[j,2]
         for e in self.root.find(
             "structure[@name='initialpos']/varray[@name='positions']"
         ):
@@ -154,6 +264,7 @@ class ReadVaspVasprun(object):
             j += 1
         return [position_initial]
 
+    #       NATOM = self.natom()
     def get_selective_initial(self):
         NATOM = self.get_natom()
         fix_initial = np.zeros((NATOM, 3), dtype="S")
@@ -164,6 +275,7 @@ class ReadVaspVasprun(object):
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in self.root.find(
                 "structure[@name='initialpos']/varray[@name='selective']"
             ):
@@ -191,6 +303,7 @@ class ReadVaspVasprun(object):
         natom = self.get_natom()
         position_final = np.zeros((natom, 3))
         j = 0
+        # print position_final[j,0],position_final[j,1],position_final[j,2]
         for e in self.root.find(
             "structure[@name='finalpos']/varray[@name='positions']"
         ):
@@ -211,6 +324,7 @@ class ReadVaspVasprun(object):
             selective = True
         if selective:
             j = 0
+            # print fix[j,0],fix[j,1],fix[j,2]
             for e in self.root.find(
                 "structure[@name='finalpos']/varray[@name='selective']"
             ):
@@ -228,6 +342,9 @@ class ReadVaspVasprun(object):
             "calculation/structure/crystal/varray[@name='basis']"
         ):
             j = 0
+            # print t_loop[0,j,ion_loop],\
+            #      t_loop[1,j,ion_loop],\
+            #      t_loop[2,j,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 t_loop[0, j, ion_loop] = tmp[0]
@@ -243,6 +360,9 @@ class ReadVaspVasprun(object):
         position_loop = np.zeros((natom, 3, self.n_ion_loop))
         for cal in self.root.findall("calculation/structure/varray[@name='positions']"):
             j = 0
+            # print position_loop[j,0,ion_loop],\
+            #      position_loop[j,1,ion_loop],\
+            #      position_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 position_loop[j, 0, ion_loop] = tmp[0]
@@ -258,6 +378,9 @@ class ReadVaspVasprun(object):
         force_loop = np.zeros((natom, 3, self.n_ion_loop))
         for cal in self.root.findall("calculation/varray[@name='forces']"):
             j = 0
+            # print force_loop[j,0,ion_loop],\
+            #      force_loop[j,1,ion_loop],\
+            #      force_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 force_loop[j, 0, ion_loop] = tmp[0]
@@ -273,6 +396,9 @@ class ReadVaspVasprun(object):
         stress_loop = np.zeros((natom, 3, self.n_ion_loop))
         for cal in self.root.findall("calculation/varray[@name='stress']"):
             j = 0
+            # print stress_loop[j,0,ion_loop],\
+            #      stress_loop[j,1,ion_loop],\
+            #      stress_loop[j,2,ion_loop]
             for e in cal:
                 tmp = e.text.split()
                 stress_loop[j, 0, ion_loop] = tmp[0]

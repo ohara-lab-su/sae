@@ -1,3 +1,112 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# OpenMX 3.7
+#   ReadMxPdos.py 目盛バカ食いバージョン(動作は割と速いはず)
+#
+#    *.Dos.Tetrahedron.atom*
+#    ReadMxDosMethod.py (superclass)
+#                                 ---> ReadMxTdos.py
+#                                 ---> ReadMxPdos.py
+#
+################################################################################
+# ReadMxPdos.py で直接実装しているMethod
+#
+# get_pdos(lm,atom,spin)
+# get_pdos_all()
+# get_ldos_all()
+# get_tdos_spd(l,spin)
+# get_ldos_ion(l,ion,spin)
+#
+# get_ldos_ion_all()        ダミー
+#
+# get_emax()    : ReadMxTdos インスタンス作成
+# get_min()     : ReadMxTdos インスタンス作成
+# get_eng()     : ReadMxTdos インスタンス作成
+# get_inttdos() : ReadMxTdos インスタンス作成
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.02.27
+#   !!!!!!! OpenMX の down-spin の DOS 値は負の符号が付いている !!!!!!
+#   気が付かなくてかなりハマった
+#
+#   コンストラクタでの読み込みの段階でDOSの値をすべて正に戻しておく
+#
+# 2015.02.25
+#  get_ldos_ion()
+#  get_ldos_ion_all()
+#  実装初め (MXplot_ADOS.py 用)
+#
+# 2015.02.25
+#  ReadMxDosMethod から継承している Method において
+#  入力のデーターファイルの都合 self.datlines を取るインスタンス変数は
+#  ReadMxPdos ではうまく使えない
+#     ---> ReadMxPdos 内で self.datlines をうまく定義できないので
+#          本質的には無理、無理やり何処かの原子のPDOSファイルを置くことは
+#          出来るが誤解が生じる可能性がある。
+#
+#  とりあえず現状では
+#  get_emax()
+#  get_emin()
+#  get_eng()
+#  get_tdos()
+#  get_inttdos()
+#
+#  method は ReadMxPdos 内でオーバーライトしておく
+#   ---> ReadMxTdos を呼び出して使う形
+#
+# 2015.02.25
+#  ReadDoscar.py とほぼ同等の動作をする Method をほぼ実装
+#
+# 2015.02.25
+#  共通する Class を ReadMxDosMethod に superclass として放り投げ
+#  現存する ReadMxDos クラスは ReadMxTdos に変更し、同様に ReadMxPdos 作成
+#
+#  基本方針でコンストラクタで全てデーター読み込みなので、動作は割と速いはず
+#  目盛はバカバカ食う。
+#
+#
+# ------------------------- ReadMxDosMethod 分離前
+# 2015.02.25
+#  OpenMX 用の DOS/PDOS 用の superclass に作成した method を分離、継承化
+#
+# 2015.02.25
+#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  の実装等
+#
+# 2015.02.24
+#    startup
+#    主に ReadMxDat, ReadMxDatMethod の整備
+#
+################################################################################
+################################################################################
+# import gzip
+# from copy import deepcopy
+# import SpaceGroupEnvironment as SGE
+# sys.path.append('../..')
+################################################################################
+################################################################################
+# 'openmx' より最適なデフォルトファイル名の推定ルーチン
+#   for spin in range(NSPIN):
+#       print '-------------------------- spin=',spin
+#       for ion in  range(NION):
+#           print '-------------------------- ion=',ion
+#           for l in range(3): # s,p,d
+#               print '------------------------------ l=',l
+#               ldos_ion = pdos.get_ldos_ion(l,ion,spin)
+#               for i in range(NEDOS):
+#                   print " %14.11f %14.11f" %(ENG[i],ldos_ion[i])
+#   print ispin
+#   print natom
+#   print title
+#   for i in range(nedos):
+#       print i,eng[i],tdos[i],inttdos[i]
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.openmx.dos_methods import ReadMxDosMethod
@@ -14,8 +123,91 @@ except ImportError:
     ReadMxDosMethod = ReadMxDosMethod
 
 
+###################################
+# 0) コンストラクタで複数ファイルからまるごとデータ構造を配列に読み込む)
+# 1) 計算していない原子も含めてすべての原子の配列を用意
+# 2) LDOS までコンストラクタで作ってしまう
+#
+###################################
+# PDOS (lm,atom,spin 指定)
+###################################
+# PDOS を全部そのまま返す
+###################################
+# LDOS (l,atom,spin 指定)
+###################################
+# LDOS を全部そのまま返す
+###################################
+# (TDOS_SPD) PDOS の spd 合計(原子情報でsum)
+###################################
+# LDOS_ion (サイトごとのLDOSを取る), ReadDoscar.get_ldos_ion() 互換
+# *.out or *.dat から atom の ion 情報を読み取るのは必須
+# ReadMxTdos
+# 固有値の最大(DOSのXレンジ)
+# ReadMxTdos
+# 固有値の最小(DOSのXレンジ)
+# ReadMxTdos
+# 固有値の(DOSのX軸)
+# ReadMxTdos
+# ReadMxTdos
 class ReadMxPdos(ReadMxDosMethod):
 
+    # 物質名
+    # NSPIN & NATOM を *.out もしくは *.dat から抽出
+    # 読み込むPDOSファイルの確認(1)
+    # 実際にPDOSを計算したatomの番号を抽出する
+    # NEDOS の算出
+    # インスタンス変数化
+    # リストの重複項目を削除
+    ###################################
+    # ADOS 収納に使う配列
+    # *.PDOS.Tetrahedron.atom? ファイルからのデータ抽出
+    ###################################
+    # TDOS_spd 収納に使う配列(原子種ごとの情報を潰すのであまり意味は無い)
+    ###################################
+    # LDOS 収納に使う配列(原子種ごと)
+    ###################################
+    # PDOS 収納に使う配列(原子種,軌道ごと)
+    # *.PDOS.Tetrahedron.atom?.* ファイルの検索,suffix抽出
+    # 原子種のループ
+    ########################## orbital (for VASP)
+    # 0: eng
+    # 0: lm=0 s
+    # 1: lm=1 p_y
+    # 2: lm=2 p_z
+    # 3: lm=3 p_x
+    # 4: lm=4 d_xy
+    # 5: lm=5 d_yz
+    # 6: lm=6 d_3z2-r2
+    # 7: lm=7 d_xz
+    # 8: lm=8 d_x2-y2
+    ########################## orbital (for OpenMX)
+    # 0: s
+    # 1: px
+    # 2: py
+    # 3: pz
+    # 4: dz2
+    # 5: dx2-y2
+    # 6: dxy
+    # 7: dxz
+    # 8: dyz
+    ##########################
+    # OpenMX の並びを VASP の並びに変更する
+    # 注意) 対称性が変わった時に OpenMX の並びがそのままかどうかは知らない
+    #       2015.02.26
+    #
+    # origina
+    # 0: s       ----> s      (0)
+    # 1: px      ----> py     (2)
+    # 2: py      ----> pz     (3)
+    # 3: pz      ----> px     (1)
+    # 4: dz2     ----> dxy    (6)
+    # 5: dx2-y2  ----> dyz    (8)
+    # 6: dxy     ----> dz2    (4)
+    # 7: dxz     ----> dxz    (7)
+    # 8: dyz     ----> dx2-y2 (5)
+    #
+    ##########################
+    # ex) self.pdos = np.zeros((NEDOS,lm_max,NATOM,NSPIN))
     def __init__(self, name, suffix):
         from sae.common.text import TextFiles
 
@@ -52,16 +244,23 @@ class ReadMxPdos(ReadMxDosMethod):
                 for j in range(nline):
                     self.ados[i, atom - 1, ispin] = float(data[i].split()[1 + ispin])
                     self.intados[i, atom - 1, ispin] = float(data[i].split()[2 + ispin])
+        # s,p,d,f
         l_max = 4
         self.tdos_spd = np.zeros((NEDOS, l_max, NSPIN))
         self.inttdos_spd = np.zeros((NEDOS, l_max, NSPIN))
+        # s,p,d,f
         l_max = 4
         self.ldos = np.zeros((NEDOS, l_max, NATOM, NSPIN))
         self.intldos = np.zeros((NEDOS, l_max, NATOM, NSPIN))
+        # s+p+d+f
         lm_max = 1 + 3 + 5 + 7
         self.pdos = np.zeros((NEDOS, lm_max, NATOM, NSPIN))
         self.intpdos = np.zeros((NEDOS, lm_max, NATOM, NSPIN))
         self.eng = np.zeros((NEDOS, NATOM))
+        # s-orbital (1)
+        # p-orbital (3)
+        # d-orbital (5)
+        # f-orbital (7)
         for atom in atom_list:
             base = dosname + ".atom" + str(atom)
             orbit = "s"
@@ -223,18 +422,22 @@ class ReadMxPdos(ReadMxDosMethod):
             for atom in range(NATOM):
                 ion1 = atoms_j[atom]
                 for i in range(NEDOS):
+                    # 0:s
                     for lm in range(0, 1):
                         ldos_ion[i, 0, ion1, spin] = (
                             ldos_ion[i, 0, ion, spin] + self.pdos[i, lm, atom, spin]
                         )
+                    # 3:p
                     for lm in range(1, 4):
                         ldos_ion[i, 1, ion1, spin] = (
                             ldos_ion[i, 1, ion, spin] + self.pdos[i, lm, atom, spin]
                         )
+                    # 5:d
                     for lm in range(4, 9):
                         ldos_ion[i, 2, ion1, spin] = (
                             ldos_ion[i, 2, ion, spin] + self.pdos[i, lm, atom, spin]
                         )
+                    # 7:d
                     for lm in range(9, 16):
                         ldos_ion[i, 3, ion1, spin] = (
                             ldos_ion[i, 3, ion, spin] + self.pdos[i, lm, atom, spin]

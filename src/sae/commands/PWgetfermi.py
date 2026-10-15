@@ -1,7 +1,48 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print ""
+#   print out.get_atoms_index()
+#   print out.get_atoms()
+#   print ""
+#   print ""
+#   print out.get_atoms_j()
+#   print out.get_atoms_index_j()
+#   print ""
+#   print "TRANSLATION VECTOR"
+#   print out.get_t()
+#   print ""
+#   print out.get_position()
+#   print ""
+#   position_loop = out.get_position_loop()
+#   for j in range(out.get_n_ion_loop()):
+#       print ""
+#       print position_loop[j,:,:]
+#   print "FORCE"
+#   force_loop = out.get_force_loop()
+#   for j in range(out.get_n_ion_loop()):
+#       print ""
+#       print force_loop[j,:,:]
+#   print "ENERGY"
+#   toten_ion = out.get_toten_ion()
+#   for i in range(out.get_n_ion_loop()):
+#       print toten_ion[i]
 from sae.pwscf.out import ReadPwOut
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Get fermi for PWSCf
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.07.17 startup
+#
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +55,12 @@ import optparse
 import numpy as np
 
 
+#
+################################################################################
+#import gzip
+#import os
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "scf.out"
     parser = optparse.OptionParser()
@@ -26,6 +73,7 @@ def options():
     return name
 
 
+################################################################################
 if __name__ == "__main__":
     name = options()
     out = ReadPwOut(name)

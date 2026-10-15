@@ -1,8 +1,64 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.lobster.doscar import ReadLobDos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_PDOS.py ---> Vplot_PDOS.py (名前変更)
+#
+#   Vplot_PDOS.py とほぼ同等
+#     DOSCAR の代わりに DOSCAR.lobster を読み込む
+#
+#   atom は 1 番から(内部的には0番からなので内部的に変換する)
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.07
+#  自動モードを止めて手動モードのみに(hex,cubic選択)
+#  軌道成分の指定部分を直接数字の指定は出来ない（計算ごとに異なる）
+#  ため、実際に計算している成分から、たとえば、px のみの番号を取得する
+#  などの仕様に変更した。
+#  --> それにともなって Vplod_PDOS.py から少しだけ変更
+#
+# 2015.09.03
+#  lobster 版へブランチ
+#  ---> いきなり頓挫、lm 分解モードが lobster DOSCAR だと、原子種に依存する
+#       そのため対称性分解モードがそのままでは移植できないことに気がつく。
+#       ---> auto-mode を停止で対応(デフォルトは full-lm モード)
+#
+################################################################################
+#
+# 2015.01.15
+#   旧バージョンを Vplot_PDOS_OLD_20150115.py として BACKUP へ
+#   現場ジョンを Vplot_PDOS_sym.py から Vplot_PDOS.py へ
+#
+# 2015.01.15
+#   cubic モード, hexagonal モードを追加
+#   対称性自動判別
+#   sp軌道 or spd軌道 モード
+#   --> コードの全面改修(作り直し),前のコードの面影がない
+#   --> コードをブランチ
+#
+# 2015.01.15
+#   デフォルト動作を portrait にして landscape モードとオプションで
+#   切り替え可能にした。
+#
+# 2015.01.14
+#   SPIN 対応
+#
+# 2015.01.14 startup
+#    Vplot_PDOS.py から Vplod_PDOS.py がベース
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +71,17 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
+#  atom は 1 番から(内部的には0番からなので内部的に変換する)
 def options():
     dname = "DOSCAR.lobster"
     parser = optparse.OptionParser()
@@ -47,6 +114,46 @@ def options():
     ]
 
 
+################################################################################
+# set input file
+# set output device
+# makes instance ( Read DOSCAR )
+#   dos = SAE.io.ReadVaspDoscar(dname)
+#   TITLE =  dos.title
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family']       = 'Times New Roman'
+#   plt.rcParams['font.size']         = 14  # ラベル等のフォントサイズ
+#   plt.rcParams['legend.fontsize']   = 5   # レジェンドのフォントサイズ
+#   plt.rcParams['axes.linewidth']    = 1.5 # 軸の太さを設定。目盛りは変わらない
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+############################################################################
+# block のリスト
+# for s,p,d
+#   list1_1=[0]         # 0:s
+#   list1_2=[1,2,3]     # 1:p_y, 2:p_z, 3:p_x
+#   list1_3=[4,5,6,7,8] # 4:d_xy, 5:d_yz, 6:d_3z2-r2, 7:d_xz, 8:d_x2-y2
+# for cubic
+#   list2_1=[0]         # 0:s
+#   list2_2=[1,2,3]     # 1:p_y, 2:p_z, 3:p_x
+#   list2_3=[4,5,7]     # 4:d_xy, 5:d_yz, 7:d_zx    (t2g)
+#   list2_4=[6,8]       # 6:d_3z2-r2, 8:d_x2-y2     (eg)
+# for hexagonal (without s,p )
+#   list3_1=[0,1,2,3]   # 0:s, 1:p_y, 2:p_z, 3:p_x
+#   list3_2=[5,7]       # 5:d_yz, 7:d_xz
+#   list3_3=[4,8]       # 4:d_yz, 8:d_x2-y2
+#   list3_4=[6]         # 6:d_3z2-r2
+# for hexagonal (s-orbital and p-orbital MODE)
+#   list4_1=[0]         # 0:s
+#   list4_2=[2]         # 2:p_z
+#   list4_3=[1,3]       # 1:p_y, 3:p_x
+############################################################################
+# block のリスト作成
+########################################################################
+# 画面分割のブロック
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         dname,
@@ -96,10 +203,16 @@ if __name__ == "__main__":
     if LORBIT <= 10:
         sys.exit("STOP: LORIBT=" + str(LORBIT))
     ENG = dos.eng
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 14
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 5
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+    #       plt.figure(figsize=(8.27, 11.69)) # for portrait
     if not LANDSCAPE_FLAG:
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
     list1_1 = ["s"]
     list1_2 = ["p_y", "p_z", "p_x"]
@@ -115,7 +228,9 @@ if __name__ == "__main__":
     list3_3 = ["d_yz", "d_x2-y2"]
     list3_4 = ["d_3z2-r2"]
     list3 = [list3_1, list3_2, list3_3, list3_4]
+    # 0:s
     list4_1 = ["s"]
+    # 2:p_z
     list4_2 = ["p_z"]
     list4_3 = ["p_y", "p_x"]
     list4 = [list4_1, list4_2, list4_3]
@@ -136,6 +251,25 @@ if __name__ == "__main__":
     off = 0.015
     size = 0.83 / nblock / NSPIN
     for blk in range(nblock - 1, -1, -1):
+        # ラベルの作成
+        # 描画軸の作成
+        # 次回の描画原点位置の調整
+        ####################################################################
+        # グラフ描画ブロック
+        #           plt.xticks([])
+        #           if blk != (nblock-1):
+        #               plt.xticks([])
+        ####################################################################
+        # EF0
+        ################################################################
+        # DOSのY軸(DOS軸)原点をセットする(稀に必須)
+        ################################################################
+        # down spin の時に反転させる
+        ################################################################
+        # title,label,xticks 処理
+        # 一番上
+        # 一番下以外
+        # 一番下
         for spin in range(NSPIN - 1, -1, -1):
             if blk == nblock - 1:
                 atom_label = str(atom)
@@ -194,7 +328,9 @@ if __name__ == "__main__":
             if OPT_YMAX:
                 plt.ylim(ymax=float(OPT_YMAX))
             if spin == 0:
+                # 凡例Box
                 leg = plt.legend(fontsize=9)
+                # Alphaチャンネル(半透明化)
                 leg.get_frame().set_alpha(0.5)
     if HEX_FLAG:
         foot = "hex"

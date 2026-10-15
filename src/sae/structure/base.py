@@ -1,8 +1,46 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Rread* 共通Method のボス
+#
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+###############################################################################
+# History
+#
+# 2015.08.25
+#  startup (ReadMxDatMethod.py から抽出)
+#
+###############################################################################
+###############################################################################
+# import sys
+# import os
+# import re
+# import gzip
+# import optparse
+###############################################################################
+###############################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import numpy as np
 
 
+####################################
+# position の(x,y,z) 毎の最大を返す
+#
+####################################
+# position の(x,y,z) 毎の最小値を返す
+#
 class Method(object):
 
     def get_title(self):

@@ -3,6 +3,22 @@
 from __future__ import print_function
 from sae.fdmnes.inp import ReadFdmInp
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDmove
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.06.19 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +31,15 @@ import optparse
 import glob
 
 
+#
+################################################################################
+#import gzip
+#import shutil
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# $B0z?t(B1: (*.inp $B$N(B filout $B9`L\$,I,?\(B)
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -46,6 +71,7 @@ def options():
     return (inpname, filsrc, fildst)
 
 
+################################################################################
 if __name__ == "__main__":
     inpname, filsrc, fildst = options()
     if filsrc is None:

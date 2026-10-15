@@ -1,3 +1,34 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+# OSZICAR 読み込み (汎用,その他)
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.02.24
+#  get_iter_num() --> get_n_ion_loop() 変更
+#
+# 2015.01.29
+#  get_tmod() の名称を get_md_mode() へ変更
+#  (ReadOutcar.get_tmode() ==> ReadOutcar.get_md_mode() への変更に合わせた)
+#
+# 2015.01.26 startup
+#
+#   temperature と etotal のゲット
+#   IBRION ゲット method 追加
+#
+################################################################################
+################################################################################
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,6 +38,10 @@ import re
 import numpy as np
 
 
+# get_n_ion_loop (旧名) get_iter_num
+# 実際に計算した ION iter 数をゲットする
+# get_md_mode
+# IBRION=0 or それ以外の判定
 class ReadVaspOszicar(object):
 
     def __init__(self, cname):

@@ -4,6 +4,28 @@ from __future__ import print_function
 from sae.wien2k.output0 import ReadWienOutput0
 from sae.wien2k.spectra_plot import SpectraPlot
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Wplot_XAS.py
+#
+# wplot_XAS_K, wplot_XAS_L の基本アイデアを踏襲
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.06
+#  plot 部分を分離 plot_sum_xas() と plot_xas() に分離
+#
+# 2015.03.27 (sat)
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +38,13 @@ import re
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     parser = optparse.OptionParser(os.getcwd())
@@ -29,6 +58,12 @@ def options():
     return [name, options.EMAX, options.EMIN, options.YMAX]
 
 
+################################################################################
+# set input file
+############################################
+# check SPIN
+#   nion = output0.get_nion()
+#   atoms_index = output0.get_atoms_index()
 if __name__ == "__main__":
     case, EMAX, EMIN, YMAX = options()
     if os.path.exists(case + ".output0"):

@@ -3,6 +3,33 @@
 from __future__ import print_function
 from sae.fdmnes.ase_input import AseInputOperations
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# VASP to FDMNES crystal 情報
+#
+# using ASE version
+#
+# (注意)
+#  1) ASE のルーチン(cellconst) を使っている
+#  2) ASE のmodule を呼び出している
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2016.01.16
+#  出力形式だけ新バージョンに合わせる
+#
+# 2016.01.16
+#  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
+#  バグを発見。旧バージョンを復帰させる
+#
+# 2015.05.18 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +46,12 @@ import optparse
 import numpy as np
 
 
+#
+################################################################################
+#
+## using cellconst
+# from ase.io.xyz import *
+#   atoms = atoms2.copy()
 def write_fdmnes(name="POSCAR", atoms=None, STD=True, MOL=False):
     """
     FDMNES 入力形式へ POSCAR を変換する
@@ -39,6 +72,7 @@ def write_fdmnes(name="POSCAR", atoms=None, STD=True, MOL=False):
             sys.exit("STOP:" + name + ".fdmnes file can't open")
     cell = atoms.get_cell()
     metT = np.dot(cell, np.transpose(cell))
+    # from ASE module
     cell2 = cellconst(metT)
     a = cell2[0]
     b = cell2[1]
@@ -55,6 +89,7 @@ def write_fdmnes(name="POSCAR", atoms=None, STD=True, MOL=False):
         "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
         file=out,
     )
+    # pos = atoms.get_positions()[ii]
     for ii in range(nat):
         zza = atoms.get_atomic_numbers()[ii]
         pos = atoms.get_scaled_positions()[ii]
@@ -67,6 +102,7 @@ def write_fdmnes(name="POSCAR", atoms=None, STD=True, MOL=False):
         out.close()
 
 
+#   atoms = atoms2.copy()
 def write_fdmnes_inp(
     name="read_pdb.inp",
     absorber=1,
@@ -98,8 +134,10 @@ def write_fdmnes_inp(
     e_range_comment = "first energy, step, intermediary energy, step ..., last energy"
     if e_range is None:
         e_range = "-15. 0.2  0. 0.5 10. 1. 45."
+    # from ASE
     cell = atoms.get_cell()
     metT = np.dot(cell, np.transpose(cell))
+    # from ASE module
     cell2 = cellconst(metT)
     a = cell2[0]
     b = cell2[1]
@@ -180,6 +218,7 @@ def write_fdmnes_inp(
         "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
         file=out,
     )
+    # pos = atoms.get_positions()[ii]
     for ii in range(nat):
         zza = atoms.get_atomic_numbers()[ii]
         pos = atoms.get_scaled_positions()[ii]
@@ -225,6 +264,13 @@ def options():
     return [name, MOL]
 
 
+################################################################################
+# atoms.write('POSCAR.pdb',format='pdb')
+# print atoms.positions
+# print ""
+# print atoms.cell
+# print ""
+# print atoms.get_scaled_positions()
 if __name__ == "__main__":
     name, MOL = options()
     atoms = read_vasp(name)

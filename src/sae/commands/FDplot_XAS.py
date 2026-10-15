@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print "NAME",name
 from __future__ import print_function
 from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.inp import ReadFdmInp
@@ -7,6 +8,104 @@ from sae.fdmnes.sd import ReadFdmSd
 from sae.fdmnes.txt import ReadFdmTxt
 from sae.athena.nor import ReadAthenaNor
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+#
+#   *_conv.txt plot program
+#    ファイル名自動判別を付け加えただけの基本的な XAS plot
+#
+#   fdXAS.py のゴージャス版
+#   fdXAS は書き換えるのを前提としたスクリプト(小文字系)
+#
+#   Kエッジ版
+#
+#   SPIN 暫定対応版
+#    ただし、read_pdb.inp と conv.inp 両対応を意識して、自動判別ではなく
+#    -s もしくは --spin オプション時に強制的に対応させる
+#    spin の計算で -s をつけていない時は up-spin の DOS を描く
+#
+#   Weight
+#     もしPd19クラスター（つまりPd原子が19個)で、計算したサイトがall-siteで
+#     4つならば(サイト内には同種の対称性の複数の原子を含む)
+#
+#     FDplot_xas.py -a 1 2 3 4 -w 19
+#      とプロットすると、４つのサイトの平均値を19で割る(1原子あたり)に
+#      変換した XANES をプロットする
+#
+#    このとき、DOS プロットも一緒にすると DOS のときはサイト情報は
+#    そもそもが原子一個あたりなので（サイト内は一個の原子扱い）
+#
+#       FDplot_xas.py -d -x 4
+#       とする(xはDOS weight)
+#
+#    両方時にプロットするには
+#      FDplot_xas.py -a 1 2 3 4 -w 19 -d -x 4
+#
+##########################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.11.23
+#  L2,L3 の計算に対応
+#
+# 2015.09.08
+#  _0.txt _0_conv.txt _0_sd0.txt 出力系を追加・修正
+#
+# 2015.09.08
+#  オプション、ファイル名取得系を整理整頓
+#
+# 2015.07.06
+#   XAS の Weight と DOS の Weight を別に設定可能にした
+#
+# 2015.07.02
+#  spin対応(DOSのプロットでupとdownの併記プロット)
+#  その代わりに LDOS のプロットで p軌道のみ出力
+#
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加したのを呼び出すように
+#
+# 2015.07.01
+#   average モードで XAS だけではなく DOS も対応(ReadFdmSdの対応化)
+#
+# 2015.06.30
+#   average モードを追加
+#    filout 名 + _ + 数字 + _conv.txt
+#    ファイルを複数読み込み平均化してプロットするモードを追加
+#
+# 2015.06.30
+#   可変長オプションに変更
+#   optparser() --> argparse()
+#
+# 2015.06.30
+#   -i 指定で conv.inp を読み込んで 別途に計算した XAS conv を
+#   プロットできるように修正
+#
+#   このとき、conv.inp ファイル中の conv_out 情報を取得して
+#   プロットする名前を獲得できる
+#
+#   さらにDOS モードの時は
+#     conv.inp 中の Filout から *_bav.txt 名を取得して情報を入手がかのう
+#
+#   つまり、Convolution 名とログファイル名の２つの名前を扱える
+#
+# 2015.06.24
+#  実験データもプロット可能に
+#        obs_file = filout+'_obs.txt.nor'
+#
+# 2015.06.23
+#  DOSもプロット可能に
+#
+# 2015.06.19 FDplot_XAS startup
+#
+# 2015.05.21 fdXAS startup
+#
+##########################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +118,57 @@ import argparse
 import matplotlib.pyplot as plt
 
 
+#
+##########################################################################
+# import gzip
+# import re
+# import optparse
+# import numpy as np
+# import SpaceGroupEnvironment as SGE
+#####################
+# UserWarning: Matplotlib is currently using agg,
+# which is a non-GUI backend, so cannot show the figure.
+#
+# にて画面表示が出来なかったときは Agg を止めて TkAgg へ
+# さらに Tinkter を入れる必要がある。
+#
+# (正確には、Agg は 非GUI用で、Matplotlib は、自動で TkAgg 利用される
+#  Tinker が導入されていないので、TkAgg が使えずに失敗したので、
+#  上記エラーメッセージでは、代わりに Agg を利用している)
+#
+# これに対処するには
+#
+#  yum install tk-devel   (for Python2?)
+#  yum install python3-tkinter
+#
+#  上記で入れると system に入るので pyenv 環境にモジュールが入らない
+#  結構困るのだが、実は python 導入時に tinker が導入されているか？が味噌
+#  つまり、 一度 pyenv 環境の python を uninstall をしてもう一度入れるとOK
+#     pyenv uninstall 3.6.10
+#     pyenv install 3.6.10
+#
+# import matplotlib
+# matplotlib.use('TkAgg')
+# 上記設定(Tkinterインスール&Python利用)が出来ているならば
+# TkAgg は自動でチョイスされるので設定は必要ない
+#####################
+# from matplotlib.ticker import FuncFormatter
+# import matplotlib.ticker as ptick
+##########################################################################
+#   parser = optparse.OptionParser()
+# name: conv, txt, sd ファイル名を一括する
+# output: output するファイル名を指定する
+# 複数エッジ(L23)のときのプロットするエッジの指定(L23モードののみ対応)
+# fermi level をゼロにする( default は photon energy に変換する)
+# fermi level の変換を完全になくす
+# broad: XAS with broad のみを描く( FDplot_LDOS の brad option と逆 )
+# xas: XAS non broad のみを描く
+# dos: _sd0.txt を用いて LDOS をプロット (XASとの違いに注意)
+#   parser.add_argument('-o', '--obs', action='store_true', default=False,)
+# absorber: 指定した absorber 原子を平均化してプロット
+# 逆のスイッチ:pdf のみ出力を diable にする ( default は pdf )
+#   options, args = parser.parse_args()
+###### default inpname 取得
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -45,7 +195,9 @@ def options():
     parser.add_argument("-d", "--dos", action="store_true", default=False)
     parser.add_argument("-o", "--obs")
     parser.add_argument("-a", "--absorber", nargs="*")
+    # for XAS
     parser.add_argument("-w", "--weight")
+    # for LDOS
     parser.add_argument("-x", "--dosweight")
     parser.add_argument("--up", action="store_true", default=False)
     parser.add_argument("--dn", "--down", action="store_true", default=False, dest="dn")
@@ -99,6 +251,59 @@ def options():
     ]
 
 
+###############################################################################
+##########################################################################
+# inpname
+#    ベースとなる情報のinputfile名
+##########################################################################
+# txt
+# conv
+#     計算結果の読み込み (平均化で最初に指定したabsorberから)
+#     convol の値は 平均化モードで Method により上書きされる
+##########################################################################
+# txt
+# conv
+#     平均化モードのとき txt インスタンスの結果を上書き(平均の結果にする)
+#     平均化モードの時に filbav 名を取得(平均化モードでは必須)
+##########################################################################
+# sd
+#    DOS モードで fileout TAG から元の計算のログファイル名を入手
+#    DOS 用の sd インスタンス作成
+##########################################################################
+# *_0_conv.txt ファイルへ結果出力
+##########################################################################
+# *_0.txt ファイルへ結果出力
+##########################################################################
+# *_0_sd0.txt へ平均化の結果出力
+##########################################################################
+##########################################################################
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(7.00, 9.89))  # for portrait
+#   orgx = 0.170
+#   orgy = 0.080
+#   off = 0.010
+#   xsize = 0.75
+#   ysize = 0.83/2.
+#   plt.axes([orgx,orgy,xsize,ysize])
+##########################################################################
+# XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
+#
+#
+##########################################################################
+# XAS plot
+# broad オプション ナシ( XAS の生スペクトルplot) or XAS オプションあり
+# xas オプション ナシ
+#   plt.ticklabel_format(axis='x',style='plain')
+#   if FLAG_fermi:
+#       plt.xlabel("Energy above Fermi [eV]")
+#   else:
+#       plt.xlabel("Photon Energy [eV]")
+#   leg = plt.legend(fontsize=12,loc='lower right')
+##########################################################################
+# DOS plot
+##########################################################################
+# Athena data plot
+##########################################################################
 if __name__ == "__main__":
     (
         outputname,
@@ -169,6 +374,7 @@ if __name__ == "__main__":
         convolname = allname
         textname = allname
         sdname = allname
+    # Read Edge and Efermi
     if AV:
         print("")
         print("--- average mode ---")
@@ -289,15 +495,22 @@ if __name__ == "__main__":
     if WEDOS:
         WEDOW = float(WEDOS)
         print("Weight for LDOS  =", WEDOS)
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(8.1, 9.89))
     print("-------------------")
     print("E_edge   =", txt.E_edge)
     print("E_fermi  =", txt.E_Fermi)
     print("-------------------")
     txt_eng = txt.eng
+    # PhotoEnegy モードで計算した時と同じ結果を返す
+    # E_fermi を引く(A) : A=B
+    # E_fermi を引く(B) : A=B
     if not FLAG_subt:
         if not inp.get_energygpho() and (not FLAG_fermi):
             print("current mode is Fermi (E_edge = 0)")
@@ -342,6 +555,7 @@ if __name__ == "__main__":
     if OPT_YMAX:
         plt.ylim(ymax=float(OPT_YMAX))
     xas_xmin, xas_xmax, xas_ymin, xas_ymax = plt.axis()
+    #   leg = plt.legend(fontsize=12,loc='lower right')
     if FLAG_DOS:
         plt.subplot(3, 1, 3)
         dos_p = sd.get_ldos(l="p")
@@ -375,6 +589,8 @@ if __name__ == "__main__":
         plt.xlabel("Energy above Fermi [eV]")
     else:
         plt.xlabel("Photon Energy [eV]")
+    #   leg = plt.legend(fontsize=12,loc='lower right')
+    #   leg = plt.legend(loc='upper right')
     if OPT_OBS:
         if os.path.exists(OPT_OBS):
             obs_file = OPT_OBS

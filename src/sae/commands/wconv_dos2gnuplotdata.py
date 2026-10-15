@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+###################################### END SPIN roop ##########################################
 from __future__ import print_function
 import sys
 import os
@@ -8,7 +9,58 @@ import optparse
 import copy
 from numpy import *
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+# python trial, Aho code
+#
+# for WIEN2k 13.1
+#
+# read
+#   case.int
+#   case.dos*
+#
+##########################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2014.06.03 10:45
+#   バグばかりだけど（インデックス周りにバグが多い）
+#   最終的に使用している部分は正常動作しているので、
+#   現行では一応動作するバージョン。
+#   気持ち悪いので後で見直す。
+#   通し番号でindexを貼った data 系が壊滅。(それに関わるインデックスも)
+#
+# 2014.06.02 ~ 06.03
+#  wconv_dos2gnuplot.py 
+#  total-DOS 以外はすべての軌道に対応しているはず
+#
+# 2014.06.03
+#  tot-* をアホな勘違いしていたので開発当初から想定外だった。
+#  total-DOS を入れるとご動作を確認
+#
+# 2014.06.03 ~ 06.04
+#  wconv_dos2gnuplotdata+.py
+#    臨時の名前, total-DOS の対応可
+#    204.06.03 10:14 のバグは問題解決
+#    index あたりをひと通り再チェック、作り直し
+#
+# 2014.06.04 
+#  暫定的に動くのを確認(一部ルーチンがやっつけなので確実性は低い)
+#  NiAs-type MnAs, C15-YMn2, BaTiO3, FCC-Cu, Diamond_GaAs などで動作確認
+#
+#  wconv_dos2gnuplot+.py --> wcon_dos2gnuplot.py に名前変更
+#
+# 2014.06.05
+#  そのままスピン対応
+#
+##########################################################################
+################################################################################
 cname = os.path.basename(os.getcwd())
+####################################### optparse  ####
+#usage = "usage: %prog [options] case "
 parser = optparse.OptionParser()
 parser.add_option("-f", "--ef", action="store_true", dest="FLAG_EF")
 parser.add_option("-e", "--unit", action="store_true", dest="FLAG_UNIT")
@@ -16,17 +68,21 @@ parser.add_option("-v", "--debug", action="store_true")
 parser.add_option("-t", "--test", action="store_true")
 parser.add_option("-d", "--deep", action="store_true")
 options, args = parser.parse_args()
+#print args,options
+#print "script name:",argvs[0]
 if len(args) > 0:
     cname = args[0]
 if options.debug:
     print("")
     print("BASE NAME     =", cname)
+### default unit (eV)
 unit = ""
 if options.FLAG_UNIT:
     unit = "ev"
     unit_tmp = "eV"
 else:
     unit_tmp = "Ry"
+######################################################
 if not os.path.exists(cname + ".int"):
     print(cname + ".int file not found")
     print("EXIT")
@@ -35,12 +91,25 @@ if options.debug:
     print("UNIT          =", unit_tmp)
     print("EF0 MODE      =", options.FLAG_EF)
 TOTALDOS_FLAG = False
+##########################################################################
+# version 2014.06.05
+##########################################################################
+##
+## read case.int
+##
+##########################################################################
+##########################################################################
 tmp = open(cname + ".int")
 intfile = tmp.read()
 tmp.close
+# read number of orbital
 intlines = intfile.split("\n")
 n = intlines[2].split()
 n_total_orbit = int(n[0])
+###############################################################
+#
+# max_orbit_number : 軌道番号の最大値の取得
+#
 max_orbit_number = 1
 for line in range(1, 1 + n_total_orbit):
     orbital = intlines[line + 2].split()
@@ -50,6 +119,16 @@ for line in range(1, 1 + n_total_orbit):
 if options.debug:
     print("")
     print("MAXORBIT NUM  =", max_orbit_number)
+###############################################################
+#
+# natom : 最大の原子数の取得(暫定版)
+#
+#    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#     注意)  原子の番号の並びが小さい方から大きい方へ並んでいるのを仮定
+#            つまり TOTAL-DOS は先頭行になくてはいけない
+#            (もしくは TOTAL-DOS 行が存在しなくても良い)
+#    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
 atom = 0
 l = 0
 for num in range(1, 1 + n_total_orbit):
@@ -68,6 +147,12 @@ if options.debug:
     print("TOTAL ORBITAL =", n_total_orbit)
     if TOTALDOS_FLAG:
         print("TOTLDOS       =", TOTALDOS_FLAG)
+###############################################################
+#
+# indexatom[num]  : 軌道の通し番号に対しての原子種index
+# indexorbit[num] : 軌道の通し番号に対して原子種ごとの軌道番号index
+# indexname[num] : 軌道の通し番号に対して軌道の記号を返す
+#
 indexatom = zeros(n_total_orbit + 1)
 indexorbit = zeros(n_total_orbit + 1)
 indexname = ["list0"]
@@ -81,12 +166,20 @@ for num in range(1, 1 + n_total_orbit):
     indexatom[num] = atom_tmp
     indexorbit[num] = orbit_tmp
     indexname.append(orbital[2])
+#   if atom_tmp == 0:
+#       TOTALDOS_FLAG= True
+#       indexatom[0] = 0
 if options.test:
     print("")
     print("num, indexatom[num], indexorbit[num], indexname[num]")
     for num in range(1, n_total_orbit + 1):
         print(num, int(indexatom[num]), int(indexorbit[num]), indexname[num])
     print("")
+###############################################################
+#
+# norbit[atom] : 原子種ごとの最大の軌道数
+#
+# 0番目の原子がTOTALDOSになる
 if TOTALDOS_FLAG:
     norbit = zeros(natom + 1 + 1)
     local_index_orbit = zeros((natom + 1 + 1, max_orbit_number + 1))
@@ -125,6 +218,14 @@ if options.debug:
         else:
             print("ATOM=", atom, "NUM ORBIT", int(norbit[atom]))
     print("")
+###############################################################
+#
+# index_local_orbit[atom,num_local_orbit]
+#    原子毎の軌道の通し番号(num_local_orbit)を与えると軌道番号を返す
+#
+# index_local_num[atom,num_local_orbit]
+#    原子毎の軌道の通し番号(num_local_orbit)を与えると軌道の通し番号を返す
+#
 num = 1
 for atom in range(0, natom + 1):
     for num_local_orbit in range(1, int(norbit[atom]) + 1):
@@ -150,6 +251,11 @@ if options.test:
                 indexname[num],
             )
             num += 1
+###############################################################
+#
+# indexnum[atom,orbit] : 原子種と軌道'番号'を与えると通し番号が得られる
+#
+#print "n_total_orbit",n_total_orbit
 if max_orbit_number > n_total_orbit:
     indexnum = zeros((natom + 1, max_orbit_number + 1))
 else:
@@ -164,8 +270,24 @@ if options.test:
     for num in range(1, 1 + n_total_orbit):
         print(num, int(indexnum[int(indexatom[num]), int(indexorbit[num])]), end="")
         print(int(indexatom[num]), int(indexorbit[num]))
+#print ""
+#for atom in range(0,natom+1):
+#    for num_local_orbit in range(1,int(norbit[atom]+1)):
+#        print atom,num_local_orbit, int(index_local_orbit[atom,num_local_orbit])
+#print ""
+##########################################################################
+##########################################################################
+##
+## read case.dos*
+##
+##########################################################################
+##########################################################################
 ls = glob.glob(cname + ".dos*[0-9]" + unit)
 nfiles = len(ls)
+######### check spin #########
+# ls_up[nfiles_up]
+# ls_dn[nfiles_dn]
+#
 SPIN_FLAG = False
 if nfiles == 0:
     ls_up = glob.glob(cname + ".dos*[0-9]" + unit + "up")
@@ -193,12 +315,18 @@ else:
             print(ls[n], " file not found")
             print("EXIT")
             sys.exit()
+##############################   
 if SPIN_FLAG:
     spin_list = ["up", "dn"]
     suffix = "_"
 else:
     spin_list = [""]
     suffix = ""
+####################
+#
+# pre Read 
+#
+# get EF and NENRG
 for spin in spin_list:
     if spin == "up":
         ls = ls_up
@@ -226,6 +354,24 @@ for spin in spin_list:
 if options.debug:
     print("EF            =", EF)
     print("")
+######################################## SPIN roop ###########################################
+################################################
+#
+# Read case.dos* files
+#
+# data [atom,num,NENRG]
+# index_*_page_colum[page,colum]
+################################################
+###############################################
+#           print "%12.8f  " %( data[i_atom, i_num, ene] ),
+#       print ""
+## ##### TEST PRINT
+######################
+#
+# output data
+#
+# data [atom,num,NENRG]
+# data [nfiles+1,n_total_orbit+1,NENRG+1]
 for spin in spin_list:
     if spin == "up":
         ls = ls_up
@@ -238,8 +384,11 @@ for spin in spin_list:
             print("===== SPIN " + spin + " ====")
         print("ORIGINAL FILE:")
     data = zeros((nfiles + 1, n_total_orbit + 1, NENRG + 1))
+    # *.dos? ファイル一つにいくつの軌道情報があるか？
     n_orbit_page = zeros(nfiles + 1)
+    # 原子番号(total-DOSの時は0)のインデックス
     index_atom_page_colum = zeros((nfiles + 1, 8 + 1))
+    #
     index_orbit_page_colum = zeros((nfiles + 1, 8 + 1))
     num = 1
     local_orbit = 1
@@ -248,6 +397,8 @@ for spin in spin_list:
         atom = 0
     else:
         atom = 1
+    # ページ(ファイルごとに分解)
+    # ENEを除く,TOTAL-DOS は含む
     for dosname in ls:
         if options.debug:
             print("  ", dosname)
@@ -255,7 +406,9 @@ for spin in spin_list:
         f = open(dosname)
         dosfile = f.read()
         f.close
+        # 行で分解
         dosdata = dosfile.split("\n")
+        # 各ページごとの読み込む軌道数
         n_orbit_page[page] = len(dosdata[2].split()) - 2
         max_ene = len(dosdata) - 1 - 3
         if NENRG != max_ene:
@@ -269,11 +422,16 @@ for spin in spin_list:
             print("")
         if options.debug:
             print("")
+        # カラム分割(インデックス作成用)
+        ## index[page,colum]
+        #print int(index_orbit_page_colum[page,colum]),indexname[int(index_orbit_page_colum[page,colum])]
         for colum in range(0, int(n_orbit_page[page]) + 1):
+            # ページの先頭
             if colum == 0:
                 local_orbit -= 1
                 index_orbit_page_colum[page, colum] = 0
                 num -= 1
+            # ページ途中で原子が切り替わる
             elif local_orbit > int(norbit[atom]):
                 atom += 1
                 local_orbit = 1
@@ -282,6 +440,7 @@ for spin in spin_list:
                 index_orbit_page_colum[page, colum] = local_orbit
             index_atom_page_colum[page, colum] = atom
             if options.test:
+                # local_num
                 print(
                     "num, page, colum, atom_page_colum[page,colum], orbit_page_colum[page,colum]   ",
                     num,
@@ -304,11 +463,17 @@ for spin in spin_list:
                 )
             num += 1
             local_orbit += 1
+        # 行ごとの処理
+        #print 'ENERRY=',len(dosdata)-1,ene,doslines[0]
         for i in range(3, len(dosdata) - 1):
+            # 各行を列に分解
             doslines = dosdata[i].split()
             ene = i - 2
+            # 各ページごとに読み込む軌道数
+            ###############################################
             for colum in range(0, int(n_orbit_page[page]) + 1):
                 i_atom = int(index_atom_page_colum[page, colum])
+                # local_num
                 i_num = int(index_orbit_page_colum[page, colum])
                 if options.debug and colum == 0 and (ene == 1):
                     print(
@@ -329,8 +494,11 @@ for spin in spin_list:
             dosdata = dosfile.split("\n")
             print("")
             print("i_atom, num, data[i_atom,num,ene]")
+            # エネルギー分割
             for i in range(3, len(dosdata) - 1):
                 ene = i - 2
+                # カラム分割( total-DOS も含む)
+                #print "%d %d %12.8f   " %( i_atom, num, data[i_atom, num, ene] ),
                 for colum in range(0, int(n_orbit_page[page]) + 1):
                     i_atom = int(index_atom_page_colum[page, colum])
                     num = int(index_orbit_page_colum[page, colum])
@@ -347,6 +515,8 @@ for spin in spin_list:
         start = 0
     else:
         start = 1
+    ###################### print HEADER
+    #######################################
     for atom in range(start, natom + 1):
         gnuplot = open(cname + ".gnuplot_dos" + str(atom) + unit + str(spin), "w")
         if options.debug:
@@ -364,6 +534,8 @@ for spin in spin_list:
             file=gnuplot,
         )
         print("# ENERGY  ", file=gnuplot)
+        # atom=0 (total-DOS) の時は norbit[atom]=1
+        #print("%d:%s  " %(atom,indexnum[atom,orbit_num]), file=gnuplot, end="")
         for orbit in range(1, int(norbit[atom]) + 1):
             orbit_num = int(index_local_orbit[atom, orbit])
             index_num = int(indexnum[atom, int(orbit_num)])
@@ -376,6 +548,8 @@ for spin in spin_list:
         print("")
         if options.test:
             print("")
+        #       if options.test:
+        #           print "atom,"
         for nen in range(1, NENRG + 1):
             if options.FLAG_EF:
                 E = float(data[atom, 0, nen]) - float(EF)
@@ -384,9 +558,12 @@ for spin in spin_list:
             if TOTALDOS_FLAG:
                 data[1, 0, nen] = data[0, 0, nen]
             print("%10.6f" % E, file=gnuplot, end="")
+            # 原子種ごとの軌道番号
+            #print "atom,orbit,indexnum[atom,orbit] = ",atom,orbit,int(indexnum[atom,orbit])
             for orbit in range(1, int(norbit[atom]) + 1):
                 if options.deep:
                     print("atom,norbit[atom],orbit = ", atom, int(norbit[atom]), orbit)
+                # 原子種ごとの軌道番号
                 num = orbit
                 print("%12.8f" % data[atom, num, nen], file=gnuplot, end="")
             print("", file=gnuplot)

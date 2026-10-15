@@ -1,8 +1,32 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vtdos.py
+#
+#  DOSCAR から gnuplot 形式へ変換
+#  TDOS と INT-TDOS の結果のみ出力、ほぼテスト用
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.10.28
+#   フェルミレベルに関してのオプションを追加
+#
+# 2015.01.14 startup
+#    get_tdos & get_inttdos テスト用を兼ねる
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -13,6 +37,16 @@ import sys
 import optparse
 
 
+#
+################################################################################
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# スイッチが入ると Ef = 0 のスイッチが 'off' になる
 def options():
     name = "DOSCAR"
     parser = optparse.OptionParser()
@@ -26,6 +60,10 @@ def options():
     return (name, options.fermi)
 
 
+################################################################################
+# set input file
+# makes instance ( Read DOSCAR )
+# set output device
 if __name__ == "__main__":
     name, FERMI_FLAG = options()
     dos = ReadVaspDoscar(name)

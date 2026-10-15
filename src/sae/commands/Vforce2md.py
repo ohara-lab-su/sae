@@ -1,10 +1,36 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.geometry.coordinates import CoordinateTransforms
 from sae.vasp.outcar_fields import OutcarFields
 from sae.vasp.poscar_fields import PoscarFields
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# POSCAR および OUTCAR を読み ION-LOOP 毎の原子位置、フォースを出力する
+# 座標系は cartesia絶対座標系(scale=1.0) に直しておく
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.02.27
+#  conv_direct2car --> conv_direct2car0
+#
+# 2014.11.17
+#    Vforce.py がベース(2014.11.17 version)
+#
+#     OUTCAR/POSCAR から
+#       OpenMX で計算の際に出力される *.md 形式(GaussianのMD形式？)
+#       を出力する
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,8 +41,32 @@ import optparse
 import numpy as np
 
 
+#
+################################################################################
+#import sys
+#import os
+#import re
+#import SpaceGroupEnvironment as SGE
+#from copy import deepcopy
+################################################################################
+###############################################
+## default parameter
+##
+###############################################
+## optparse
+##
+#print args,options
+#   if len(args) > 0:
+#       #print "script name:",argvs[0]
+#       #POSCAR=argv[0]
+#       #distance = float(args[0])
+#       cname=args[0]
+#print "INPUT POSCAR file name    :",POSCAR
+#print "INPUT OUTCAR file name    :",OUTCAR
 def options():
+    # OUTPUT BASE filename
     OUTCAR = "OUTCAR"
+    # INPUT (BASE) filename
     POSCAR = "POSCAR"
     parser = optparse.OptionParser()
     parser.add_option("-p", "--poscar", dest="INPUT", default=POSCAR)
@@ -29,6 +79,20 @@ def options():
     return [POSCAR, OUTCAR]
 
 
+################################################################################
+# Default & OptionParser
+# POSCAR の事前読み込み
+# POSCAR 読み込みのための準備
+# POSCAR の読み込み
+# OUTCAR の事前読み込み
+#print "NLOOP = ",nloop
+# OUTCAR 読み込みのための準備
+# OUTCAR 読み込み(原子位置とフォース), 座標系はPOSCARの座標系のまま
+# scale factor --> 1.0
+# イオンループごとの処理 (座標変換 & 表示)
+#########################
+#conv = False
+#########################
 if __name__ == "__main__":
     POSCAR, OUTCAR = options()
     nion, natom, VASP = PoscarFields().read_poscar_param(POSCAR)
@@ -49,11 +113,13 @@ if __name__ == "__main__":
     scale = CoordinateTransforms().conv_scale21a(scale, t)
     direct0 = direct
     conv = True
+    # 座標変換のための準備
     for i in range(nloop):
         print(natom)
         print("   time=")
         if direct0 and conv:
             position0 = np.zeros((natom, 3))
+        # ループごとの座標変換の準備&変換
         for j in range(natom):
             if direct0 and conv:
                 direct = direct0

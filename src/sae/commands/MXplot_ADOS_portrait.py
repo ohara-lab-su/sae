@@ -1,9 +1,59 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.openmx.pdos import ReadMxPdos
 from sae.openmx.tdos import ReadMxTdos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# MXplot_ADOS_portrait.py
+#   Vplot_ADOS_portrait.py
+#
+#   原子の種類ごとに画面分割を[自動]にして
+#   種類ごとにオービタルを足しあわせ LDOS + TODOS 出力
+#
+#   注意) portrait モードが重要なのではなくて、自動分割がミソ
+#
+#   おそらく原子種の種類としては多くても４種類くらい(IGZOでも)
+#   なので portrait で 4 分割+spin(合計8分割)はそれなりに現実的
+#   それ以上小さくなると見難いので,自動で分割するのは非現実的かも
+#
+#   注意) ION 毎の情報が必要なので、OUTCAR の読み込み
+#         (OpenMX だと *.out or *.dat ) は必須となる
+#         読み込めなかったら止まる。gzip 自動対応
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.02.26
+#  デフォルトファイル名 or 入力ファイル名が存在しない時には
+#  カレントの *.out ファイルを検出して、もしカレントの *.out がひとつのときに
+#  デフォルト名を変更する仕組みを導入
+#
+#  注意) *.out ファイルもしくは *.dat ファイルをキーにしているので
+#        これらは必須となる
+#        もととも、DOS系のクラスは実質的には *.out or *.dat  は必須
+#
+# 2015.02.26
+#  [startup]
+#  MXplot_ADOS_portrait.py
+#
+# ----------------------------------- Vplot_ADOS_portrait.py
+# 2015.01.15 startup
+#      landscape モードを追加
+#
+# 2015.01.15 startup
+#      Vplot_ADOS.py の再設計(複数画面化)
+#      非SPIN版,完成
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,9 +66,21 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.mlab as mlab
+################################################################################
+# 'openmx' より最適なデフォルトファイル名の推定ルーチン
 def options():
     from sae.common.paths import FileDiscovery
 
+    # input data name
     name = "openmx"
     suffix_tdos = ".DOS.Tetrahedron"
     suffix_pdos = ".PDOS.Tetrahedron"
@@ -65,6 +127,21 @@ def options():
     ]
 
 
+################################################################################
+# set input file
+# set output device
+# makes instance ( Read *.out or *.dat )
+#   module = __import__(module_name,globals(),locals(),[class_name],-1)
+# module の動的ロード
+# class の動的ロード
+# makes instance ( Read DOS.Tetrahedron )
+# makes instance ( Read PDOS.Tetrahedron )
+############################################################################
+# matplotlib
+############################################################################
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         name,
@@ -95,6 +172,8 @@ if __name__ == "__main__":
         datname = datname + ".dat"
     else:
         sys.exit("STOP: " + datname + ".dat or .dat.gz file not found")
+    # このリフレクションは python2 方式なので注意
+    # for Python3
     try:
         module = __import__(module_name, globals(), locals(), [class_name], 0)
     except:
@@ -114,16 +193,34 @@ if __name__ == "__main__":
     ENG = tdos.get_eng()
     pdos = ReadMxPdos(name, suffix_pdos)
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+    #       plt.figure(figsize=(8.27, 11.69)) # for portrait
     if not LANDSCAPE_FLAG:
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
     orgx = 0.13
     orgy = 0.08
     off = 0.015
     size = 0.83 / NION / NSPIN
+    # spin を逆から回す(先に描いものが下側に描画されるので)
     for ion in range(NION):
+        ########################################################################
+        # 原点位置を自動調整
+        ########################################################################
+        # DOSのY軸(DOS軸)原点をセットする(稀に必須)
+        # down spin の時に反転させる
+        # title,label,xticks
+        # 一番上
+        # 一番下以外
+        # 一番下
+        # EF0
+        # 凡例BOX
         for spin in range(NSPIN - 1, -1, -1):
             if NSPIN == 1:
                 print("ion = ", ion + 1, atoms[ion])
@@ -204,8 +301,11 @@ if __name__ == "__main__":
                     yl = plt.ylabel("DOS/eV", fontsize=16)
             plt.axvline(x=0, color="black", linewidth=1)
             if spin == 0:
+                # 凡例Box
                 leg = plt.legend(fontsize=12)
+                # Alphaチャンネル(半透明化)
                 leg.get_frame().set_alpha(0.5)
+    #       plt.savefig("ADOS_portrait.eps",orientation = 'portrait',papertype = 'a4')
     if LANDSCAPE_FLAG:
         plt.savefig("ADOS.eps")
         plt.savefig("ADOS.pdf")

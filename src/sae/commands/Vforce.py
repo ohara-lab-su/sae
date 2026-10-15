@@ -1,9 +1,27 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.outcar_fields import OutcarFields
 from sae.vasp.poscar_fields import PoscarFields
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# POSCAR および OUTCAR を読み ION-LOOP 毎の原子位置、フォースを出力する
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2014.11.17
+#    Vforce.pl を python 化 (using LIB_vasp )
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,8 +32,42 @@ import optparse
 import numpy as np
 
 
+#                                                                                         
+################################################################################
+#import sys
+#import os
+#import re
+#import SpaceGroupEnvironment as SGE  
+#from numpy import *
+#from copy import deepcopy
+#from LIB_vasp import read_poscar_param
+#from LIB_vasp import read_poscar
+#from LIB_vasp import print_poscar
+#from LIB_vasp import *
+#from LIB_vasp.read_poscar_param import *
+#from LIB_vasp.read_poscar import *
+#from LIB_vasp.read_outcar_param import *
+#from LIB_vasp.read_outcar_position import *
+#from LIB_vasp.print_poscar import *
+################################################################################
+###############################################
+## default parameter
+##
+###############################################
+## optparse
+##
+#print args,options
+#   if len(args) > 0:
+#       #print "script name:",argvs[0]
+#       #POSCAR=argv[0]
+#       #distance = float(args[0])
+#       cname=args[0]
+#print "INPUT POSCAR file name    :",POSCAR
+#print "INPUT OUTCAR file name    :",OUTCAR
 def options():
+    # OUTPUT BASE filename
     OUTCAR = "OUTCAR"
+    # INPUT (BASE) filename
     POSCAR = "POSCAR"
     parser = optparse.OptionParser()
     parser.add_option("-p", "--poscar", dest="INPUT", default=POSCAR)
@@ -28,6 +80,15 @@ def options():
     return [POSCAR, OUTCAR]
 
 
+################################################################################
+# Default & OptionParser
+# POSCAR の事前読み込み
+# POSCAR 読み込みのための準備
+# POSCAR の読み込み
+# OUTCAR の事前読み込み
+#print "NLOOP = ",nloop
+# OUTCAR 読み込みのための準備
+# OUTCAR 読み込み(原子位置とフォース), 座標系はPOSCARの座標系のまま
 if __name__ == "__main__":
     POSCAR, OUTCAR = options()
     nion, natom, VASP = PoscarFields().read_poscar_param(POSCAR)

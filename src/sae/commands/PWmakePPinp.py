@@ -4,6 +4,23 @@ from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.common.text import TextFiles
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#   UPF 形式の PP ファイルから <PP_INPUTFILE> </PP_INPUTFILE> を吸い出す
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.23
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +31,16 @@ import optparse
 import os
 import re
 
+#
+################################################################################
+#import sys
+#import numpy as np
+#import glob
+#import SpaceGroupEnvironment as SGE
+################################################################################
+############################################################################
+#   print "INPUT UPF file: ",name
+############################################################################
 if __name__ == "__main__":
     base = "default"
     suffix = "UPF"

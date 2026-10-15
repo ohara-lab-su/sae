@@ -3,6 +3,22 @@
 from __future__ import print_function
 from sae.structure.document import Read
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# PWscf *.in --> POSCAR 変換出力
+#
+################################################################################
+#
+# 2015.08.24
+#  統合化への大改修
+#
+# 2015.05.13 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -12,6 +28,15 @@ __license__ = "MIT"
 import optparse
 
 
+#
+################################################################################
+#import sys
+#import gzip
+#import os
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "scf.in"
     parser = optparse.OptionParser()
@@ -24,6 +49,7 @@ def options():
     return name
 
 
+################################################################################
 if __name__ == "__main__":
     name = options()
     pwin = Read(filename=name, code="PWscf")

@@ -5,6 +5,37 @@ from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.output0 import ReadWienOutput0
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# WIEK2k case.dos 用
+# Wldos ( Wldos の出力形式はほぼ Vldos と同様 )
+#
+#
+# 基本クラスのテストも兼ねる
+#
+# dos = SAE.ReadWienDos(lists)
+#   d = dos.get_raw_dos(atom=ion,orbit='d')
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.26
+#  output0 が見つからない時の対応
+#  軌道成分のチェック(s,p,d,fプロット項目の追加等)
+#
+# 2015.03.25
+#   spin 対応version
+#
+# 2015.03.25
+#   startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,6 +48,12 @@ import re
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     case = re.sub(".*/", "", os.getcwd())
     unit = "ev"
@@ -47,6 +84,15 @@ def options():
     return (case, output, unit, FLAG_STD, FLAG_FERMI)
 
 
+################################################################################
+#####################################################
+## check SPIN
+#####################################################
+## SPIN 有りの時に list のスピン毎の作り直し
+#####################################################
+# Open File
+#####################################################
+# spin1 のデーターの後そのまま spin2 が並ぶだけの形式
 if __name__ == "__main__":
     case, output, unit, STD, FERMI = options()
     lists = FileDiscovery().find_suffix3(case + ".dos", unit)
@@ -88,6 +134,7 @@ if __name__ == "__main__":
     except:
         out.close()
         sys.exit("STOP: can'nt open :" + output)
+    # s,p,d oribt がそれぞれの ion で計算されていることが必須
     for spin in range(nspin):
         if FLAG_SPIN and spin == 0:
             lists = up_lists
@@ -103,6 +150,9 @@ if __name__ == "__main__":
             print("FERMI ENERGY :", efermi)
             if FERMI:
                 print("FERMI --> 0  :")
+        #for orbit in ['s','p','d']:
+        #    if not dos.chk_raw_dos(atom=ion,orbit=orbit):
+        #        sys.exit("STOP: does'nt font data in orbit "+str(orbit))
         for ion in plot_ions:
             FT = False
             FS = False
@@ -149,6 +199,8 @@ if __name__ == "__main__":
                 print("f, ", file=out, end="")
             print("", file=out)
             print("#", file=out)
+            #print >>out, "%11.5f %14.8f %14.8f %14.8f %14.8f" \
+            #              % ( energy,tot[i],s[i],p[i],d[i] )
             for i in range(nedos):
                 if FERMI:
                     energy = eng[i] - efermi

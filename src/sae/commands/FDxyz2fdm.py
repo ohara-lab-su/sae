@@ -1,9 +1,35 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   natom = xyz.get_natom()
+#   atoms_index_j = xyz.get_atoms_index_j()
+#   position = xyz.get_position()
+#   print natom
+#   print ""
+#   for j in range(natom):
+#       print " %s %13.9f %13.9f %13.9f" \
+#               %(atoms_index_j[j],position[j,0],position[j,1],position[j,2])
 from __future__ import print_function
 from sae.fdmnes.ase_input import AseInputOperations
 from sae.openmx.md import ReadMd
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+#
+# xyz to FDMNES crystal 情報
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2015.06.30
+#  == None --> is None
+#
+# 2015.05.18 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +41,12 @@ import sys
 import optparse
 
 
+#
+################################################################################
+#
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def write_fdmnes(xyz, name="POSCAR", STD=True):
     from sae.structure.elements import ElementTable
 
@@ -43,6 +75,20 @@ def write_fdmnes(xyz, name="POSCAR", STD=True):
         out.close()
 
 
+################################################################################
+#   max_x = max(position[:,0])
+#   max_y = max(position[:,1])
+#   max_z = max(position[:,2])
+#   min_x = min(position[:,0])
+#   min_y = min(position[:,1])
+#   min_z = min(position[:,2])
+#   print max_x,max_y,max_z
+#   print min_x,min_y,min_z
+#   print abs(max_x-min_x),abs(max_y-min_y),abs(max_z-min_z)
+#   print (max_x-min_x)/2.,(max_y-min_y)/2.,(max_z-min_z)/2.
+#   lattice = max(abs(max_x-min_x),abs(max_y-min_y),abs(max_z-min_z)) + 1
+#   print lattice
+#   print("      "+str(lattice)+" "+str(lattice)+" "+str(lattice)+" 90.0 90.0 90.0", file=out)
 def write_fdmnes_inp(xyz, name="read_pdb.inp"):
     from sae.structure.elements import ElementTable
 
@@ -102,6 +148,9 @@ def write_fdmnes_inp(xyz, name="read_pdb.inp"):
     print("", file=out)
     print(" molecule", file=out)
     print("      1.0 1.0 1.0 90.0 90.0 90.0", file=out)
+    #       px = pos[0]/lattice
+    #       py = pos[1]/lattice
+    #       pz = pos[1]/lattice
     for ii in range(natom):
         pos = position[ii]
         sym = atoms_index_j[ii]
@@ -124,6 +173,7 @@ def write_fdmnes_inp(xyz, name="read_pdb.inp"):
     out.close()
 
 
+################################################################################
 def options():
     from sae.common.paths import FileDiscovery
 
@@ -155,6 +205,7 @@ def options():
     return (MD0, suffix, MOL)
 
 
+################################################################################
 if __name__ == "__main__":
     MD0, suffix, MOL = options()
     MD = MD0 + "." + suffix

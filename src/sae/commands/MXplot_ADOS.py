@@ -1,9 +1,63 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.openmx.pdos import ReadMxPdos
 from sae.openmx.tdos import ReadMxTdos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# MXplot_ADOS.py
+#      Vplot_ADOS.py (2015.02.25ベース)
+#
+#   原子の種類ごとのオービタル足しあわせ LDOS + TODOS 出力
+#
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.02
+#  Gaussian スメアリングの時のモードを追加
+#
+# 2015.02.26
+#  デフォルトファイル名 or 入力ファイル名が存在しない時には
+#  カレントの *.out ファイルを検出して、もしカレントの *.out がひとつのときに
+#  デフォルト名を変更する仕組みを導入
+#
+#  注意) *.out ファイルもしくは *.dat ファイルをキーにしているので
+#        これらは必須となる
+#        もととも、DOS系のクラスは実質的には *.out or *.dat  は必須
+#
+# 2015.02.25
+#  startup
+#  MXplot_ADOS.py
+#
+# -------------------------------- Vplot_ADOS.py (2015.02.25)
+# 2015.01.29
+#    Y軸(DOS軸) の下限の設定のバグを修正
+#
+# 2015.01.14
+#      SPIN対応,option XMAX,XMIN,YMAX 対応
+#
+# 2015.01.14
+#      元素名判別＆ラベルの自動出力
+#
+# 2015.01.13
+#      とりあえず完成
+#      色設定の自動化
+#      むしろ、ReadDoscar, ReadOutcar を中心に修正・改良
+#
+# 2015.01.11 (sun) startup
+#      原子種ごとのs成分,p成分,d成分をsumしたものを TDOS と一緒にプロット
+#      非スピン版
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,9 +71,20 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
+# 'openmx' より最適なデフォルトファイル名の推定ルーチン
 def options():
     from sae.common.paths import FileDiscovery
 
+    # input data name
     name = "openmx"
     suffix_tdos = ".DOS.Tetrahedron"
     suffix_pdos = ".PDOS.Tetrahedron"
@@ -62,6 +127,23 @@ def options():
     ]
 
 
+################################################################################
+# set input file
+# set output device
+# makes instance ( Read *.out or *.dat )
+#   module = __import__(module_name,globals(),locals(),[class_name],-1)
+# module の動的ロード
+# class の動的ロード
+# makes instance ( Read DOS.Tetrahedron )
+# makes instance ( Read PDOS.Tetrahedron )
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+############################################################################
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         name,
@@ -90,6 +172,8 @@ if __name__ == "__main__":
         datname = datname + ".dat"
     else:
         sys.exit("STOP: " + datname + ".dat or .dat.gz file not found")
+    # このリフレクションは python2 方式なので注意
+    # for Python3
     try:
         module = __import__(module_name, globals(), locals(), [class_name], 0)
     except:
@@ -108,18 +192,26 @@ if __name__ == "__main__":
     NEDOS = tdos.get_nedos()
     ENG = tdos.get_eng()
     pdos = ReadMxPdos(name, suffix_pdos)
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 18
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    #   plt.plot(ENG-EFERMI,TDOS, color="black", linewidth=2, label='total')
+    # EF0
     for spin in range(NSPIN):
         if NSPIN == 1:
+            # 一段組の原点(x,y), 幅(x,y)
             plt.axes([0.13, 0.13, 0.8, 0.8])
             plt.title(TITLE)
         if NSPIN == 2:
             if spin == 0:
+                # 二段組の上側(y幅半分) up-spin
                 plt.axes([0.13, 0.53, 0.8, 0.4])
                 plt.title(TITLE)
             if spin == 1:
+                # 二段組の下段( down-spin )
                 plt.axes([0.13, 0.13, 0.8, 0.4])
         INTTDOS = tdos.get_inttdos(spin)
         TDOS = tdos.get_tdos(spin)
@@ -127,6 +219,9 @@ if __name__ == "__main__":
             ENG - EFERMI, TDOS, color="#cccccc", linewidth=2, label="total"
         )
         j = 0
+        # autumn, bone, cool, copper, flag, gray, hot, hsv,
+        # jet, pink, prism, spring, summer, winter, spectral
+        # Y軸の調整
         for ion in range(NION):
             if NSPIN == 1:
                 print("ion = ", ion + 1, atoms[ion])
@@ -178,12 +273,15 @@ if __name__ == "__main__":
         if NSPIN == 2:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0])
         plt.axvline(x=0, color="black", linewidth=1)
     plt.xlabel("$E -  E_{\\mathrm{F}}$ [eV]", fontsize=20)
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     plt.savefig("ADOS.eps")
     plt.savefig("ADOS.pdf")

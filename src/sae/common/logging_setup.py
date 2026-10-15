@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# codoing: utf-8
 # Copyright Kengo NAKADA; SAE class library.
 import multiprocessing
 import logging
@@ -37,6 +39,9 @@ class LoggingSetup:
         """
         from sae.common.logging_setup import LoggingSetup
 
+        # メモリ上の logger インスタンス（生）を用いる
+        # 新たに EmLogger() (multiprocessing.get_logger() ) で生成したインスタンスを引いた場合
+        # changed logmode
         if logging is None:
             logger = multiprocessing.get_logger()
             try:
@@ -45,6 +50,7 @@ class LoggingSetup:
             except Exception:
                 pass
         else:
+            # 互換（logging として logger を食わせた場合
             try:
                 logger = logging.logger
             except Exception:

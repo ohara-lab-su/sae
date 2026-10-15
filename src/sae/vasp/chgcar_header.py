@@ -1,3 +1,23 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+################################################################################
+#
+# CHGCAR/ELFCAR 読み込み class の一部、結晶のヘッダ（position情報の手前まで）
+# を読み込むルーチン
+#
+################################################################################
+################################################################################
+# import gzip
+# sys.path.append('../..')
+# スーパーセルに関していくつかルーチンを殺す。メモリ消費を少なくするため。
+# reduced_memory = True
+# import SpaceGroupEnvironment as SGE
+# from numba import jit
+# name = 'BvAt2026.dat'
+# Header 部分の取り出し
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.structure.base import Method
@@ -15,6 +35,7 @@ except ImportError:
 reduced_memory = False
 
 
+# 個々まででヘッダ情報（位置情報を除く）を取り出す
 class ReadVaspChgcarHeader(Method):
 
     def __init__(
@@ -35,6 +56,80 @@ class ReadVaspChgcarHeader(Method):
         self.__logger = logger
         self.open(CHGCAR=CHGCAR, suffix=suffix, sort=sort, atoms_index=sort)
 
+    ###############################################
+    # Read Translation Vector
+    #         x   y   z
+    #   t1 = t11 t21 t31
+    #   t2 = t12 t22 t32
+    #   t3 = t13 t23 t33
+    #
+    ###############################################
+    # 単位胞の長さの計算
+    #
+    # print("lattice a = %s " % str(self.t1_len))
+    # print("lattice b = %s " % str(self.t2_len))
+    # print("lattice c = %s " % str(self.t3_len))
+    ###############################################
+    # VASP のバージョン番号確認(記号があるか否か)
+    #
+    ###############################################
+    # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+    # atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+    #
+    ###############################################
+    # atoms_number[i]
+    #   atoms_index の原子番号版
+    ###############################################
+    # atoms_index の通し番号版
+    #    atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+    # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+    # print('makes atoms_index_j[i]')
+    # self.atoms_index_j = []
+    # if self.vasp_version == 5:
+    #     for k in range(self.nion):
+    #         for l in range(int(self.atoms[k])):
+    #             self.atoms_index_j.append(str(self.atoms_index[k]))
+    ###############################################
+    # atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
+    # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+    # print('makes atoms_number_j[]')
+    # self.atoms_number_j = []
+    # if self.vasp_version == 5:
+    #     for k in range(self.nion):
+    #         for l in range(int(self.atoms[k])):
+    #             num0 = SAEnv.get_atomic_number1(str(self.atoms_index[k]))
+    #             self.atoms_number_j.append(num0)
+    ###############################################
+    # 全原子数の確認
+    ###############################################
+    # get ion (makes index)
+    # ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+    #
+    # print tmp, int(ion[tmp])
+    ###############################################
+    # ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+    #
+    # print tmp, int(ion[tmp]), int(ion_local[tmp])
+    ###############################################
+    # natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号)
+    #                               <---> atoms_index_j() は元素記号を返す
+    # ReadOutcar.py, ReadMxDatMethod.py 互換
+    #
+    # 通常使ってないので停止しても問題は無い
+    # 2022/03/11 メモリ消費量が多く使ってないルーチンなので、disable する
+    # print('Create atoms_j[j]')
+    # self.atoms_j = np.zeros(self.natom, dtype=int)
+    # j = 0
+    # for ion in range(self.nion):
+    #     for atom in range(self.atoms[ion]):
+    #         self.atoms_j[j] = int(ion)
+    #         j += 1
+    ###############################################
+    # get atomc coordinate mode
+    #
+    ###############################################
+    # 内部座標のモードを取得
+    #
     def open(self, CHGCAR="CHGCAR", suffix=".vasp", sort=False, atoms_index=None):
         from sae.common.text import TextFiles
         from sae.structure.elements import ElementTable
@@ -69,6 +164,7 @@ class ReadVaspChgcarHeader(Method):
         i = 5
         self.vasp_version = 5
         atoms = self.datlines[i].split()
+        # 数字ならば
         if atoms[0].isdigit():
             self.vasp_version = 4
         del atoms
@@ -148,6 +244,9 @@ class ReadVaspChgcarHeader(Method):
         elif bool(car_reg.match(self.datlines[i].split()[0])):
             self.direct = False
 
+    # position = self.get_position()
+    # fix = self.get_fix()
+    # return [title, scale, t, vasp, nion, atoms, atoms_index, natom, selective, direct, position, fix]
     def get_poscar_info(self):
         """
         POSCAR 情報の取り出し

@@ -1,3 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# WIEK2k case.scf
+#  エナジーパラメーターのチェックなどのために、*.scf 情報を抜き出すためのclass
+#
+#  *.scf ファイルは *.output0 *.output1 などの情報から重要なものを抽出したもの
+#  --> WIEN2k の実行スクリプトで作られる
+#
+#  注意)
+#    scf1 ファイルは ITERATION 情報がないのでこのクラスは使えない
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.06.30
+#   == None --> is None
+#
+# 2015.03.30
+#  startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import numpy as np
+# import optparse
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+# case = 'Cu'
+#   scf.write_epar(ion=0,par=1)
+#   scf.write_epar(l=1)
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -5,6 +42,14 @@ import os
 import re
 
 
+############################################################################
+## init
+############################################################################
+# print EPL
+############################################################################
+# print EPH
+############################################################################
+# print E_parameter
 class ReadWienScf(object):
 
     def __init__(self, case="case", suffix="scf"):
@@ -24,12 +69,14 @@ class ReadWienScf(object):
         EPL_ITER = []
         EPH_ITER = []
         SITE = []
+        # ITER 毎の区切りチェック
         while i < self.num:
             if bool(ite_reg.match(self.datlines[i])):
                 E_ATOM = []
                 EPL_ATOM = []
                 EPH_ATOM = []
                 nion = 0
+                # ATOMIC SPHEARE DEPENDENT PARAMETERS のチェック
                 while i < self.num:
                     if bool(parm_reg.match(self.datlines[i])):
                         SITE.append(self.datlines[i].split()[6])
@@ -81,10 +128,12 @@ class ReadWienScf(object):
         if ion is None:
             for it in range(self.nscf):
                 print("======== ITER %s" % str(it))
+                # print "ion=",ion,"",self.epl_iter[it][ion]
                 for ion in range(self.nion):
                     print("ion= %s %s" % (str(ion), str(self.epl_iter[it][ion])))
         else:
             ion = int(ion)
+            # print "it=",it,"",self.epl_iter[it][ion]
             for it in range(self.nscf):
                 print("it= %s %s" % (str(it), str(self.epl_iter[it][ion])))
 
@@ -95,10 +144,12 @@ class ReadWienScf(object):
         if ion is None:
             for it in range(self.nscf):
                 print("======== ITER %s" % str(it))
+                # print "ion=",ion,"",self.eph_iter[it][ion]
                 for ion in range(self.nion):
                     print("ion= %s %s" % (str(ion), str(self.eph_iter[it][ion])))
         else:
             ion = int(ion)
+            # print "it=",it,"",self.eph_iter[it][ion]
             for it in range(self.nscf):
                 print("it= %s %s" % (str(it), str(self.eph_iter[it][ion])))
 
@@ -107,12 +158,15 @@ class ReadWienScf(object):
             for it in range(self.nscf):
                 print("======== ITER %s" % str(it))
                 for ion in range(self.nion):
+                    # print self.site_iter[it][ion],self.epar_iter[it][ion][par]
                     for par in range(len(self.epar_iter[it][ion])):
                         print(self.site_iter[it][ion], self.epar_iter[it][ion][par])
         elif ion is not None and par is None and (l is None):
             ion = int(ion)
             for it in range(self.nscf):
                 print("======== ITER %s" % str(it))
+                # print "ion=",ion,"",\
+                #        self.site_iter[it][ion],self.epar_iter[it][ion][par]
                 for par in range(len(self.epar_iter[it][ion])):
                     print(
                         "ion= %s %s %s"
@@ -126,6 +180,8 @@ class ReadWienScf(object):
             par = int(par)
             for it in range(self.nscf):
                 print("======== ITER %s" % str(it))
+                # print "ion=",ion,"orbit=",par,"",\
+                #        self.site_iter[it][ion],self.epar_iter[it][ion][par]
                 for ion in range(self.nion):
                     print(
                         "ion= %s orbit=%s %s %s"
@@ -139,6 +195,7 @@ class ReadWienScf(object):
         elif ion is not None and par is not None and (l is not None):
             par = int(par)
             ion = int(ion)
+            # print "iter=",it,"",self.site_iter[it][ion],self.epar_iter[it][ion][par]
             for it in range(self.nscf):
                 print(
                     "iter= %s %s %s"
@@ -155,6 +212,7 @@ class ReadWienScf(object):
             l_orbit_reg = re.compile(l_orbit_txt)
             for it in range(self.nscf):
                 for par in range(len(self.epar_iter[it][ion])):
+                    # print "ion=",ion,"",self.epar_iter[it][ion][par]
                     if bool(l_orbit_reg.match(self.epar_iter[it][ion][par])):
                         print(
                             "ion= %s %s" % (str(ion), str(self.epar_iter[it][ion][par]))

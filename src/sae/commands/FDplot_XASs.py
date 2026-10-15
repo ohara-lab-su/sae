@@ -6,6 +6,26 @@ from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.inp import ReadFdmInp
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+#   *_{1,2,3,,,}_conv.txt plot program
+#
+#  allsite で出力した XAS の結果(_conv.txt) をまとめてプロット
+#
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.07.01 fdXAS startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +39,22 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ptick
 
 
+#
+################################################################################
+# import gzip
+# import re
+# import optparse
+# import numpy as np
+# import SpaceGroupEnvironment as SGE
+# from matplotlib.ticker import FuncFormatter
+################################################################################
+#   name = 'read_pdb.inp'
+#   name = 'POSCAR.inp'
+#   parser = optparse.OptionParser()
+#   options,args = parser.parse_args()
+#   if options.INPUT: name=options.INPUT
+#   if len(args) > 0: name=args[0]
+########## inpname 取得
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -51,6 +87,17 @@ def options():
     )
 
 
+###############################################################################
+#   plt.figure(figsize=(7.00, 9.89))  # for portrait
+#   orgx = 0.170
+#   orgy = 0.080
+#   off = 0.010
+#   xsize = 0.75
+#   ysize = 0.83/2.
+#   plt.axes([orgx,orgy,xsize,ysize])
+############################################################################
+## 計算結果の読み込み
+############################################################################
 if __name__ == "__main__":
     inpname, OPT_EMAX, OPT_EMIN, OPT_YMAX, FLAG_fermi, FLAG_OBS, AV = options()
     if not AV:
@@ -65,9 +112,13 @@ if __name__ == "__main__":
         OPT_YMAX = float(OPT_YMAX)
         print("Ymax     =", OPT_YMAX)
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(8.1, 9.89))
     inp = ReadFdmInp(inpname)
     calculation = inp.get_calculation()
@@ -87,6 +138,17 @@ if __name__ == "__main__":
     if filbav is None:
         sys.exit("STOP: fileout TAG not found in " + inpname)
     print("-----")
+    # XASエネルギー原点の変換 (*.txt ファイルおよび *_conv.txt 読み込み)
+    ########################################################################
+    #   plt.subplot()
+    #   plt.ticklabel_format(axis='x',style='plain')
+    #   if FLAG_fermi:
+    #       plt.xlabel("Energy above Fermi [eV]")
+    #   else:
+    #       plt.xlabel("Photon Energy [eV]")
+    #   leg = plt.legend(fontsize=12,loc='lower right')
+    ############################################################################
+    # Athena data plot
     for ab in range(len(AV)):
         filout = filbav + "_" + str(ab + 1)
         convname = filout + "_conv.txt"
@@ -125,6 +187,8 @@ if __name__ == "__main__":
             plt.xlabel("Energy above Fermi [eV]")
         else:
             plt.xlabel("Photon Energy [eV]")
+        #   leg = plt.legend(fontsize=12,loc='lower right')
+        #   leg = plt.legend(loc='upper right')
         if FLAG_OBS:
             obs_file = filout + "_obs.txt.nor"
             if not os.path.exists(obs_file):

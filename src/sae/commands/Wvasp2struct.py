@@ -8,6 +8,28 @@ from ase.io import read, write
 from ase.io.vasp import *
 from ase.io.xyz import *
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#  using ASE
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
+#import numpy as np
+################################ ASE
+#from ase.lattice import bulk
+#from ase.dft.kpoints import ibz_points, get_bandpath
+###############################
+#from gpaw import GPAW, PW, FermiDirac, setup_paths
+#from gpaw import GPAW, PW
+#setup_paths.insert(0,'.')
+################################################################################
 poscarname = "POSCAR"
 wien_suffix = ".struct"
 parser = optparse.OptionParser(os.getcwd())

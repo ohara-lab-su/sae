@@ -5,6 +5,23 @@ from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.inp import ReadFdmInp
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FEconv_e2photow.py
+#   *_conv.txt ---> *_conv_photoe.txt
+#
+#   EF からの相対単位を Photon Energy 単位に変換して出力するプログラム
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +33,17 @@ import os
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import re
+#import argparse
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+#from matplotlib.ticker import FuncFormatter
+#import matplotlib.pyplot as plt
+#import matplotlib.ticker as ptick
+################################################################################
 def options():
     inpname = "read_pdb.inp"
     parser = optparse.OptionParser()
@@ -33,6 +61,14 @@ def options():
     return (inpname, options.text, options.conv, options.fermi)
 
 
+###############################################################################
+# inpname 他、名前取得
+# inp ファイルの分解
+# convolution 前の元データ(パラメーター読み込み)
+# エネルギー単位変換前の convolution データ(実際に変換するデータ)
+# エネルギー単位変換後の出力ファイル
+# データーの分解
+########################### converter ######################################
 if __name__ == "__main__":
     inpname, txtname, convname, FLAG_FERMI = options()
     if not os.path.exists(inpname):
@@ -65,7 +101,9 @@ if __name__ == "__main__":
     print("E_fermi                                             =", txt.E_Fermi)
     if not inp.get_energygpho():
         print("current mode                                        = Fermi")
+        #-txt.E_fermi
         txt.eng = txt.eng + txt.E_edge
+        #-txt.E_fermi
         conv.eng = conv.eng + txt.E_edge
     if FLAG_FERMI:
         print("Energy - E_fermi                                    = ", txt.E_fermi)

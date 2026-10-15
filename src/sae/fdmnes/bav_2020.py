@@ -1,3 +1,45 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+# *_bav.txt ファイル
+#
+###############################################################################
+#
+# 2020.08.11: lmax 関係の 2020対応が場合寄っては機能しなかったのを修正
+#
+# 2020.07.17
+#  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
+#  - バージョンチェック(ReadFdmBav.py) のための改修
+#  - バージョン切り替えのために ReadFdmBav2016()
+#  - バージョン切り替えのために ReadFdmBav2020() 切り替え
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.11
+#  scf ループ関係の情報吸い出しを追加
+#
+# 2015.06.25
+#  R2 bases に対応した cluster: atom positions 吸い出しに対応
+#
+# 2015.06.23 startup
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+#   name = 'POSCAR.txt'
+###############################################################################
+#   for i in range(natom):
+#       print "%s %10.6f %10.6f %10.6f" \
+#         % (atoms_index_j[i], position[i, 0], position[i, 1], position[i, 2])
+#       print position[i][0],position[i][1],position[i][2]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +49,24 @@ import optparse
 import numpy as np
 
 
+#
+# property (added: 2020.07.17)
+#
+#
+# get attribute
+#
 class ReadFdmBav2020(object):
 
+    # 2016 では Excited atom は一つだけしか出ないが
+    # 2020 では複数出るので注意
+    #excited_atom_reg = re.compile('.*Excited atom.*')
+    # excited atom の lmax 検索を止めるフラグ
+    # 2016 と 2020 では異なる
+    # atom_type_reg = re.compile('.*Atom type.*')  # for 2016
+    # 吸収端のエネルギー
+    # self.position = []
+    # ログファイル読み込みのアホなループ
+    # ispin と nspin は同じ（互換)
     def __init__(self, cname, suffix="_bav.txt", datline=None, num=None):
         """
 
@@ -39,10 +97,24 @@ class ReadFdmBav2020(object):
         scf_toten_reg = re.compile(".*Unit cell energy.*")
         nspin_reg = re.compile(".*Magnetic calculation")
         self.__t = np.zeros((3, 3))
+        # default nonmag
         self.__nspin = 1
         self.SCF = False
         self.__n_scf_loop = 0
         self.__scf_toten = []
+        # print(self.__datlines[i])
+        # Version チェック
+        # SCF 計算のチェック
+        # scf ループの最大値
+        # scf ループ数のカウント
+        # scf ループ毎の unit cell の全エネルギー
+        # 全原子数の検索
+        # 吸収原子の最大のlを探す
+        # Magnetic? or Nonmag
+        # 吸収端(K,,,)
+        # 吸収端のエネルギー(Kによる固定値)
+        # absorber を原点とした時の基本並進ベクトル
+        # positon (絶対座標系)
         for i in range(self.__num):
             if bool(fdmnes_ver_reg.match(self.__datlines[i])):
                 print(self.__datlines[i])
@@ -66,6 +138,8 @@ class ReadFdmBav2020(object):
                 print("check: .*Excited atom,.*")
                 j = 2
                 l = 0
+                # print(_l)
+                # if bool(atom_type_reg.match(self.__datlines[i + j + 1])):
                 while True:
                     _l = int(self.__datlines[i + j].split()[1])
                     if l < _l:

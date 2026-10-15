@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # Copyright Kengo NAKADA; SAE class library.
 """
 中身は EM logger とほぼ同じ (Ver_0.6.0 のコピー)
@@ -15,11 +17,18 @@ except:
     pass
 
 
+#
+# logging の整理/起動
+#
+#
+# support func
+#
 class Logger(object):
     """
     em_logger Ver_0.6.0
     """
 
+    # create logger instance
     def __init__(
         self, loglevel="info", logmode="default", logformat=None, logappname=None
     ):
@@ -41,6 +50,7 @@ class Logger(object):
         self.init_logger(loglevel=loglevel, logmode=logmode, logappname=logappname)
 
     @property
+    # これが logging インスタンスに相当する形になる
     def logger(self):
         return self.__logger
 
@@ -79,6 +89,8 @@ class Logger(object):
         return __version__
 
     @classmethod
+    # @property
+    # def version(self):
     def version(cls):
         return __version__
 
@@ -113,6 +125,9 @@ class Logger(object):
 
     loglevel = property(get_loglevel, set_loglevel)
 
+    # if self.chk_windows() and logmode is not None:
+    #    logmode = 'windows'
+    # print("set logmode = %s" % logmode_)
     def set_logmode(self, logmode_):
         """
         handlers の選択と handelr のセット
@@ -174,6 +189,7 @@ class Logger(object):
 
     logformat = property(get_logformat, set_logformat)
 
+    # self.__logger = logging.getLogger(__name__)
     def init_logger(self, loglevel=None, logmode=None, logappname=None):
         """
         旧来のEmLoggerの核となるMethod

@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "StructureAnalysisEnvironment"
 version = "0.1.0"
-description = "SAE calculation-code class library"
+description = "StructureAnalysisEnvironment (SAE)"
 readme = "README.md"
 requires-python = ">=3.7"
-authors = [{name = "Kengo NAKADA"}]
+authors = [{name = "Kengo NAKADA", email = "kengo.nakada@email.com"}]
 dependencies = ["numpy", "pandas", "ase", "matplotlib", "humanfriendly", "coloredlogs", "xlogger-py>=0.3.0"]
 
 [tool.setuptools]
@@ -217,8 +217,16 @@ script-files = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-sae = ["*.list", "sample_input/*.txt"]
+sae = ["*.list", "POSCAR", "sample_input/*.txt", "vasp/sample_input/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+# 旧版の整形設定を保持する。
+[tool.black]
+line-length = 88
+target-version = ["py37"]
+
+[tool.isort]
+profile = "black"

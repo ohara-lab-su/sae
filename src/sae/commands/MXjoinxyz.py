@@ -3,6 +3,23 @@
 from __future__ import print_function
 from sae.common.text import TextFiles
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# 複数の *.xyz ファイルを結合する
+#
+################################################################################
+#
+# 2018.08.23
+#  Python2/3 両対応
+#
+# 2015.03.10
+#  startup (python版)
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +32,14 @@ import re
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import SpaceGroupEnvironment as SGE 
+################################################################################
+# 自動探索(デフォルト), 複数ファイル版
+# 手動指定: 末尾のxyz を削除した引数名を名前リストに追加する
 def options(suffix, sumfile):
     from sae.common.paths import FileDiscovery
 
@@ -32,6 +57,7 @@ def options(suffix, sumfile):
     return [xyznames, FLAG_STD]
 
 
+################################################################################
 if __name__ == "__main__":
     suffix = "xyz"
     sumfile = "sum" + "." + suffix

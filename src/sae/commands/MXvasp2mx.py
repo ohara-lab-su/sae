@@ -3,6 +3,38 @@
 from __future__ import print_function
 from sae.structure.document import Read
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#   convert VASP POSCAR to OpenMX *.dat
+#   for OpenMX 3.7.*
+#
+#  実行にはPAO と VPS の情報一覧を必須とする
+#
+#    情報一覧ファイル
+#    openmx_defaults_vpsdata
+#
+#       1) カレントをサーチ
+#       2) ホーム直下の DFT_DATA13 ディレクトリをサーチ
+#       3) ../DFT_DATA13 ディレクトリをサーチ
+#       4) ~/openmx1/ ディレクトリをサーチ
+#
+#    vpsdata ファイルを発見したら読み込む
+#    vapdata ファイルの中身は PAO の軌道情報および VPS 情報で
+#    元素記号から最低限動くデフォルトの PAO/VPS 情報を引っ張るために用いる
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.08.20
+#   関数化&分離化&統合化バージョン
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +47,15 @@ import os
 import re
 
 
+#
+################################################################################
+#import numpy as np
+#import glob
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# VASP 入力ファイル名の自動取得
+# もし拡張子 .dat がついていたらそれを消す
+# オプション無し引数の時は拡張子自動削除を付けずにそのままファイル名とする
 def options():
     from sae.common.paths import FileDiscovery
 
@@ -37,11 +78,14 @@ def options():
     if options.OUTPUT:
         datname = options.OUTPUT
     datname = re.sub("\\.dat", "", datname)
+    #print "POSCAR:",args[0]
     if len(args) > 0:
         poscarname = args[0]
     return [poscarname, datname, options.stdout, options.FRAC]
 
 
+################################################################################
+## options
 if __name__ == "__main__":
     poscarname, datname, OPT_STD, OPT_FRAC = options()
     print("INPUT :", poscarname)

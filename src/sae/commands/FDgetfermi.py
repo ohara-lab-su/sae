@@ -5,6 +5,22 @@ from sae.fdmnes.bav import ReadFdmBav
 from sae.fdmnes.inp import ReadFdmInp
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# get E_fermi
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.11.16 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,6 +32,15 @@ import os
 import optparse
 
 
+#
+################################################################################
+#import gzip
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.pyplot as plt
+#################################################################################
+###### default inpname 取得
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -35,6 +60,7 @@ def options():
     return (inpname, options.name)
 
 
+################################################################################
 if __name__ == "__main__":
     inpname, filout = options()
     if not filout:

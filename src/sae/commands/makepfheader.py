@@ -8,6 +8,17 @@ import optparse
 import ReadPfformat as pf
 
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-                                                                   
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com  
+#
+################################################################################
+################################################################################
+#import PFformat as pf
+#import re
+################################################################################
+## default
 def options():
     DAT = "Cu-foil_10ms.dat"
     parser = optparse.OptionParser()
@@ -25,6 +36,11 @@ def options():
     return DAT
 
 
+################################################################################
+#   STD = False
+#   a.head()
+#   a.write()                                                                             
+#   a.write(logfile)                                                                             
 if __name__ == "__main__":
     DAT = options()
     base, ext = os.path.splitext(DAT)
@@ -34,6 +50,7 @@ if __name__ == "__main__":
     if STD:
         out = sys.stdout
     else:
+        #           out = codecs.open(outfile,'a','utf-8')                                    
         try:
             out = codecs.open(outfile, "w", "utf-8")
         except:

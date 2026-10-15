@@ -1,10 +1,30 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.output0 import ReadWienOutput0
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Wplot_LDOS_portrait.py
+#
+#    Wplot_ADOS_portrait.py (2015.04.21 ベース)
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.21
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -18,6 +38,15 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     unit = "ev"
@@ -51,6 +80,24 @@ def options():
     ]
 
 
+################################################################################
+############################################
+# set input file
+############################################
+# case.dos ファイルを抽出
+############################################
+# unit の書き直し
+############################################
+# check SPIN
+############################################
+# SPIN 有りの時に list のスピン毎の作り直し
+############################################################################
+# matplotlib
+############################################################################
+# spin を逆から回す(先に描いものが下側に描画されるので)
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         case,
@@ -108,15 +155,23 @@ if __name__ == "__main__":
         up_lists = list(set(up))
         dn_lists = list(set(dn))
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+    #       plt.figure(figsize=(8.27, 11.69)) # for portrait
     if not LANDSCAPE_FLAG:
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
     orgx = 0.13
     orgy = 0.08
     off = 0.015
     size = 0.83 / nion / nspin
+    ############################
+    # makes instance
     for spin in range(nspin - 1, -1, -1):
         if FLAG_SPIN and spin == 0:
             lists = up_lists
@@ -132,6 +187,28 @@ if __name__ == "__main__":
         plot_ions = dos.get_plot_ions()
         title = case
         ion_j = 0
+        ####################################################
+        # X 軸
+        ####################################################
+        # ラベル
+        #atom = str(atoms_index[ion])
+        ####################################################################
+        # 原点位置を自動調整
+        ####################################################################
+        # Y軸
+        #if TDOS_FLAG and dos.chk_raw_dos(atom=0,orbit='total-DOS'):
+        #    tdos = dos.get_raw_dos(atom=ion,orbit='total-DOS')
+        #    plt.fill_between(e,tdos, color='#cccccc', linewidth=2, label='total')
+        #else:
+        ####################################################################
+        # DOSのY軸(DOS軸)原点をセットする(稀に必須)
+        # down spin の時に反転させる
+        # title,label,xticks
+        # 一番上
+        # 一番下以外
+        # 一番下
+        # EF0
+        # 凡例BOX
         for ion in plot_ions:
             e = []
             for i in range(nedos):
@@ -162,18 +239,22 @@ if __name__ == "__main__":
                     plt.fill_between(
                         e, t, color="#cccccc", linewidth=2, label=atom + "-tot"
                     )
+            #s = dos.get_ldos_ion(case=case,atom=ion,orbit='s')
             if dos.chk_raw_dos(atom=ion, orbit="s"):
                 s = dos.get_raw_dos(atom=ion, orbit="s")
                 c = "red"
                 plt.plot(e, s, linestyle="-", color=c, linewidth=2, label=atom + "-s")
+            #p = dos.get_ldos_ion(case=case,atom=ion,orbit='p')
             if dos.chk_raw_dos(atom=ion, orbit="p"):
                 p = dos.get_raw_dos(atom=ion, orbit="p")
                 c = "green"
                 plt.plot(e, p, linestyle="-", color=c, linewidth=2, label=atom + "-p")
+            #d = dos.get_ldos_ion(case=case,atom=ion,orbit='d')
             if dos.chk_raw_dos(atom=ion, orbit="d"):
                 d = dos.get_raw_dos(atom=ion, orbit="d")
                 c = "blue"
                 plt.plot(e, d, linestyle="-", color=c, linewidth=2, label=atom + "-d")
+            #f = dos.get_ldos_ion(case=case,atom=ion,orbit='f')
             if dos.chk_raw_dos(atom=ion, orbit="f"):
                 f = dos.get_raw_dos(atom=ion, orbit="f")
                 c = "yellow"
@@ -222,9 +303,12 @@ if __name__ == "__main__":
             else:
                 plt.axvline(x=efermi, color="black", linewidth=1)
             if spin == 0:
+                # 凡例Box
                 leg = plt.legend(fontsize=12)
+                # Alphaチャンネル(半透明化)
                 leg.get_frame().set_alpha(0.5)
             ion_j += 1
+    #       plt.savefig("ADOS_portrait.eps",orientation = 'portrait',papertype = 'a4')
     if LANDSCAPE_FLAG:
         plt.savefig("ADOS.eps")
         plt.savefig("ADOS.pdf")

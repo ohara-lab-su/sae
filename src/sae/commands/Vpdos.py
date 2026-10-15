@@ -1,8 +1,34 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print "LORBIT = ",LORBIT
+#   print "TITLE  = ",TITLE
+################################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vpdos.py
+#
+#   Vpdos.pl 完全互換(のはず)
+#   ReadDoscar Class (ReadDoscar.py) 利用
+#
+#   デフォルトで  E - EF
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.01.14 strtup
+#   Vldos.py からコピー, method 名, 変数名を変更しただけのもの
+#   動作確認は IGZO にて
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -13,6 +39,15 @@ import sys
 import optparse
 
 
+#
+################################################################################
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "DOSCAR"
     parser = optparse.OptionParser()
@@ -25,6 +60,12 @@ def options():
     return name
 
 
+################################################################################
+# set input file
+# makes instance ( Read DOSCAR )
+# set output device
+# 最初からごつい構造体を返すMethodを作っておく(超高速) --> おすすめ
+# perl 版とほぼ同じ速度
 if __name__ == "__main__":
     name = options()
     dos = ReadVaspDoscar(name)

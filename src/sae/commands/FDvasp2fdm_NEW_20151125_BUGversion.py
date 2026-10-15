@@ -1,7 +1,49 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+## ASE version
+#   atoms = read_vasp(name)
+#   SAEnvnv.print_fdmnes0(atoms=atoms,MOL=MOL)
+#   SAEnvnv.print_fdmnes0(outname=outname,atoms=atoms,STD=False,MOL=MOL)
+#   SAEnvnv.print_fdmnes_inp0(atoms=atoms,MOL=MOL)
+### SAEnvnv version
+#   cell = SAEnvnv.Read(filename = name, code = 'VASP')
+#   SAEnvnv.print_fdmnes1(outname=outname,cell=cell,MOL=MOL)
+#   SAEnvnv.print_fdmnes1(outname=outname,cell=cell,STD=False,MOL=MOL)
+#   SAEnvnv.print_fdmnes_inp1(cell=cell,MOL=MOL)
 from __future__ import print_function
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# VASP to FDMNES crystal 情報
+#
+# using ASE version
+#
+# (注意)
+#  1) ASE のルーチン(cellconst) を使っている
+#  2) ASE のmodule を呼び出している
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2016.01.16
+#  自分でASEのルーチンを置き換えた（完全分離させた)バージョンに致命的な
+#  バグを発見。旧バージョンを復帰させる
+#  --> 現在のバージョンを凍結
+#
+#   08.18 でバグが混入したと思われる。
+#    このバージョンのブランチは 11.25 までつづく
+#
+# 2015.08.18
+#  ASE で読み込む構造を止めて、拙作 SAEnvnv を用いる様にした
+#    注意) scale ファクターは 1 を要求
+#
+# 2015.05.18 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +56,16 @@ import optparse
 from ase.io.vasp import *
 
 
+#
+################################################################################
+#
+#from ase.io.xyz import *
+#from ase import Atoms
+#from ase.io import read,write
+#from ase.io.vasp import *
+#from ase.io.wien2k import *  ## using cellconst
+#import numpy as np
+################################################################################
 def options():
     name = "POSCAR"
     outname = "read_pdb.inp"
@@ -42,6 +94,11 @@ def options():
     return (name, outname, MOL)
 
 
+################################################################################
+### bug-version につきコメントアウト
+#   cell = SAEnvnv.Read(filename=name,code='VASP')
+#   cell.write(code='FDMNES',outname=outname,STD=True,MOL=MOL)
+#   cell.write(code='FDMNES',outname=outname,MOL=MOL)
 if __name__ == "__main__":
     name, outname, MOL = options()
     print("gug version")

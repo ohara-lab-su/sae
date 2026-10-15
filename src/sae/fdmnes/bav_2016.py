@@ -1,3 +1,42 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+# *_bav.txt ファイル
+#
+###############################################################################
+#
+# 2020.07.17
+#  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
+#  - バージョンチェック(ReadFdmBav.py) のための改修
+#  - バージョン切り替えのために ReadFdmBav2016()
+#  - バージョン切り替えのために ReadFdmBav2020() 切り替え
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.11
+#  scf ループ関係の情報吸い出しを追加
+#
+# 2015.06.25
+#  R2 bases に対応した cluster: atom positions 吸い出しに対応
+#
+# 2015.06.23 startup
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+#   name = 'POSCAR.txt'
+#   for i in range(natom):
+#       print "%s %10.6f %10.6f %10.6f" \
+#         % (atoms_index_j[i], position[i, 0], position[i, 1], position[i, 2])
+#       print position[i][0],position[i][1],position[i][2]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +46,17 @@ import optparse
 import numpy as np
 
 
+#
+# property (added: 2020.07.17)
+#
+#
+# get attribute
+#
 class ReadFdmBav2016(object):
 
+    # 吸収端のエネルギー(2020と互換)
+    # self.position = []
+    # ログファイル読み込みのアホなループ
     def __init__(self, cname, suffix="_bav.txt", datline=None, num=None):
         """
 
@@ -39,10 +87,24 @@ class ReadFdmBav2016(object):
         e_edge_reg = re.compile(".*E_edge.*")
         nspin_reg = re.compile(".*Magnetic calculation")
         self.__t = np.zeros((3, 3))
+        # default nonmag
         self.__nspin = 1
         self.SCF = False
         self.__n_scf_loop = 0
         self.__scf_toten = []
+        # print(self.datlines[i])
+        # Version チェック
+        # SCF 計算のチェック
+        # scf ループの最大値
+        # scf ループ数のカウント
+        # scf ループ毎の unit cell の全エネルギー
+        # 全原子数の検索
+        # 吸収原子の最大のlを探す
+        # Magnetic? or Nonmag
+        # 吸収端(記号)
+        # 吸収端のエネルギー(Kによる固定値)
+        # absorber を原点とした時の基本並進ベクトル
+        # positon (絶対座標系)
         for i in range(self.num):
             if bool(fdmnes_ver_reg.match(self.__datlines[i])):
                 print(self.__datlines[i])

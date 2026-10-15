@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# 回転関係の関数
+#
+################################################################################
+#
+# 2015.03.03
+#   startup
+#
+################################################################################
+################################################################################
+# import sys
+# import os
+# import re
+# from copy import deepcopy
+################################################################################
+# 応用群論 p.122 - p123
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import numpy as np
@@ -9,6 +29,7 @@ class Rotations:
         r = np.radians(float(deg))
         C = np.cos(r)
         S = np.sin(r)
+        # z軸周りの回転行列
         R_z = np.matrix(((C, -S, 0), (S, C, 0), (0, 0, 1)))
         return R_z
 
@@ -16,6 +37,7 @@ class Rotations:
         r = np.radians(float(deg))
         C = np.cos(r)
         S = np.sin(r)
+        # z軸周りの回転行列
         R_y = np.matrix(((C, 0, S), (0, 1, 0), (-S, 0, C)))
         return R_y
 

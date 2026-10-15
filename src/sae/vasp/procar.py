@@ -1,3 +1,62 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+# ReadProcar.py
+#
+#  PROCAR 読み込みクラス
+#    Vcom11.pl にほぼ対応する。LORIBT=11 しか考慮してない
+#
+################################################################################
+#
+#  s, p_y, p_z, p_x, d_xy, d_yz, d_z2-r2, d_xz, d_x2-y2,
+#  i.e. (l,-m, ..... l,0, ..... l,+m)
+#
+#           1:s
+#
+#           2:p_y
+#           3:p_z
+#           4:p_x
+#
+#           5:d_xy
+#           6:d_yz
+#           7:d_3z2-r2
+#           8:d_xz
+#           9:d-x2-y2
+#
+#  t2g: 5,6,8
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.01.29
+#   固有値の最大と最小をゲットするmethodを実装
+#   一度 get_pro_all を読んでから処理するアホ(低速)処理仕様
+#      def get_max_eigenval()  (ReadEigenval.get_max_eigenval() と同様仕様
+#      return [eigen_min,eigen_max]
+#
+# 2015.01.29 startup
+#   K点が固定フォーマットで、スペース無しでつながるケースを発見
+#   固定フォーマット版へ修正。
+#
+#   get_pro_all(self)  LORBIT の応じてすべての情報を返す
+#   get_pro_spd(self)  LORBIT=10 相当の情報を返す
+#
+# 2015.01.29 startup
+#
+################################################################################
+################################################################################
+# from copy import deepcopy
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+# print " %5.3f" % ( pro_ratio[lm,atom,i,k,spin] ),
+# print " %5.3f" % ( pro_ratio[lm,NATOM,i,k,spin] ),
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -8,6 +67,15 @@ import optparse
 import numpy as np
 
 
+# PROCAR の k-point 1 のband 1 の OCC が 1 or 2 を確認
+# NCM のときはもっと注意して実装し直す必要がある
+# NATOM: VASP 内部(表記) では ions に相当
+############################################################################
+# PROCAR の情報をまるごと配列で返す(系によっては目盛をモリモリ食うので注意)
+############################################################################
+# PROCAR の情報をまるごと配列で返す
+# LORBIT=11 のときでも LORBIT=10 相当の情報を返す
+# 全バンドの中から最大の固有値と最小を探す
 class ReadProcar(object):
 
     def __init__(self, name):
@@ -97,54 +165,113 @@ class ReadProcar(object):
         for s in range(NSPIN):
             if s == 1:
                 j += 1
+            # print j+1,"  :",self.datlines[j]  # K-point
+            # kp[k,0] = float(self.datlines[j].split()[3])  # kx
+            # kp[k,1] = float(self.datlines[j].split()[4])  # ky
+            # kp[k,2] = float(self.datlines[j].split()[5])  # kx
+            # kp[k,3] = float(self.datlines[j].split()[8])  # w
             for k in range(NKPTS):
                 j += 1
+                # kx
                 kp[k, 0] = float(self.datlines[j][18:29])
+                # ky
                 kp[k, 1] = float(self.datlines[j][29:40])
+                # kz
                 kp[k, 2] = float(self.datlines[j][40:51])
+                # kz
                 kp[k, 3] = float(self.datlines[j][64:75])
                 j += 1
+                # print j+1,"  :",self.datlines[j]  # band_energy
+                ##################
+                # den = 0.0
+                # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                #    den = pro[m,a,i,k,s] + den
+                #   #print s,i,a,m,den
+                # for m in range(LMMAX):
+                #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                ##################
+                ##################
+                # den = 0.0
+                # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                #    den = pro[m,a,i,k,s] + den
+                #   #print s,i,a,m,den
+                # for m in range(LMMAX):
+                #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                ##################
                 for i in range(NBANDS):
                     j += 1
+                    # eig
                     eig[i, k, s] = float(self.datlines[j].split()[4])
+                    # occ
                     occ[i, k, s] = float(self.datlines[j].split()[7])
                     j += 2
+                    # print j+1,"  :",self.datlines[j]
                     for a in range(NATOM):
                         j += 1
                         if LORBIT > 10:
+                            # s
                             pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            # py
                             pro[1, a, i, k, s] = float(self.datlines[j].split()[2])
+                            # pz
                             pro[2, a, i, k, s] = float(self.datlines[j].split()[3])
+                            # px
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[4])
+                            # dxy
                             pro[4, a, i, k, s] = float(self.datlines[j].split()[5])
+                            # dyz
                             pro[5, a, i, k, s] = float(self.datlines[j].split()[6])
+                            # dz2
                             pro[6, a, i, k, s] = float(self.datlines[j].split()[7])
+                            # dxz
                             pro[7, a, i, k, s] = float(self.datlines[j].split()[8])
+                            # dx2
                             pro[8, a, i, k, s] = float(self.datlines[j].split()[9])
+                            # tot
                             pro[9, a, i, k, s] = float(self.datlines[j].split()[10])
                         else:
+                            # s
                             pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            # p
                             pro[1, a, i, k, s] = float(self.datlines[j].split()[2])
+                            # d
                             pro[2, a, i, k, s] = float(self.datlines[j].split()[3])
+                            # tot
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[4])
+                    # total
+                    # print j+1,"  :",self.datlines[j]
                     if NATOM > 1:
                         j += 1
                         a += 1
                         if LORBIT > 10:
+                            # s
                             pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            # py
                             pro[1, a, i, k, s] = float(self.datlines[j].split()[2])
+                            # pz
                             pro[2, a, i, k, s] = float(self.datlines[j].split()[3])
+                            # px
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[4])
+                            # dxy
                             pro[4, a, i, k, s] = float(self.datlines[j].split()[5])
+                            # dyz
                             pro[5, a, i, k, s] = float(self.datlines[j].split()[6])
+                            # dz2
                             pro[6, a, i, k, s] = float(self.datlines[j].split()[7])
+                            # dxz
                             pro[7, a, i, k, s] = float(self.datlines[j].split()[8])
+                            # dx2
                             pro[8, a, i, k, s] = float(self.datlines[j].split()[9])
+                            # tot
                             pro[9, a, i, k, s] = float(self.datlines[j].split()[10])
                         else:
+                            # s
                             pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            # p
                             pro[1, a, i, k, s] = float(self.datlines[j].split()[2])
+                            # d
                             pro[2, a, i, k, s] = float(self.datlines[j].split()[3])
+                            # tot
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[4])
                     j += 1
                 j += 1
@@ -170,18 +297,43 @@ class ReadProcar(object):
         for s in range(NSPIN):
             if s == 1:
                 j += 1
+            # print j+1,"  :",self.datlines[j]  # K-point
             for k in range(NKPTS):
                 j += 1
+                # kx
                 kp[k, 0] = float(self.datlines[j][18:29])
+                # ky
                 kp[k, 1] = float(self.datlines[j][29:40])
+                # kz
                 kp[k, 2] = float(self.datlines[j][40:51])
+                # kz
                 kp[k, 3] = float(self.datlines[j][64:75])
                 j += 1
+                # print j+1,"  :",self.datlines[j]  # band_energy
+                ##################
+                # den = 0.0
+                # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                #    den = pro[m,a,i,k,s] + den
+                #   #print s,i,a,m,den
+                # for m in range(LMMAX):
+                #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                ##################
+                ##################
+                # den = 0.0
+                # for m in range(LMMAX): # 全成分を足しあわせてその合計を 1 とみなす
+                #    den = pro[m,a,i,k,s] + den
+                #   #print s,i,a,m,den
+                # for m in range(LMMAX):
+                #    pro_ratio[m,a,i,k,s] = pro[m,a,i,k,s]/den
+                ##################
                 for i in range(NBANDS):
                     j += 1
+                    # eig
                     eig[i, k, s] = float(self.datlines[j].split()[4])
+                    # occ
                     occ[i, k, s] = float(self.datlines[j].split()[7])
                     j += 2
+                    # print j+1,"  :",self.datlines[j]
                     for a in range(NATOM):
                         j += 1
                         if LORBIT > 10:
@@ -198,12 +350,19 @@ class ReadProcar(object):
                                 + +float(self.datlines[j].split()[8])
                                 + +float(self.datlines[j].split()[9])
                             )
+                            # tot
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[10])
                         else:
+                            # s
                             pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            # p
                             pro[1, a, i, k, s] = float(self.datlines[j].split()[2])
+                            # d
                             pro[2, a, i, k, s] = float(self.datlines[j].split()[3])
+                            # tot
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[4])
+                    # total
+                    # print j+1,"  :",self.datlines[j]
                     if NATOM > 1:
                         j += 1
                         a += 1
@@ -223,9 +382,13 @@ class ReadProcar(object):
                             )
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[10])
                         else:
+                            # s
                             pro[0, a, i, k, s] = float(self.datlines[j].split()[1])
+                            # p
                             pro[1, a, i, k, s] = float(self.datlines[j].split()[2])
+                            # d
                             pro[2, a, i, k, s] = float(self.datlines[j].split()[3])
+                            # tot
                             pro[3, a, i, k, s] = float(self.datlines[j].split()[4])
                     j += 1
                 j += 1
@@ -235,6 +398,7 @@ class ReadProcar(object):
         NSPIN = self.get_ispin()
         NBANDS = self.get_nbands()
         NKPTS = self.get_nkpts()
+        ## ReadEigenval 版と異なる部分
         kp, eig, occ, pro, pro_ratio = self.get_pro_all()
         all_eigen_list = np.zeros(NSPIN * NBANDS * NKPTS)
         i = 0

@@ -1,9 +1,36 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+##########################################################################
 from __future__ import print_function
 from sae.lobster.cohpcar import ReadLobCohp
 from sae.lobster.doscar import ReadLobDos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_COHP_yoko.py
+#
+#  1) 指定したCOHP描画のペア原子が一つの時は LDOS 追加表示モード
+#  2) 指定したCOHP描画のペア原子が二つ以上の時は LDOS モードは OFF
+#      かわりに COHP をペアごとに分割表示モードに
+#
+#      par は 1 番から (0番はAverage)
+#
+##########################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.01
+#  par ごとの出力モード追加
+#
+# 2015.06.05
+#  startup
+#
+##########################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +42,23 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+##########################################################################
+#import sys
+#import os
+#import gzip
+#import optparse
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.ticker as tic
+#import matplotlib.mlab as mlab
+##########################################################################
+#   parser = optparse.OptionParser()
+#   parser.add_option('-n', '--nw', action='store_true', default=False,)
+#  par は 1 番から (0番はAverage)
+#   options,  args = parser.parse_args()
 def options():
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--nw", action="store_true", default=False)
@@ -48,6 +92,27 @@ def options():
     ]
 
 
+##########################################################################
+# set options file
+##########################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+##########################################################################
+# plot する l軌道のリスト
+# TOTAL DOS & PDOS
+# COHP Average
+# ペアプロットするかどうかの判断
+# 分割サイズの変更
+######################################################## COHP Average
+################### COHP Average
+################### COHP Pair
+######################################################## TDOS
+# TDOS のプロット
+######################################################## COHP 分割プロット
+# LDOS を描画しないとき(複数のペアを書いたとき),COHPの分割表示on
+######################################################## LDOS
+# ペア原子のLDOSをプロットする
+##########################################################################
 if __name__ == "__main__":
     (
         NO_WINDOW_FLAG,
@@ -74,9 +139,13 @@ if __name__ == "__main__":
         print("Ymax=", OPT_YMAX)
     if OPT_YMIN:
         print("Ymax=", OPT_YMIN)
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 14
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 12
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.13
     orgy = 0.075
@@ -114,6 +183,8 @@ if __name__ == "__main__":
     sizey_cohp = sizey_dos0 / 2
     npar = 0
     if OPT_PAIR:
+        # 分割サイズの変更
+        # 分割サイズの変更
         if len(OPT_PAIR) > 1:
             npar = len(OPT_PAIR)
             OPT_LDOS = False
@@ -156,6 +227,7 @@ if __name__ == "__main__":
         for i in OPT_PAIR:
             par_label = cohp.bond_index[int(i)]
             c = cm.prism(ci * 5)
+            #label = par_label+'  ('+spin_label+')'
             for s in spin_list:
                 if s == 0:
                     spin_label = "up"
@@ -179,9 +251,11 @@ if __name__ == "__main__":
             ci += 1
     plt.ylabel("-pCOHP", fontsize=14)
     plt.xlabel("$E -  E_{\\mathrm{F}}$ [eV]", fontsize=14)
+    # 凡例Box
     leg = plt.legend(fontsize=9)
     if OPT_LEFT:
         leg = plt.legend(loc="lower left")
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     orgy = orgy + sizey_cohp + off
     plt.axes([orgx, orgy, sizex, sizey])
@@ -206,12 +280,16 @@ if __name__ == "__main__":
             plt.xlim(xmin=float(OPT_EMIN))
         plt.xticks([])
     plt.ylabel("DOS/eV", fontsize=14)
+    # 凡例Box
     leg = plt.legend(fontsize=9)
     if OPT_LEFT:
         leg = plt.legend(loc="lower left")
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     if not OPT_LDOS and npar > 1:
         ci = 0
+        # autumn, bone, cool, copper, flag, gray, hot, hsv, jet, pink,
+        # prism, spring, summer, winter, spectral
         for i in OPT_PAIR:
             orgy = orgy + sizey + off
             plt.axes([orgx, orgy, sizex, sizey])
@@ -239,13 +317,17 @@ if __name__ == "__main__":
                 if OPT_YMIN:
                     plt.ylim(ymin=float(OPT_YMIN))
                 plt.xticks([])
+            # 凡例Box
             leg = plt.legend(fontsize=9)
             if OPT_LEFT:
                 leg = plt.legend(loc="lower left")
+            # Alphaチャンネル(半透明化)
             leg.get_frame().set_alpha(0.5)
             ci += 1
         plt.ylabel("-pCOHP", fontsize=14)
+    # ペア原子ごとのループ
     if OPT_LDOS and npar == 1:
+        # ペア原子の情報を入手
         for par in range(len(cohp.bond_par[int(OPT_PAIR[0])])):
             c = cm.prism(par * 20)
             atom_j = cohp.bond_par[int(OPT_PAIR[0])][par]
@@ -255,6 +337,7 @@ if __name__ == "__main__":
             for l in orbit_list:
                 orgy = orgy + sizey + off
                 plt.axes([orgx, orgy, sizex, sizey])
+                # ペア原子の元素名と通しの番号をゲット
                 for s in spin_list:
                     if s == 0:
                         spin_label = "up"
@@ -277,9 +360,11 @@ if __name__ == "__main__":
                     plt.xlim(xmin=float(OPT_EMIN))
                 plt.xticks([])
                 orb += 1
+                # 凡例Box
                 leg = plt.legend(fontsize=9)
                 if OPT_LEFT:
                     leg = plt.legend(loc="lower left")
+                # Alphaチャンネル(半透明化)
                 leg.get_frame().set_alpha(0.5)
     if OPT_PAIR:
         if len(OPT_PAIR) > 1:

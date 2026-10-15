@@ -1,9 +1,30 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+##########################################################################
 from __future__ import print_function
 from sae.lobster.cohpcar import ReadLobCohp
 from sae.lobster.doscar import ReadLobDos
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_COHP.py
+#
+##########################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.01
+#  par ごとの出力モード追加
+#
+# 2015.06.05
+#  startup
+#
+##########################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +35,23 @@ import argparse
 import matplotlib.pyplot as plt
 
 
+#
+##########################################################################
+#import sys
+#import os
+#import gzip
+#import optparse
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.ticker as tic
+#import matplotlib.mlab as mlab
+##########################################################################
+#   parser = optparse.OptionParser()
+#   parser.add_option('-n', '--nw', action='store_true', default=False,)
+#   options,  args = parser.parse_args()
 def options():
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--nw", action="store_true", default=False)
@@ -41,6 +79,32 @@ def options():
     ]
 
 
+##########################################################################
+# set options file
+##########################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(7.00, 9.89))  # for portrait
+##########################################################################
+# TOTAL DOS
+# COHP Average
+######################################################## DOS
+#       plt.plot(dos_y, dos_x, color="black", linewidth=1, label='TDOS')
+#       plt.fill_between(dos_y,dos_x, 0,facecolor='#cccccc', linewidth=2, label='TDOS')
+# legend
+######################################################## COHP Average
+################### COHP Average
+################### COHP Pair
+# legend
+# Y軸の調整
+#   plt.ylim( ymin=0 )
+#   if spin == 0:
+##########################################################################
+#   plt.xlabel("$E -  E_{\mathrm{F}}$ [eV]", fontsize=20 )
+#   leg = plt.legend(fontsize=12)   # 凡例Box
+#   leg.get_frame().set_alpha(0.5)  # Alphaチャンネル(半透明化)
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         NO_WINDOW_FLAG,
@@ -64,8 +128,11 @@ if __name__ == "__main__":
         print("Ymax= %s" % str(OPT_YMAX))
     if OPT_YMIN:
         print("Ymax= %s" % str(OPT_YMIN))
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 18
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
     spin_list = [0]
     if OPT_UP:

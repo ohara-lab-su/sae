@@ -1,10 +1,39 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 from sae.vasp.kpoints import ReadVaspKpoints
 from sae.vasp.symdat import ReadVaspSymdat
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_com.py
+#
+#  vplot_com10.pl/com11.pl モドキ
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.02.06
+#  band の plot で spd 分解（全原子まとめて表示、原子毎表示）を追加
+#
+# 2015.01.30
+#  DOS プロットのところに s,p,d 表示を追加(TOTAL_spd)
+#
+# 2015.01.30
+#  Vplot_band.py と同等のものを PROCAR から作成
+#  ---> Vplot_com_band.py と暫定的に名前を変えて、そのバージョンを保存
+#
+# 2015.01.29 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -18,6 +47,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import gzip
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# 必須ファイル(vasprun.xml に置き換え可能)
+###########################################
+# INPUT files
+###########################################
+# FLAGS
+###########################################
+# Parameters
 def options():
     procarname = "PROCAR"
     kpointsname = "KPOINTS"
@@ -80,6 +123,44 @@ def options():
     ]
 
 
+################################################################################
+# 基本インスタンス生成
+# バンドの基本情報取得
+#   TITLE = doscar.get_title()
+# K点&バンドごとのデータ
+# K点のゾーン情報(KPOINTS & OUTCAR)
+# データーのチェック
+############################################################################
+# E-fermi は DOSCAR から取得する(DOSCARがない場合はOUTCARから)
+# K点情報はバンドの計算のOUTCARが必須
+# E-fermi情報は SCF 計算の DOSCAR(E-fermi が欲しい)
+#
+############################################################################
+# LDOS_ALL 読み込み
+############################################################################
+# sym.dat ファイルをゲットする(K点の自動処理をする前の暫定措置)
+############################################################################
+# KPOINTS print
+############################################################################
+# 最大の固有値と最小の固有値をゲット
+# multi-plot する zone 共通のデフォルト ymin,ymax を作成する
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family']       = 'Times New Roman'
+############################################################################
+# DOS plot
+############################################################################
+#   plt.subplot(1,num_kpoints_line,1)
+#   plt.subplot(1,num_kpoints_line,3)
+#   for i in range(num_kpoints_line):
+#       print vector[i]
+#       plt.subplot(1,num_kpoints_line,i)
+#   ax3 = fig.add_subplot(1,num_kpoints_line,3, sharey=ax1)
+#   plt.subplots_adjust(wspace=0)
+#   plt.subplots_adjust(hspace=0)
+#   plt.savefig("ek_band.eps")
+#   plt.savefig("ek_band.pdf")
+#   plt.savefig("ek_band.png")
 if __name__ == "__main__":
     (
         procarname,
@@ -149,6 +230,9 @@ if __name__ == "__main__":
     if num_kpoints_line != NKPTS / div_kpoints_line:
         print("STOP: KPONTS lines =", num_kpoints_line)
         sys.exit("STOP: NKPTS inconsistence")
+    #       module = __import__(module_name, globals(), locals(), [class_name], -1)
+    # module の動的ロード
+    # class の動的ロード
     if not DOS_FLAG:
         if os.path.exists(doscarname) or os.path.exists(doscarname + ".gz"):
             class_name = "ReadDoscar"
@@ -159,6 +243,8 @@ if __name__ == "__main__":
             optname = outcarname
             print("EFERMI(OUT):", end="")
         module_name = "sae._class_registry"
+        # このリフレクションは python2 方式なので注意
+        # for Python3
         try:
             module = __import__(module_name, globals(), locals(), [class_name], 0)
         except:
@@ -176,6 +262,7 @@ if __name__ == "__main__":
         print(efermi)
     if not TITLE:
         TITLE = "dummy"
+    #ldos_all = dos.get_ldos_all()  # LDOS(NEDOS,l,atom,ispin)
     if SPD_FLAG and DOS_FLAG:
         NEDOS = dos.get_nedos()
     SYMDAT_FLAG = False
@@ -201,6 +288,7 @@ if __name__ == "__main__":
     for i in range(num_kpoints_line):
         print(" line %d : %10.7f " % (i, zone_ratio[i]))
     eigen_min, eigen_max = procar.get_max_eigenval()
+    # 1/20 だけ下限を増やすため
     delta = (eigen_max - eigen_min) / 20
     if ABS_FLAG:
         eigen_max = eigen_max + delta
@@ -208,8 +296,11 @@ if __name__ == "__main__":
     else:
         eigen_max = eigen_max + delta - efermi
         eigen_min = eigen_min - delta - efermi
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 14
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 5
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
     orgx = 0.13
     orgy = 0.11
@@ -238,25 +329,40 @@ if __name__ == "__main__":
         title = TITLE + " minority-spin"
     if OPT_BAND:
         title = title + "  band= " + str(OPT_BAND)
+    # multi plot の原点と軸の修正
+    # X 軸の作成(lines数)
+    # X軸のticks (gnuplot形式のsym.dat を TeX 形式へ変更
+    # Y軸のticks
+    # バンドの重ね書きプロット
+    ## ispin/band-loop ##
+    # X幅の調整
+    # Fermi-Level
     for i in range(num_kpoints_line):
         sizex = zone_ratio[i] * sizex0
         plt.axes([orgx, orgy, sizex, sizey])
         orgx = orgx + sizex
         X = np.zeros(div_kpoints_line)
+        # (0) 〜 (div_kpoints_line)
         for j in range(div_kpoints_line):
             X[j] = j
         if SYMDAT_FLAG:
             if i != num_kpoints_line - 1:
                 if "{/Symbol G}" == symlines[i]:
+                    # gnuplot 形式から TeX形式へ
                     symlines[i] = "\\Gamma"
+                # TeX 出力形式へ
                 sym = "$" + str(symlines[i]) + "$"
                 plt.xticks([0], [sym])
             if i == num_kpoints_line - 1:
                 if "{/Symbol G}" == symlines[i]:
+                    # gnuplot 形式から TeX形式へ
                     symlines[i] = "\\Gamma"
                 if "{/Symbol G}" == symlines[i + 1]:
+                    # gnuplot 形式から TeX形式へ
                     symlines[i + 1] = "\\Gamma"
+                # TeX 出力形式へ
                 sym0 = "$" + str(symlines[i]) + "$"
+                # TeX 出力形式へ
                 sym1 = "$" + str(symlines[i + 1]) + "$"
                 plt.xticks([0, div_kpoints_line - 1], (sym0, sym1))
         if i != 0:
@@ -265,6 +371,14 @@ if __name__ == "__main__":
             plt.title(title)
             plt.ylabel("$E - E_{\\mathrm{F}}$ [eV]", fontsize=16)
         for ispin in range(istart, iend):
+            # Y 軸の作成,eigenval(NBANDS,NKPTS,NSPIN), NKPTS の分割プロット
+            # SPD_FLAG mode (plot s,p,d lines)
+            # pro_spd(lm,atom,NBANDS,NKPTS,NSPIN)
+            # s --> red
+            # p --> green
+            # d --> blue
+            # 線の色の調整
+            # Y幅の調整
             for iband in range(NBANDS):
                 startx = i * div_kpoints_line
                 endx = startx + div_kpoints_line - 1
@@ -285,6 +399,8 @@ if __name__ == "__main__":
                 if SPD_FLAG:
                     for j in range(startx, endx):
                         for atom in range(start_atom, end_atom):
+                            ##################################
+                            ##################################
                             for lm in range(3):
                                 ratio = pro[lm, atom, iband, j, ispin]
                                 rsize = ratio * 5
@@ -349,6 +465,12 @@ if __name__ == "__main__":
         else:
             plt.axhline(y=0, color="blue")
     if DOS_FLAG:
+        # スピンの有無と SPIN_FLAG による位置修正
+        # 目盛の調整
+        #      #    plt.xticks(range(1,4))
+        # X軸の調整
+        # Y幅の調整(DOS)
+        # Fermi-Level
         for ispin in range(istart, iend):
             if NSPIN == 2:
                 if UP_FLAG or DOWN_FLAG:

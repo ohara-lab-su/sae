@@ -6,6 +6,59 @@ from sae.geometry.coordinates import CoordinateTransforms
 from sae.openmx.md import ReadMd
 from sae.vasp.vasprun_writer import VasprunWriter
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com, kengo.nakada@spring8.or.jp
+#
+# vasprun.xml ファイルを適当な情報から作成するルーチン
+#
+#   OpenMX の *.md ファイルを vasprun.xml へコンバート
+#   基本並進情報を *.out or *.dat から取得
+#
+#  注意)
+#    OpenMX 専用版: MXmd2vasprun.py
+#    汎用 *.md 版 : md2vasprun.py
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.06.30
+#  == None --> is None
+#
+# 2015.06.16
+#  VASP --> OpenMX (cartesian) 変換した後の計算結果を vasprun.xml に乗せるとき
+#  は scale 1.0 の基本並進をそのまま用いるときは direct --> cartesian すると
+#  うまくいく。
+#
+# 2015.06.16
+#  MXmd2vasprun.py と md2vasprun.py を明確にブランチ
+#
+# 2015.06.16
+#   汎用の *md ファイルではなくて openMX の *md ファイル専用にチェンジ
+#   (もともとの基本並進情報を *.dat *.out から取得)
+#
+# 2015.06.16
+#  関数ライブラリを用いた read_md ではなく、ReadMd クラスの仕様へチェンジ
+#
+# 2015.06.16
+#  ファイル名の自動取得ルーチンの追加
+#
+# 2015.02.24
+#  デフォルトの md 名をテスト用の co.md から openmx.md へ変更
+#
+# 2015.02.12
+#  暫定的に正しく動作するように修正( print_vasprun.py 関数の修正)
+#  コメント関係(change log) を print_vasprun.py へ移行
+#
+#  基本的に使っている関数や方法論が古いので注意
+#
+# 2015.01.08 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,9 +70,39 @@ import os
 import optparse
 import numpy as np
 
+#
+################################################################################
+#import re
+#import xml.etree.ElementTree as ET
+#import math
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# オプション処理(指定したファイルが存在してない時はsuffixをつけてみる)
+# 指定したファイルが存在したときは suffix を外した名前を作成する
+# オプション指定なしのコマンドライン引数は全てに優先して明示的に指定
+# デフォルト名 or 入力名が存在しない時の入力ファイル名自動探索
+# MD ファイル読み込み
+# dat or out ファイル読み込み
+# 基本並進ベクトルとスケールファクターの入手が主目的
+#   module = __import__(module_name,globals(),locals(),[class_name],-1)
+# module の動的ロード
+# class の動的ロード
+################ output ######################
+#   for l in range(nloop):
+#       print natom
+#       print "   setp=",l
+#       for j in range(natom):
+#           print " %3s %12.8f %12.8f %12.8f " \
+#                 % ( atoms_index_j[j],\
+#                     position_loop[l,j,0],\
+#                     position_loop[l,j,1],\
+#                     position_loop[l,j,2] )
+# vasprun.xml の最低出力をする(OpenMX *.md 形式から引き出せる最低の形式)
 if __name__ == "__main__":
     OUTPUT = "vasprun.xml"
     name = "openmx"
+    # ここでの suffix 指定は dot を付けない
     MD_suffix = "md"
     MD = name + "." + MD_suffix
     parser = optparse.OptionParser()
@@ -69,6 +152,8 @@ if __name__ == "__main__":
     else:
         sys.exit("STOP: " + name + ".out or " + name + ".dat file not fond")
     module_name = "sae._class_registry"
+    # このリフレクションは python2 方式なので注意
+    # for Python3
     try:
         module = __import__(module_name, globals(), locals(), [class_name], 0)
     except:

@@ -1,3 +1,38 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# PWScf (Quantum ESPRESSO 5..x )
+# dos 関連出力 ファイル( dos.x projwfc.x 出力ファイル 読み込み)
+#
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.07.23
+#  停止していた開発を再スタート
+#
+#
+# 2015.05.08 startup
+#
+################################################################################
+################################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+################################################################################
+#   lm_list = [1,3,5,7]
+#   LDOSup = dos.get_ldos(l=0,atom=0,spin=0)
+#   LDOSdn = dos.get_ldos(l=0,atom=0,spin=1)
+#   PDOSdn = dos.get_pdos(l=2,lm=2,atom=0,spin=1)
+#   for i in range(dos.nedos):
+#       print ENG[i], LDOSup[i], LDOSdn[i]
+#       print ENG[i], PDOSup[i], PDOSdn[i]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +42,43 @@ import re
 import numpy as np
 
 
+############################################################################
+############################################################################
+# lm は 0 からカウント l=2 のとき、px, py, pz ならば px は lm=0
+############################################################################
 class ReadPwPdos(object):
 
+    # cname+'pdos.pdos_tot'
+    # 実際に計算している pdos ファイルの取得
+    # 計算している pdos ファイルの原子の種類番号のみを取得
+    # 重複している pdos ファイルの原子種番号を削除(順番は変更しない)
+    # ユニークは原子種番号の数から全原子数を確保
+    # 原子数の通し番号毎の元素記号を記憶する配列を用意
+    ## 実際に計算している各原子毎に計算しているlの最大値を取得する
+    ## 最後の# の番号は軌道番号ではなくて通し番号であることが判明(15.07.22)
+    ## このルーチンは削除
+    # lmax_list = []
+    # for atom in atom_list:
+    #    tmp = glob.glob(prefix+'.pdos.pdos_atm#'+str(atom)+'(*')
+    #    for g in tmp:
+    #        tmp = re.sub(prefix+'.pdos.pdos_atm#','',g)
+    #        lmax = int(re.sub('\(.*' ,'',re.sub('\d*\(.*#','',tmp) ))
+    #    lmax_list.append(lmax)
+    # print "lmax_list: max",len(lmax_list), lmax_list
+    #       for i in range(len(atom_list)):
+    #           print l_index_j[i],l_max_list[i]
+    #       print "natom:", natom
+    #       print "atom_list    : ", atom_list
+    #       print "atoms_index_j: ", atoms_index_j
+    #       print "l_index_j    : ", l_index_j
+    #       print "l_list       : ", l_list
+    ################
+    # LDOS 収納に使う配列の確保(原子種毎),配列の l_max は固定にする
+    ################
+    # PDOS 収納に使う配列の確保
+    # lm_max = 1+3+5+7 # s+p+d+f
+    ########################################################################
+    # 原子種のループ
     def __init__(self, prefix):
         from sae.common.text import TextFiles
 
@@ -63,13 +133,22 @@ class ReadPwPdos(object):
                     lmax = 3
                 list_tmp.append(lmax)
             l_list.append(list_tmp)
+        # s,p,d,f
         l_max = 4
         self.ldos_all = np.zeros((nedos, l_max, natom, ispin))
+        # 軌道成分ごとの lm として保存するので f 軌道の最大値で良い
         lm_max = 7
         lm_list = [1, 3, 5, 7]
         self.pdos_all = np.zeros((nedos, l_max, lm_max, natom, ispin))
         self.eng = np.zeros(nedos)
         for atom in range(natom):
+            ## 原子のリスト、原子の持つ軌道番号のリストからファイル名を作成
+            ##
+            # print atoms_index_j[atom],\
+            #        l_list[atom][ll], \
+            #        l_index_list[atom][ll]
+            # 原子種＋軌道におけるデータ読み込み
+            # print atom, l,l_index, len(data[0].split())
             for ll in range(len(l_index_j[atom])):
                 l = int(l_list[atom][ll])
                 l_index = l_index_j[atom][ll]

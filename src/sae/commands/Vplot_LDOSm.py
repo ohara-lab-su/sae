@@ -1,9 +1,36 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+# atom END
+#####################################################
+##########################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 from sae.vasp.outcar import ReadVaspOutcar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+##########################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_LDOSm.py
+#
+#  Wplot_LDOSm.py (2015.04.22とほぼ同等になるように作成)
+#
+#   atom は 1 番から(内部的には0番からなので内部的に変換する)
+#
+##########################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.15
+#  両スピンモード(上下分割で反転表示)を追加
+#
+# 2015.04.22
+#    startup
+#
+##########################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,9 +43,38 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+##########################################################################
+#import sys
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+##########################################################################
+# atom は 1 番から(内部的には0番からなので内部的に変換する)
+# 全サイトの原子のLDOSをまとめてプロット(大量にあると意味不明になる)
+# s-orbital のみプロット
+# p-orbital のみプロット
+# d-orbital のみプロット
+# f-orbital のみプロット
+# sp-orbital プロット
+# spd-orbital プロット
+# spdf-orbital プロット
+# total DOS プロットナシにするフラグ
+# title
+# efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+# efermi を 0 ではなく shift した値を使う
+# legend の right と left の切り替え
+# EF0 のラインを消す
+# pdf,png,eps出力をonにする( default では pdf のみ)
+## 注意)
+## all モードは描画せずに、ファイルだけ全部出力するモード
 def options():
     dname = "DOSCAR"
     oname = "OUTCAR"
+    # 0版から始まる
     atom = 1
     parser = optparse.OptionParser()
     parser.add_option("-d", "--doscar", dest="DOSCAR", default=dname)
@@ -86,6 +142,27 @@ def options():
     ]
 
 
+##########################################################################
+#####################################################
+# set input file
+#####################################################
+# オプションの確認
+#####################################################
+# makes instance ( Read DOSCAR )
+#####################################################
+# plot する l軌道のリスト
+#   orbit_list = ['s','p','d','f']
+#####################################################
+#####################################################
+# 原子種の名前をゲットかのうならばゲットする
+#       atoms = outcar.get_atoms_index()
+#       atoms_j = outcar.get_atoms_j()
+#       for atom in range(natom):
+#           print atom,atoms_j[atom], atoms[atoms_j[atom]]
+#       print ""
+#####################################################
+# makes label
+#####################################################
 if __name__ == "__main__":
     (
         dname,
@@ -211,12 +288,15 @@ if __name__ == "__main__":
         FLAG_OUTCAR = True
         outcar = ReadVaspOutcar(oname)
         atoms_index_j = outcar.atoms_index_j
+    #       atom_label = str(atoms[atoms_j[atom]]) + str(atom + 1)
     if FLAG_OUTCAR:
         atom_label = atoms_index_j[atom] + str(atom + 1)
         print("atom = %d %s" % (atom + 1, str(atom_label + spin_out)))
     else:
         atom_label = str(atom)
         print("atom = %d %s" % (atom + 1, str(atom_label + spin_out)))
+    #print "plot atom number: #"+str(a1)+" - #"+str(a2)
+    #print "plot atom number: #"+str(a2)
     if ALL_FLAG:
         a1 = 0
         a2 = natom
@@ -225,13 +305,39 @@ if __name__ == "__main__":
         a1 = int(atom)
         a2 = int(atom) + 1
         print("plot atom number: #%s" % str(a2))
+    #####################################################
+    #
+    #####################################################
+    # plot TDOS
+    #####################################################
+    # plot LDOS
+    #       for orbit in range(len(orbit_list)):
+    #####################################################
+    # makes title
+    #       if FLAG_SPIN:
+    #           if FLAG_UP:
+    #               plt.title(title + "  spin-up (" +
+    #                         str(atom_label) + ") ", fontsize=18)
+    #           if FLAG_DN:
+    #               plt.title(title + "  spin-down (" +
+    #                         str(atom_label) + ") ", fontsize=18)
+    #       else:
+    #           plt.title(title + "  (" + str(atom_label) + ") ", fontsize=18)
+    #       plt.xlim([-10,10])
+    #       plt.ylim([0,200])
     for atom in range(a1, a2):
         plt.rcParams["font.size"] = 15
         plt.rcParams["legend.fontsize"] = 10
         plt.rcParams["axes.linewidth"] = 1.5
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
         XTICKS_FLAG = False
         if not FLAG_TOT:
+            # makes label
+            # !!!!! plot TDOS !!!!!
+            # ytics の調整
+            # makes xticks
+            # down spin 反転
             for spin in spin_list:
                 plt.axes([orgx, orgy, xsize, ysize])
                 tdos = dos.get_tdos(spin)
@@ -266,6 +372,12 @@ if __name__ == "__main__":
             orgy = orgy + off
         j = 1
         for orbit in orbit_list:
+            # makes color & label
+            #lab = atom_label +"_" + orbit_list[orbit] + spin_name[spin]
+            # !!!!! plot LDOS !!!!!
+            # ytics の調整
+            # makex xticks
+            # DOS: down spin 反転
             for spin in spin_list:
                 plt.axes([orgx, orgy, xsize, ysize])
                 d = dos.get_ldos(l=orbit, atom=atom, spin=spin)

@@ -1,3 +1,89 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# OpenMX 3.7
+# ReadMxDos.py ==> ReadMxTdos.py (名前変更) 2015.02.25 09:46
+#
+#  *.Dos.Tetrahedron
+#
+# 構造と設計の基本方針
+#
+#    1) OpenMX は計算後の事後処理で DOS/PDOS が生成される
+#    2) 完全に DOS(totalDOS) のファイルと PDOS(LDOS,PDOS)のファイルは別ファイル
+#       別のプログラム生成手順で作られる
+#
+#    (1)と(2)のために、ReadMxDos クラスと ReadMxPdos クラスを分離したほうが
+#    結果的に便利であると判断する
+#
+#    考えられる使い方は
+#      A) DOS の計算だけして TDOS(本気でTDOSのみ) プロット
+#      B)  DOS/PDOS の計算をして詳細にプロット (いつもの TDOS, LDOS, PDOS プロット)
+#
+#     ===> ２つの使い方に別れる (データーファイル/構造も別)
+#          ２つ以上に大きく別れたデーター構造体
+#
+#     ===> ２つ別のクラスにするべき(ただし、Method の多くは継承することを前提)
+#          ReadMxDosMethod.py (superclass)
+#                                       ---> ReadMxTdos.py
+#                                       ---> ReadMxPdos.py
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.02.27
+#   !!!!!!! OpenMX の down-spin の TDOS 値は負の符号が付いている !!!!!!
+#   気が付かなくてかなりハマった
+#
+#   get_tdos() で配列に放り込む際に値を正に戻しておく
+#
+# 2015.02.25
+#  get_tdos(), get_inttdos() method を ReadMxDosMethod class から
+#  ReadMxTdos class へ移動、整理
+#
+# 2015.02.25
+#  共通する Class を ReadMxDosMethod に superclass として放り投げ
+#  現存する ReadMxDos クラスは ReadMxTdos に変更した
+#
+# 2015.02.25
+#  OpenMX 用の DOS/PDOS 用の superclass に作成した method を分離、継承化
+#
+# 2015.02.25
+#  get_tdos, get_inttdos, get_ispin, get_natom, get_titile  の実装等
+#
+# 2015.02.24
+#    startup
+#    主に ReadMxDat, ReadMxDatMethod の整備
+#
+################################################################################
+################################################################################
+# import re
+# from copy import deepcopy
+# import SpaceGroupEnvironment as SGE
+# sys.path.append('../..')
+################################################################################
+################################################################################
+# 'openmx' より最適なデフォルトファイル名の推定ルーチン
+#       print "------------------------------------------- spin = ",spin+1
+#       for i in range(NEDOS):
+#           print " %14.11f %14.11f %14.11f" %(ENG[i],TDOS[i],INTTDOS[i])
+#   if NSPIN == 2:
+# TDOS0 = dos.get_tdos(0)
+# TDOS1 = dos.get_tdos(1)
+# INTTDOS0 = dos.get_inttdos(0)
+# INTTDOS1 = dos.get_inttdos(1)
+# for i in range(NEDOS):
+#   print ENG[i],TDOS0[i],TDOS1[i],INTTDOS0[i],INTTDOS1[i]
+# TDOS = dos.get_tdos(1)
+# import matplotlib.pyplot as plt
+# plt.fill_between(ENG,TDOS, color='#cccccc', linewidth=2, label='total')
+# plt.show()
+#   for i in range(nedos):
+#       print i,eng[i],tdos[i],inttdos[i]
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.openmx.dos_methods import ReadMxDosMethod
@@ -13,6 +99,13 @@ except ImportError:
     ReadMxDosMethod = ReadMxDosMethod
 
 
+###################################
+# インスタンス作成
+###################################
+# TDOS ( *.DOS.Tetrahedron ) 読み込み
+# (注意) OpenMX の down-spin の TDOS 値は負の符号が付いている
+###################################
+# INTTDOS ( *.DOS.Tetrahedron ) 読み込み
 class ReadMxTdos(ReadMxDosMethod):
 
     def __init__(self, name, suffix):
@@ -39,11 +132,17 @@ class ReadMxTdos(ReadMxDosMethod):
         self.datlines = datfile.split("\n")
         self.num = len(self.datlines) - 1
 
+    # eng = np.zeros((NEDOS))
+    # intdos = np.zeros((NEDOS,NSPIN))
+    # intdos[i,0] = float(self.datlines[i].split()[2])
     def get_tdos(self, spin=0):
         NSPIN = self.get_ispin()
         NEDOS = self.get_nedos()
         dos = np.zeros((NEDOS, NSPIN))
+        # eng[i] = float(self.datlines[i].split()[0])
         for i in range(NEDOS):
+            # intdos[i,0] = float(self.datlines[i].split()[3])
+            # intdos[i,1] = float(self.datlines[i].split()[4])
             if NSPIN >= 2:
                 dos[i, 0] = float(self.datlines[i].split()[1])
                 dos[i, 1] = float(self.datlines[i].split()[2])
@@ -52,11 +151,17 @@ class ReadMxTdos(ReadMxDosMethod):
         self.TDOS = np.abs(dos[:, spin])
         return self.TDOS
 
+    # eng = np.zeros((NEDOS))
+    # dos = np.zeros((NEDOS,NSPIN))
     def get_inttdos(self, spin=0):
         NSPIN = self.get_ispin()
         NEDOS = self.get_nedos()
         intdos = np.zeros((NEDOS, NSPIN))
+        # eng[i] = float(self.datlines[i].split()[0])
         for i in range(NEDOS):
+            # dos[i,0] = float(self.datlines[i].split()[1])
+            # dos[i,1] = float(self.datlines[i].split()[2])
+            # dos[i,0] = float(self.datlines[i].split()[1])
             if NSPIN >= 2:
                 intdos[i, 0] = float(self.datlines[i].split()[3])
                 intdos[i, 1] = float(self.datlines[i].split()[4])

@@ -1,8 +1,12 @@
+# 
+# 指定した原子の Bader Volume を抜き出す
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
 from sae.common.logger import Logger
 from sae.bader.bcf import ReadBaderBcf
 
+#!/usr/bin/env python
+# coding:utf-8
 "\n指定した原子の Bader Volume を抜き出す\n"
 import optparse
 
@@ -34,6 +38,7 @@ if __name__ == "__main__":
     logger.debug("**************************")
     logger.debug("")
     volumes = []
+    # Bader Volume の調査
     for atom in atom_list:
         logger.debug("=== ReadBaderBcf()")
         bcf = ReadBaderBcf()

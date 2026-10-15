@@ -1,10 +1,32 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.geometry.coordinates import CoordinateTransforms
 from sae.vasp.poscar import ReadVaspPoscar
 from sae.vasp.poscar_writer import PoscarWriter
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VchangeVacuum.py
+#
+#  POSCAR の真空層だけ増やしたり減らしたりする
+#
+#  c軸がa-b面に垂直なケースのみを想定している
+#  *) vacuum の長さをc軸の長さとすればどのようなケースでも一応は動く
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.06.16 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -16,8 +38,24 @@ import os
 import optparse
 
 
+#
+################################################################################
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+################################################################################
+###############################################
+## default parameter
+##
+###############################################
+## optparse
+##
+#print args,options
 def options():
+    # OUTPUT "BASE" filename
     outname = "POSCAR"
+    # INPUT (BASE) filename
     inpname = "POSCAR"
     vacuum = None
     parser = optparse.OptionParser()
@@ -33,6 +71,9 @@ def options():
         vacuum = float(options.vacuum)
     else:
         sys.exit("STOP: plase input vacuum size")
+    #print "script name:",argvs[0]
+    #POSCAR=argv[0]
+    #distance = float(args[0])
     if len(args) > 0:
         inpname = args[0]
     if not os.path.exists(inpname):
@@ -44,6 +85,16 @@ def options():
     return [inpname, outname, vacuum]
 
 
+################################################################################
+# Default & OptionParser
+# Read POSCAR file
+# convert to Cartesian Corrdinate
+# check c-axis
+# shift position
+# makes new translation vector of c-axis
+# conver to original coordinate mode
+# POSCAR の標準出力
+#STD=True
 if __name__ == "__main__":
     inpname, outname, vacuum = options()
     outsuffix = "_v" + str(int(vacuum))

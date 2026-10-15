@@ -1,14 +1,40 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   SAE.write(cell, outname='test.vasp',code='VASP')
+#   SAE.write(cell, outname='test.vasp',code='VASP',STD=False)
 from __future__ import print_function
 from sae.structure.document import Read
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# 統合テスト兼、FDMNES --> VASP 変換
+#
+################################################################################
+# History
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.08.20
+#  startup
+#  既知の問題: 分子系の変換時のunit-cellのスケールがおかしい
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
 __email__ = "kengo.nakada@gmail.com"
 __copyright__ = "Copyright 2014,2015 Kengo NAKADA"
 __license__ = "MIT"
+#
+################################################################################
+#import sys
+#import SpaceGroupEnvironment as SGE
+################################################################################
 if __name__ == "__main__":
     import optparse
 

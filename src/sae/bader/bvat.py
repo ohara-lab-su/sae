@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding:utf-8
 # Copyright Kengo NAKADA; SAE class library.
 """
 Bader Volumeファイル BvAt*.dat の読み込み
@@ -8,6 +10,7 @@ import os
 import sys
 
 
+# self.open(num, BvAt=BvAt, suffix=suffix, sort=sort, atoms_index=atoms_index)
 class ReadBaderBvat(object):
 
     def __init__(
@@ -34,6 +37,8 @@ class ReadBaderBvat(object):
         if logger is None:
             logger = multiprocessing.get_logger()
         self.__logger = logger
+        # POSCAR 情報を違うファイルから読む(例: header 情報をPOSCARから読んで BvAt の Bader Charge を BvAt から)
+        # 通常
         if split_chgcar:
             self.split_open(
                 num,
@@ -48,6 +53,9 @@ class ReadBaderBvat(object):
                 num, BvAt=BvAt, suffix=suffix, sort=sort, atoms_index=atoms_index
             )
 
+    # self.__chgcar = SAE.io.ReadVaspChgcar(CHGCAR=chg_name, suffix=suffix, sort=sort, atoms_index=atoms_index)
+    # Header 部分の取り出し
+    # Footer
     def split_open(
         self,
         num,

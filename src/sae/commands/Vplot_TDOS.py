@@ -1,8 +1,59 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_TDOS.py
+#
+#   拙作シェルスクリプト版 vplot_TDOS* モドキ(小文字 vplot 系)
+#   python(matplot) 版なのでもう少し一般化されているので Vplot (大文字)版へ
+#
+#   1) gnuplot の代わりに matplotlib を用いる
+#   2) Vldos.py などは用いない
+#   3) 内部的には直接 ReadVaspDoscar クラス(ReadVaspDoscar.py)を用いる
+#      そもそも ReadVaspDoscar クラスは matplotlib からの利用を念頭に
+#      構造化している
+#
+#   4) 引数処理(局所状態密度の原子選択や、対称性による軌道選択)などは
+#      別プログラムで、それぞれ対応になるので、ほぼ vplot_LDOS* シリーズと
+#      同じファイル構成になる。
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.10.28
+#   f軌道対応 & キャプション移動オプション
+#
+# 2015.01.29
+#    Y軸(DOS軸) の下限の設定のバグを修正
+#
+# 2015.01.15
+#    portrait モードを追加して、デフォルトを landscape にした
+#    (PDOS と ADOS_portrait はデフォルトは portrait)
+#    (TDOS はデフォルト landscape )
+#
+# 2015.01.14
+#    SPIN 対応,option XMAX,XMIN,YMAX 対応
+#
+# 2015.01.13
+#    とりあえず完成
+#    ReadDoscar & ReadOutcar
+#
+# 2015.01.11 (sun) startup
+#    LDOS10 以上を仮定
+#      全原子のs成分,p成分,d成分をsumしたものを TDOS と一緒にプロット
+#      非スピン版
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,6 +65,28 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+#import os
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.cm as cm
+#import matplotlib.ticker as tic
+#import matplotlib.mlab as mlab
+################################################################################
+# 積分状態密度同時プロットオプション
+# spd-all を 'off' するスイッチ
+# f-all を 'on' にするスイッチ
+# NSPIN=2 のときに、片方のスピンだけを表示するオプション
+# efermi を 0 ではなく efermi 近傍のDOSからVBMを探してそこをEF0 とする
+# efermi を 0 ではなく shift した値を使う
+# legend の right と left の切り替え
+# EF0 のラインを消す
+#   if options.OPT_EMAX:
+#       print options.OPT_EMAX
 def options():
     dname = "DOSCAR"
     oname = "OUTCAR"
@@ -61,6 +134,22 @@ def options():
     ]
 
 
+################################################################################
+# set input file
+# makes instance ( Read DOSCAR )
+#   if os.path.exists(oname) or os.path.exists(oname+'.gz'):
+#       FLAG_outcar = True
+#       outcar = SAE.io.ReadVaspOutcar(oname)
+# set output device
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+############################################################################
+#   for spin in range(NSPIN):
+##########################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         dname,
@@ -110,10 +199,16 @@ if __name__ == "__main__":
         print(EFERMI0, EFERMI)
     if OPT_SHIFT:
         EFERMI = float(OPT_SHIFT)
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 15
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    #       plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+    #       plt.figure(figsize=(8.27, 11.69)) # for portrait
     if PORTRAIT_FLAG:
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
     orgx = 0.13
     orgy = 0.125
@@ -129,13 +224,21 @@ if __name__ == "__main__":
             NSPIN = 1
     else:
         spin_list = [0]
+    # Y軸の調整
+    # EF0
+    ## for BCC-Fe
+    #plt.xlim([-10,10])
+    #plt.ylim([0,2.5])
+    # EF0
     for spin in spin_list:
         if NSPIN == 1:
             sizey = sizey0
         if NSPIN == 2:
             sizey = sizey0 / 2.0
+        # 二段組の上側(y幅半分) up-spin
         if NSPIN == 2 and spin == 0:
             orgy = orgy + sizey
+        # 二段組の下段( down-spin )
         if NSPIN == 2 and spin == 1:
             orgy = orgy - sizey
         plt.axes([orgx, orgy, sizex, sizey])
@@ -176,6 +279,7 @@ if __name__ == "__main__":
         if NSPIN == 2:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0.0])
@@ -185,7 +289,9 @@ if __name__ == "__main__":
     if FLAG_LEFT:
         leg = plt.legend(fontsize=12, loc="upper left")
     else:
+        # 凡例Box
         leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     xmin, xmax, ymin, ymax = plt.axis()
     if PORTRAIT_FLAG:

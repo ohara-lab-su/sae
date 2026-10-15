@@ -1,3 +1,46 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+# *_conv.txt ファイル( pw.x 入力ファイル 読み込み)
+#
+###############################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.07.22
+#  入力ファイル名にsuffixを付けても、つけなくても(別オプションでsuffix指定)
+#  どちらでも動作するように変更。
+#
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
+#
+# 2015.06.30
+#   == Noneo --> is None
+#
+# 2015.05.21 startup
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# import re
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+###############################################################################
+# ラベル等のフォントサイズ
+# レジェンドのフォントサイズ
+# 軸の太さを設定。目盛りは変わらない
+# for portrait
+###############################################################################
+###############################################################################
+#   print name,suffix
+#   plot_fdm_xas(eng,xas)
+#   print "NAME",name
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -6,6 +49,17 @@ import optparse
 import numpy as np
 
 
+###########################################################################
+# allsite のときの複数の *_conv.txt の平均を取る
+# filout = Pd のとき allsite ならばとして結果を出力したとする
+# Pd_1_conv.txt
+# Pd_2_conv.txt
+# Pd_3_conv.txt
+# このとき、average_conv(1,2,3) とすると Pd_1,Pd_2,Pd_3 の self.xas の
+# 平均を self.xas に返す
+#
+# non-spin
+#   def average_conv(self,name,*allsite):
 class ReadFdmConv(object):
 
     def __init__(self, cname, suffix="_conv.txt", weight=None):
@@ -30,6 +84,7 @@ class ReadFdmConv(object):
     def get_xas(self):
         return self.xas
 
+    # print absorber
     def average_conv(self, name, absorber, weight=None):
         from sae.common.text import TextFiles
 

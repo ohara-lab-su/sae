@@ -1,3 +1,58 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# OpenMX3.7
+# *.DFTSCF ファイル 読み込み
+#
+#  ReadMxDatMethod -- ReadMxOut -- ReadMxDftscf
+#                  -- ReadMxDat
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.06.30
+#   == None --> is None
+#
+# 2015.03.13
+#  get_uele()
+#  IONループが途中で終了した時の最後のSCFループの情報を配列に放り込むように変更
+#
+# 2015.03.13
+#  get_uele()
+#    MD内の SCF ループが人少なく表示されるバグを発見＆修正
+#
+# 2015.03.12
+#  get_uele()
+#   IONループが0のとき（一回目のSCFループの時)
+#    結果を途中でも書きだすように修正
+#
+# 2015.03.12
+#   startup
+#
+#   オーバーライトするもの
+#     get_n_ion_loop()
+#     get_uele()
+#
+#   データーが途中で止まっていても MD ループ等の情報を正しく読めるように修正
+#
+################################################################################
+################################################################################
+# import gzip
+# import SpaceGroupEnvironment as SGE
+# sys.path.append('../..')
+################################################################################
+################################################################################
+# デフォルト名より最適なデフォルトファイル名の推定ルーチン
+# *.dat はかならずあるのでそれをトリガーに
+# オプションでファイル名を入力した時
+# 計算途中での DFTSCF ファイル読み込み
+# print "***************** md = ",md+1,'**********************'
+# print " Utot = %15.12f" %(utot[md])
+# 計算途中の最後のSCFループを表示
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.openmx.out import ReadMxOut
@@ -13,6 +68,14 @@ except ImportError:
     ReadMxOut = ReadMxOut
 
 
+###################################
+###################################
+# (終了した)イオンループの数
+#  IONループが終了したあとの Total energy 出力の項目をカウントする
+#  SCFループが途中のIONループはカウントしない
+###################################
+# イオンループ毎のさらにSCFループごとの Uele(bandエネルギー) の抽出
+# 同一 MD=* 番号が現れた時は最後の SCF ループのみを取り出す
 class ReadMxDftscf(ReadMxOut):
 
     def __init__(self, cname):
@@ -20,6 +83,8 @@ class ReadMxDftscf(ReadMxOut):
 
         self.datlines, self.num = TextFiles().read_dataline(cname)
 
+    # print self.n_ion_loop, self.datlines[i]
+    # print "MAX",self.n_ion_loop
     def get_n_ion_loop(self):
         md_text = ".*Total energy.*at MD ="
         md_reg = re.compile(md_text)
@@ -40,14 +105,21 @@ class ReadMxDftscf(ReadMxOut):
         max_n_scf = self.get_max_n_scf()
         self.uele = np.zeros((n_ion_loop + 1, max_n_scf))
         self.uele_index = np.zeros(n_ion_loop + 1, dtype=int)
+        # MD ループが一度も終了したことがないときの処理
         if not n_ion_loop == 0:
             i = 0
             md = 0
+            # MD= 行を見つけたらスタート
             while 1:
+                # md = int(re.sub(md_start_txt,'',self.datlines[i])) - 1
+                # SCF行が始まるまでジャンプ
+                # SCF 行がある間だけ読み込み
+                # print ''
                 if bool(md_start_reg.match(self.datlines[i])):
                     while not bool(scf_reg.match(self.datlines[i])):
                         i += 1
                     scf = 0
+                    # print " %d %d %15.12f" %( md,scf,uele0 )
                     while bool(scf_reg.match(self.datlines[i])):
                         uele0 = float(re.sub(scf_reg, "", self.datlines[i]))
                         self.uele[md, scf] = uele0
@@ -57,12 +129,14 @@ class ReadMxDftscf(ReadMxOut):
                     self.uele_index[md] = scf
                     md += 1
                 i += 1
+                # 最後のMDループで SCF が終了してない途中のSCF情報
                 if md == n_ion_loop:
                     while 1:
                         if bool(md_start_reg.match(self.datlines[i])):
                             while not bool(scf_reg.match(self.datlines[i])):
                                 i += 1
                             scf = 0
+                            # print " %d %d %15.12f" %( md,scf,uele0 )
                             while bool(scf_reg.match(self.datlines[i])):
                                 uele0 = float(re.sub(scf_reg, "", self.datlines[i]))
                                 self.uele[md, scf] = uele0

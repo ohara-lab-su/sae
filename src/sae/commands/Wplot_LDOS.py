@@ -1,10 +1,52 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#############################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.output0 import ReadWienOutput0
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Wplo_LDOS.py
+#
+#   MXplot_LDOS.py (2015.03.25) ベースで作成
+#
+#   using ReadWeinDos, ReadWeinOutput0
+#   基本動作は Wldos.py (2015.03.25) ベースで作成
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.21
+#  ケアレスミス（オービタルを呼び出す名前を間違っていた),ただしかなり重要なミス
+#
+# 2015.03.27
+#  unit の表示
+#
+# 2015.03.27
+#  total-DOS がないときの処理と原子毎のtotal の処理
+#
+# 2015.03.26
+#  軌道成分の存在確認＆出力の有無の自動判別を追加
+#
+# 2015.03.26
+#  get_ldos_ion() にて読んでいる case.output0 は並列計算すると
+#  output0000 になるので注意、修正した
+#
+# 2015.03.26
+#  暫定版
+#
+# 2015.03.25
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +61,15 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     unit = "ev"
@@ -57,6 +108,28 @@ def options():
     ]
 
 
+################################################################################
+############################################
+# set input file
+# ION の種類(サイトの種類)で番号を入力
+############################################
+# case.dos ファイルを抽出
+############################################
+# unit の書き直し
+############################################
+# check SPIN
+############################################
+# check NION
+############################################
+# SPIN 有りの時に list のスピン毎の作り直し
+############################################################################
+# matplotlib
+#plt.rcParams['font.family'] = 'Times New Roman'
+#################################
+# for spin-loop
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     (
         case,
@@ -121,9 +194,17 @@ if __name__ == "__main__":
             dn.append(re.sub("up", "", re.sub("dn", "", i)) + "dn")
         up_lists = list(set(up))
         dn_lists = list(set(dn))
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 10
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    ############################
+    # makes instance
+    #plot_ions = dos.get_plot_ions()
+    ########################################################
+    # EF0
     for spin in range(nspin):
         if FLAG_SPIN and spin == 0:
             lists = up_lists
@@ -138,15 +219,29 @@ if __name__ == "__main__":
         eng = dos.get_eng()
         title = case
         if nspin == 1:
+            # 一段組の原点(x,y), 幅(x,y)
             plt.axes([0.13, 0.13, 0.8, 0.8])
             plt.title(title)
         if nspin == 2:
             if spin == 0:
+                # 二段組の上側(y幅半分) up-spin
                 plt.axes([0.13, 0.53, 0.8, 0.4])
                 plt.title(title)
             if spin == 1:
+                # 二段組の下段( down-spin )
                 plt.axes([0.13, 0.13, 0.8, 0.4])
+        # カラーの自動調節用
         j = 0
+        ############################################
+        # ION のラベル
+        ############################################
+        # X軸
+        ############################################
+        # Y軸チェック&プロット
+        #     autumn, bone, cool, copper, flag, gray, hot, hsv,
+        #     jet, pink, prism, spring, summer, winter, spectral
+        ############################################
+        # Y軸の調整
         for ion in plot_ions:
             if len(plot_ions) > 1:
                 if ion == 0:
@@ -224,6 +319,7 @@ if __name__ == "__main__":
         if nspin == 2:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0])
@@ -235,7 +331,9 @@ if __name__ == "__main__":
         plt.xlabel("$E -  E_{\\mathrm{F}}$ [" + unit + "]", fontsize=20)
     else:
         plt.xlabel("$E$ [" + unit + "]", fontsize=20)
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     plt.savefig("LDOS.eps")
     plt.savefig("LDOS.pdf")

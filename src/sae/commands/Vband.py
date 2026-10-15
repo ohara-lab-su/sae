@@ -1,8 +1,27 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.eigenval import ReadVaspEigenval
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vband.py
+#
+#  calss ReadEigenval を用いた Vband.pl の同等品
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.01.27 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -13,6 +32,15 @@ import sys
 import optparse
 
 
+#
+################################################################################
+# import os
+# import gzip
+# import numpy as np
+# import re
+# from copy import deepcopy
+# import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "EIGENVAL"
     out1 = "band1.dat"
@@ -27,6 +55,7 @@ def options():
     return [name, out1, out2]
 
 
+################################################################################
 if __name__ == "__main__":
     name, out1, out2 = options()
     band = ReadVaspEigenval(name)

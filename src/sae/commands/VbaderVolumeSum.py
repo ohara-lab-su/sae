@@ -1,9 +1,15 @@
+# 
+# 指定した原子の Bader Volume を抜き出して、足し合わせる
+# 原子は複数指定可能で、足し合わせる。
+# つまり「原子種」ごとなどの好きなグループ毎に Bader Volume を出せる
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
 from sae.common.logger import Logger
 from sae.bader.volume_operations import UtilBader
 from sae.bader.volume_writer import WriteBaderVolume
 
+#!/usr/bin/env python
+# coding:utf-8
 "\n指定した原子の Bader Volume を抜き出して、足し合わせる\n原子は複数指定可能で、足し合わせる。\nつまり「原子種」ごとなどの好きなグループ毎に Bader Volume を出せる\n"
 import optparse
 
@@ -21,6 +27,8 @@ def options():
     return [ret, options.outname]
 
 
+# 引数は string なので int に直す
+# Bader Volume の書き出し
 if __name__ == "__main__":
     logger = Logger(loglevel="debug")
     op = options()

@@ -1,11 +1,29 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print "NAME",name
 from __future__ import print_function
 from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.inp import ReadFdmInp
 from sae.fdmnes.sd import ReadFdmSd
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDplot_LDOS.py ベース (2015.11.30)
+#
+#  valence band に色を付ける
+#   (core からのジャンプの絵を描く時用、使い捨てスクリプト)
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +37,21 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import gzip
+#import re
+#import numpy as np
+#import SpaceGroupEnvironment as SGE
+################################################################################
+# name: conv, txt, sd ファイル名指定を一括する
+# output: output するファイル名を指定する
+# broad: XAS without broad を描く
+# xas: XAS with broad を描く
+# total: total-DOS を描く
+# fermi: EF --> 0
+# 逆のスイッチ: pdf のみ出力を disable にする (デフォルトは pdf のみ出力)
+########## default inpname 取得
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -31,20 +64,31 @@ def options():
     parser.add_option("--filbav", "--bavname", dest="bavname")
     parser.add_option("--name")
     parser.add_option("--output", "--head", dest="output")
+    # DOS のサイト指定 ( _sd*.txt )
     parser.add_option("-a", "--atom")
     parser.add_option("--emax")
     parser.add_option("--emin")
+    # XAS の ymax
     parser.add_option("--ymax")
+    # DOS の ymax共通
     parser.add_option("--dmax")
+    # DOS-s max
     parser.add_option("--dmax_s")
+    # DOS-p max
     parser.add_option("--dmax_p")
+    # DOS-d max
     parser.add_option("--dmax_d")
+    # DOS-f max
     parser.add_option("--dmax_f")
     parser.add_option("--label")
     parser.add_option("--outsuffix")
+    # for XAS (xasとtxt weightの同時設定)
     parser.add_option("--weight")
+    # for XAS with convolution
     parser.add_option("--xasweight")
+    # for XAS without convolution
     parser.add_option("--txtweight")
+    # for LDOS
     parser.add_option("--dosweight")
     parser.add_option("-b", "--broad", action="store_true", default=False)
     parser.add_option("-x", "--xas", action="store_true", default=False)
@@ -120,6 +164,31 @@ def options():
     ]
 
 
+################################################################################
+###########################################################################
+#   ysize0 = 0.83
+###########################################################################
+###########################################################################
+#   bav = SAE.io.ReadFdmBav(name0)
+#   sd0 = SAE.io.ReadFdmSd(sdname, '_sd0.txt')
+###########################################################################
+# 選択した atom の最大の lmax を取得して表示する軌道をチョイス
+# automatic
+# optional
+# spin の有無と spin の描画モードでの多段組の数よびスピンリストの変更
+# オービタルの数にあわせた多段組の調整
+# XANES プロットを追加するときはさらに調整
+###########################################################################
+################################################ convert Energy
+# PhotoEnegy モードで計算した時と同じ結果を返す
+# E_fermi を引く(A) : A=B
+# E_fermi を引く(B) : A=B
+######################################### plot XAS ( with broadning )
+######################################### plot Total DOS / atom
+#
+######################################### plot LDOS / atom
+#
+#########################################
 if __name__ == "__main__":
     (
         outputname,
@@ -162,9 +231,13 @@ if __name__ == "__main__":
         FLAG_NW,
     ) = options()
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 15
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 10
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.17
     orgy = 0.08
@@ -326,6 +399,10 @@ if __name__ == "__main__":
         print("EMIN = ", emin)
     num = 0
     XTICKS_FLAG = False
+    # makes label & color
+    # !!!!! plot XAS !!!!!!
+    # !!!!! plot XAS ( non broad ) !!!!!!
+    # label & xticks
     if FLAG_XAS:
         plt.axes([orgx, orgy, xsize, ysize])
         xas = conv.get_xas()
@@ -365,6 +442,12 @@ if __name__ == "__main__":
     eng = sd.get_eng() + eng_off
     if FLAG_TOTAL:
         num += 1
+        # makes xticks
+        # makes color
+        # !!!!! plot TDOS !!!!!!
+        # down spin 反転
+        # !!!!! plot INT TDOS !!!!!!
+        # INTDOS: down spin 反転
         for spin in spin_list:
             plt.axes([orgx, orgy, xsize, ysize])
             tdos = sd.get_tdos(spin=spin)
@@ -406,6 +489,13 @@ if __name__ == "__main__":
     orb = 0
     for orbit in orbit_list:
         num += 1
+        # makes xticks
+        # makes label & color
+        # !!!!! plot LDOS !!!!!!
+        #plt.plot(eng, ldos, linewidth=2, color=color, label=label)
+        # DOS: down spin 反転
+        # !!!!! plot INT LDOS !!!!!!
+        # INTDOS: down spin 反転
         for spin in spin_list:
             plt.axes([orgx, orgy, xsize, ysize])
             ldos = sd.get_ldos(l=orbit, spin=spin)

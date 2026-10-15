@@ -1,11 +1,31 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print "NAME",name
 from __future__ import print_function
 from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.inp import ReadFdmInp
 from sae.fdmnes.sd import ReadFdmSd
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+#   特定原子の PDOS 多段組(FDplot_PDOS.py) をベースとした特化型スクリプト
+#   複数のデータを読み込んで平均化して DOS と XAS をプロット
+#   その都度編集せよ
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.09.09
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,6 +37,15 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+# import sys
+# import gzip
+# import os
+# import re
+# import numpy as np
+# import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     parser = optparse.OptionParser()
     parser.add_option("-a", "--atom")
@@ -31,6 +60,7 @@ def options():
     parser.add_option("--fermi", action="store_true", default=False)
     parser.add_option("--sp", action="store_true", default=False)
     parser.add_option("--spd", action="store_true", default=False)
+    # for LDOS
     parser.add_option("--dosweight")
     parser.add_option("--nw", action="store_true", default=False)
     options, args = parser.parse_args()
@@ -52,6 +82,19 @@ def options():
     ]
 
 
+################################################################################
+###########################################################################
+###########################################################################
+# for default
+# for hexagonal (s-orbital and p-orbital MODE)
+###########################################################################
+############################################ convert Energy (set eng_off)
+# PhotoEnegy モードで計算した時と同じ結果を返す
+# E_fermi を引く(A) : A=B
+# E_fermi を引く(B) : A=B
+######################################### plot XAS
+######################################### plot LDOS
+#   plt.ylabel("Absorption [arb. unit]")
 if __name__ == "__main__":
     (
         atom,
@@ -83,14 +126,19 @@ if __name__ == "__main__":
         print("ATOM=", atom)
     if not atom:
         atom = 0
+    #       WEDOS = 1.0
     if WEDOS:
         print("DOS Weight =", WEDOS)
     else:
         WEDOS = None
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 15
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 10
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.4
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.17
     orgy = 0.08
@@ -161,6 +209,9 @@ if __name__ == "__main__":
         eng_off - txt.E_Fermi - txt.E_edge
     EF0 = txt.E_edge + txt.E_Fermi
     num = 0
+    ##### average
+    #####
+    #       plt.xlabel("Energy above Fermi [eV]")
     if FLAG_XAS:
         plt.axes([orgx, orgy, xsize, ysize])
         xas = conv_xas_av
@@ -178,6 +229,8 @@ if __name__ == "__main__":
             plt.xlim(xmin=float(OPT_EMIN))
         if OPT_YMAX:
             plt.ylim(ymax=float(OPT_YMAX))
+        ##### average
+        #####
         if FLAG_BROAD:
             dos_p = txt_xas_av
             eng_p = txt.eng + eng_off
@@ -201,6 +254,8 @@ if __name__ == "__main__":
         plt.axes([orgx, orgy, xsize, ysize])
         lm_list = block_list[blk]
         dmax0 = 0.0
+        ####### average
+        #############
         for orbit in lm_list:
             dos_1 = sd_1.get_pdos(lm=orbit, spin=spin)
             dos_2 = sd_2.get_pdos(lm=orbit, spin=spin)
@@ -233,6 +288,7 @@ if __name__ == "__main__":
                 plt.xlim(xmin=float(OPT_EMIN))
             xmin0, xmax0, ymin0, ymax0 = plt.axis()
             print(orbit, ": ymax =", dmax0, ymax0)
+            #               plt.xlabel("Energy above Fermi [eV]")
             if XTICKS_FLAG and (not FLAG_XAS):
                 plt.xlabel("Photon Energy [eV]")
                 XTICKS_FLAG = False

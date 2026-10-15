@@ -1,3 +1,37 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+#  XDATCAR を読み込んで MD形式(xyz)形式に変換する
+#  座標のみ出力 class
+#
+# 注意)
+#       そもそも VASP4 と VASP5 で XDATCAR の形式がかなり異なる
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.01.28
+#  title の取得における末尾までの空白削除を追加
+#
+# 2015.01.22
+#   暫定的に完成(xyzのアウトプット実装)
+#
+# 2015.01.21 startup
+#
+################################################################################
+################################################################################
+# import optparse
+# import xml.etree.ElementTree as ET
+# import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+# from copy import deepcopy
+################################################################################
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +41,21 @@ import re
 import numpy as np
 
 
+# Loop の数
+# 基本並進ベクトル
+# そもそも XDATCAR には Selective の情報は書かれない
+# ので Selectiev 探しは意味が無い
+# VASP5 の XDATCAR ではどうもすべて Direct っぽい
+# 指定したループの xyz を書き出す
+# loop 数は 0 からスタート
 class ReadVaspXdat(object):
 
+    ###############################################
+    # Open POSCAR file
+    ###############################################
+    ## get VASP version, atoms and index
+    ###############################################
+    ## get number of atoms
     def __init__(self, name):
         self.num_reg = re.compile("^[+-]?(\\d*\\.\\d+|\\d+\\.?\\d*)([eE][+-]?\\d+|)\\Z")
         self.selective_reg = re.compile("^S.*", re.IGNORECASE)
@@ -140,6 +187,8 @@ class ReadVaspXdat(object):
             print("%s" % str(tmp[0]))
             sys.exit("STOP: Format Error")
         else:
+            # print "selective True"
+            # print "selective False"
             if bool(self.selective_reg.match(tmp[0])):
                 i += 1
                 tmp = self.datlines[i].split()
@@ -149,8 +198,10 @@ class ReadVaspXdat(object):
             if bool(self.num_reg.match(tmp[0])):
                 print("%s" % str(tmp[0]))
                 sys.exit("STOP: Format Error")
+            # print "Direct Mode"
             if bool(self.direct_reg.match(tmp[0])):
                 self.direct = True
+            # print "Cartesian Mode"
             elif bool(self.car_reg.match(tmp[0])):
                 self.direct = False
         return self.direct

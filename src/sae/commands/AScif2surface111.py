@@ -9,6 +9,37 @@ from ase.io.vasp import *
 from ase.io.xyz import *
 from ase.lattice.surface import *
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#  read POSCAR  using ASE
+#
+#  一般化していない（する必要も無い)
+#  (111)面作成 サンプル
+#
+# surface(lattice, indices, layers, vacuum=0.0, )
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+################################################################################
+################################################################################
+#import re
+#import optparse
+#import numpy as np
+################################ ASE
+#from ase.lattice import bulk
+#from ase.dft.kpoints import ibz_points, get_bandpath
+###############################
+#from gpaw import GPAW, PW, FermiDirac, setup_paths
+#from gpaw import GPAW, PW
+#setup_paths.insert(0,'.')
+################################################################################
+#
+#
 if __name__ == "__main__":
     cifname = "case.cif"
     if not os.path.exists(cifname):

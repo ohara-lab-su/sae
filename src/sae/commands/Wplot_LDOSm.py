@@ -1,10 +1,48 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+# atom END
+################################################
+################################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.output0 import ReadWienOutput0
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Wplo_LDOSm.py
+#
+#   Wplot_LDOS.py の multi window 版(軌道成分ごとに別の box で描画する)
+#   (vplot_LDOS に一番近い描画形式)
+#
+#   指定した原子番号 or 元素記号(サイトごとの記号) で記述
+#
+#   引数形式で記述とした時に複数の番号を記述した時のその和を記述する
+#
+#   -a が 原子番号記述のオプションとなっているのに注意
+#   (Wplot_LDOS.py だと 原子サイトごとの total の表示オプションスイッチ)
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.04.22
+#  暫定版(実用版)を一応リリース
+#
+# 2015.04.21
+#  simple versoin
+#  non-spin 版としてやり直し
+#
+# 2015.03.27
+#  startup
+#   --> 途中で放し、未完のまま放置
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +57,15 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     atom = 1
@@ -62,6 +109,27 @@ def options():
     ]
 
 
+################################################################################
+############################################
+# set input file
+############################################
+# プロットする軌道のリスト
+############################################
+# オプションの確認
+############################################
+# case.dos ファイルを抽出
+############################################
+# unit の書き直し
+############################################
+# check SPIN
+############################################
+# SPIN 有りの時に list のスピン毎の作り直し
+############################################################################
+# matplotlib
+############################################
+############################################
+# X軸
+################################################
 if __name__ == "__main__":
     (
         case,
@@ -152,10 +220,20 @@ if __name__ == "__main__":
     else:
         a1 = int(atom)
         a2 = int(atom) + 1
+    ############################################
+    # setting figure
+    ############################################
+    # multi-plot
+    # END multi-plot
+    ############################################
     for atom in range(a1, a2):
+        # ラベル等のフォントサイズ
         plt.rcParams["font.size"] = 18
+        # レジェンドのフォントサイズ
         plt.rcParams["legend.fontsize"] = 10
+        # 軸の太さを設定。目盛りは変わらない
         plt.rcParams["axes.linewidth"] = 1.5
+        # for portrait
         plt.figure(figsize=(7.0, 9.89))
         orgx = 0.15
         orgy = 0.08
@@ -167,6 +245,12 @@ if __name__ == "__main__":
         j = 0
         for orbit in orbit_list:
             print("ORBIT: ", orbit)
+            ############################################
+            # EF0
+            ############################################
+            # Y軸の調整
+            ############################################
+            # Label 処理
             if dos.chk_raw_dos(atom=atom, orbit=orbit):
                 plt.axes([orgx, orgy, xsize, ysize])
                 ldos = dos.get_raw_dos(atom=atom, orbit=orbit)
@@ -184,7 +268,9 @@ if __name__ == "__main__":
                     plt.xlim(xmin=int(OPT_EMIN))
                 if OPT_YMAX:
                     plt.ylim(ymax=int(OPT_YMAX))
+                # 凡例Box
                 leg = plt.legend(fontsize=12)
+                # Alphaチャンネル(半透明化)
                 leg.get_frame().set_alpha(0.5)
                 if j != 0:
                     plt.xticks([])

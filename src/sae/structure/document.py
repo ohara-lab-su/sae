@@ -1,11 +1,63 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# 統合テスト
+#  入力系(ファイル読み込み系)クラスをラップするボス
+#
+###############################################################################
+# History
+#
+# 2018.08.15
+#  python2/3 共通化テスト
+#
+# 2015.08.18
+#  startup
+#
+###############################################################################
+###############################################################################
+# import re
+# import gzip
+# import numpy as np
+# import SpaceGroupEnvironment as SGE
+# try:
+#     # sys.path.append('../..')
+#     sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+#     import StructureAnalysisEnvironment as SAE
+# except ImportError:
+#     import StructureAnalysisEnvironment as SAE
+###############################################################################
+# RMC_POT や VASP4 などでは atoms_index 情報が存在しないので自分で
+# その情報を手動で入力するときに atoms_index=['In','Ga','Zn','O'] などとする
+#
+###############################################################################
+# for TEST
+#   for i in range(natom):
+#       print i, atoms_index_j[i]
+#   ###########################################################################
+# for VASP5
+###########################################################################
+#   print ion
+#   print ion_local
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
 import os
 
 
+###########################################################################
+###########################################################################
 class Read(object):
 
+    # module_name = 'StructureAnalysisEnvironment'
+    # for Default
+    # class_name = 'ReadVaspPoscar'
+    # for debug
+    # module の動的ロード
+    # class の動的ロード
+    # self.cell = SAE.ReadVaspPoscar(suffix=suffix, atoms_index=atoms_index)
+    # どのような計算コードでもおそらく出力される(ダミー可能な)構造情報
     def __init__(
         self, filename=None, suffix=None, code="VASP", sort=False, atoms_index=None
     ):
@@ -52,6 +104,8 @@ class Read(object):
             if filename is None:
                 filename = "sets.in"
         print("class name = %s" % str(class_name))
+        # for Python3
+        # このリフレクションは python2 方式なので注意
         try:
             module = __import__(module_name, fromlist=[class_name])
         except:

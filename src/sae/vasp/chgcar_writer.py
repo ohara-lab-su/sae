@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding:utf-8
 # Copyright Kengo NAKADA; SAE class library.
 import multiprocessing
 import sys
@@ -105,6 +107,16 @@ class WriteVaspChgcar(object):
             outname=outname,
         )
 
+    # else:
+    #     out = sys.stdout
+    # 元のPOSCAR情報を取得
+    # ion = self.get_ion()
+    # ion_local = self.get_ion_local()
+    # atoms_index_j = self.get_atoms_index_j()
+    # POSCAR 相当情報の書き込み
+    #
+    # print("write VASP style (new) CHGCAR files: plase wait...", file=sys.stdout)
+    # WRITE CHGCAR/ELFCAR DATA
     def print_chgcar(
         self,
         chgdata=None,
@@ -204,6 +216,7 @@ class WriteVaspChgcar(object):
         inner_counter = 0
         for nx in range(0, ngx_max):
             for ny in range(0, ngy_max):
+                # if inner_counter >= 10:
                 for nz in range(0, ngz_max):
                     inner_counter += 1
                     try:
@@ -213,12 +226,14 @@ class WriteVaspChgcar(object):
                                 file=out,
                                 end="",
                             )
+                        # print("%11.5f " % self.__chgdata[nx, ny, nz], end="")
                         elif 0.001 <= chgdata[nx, ny, nz] < 10:
                             print(
                                 "{:<12.5f}".format(chgdata[nx, ny, nz]),
                                 file=out,
                                 end="",
                             )
+                        # print("%12.5e " % self.__chgdata[nx, ny, nz], end="")
                         elif chgdata[nx, ny, nz] >= 10.0:
                             print(
                                 "{:<12.5e}".format(chgdata[nx, ny, nz]),

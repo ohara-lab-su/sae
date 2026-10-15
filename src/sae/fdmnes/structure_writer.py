@@ -1,3 +1,86 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# VASP to FDMNES crystal 情報のルーチン
+# FDMNES の構造書き出しルーチン
+#
+# using ASE version
+#
+# (注意)
+#  1) ASE のmodule を呼び出している
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2015.05.18 startup
+#
+################################################################################
+################################################################################
+#
+# from ase.io.xyz import *
+# using cellconst
+# import os
+# import optparse
+# import numpy as np
+################################################################################
+## 独自実装版
+##
+################################################################################
+## ASE 依存版 & atoms は ASEの構造
+##
+################################################################################
+## ASE 依存版 & atoms(cell) は SAE の構造
+##  ただし、conv_cellparam 内でまだASEを用いているので一部ASE依存
+##
+##  self.atoms_number_j
+##  self.atoms_index_j
+##  self.position
+##
+##  セルパラメータゲット: conv_cellparam*(cell)
+##
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# VASP to FDMNES crystal 情報 関係の出力ルーチン
+#
+# using ASE version
+#
+# (注意)
+#  1) ASE のmodule を呼び出している
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2015.05.18 startup
+#
+################################################################################
+################################################################################
+#
+# from ase.io.xyz import *
+# from ase.io.wien2k import *  ## using cellconst
+# from ase import Atoms
+# import os
+# import optparse
+################################################################################
+## 独自実装版
+##
+################################################################################
+## ASE 依存版 & atoms が ASE の構造を持つ
+##
+################################################################################
+## ASE 依存版 & atoms が SAE の構造を持つ
+##  ただし、conv_cellparam  内でまだASEを用いているので一部ASE依存版
+##
+##  self.atoms_number_j
+##  self.atoms_index_j
+##  self.position
+##
+##  セルパラメータゲット: conv_cellparam*(cell)
+##
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from ase.io.wien2k import *
@@ -23,6 +106,8 @@ class FdmnesStructureWriter:
                 out.close()
                 sys.exit("STOP:" + outname + ".fdmnes file can't open")
         a, b, c, alpha, beta, gamma, nat = CoordinateTransforms().conv_cellparam0(atoms)
+        #   atoms = atoms2.copy()
+        # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
         if MOL:
             print(" molecule", file=out)
         else:
@@ -31,6 +116,7 @@ class FdmnesStructureWriter:
             "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
             file=out,
         )
+        # pos = atoms.get_positions()[ii]
         for ii in range(nat):
             zzn = atoms.get_atomic_numbers()[ii]
             pos = atoms.get_scaled_positions()[ii]
@@ -54,6 +140,7 @@ class FdmnesStructureWriter:
                 out.close()
                 sys.exit("STOP:" + outname + ".fdmnes file can't open")
         a, b, c, alpha, beta, gamma, nat = CoordinateTransforms().conv_cellparam1(cell)
+        # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
         if MOL:
             print(" molecule", file=out)
         else:
@@ -85,6 +172,8 @@ class FdmnesStructureWriter:
             out.close()
             sys.exit("STOP:" + outname + ".fdmnes file can't open")
         a, b, c, alpha, beta, gamma, nat = CoordinateTransforms().conv_cellparam0(atoms)
+        # 基本並進系のセル情報をコンベンショナル系に変換(atomsはASEの構造)
+        #   atoms = atoms2.copy()
         print("! FDMNES indata file", file=out)
         print("", file=out)
         print("!Nonexc", file=out)
@@ -162,6 +251,7 @@ class FdmnesStructureWriter:
             "      %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f" % (a, b, c, alpha, beta, gamma),
             file=out,
         )
+        # pos = atoms.get_positions()[ii]
         for ii in range(nat):
             zzn = atoms.get_atomic_numbers()[ii]
             pos = atoms.get_scaled_positions()[ii]
@@ -190,6 +280,8 @@ class FdmnesStructureWriter:
             out.close()
             sys.exit("STOP:" + outname + ".fdmnes file can't open")
         a, b, c, alpha, beta, gamma, nat = CoordinateTransforms().conv_cellparam1(cell)
+        # 基本並進系のセル情報をコンベンショナル系に変換(cellはASEの構造)
+        #   atoms = atoms2.copy()
         print("! FDMNES indata file", file=out)
         print("", file=out)
         print("!Nonexc", file=out)

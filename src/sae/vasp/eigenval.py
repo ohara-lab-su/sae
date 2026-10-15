@@ -1,3 +1,34 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# VASP
+# ReadEigenval.py
+#
+#  EIGENVAL 読み込みクラス (Vband.pl を参考)
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応暫定
+#
+# 2015.01.28
+#  title の取得における末尾までの空白削除を追加
+#
+# 2015.01.27 startup
+#
+################################################################################
+################################################################################
+# from copy import deepcopy
+################################################################################
+################################################################################
+#   print "NATOM  = ",NATOM
+#   print "TITLE  = ",TITLE
+#   print "NKPTS  = ",NKPTS
+#   print "NBANDS = ",NBANDS
+#   print "NSPIN  = ",NSPIN
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,6 +38,14 @@ import gzip
 import numpy as np
 
 
+# DOSCAR & EIGENVAL 共通フォーマット(0-4)
+# DOSCAR & EIGENVAL 共通フォーマット(0-4)
+# NKPTS
+# NBANDS
+# ISPIN を類推
+# EIGENVAL,固有値の情報 をゲット
+# EIGENVAL,K点の情報 をゲット
+# 全バンドの中から固有値の最大と最小を探す(アホルーチン)
 class ReadVaspEigenval(object):
 
     def __init__(self, name):
@@ -29,12 +68,16 @@ class ReadVaspEigenval(object):
             tmp.close()
         self.datlines = datfile.split("\n")
 
+    # VASP 的には NSIONS に相当
     def get_natom(self):
+        # NATOM
         tmp = self.datlines[0].split()
         self.N_ATOM = int(tmp[0])
         return self.N_ATOM
 
+    # VASP 的には SYSTEM に相当かと
     def get_title(self):
+        # SYSTEM
         src = str(self.datlines[4])
         self.SYSTEM = re.sub(" *$", "", src)
         return self.SYSTEM
@@ -63,6 +106,11 @@ class ReadVaspEigenval(object):
         NKPTS = self.get_nkpts()
         i = 6
         self.eigenval = np.zeros((NBANDS, NKPTS, NSPIN))
+        #           tmp = self.datlines[i].split()
+        #           kx = float(tmp[0])
+        #           ky = float(tmp[1])
+        #           kz = float(tmp[2])
+        #           w  = float(tmp[3])
         for k in range(NKPTS):
             i += 1
             i += 1

@@ -3,6 +3,33 @@
 from __future__ import print_function
 from sae.structure.document import Read
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# convert from RMC_POT cfg file to VASP POSCAR file
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.07.16
+#    関数版を駆逐(class版を使う)
+#
+# 2014.10.31
+#    関数化 & ライブラリ分離
+#
+# 2014.10.08
+#    Rvasp2cfg.py に仕様を合わせる
+#    --> オプション関係を追加
+#
+# 2014.10.01
+#    1st version
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -14,7 +41,20 @@ import os
 import optparse
 
 
+#
+################################################################################
+# import numpy as np
+# try:
+#    sys.path.append('../../')
+#    import StructureAnalysisEnvironment as SAE
+# except ImportError:
+#    import StructureAnalysisEnvironment as SAE
+# import SpaceGroupEnvironment as SGE
+################################################################################
+# if not os.path.exists(cname + ".cfg"):
+#     sys.exit(cname + ".cfg file not found")
 def options():
+    # INPUT BASE filename
     cname = "igzo"
     parser = optparse.OptionParser()
     parser.add_option("-i", "--input", dest="INPUT")
@@ -31,10 +71,19 @@ def options():
     return (cname, options.atoms_index)
 
 
+################################################################################
+#
+# Usage:
+#  Rcfg2vasp.py <name> --atoms_index=A,B,C,Da
+#
+# atoms_index = ['In', 'Ga', 'Zn', 'O']
+# atoms_index0 = 'V,O'
 if __name__ == "__main__":
     "\n    usage:\n    V と O 原子の時\n    LVOF.cfg ファイルに対するアプローチとしては\n       ./Rcfg2vasp.py --atoms_index=V,O LVOF.cfg\n"
     cname, atoms_index0 = options()
     atoms_index = []
+    # 原子の種類指定がない時
+    # cfg からの変換だとatoms_index を使わないので関係ない
     if atoms_index0 == None:
         pass
     else:

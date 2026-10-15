@@ -1,8 +1,28 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.wien2k.xspec import ReadWienXspec
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# XAS.py  (Wplot_XAS.py ベース)
+#
+#  小回りがきくようにシンプル化(使用には書き換えが前提)
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.30
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +35,9 @@ import optparse
 import matplotlib.pyplot as plt
 
 
+#
+################################################################################
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     parser = optparse.OptionParser(os.getcwd())
@@ -28,6 +51,23 @@ def options():
     return [name, options.EMAX, options.EMIN, options.YMAX]
 
 
+################################################################################
+############################################
+# set input file
+############################################################################
+# matplotlib
+############################################################################
+#orgx = 0.130
+#orgy = 0.100
+############################################################################
+# XAS ( *.xspec and *.txspec )
+#orgy = orgy + ysize + off + off + off
+# broad (XAS)
+# broad (XAS hole)
+#plt.xlabel("")
+#   leg = plt.legend(fontsize=12,loc='upper left')
+#   leg.get_frame().set_alpha(0.5)
+############################################################################
 if __name__ == "__main__":
     case, OPT_EMAX, OPT_EMIN, OPT_YMAX = options()
     if OPT_EMAX:
@@ -40,9 +80,13 @@ if __name__ == "__main__":
         print("Ymax=", OPT_YMAX)
         OPT_YMAX = float(OPT_YMAX)
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.15
     orgy = 0.08
@@ -50,6 +94,7 @@ if __name__ == "__main__":
     xsize = 0.75
     ysize = 0.83 / 3.5
     ysize0 = 0.83 / 4
+    # 原点位置を自動調整
     plt.axes([orgx, orgy, xsize, ysize])
     xspec1 = ReadWienXspec(case="111")
     eng = xspec1.get_eng()

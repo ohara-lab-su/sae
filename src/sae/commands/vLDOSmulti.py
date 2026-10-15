@@ -1,8 +1,32 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.vasp.doscar import ReadVaspDoscar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# vLDOSmulti.py
+#
+# Vplot_LDOSm.py (2015.04.22 ベース)
+# 超 Simple 化 nonmag版
+# ---> subplot 版
+#
+# Mac OS X 上で Vldos.py と名前の重複注意
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.06.15
+#    startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,6 +39,16 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import sys
+#import os
+#import gzip
+#import re
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     parser = optparse.OptionParser()
     parser.add_option("--emax", dest="EMAX")
@@ -23,11 +57,20 @@ def options():
     return (options.EMAX, options.EMIN)
 
 
+################################################################################
+#####################################################
+#####################################################
+#####################################################
+# multiplot 設定
+#####################################################
+################################################## 一段目
+################################################## 二段目
 if __name__ == "__main__":
     OPT_EMAX, OPT_EMIN = options()
     plt.rcParams["font.size"] = 16
     plt.rcParams["legend.fontsize"] = 12
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     fig = plt.figure(figsize=(7.0, 9.89))
     f1 = fig.add_subplot(211)
     f2 = fig.add_subplot(212, sharex=f1)

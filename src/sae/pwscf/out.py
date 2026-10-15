@@ -1,3 +1,44 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# PWScf (Quantum ESPRESSO 5..x )
+# scf.out ファイル( pw.x 出力ファイル 読み込み)
+#
+# 1) pw.x 出力ファイル名の第一候補を scf.out とする
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.05.13
+#  position_loop の配列構造を修正(ReadMd.py, ReadVapsrun.py 互換)
+#  force_loop の配列構造を修正
+#
+# 2015.05.13
+#  force 対応
+#
+# 2015.05.08 startup
+#
+################################################################################
+################################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+################################################################################
+#   print "FORCE"
+#   force_loop = out.get_force_loop()
+#   for j in range(out.get_n_ion_loop()):
+#       print ""
+#       print force_loop[j,:,:]
+#   print "ENERGY"
+#   toten_ion = out.get_toten_ion()
+#   for i in range(out.get_n_ion_loop()):
+#       print toten_ion[i]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +48,34 @@ import optparse
 import numpy as np
 
 
+#############################################################################
+# atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+# atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+#############################################################################
+# 注意)
+# atoms_index の順番でcoordinateが全て並んでいると仮定するときの atoms
+#
+# atoms[i]       : 原子の種類番号(max=nion)を与えると、原子種の数を返す
+# atoms_index[i] : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+# ReadVasprun.py 互換
+############################################################################
+# natom までの通し番号で原子種を返す(元素記号ではなくて原子の種類番号を返す)
+#############################################################################
+# natom までの通し番号で原子種の記号を返す
+# 全ループ構造で完全に同じなので一回見つけたらbreakする
+#############################################################################
+# ReadPoscar.py での処理に準ずる構造
+#############################################################################
+# get_final position
+#############################################################################
+#############################################################################
+#############################################################################
+############################################################################
+# ion loop 毎の Total Energy
 class ReadPwOut(object):
 
+    # 1bhor = 0.529177249 angstrom
+    # 1Rydberg = 13.6056981 eV
     def __init__(self, cname):
         from sae.common.text import TextFiles
 
@@ -29,6 +96,8 @@ class ReadPwOut(object):
         self.atoms_index = []
         self.toten_ion = []
         self.efermi = "None"
+        # scale ファクターは angstrom にする
+        # 実際にループした数をカウント
         for line in self.datlines:
             if bool(bravais_reg.match(line)):
                 ibrva = int(line.split()[3])
@@ -95,6 +164,7 @@ class ReadPwOut(object):
         TYPES = [self.atoms, self.atoms_index]
         return [TYPES]
 
+    # ReadOutcar.py 互換, ReadMxDatMethod.py 互換
     def get_atoms_j(self):
         self.get_atoms()
         self.atoms_j = np.zeros(self.natom, dtype=int)
@@ -105,6 +175,7 @@ class ReadPwOut(object):
                 j += 1
         return self.atoms_j
 
+    # ReadMd, ReadPoscar, ReadPwIn 互換
     def get_atoms_index_j(self):
         position_reg = re.compile(".*ATOMIC_POSITIONS.*", re.IGNORECASE)
         self.atoms_index_j = []
@@ -153,8 +224,11 @@ class ReadPwOut(object):
             line = self.datlines[i]
             if bool(ion_loop_reg.match(line)):
                 for j in range(self.natom):
+                    # x
                     self.position[j, 0] = self.datlines[i + j + 1].split()[1]
+                    # y
                     self.position[j, 1] = self.datlines[i + j + 1].split()[2]
+                    # z
                     self.position[j, 2] = self.datlines[i + j + 1].split()[3]
         return self.position
 
@@ -162,6 +236,8 @@ class ReadPwOut(object):
         self.get_position()
         return self.position
 
+    # ReadMd.py, ReadVasprun.py 互換
+    # self.position_loop = np.zeros((self.natom,3,self.n_ion_loop))
     def get_position_loop(self):
         ion_loop_reg = re.compile(".*ATOMIC_POSITIONS.*")
         self.position_loop = np.zeros((self.n_ion_loop, self.natom, 3))
@@ -169,32 +245,46 @@ class ReadPwOut(object):
         for i in range(self.num):
             line = self.datlines[i]
             if bool(ion_loop_reg.match(line)):
+                # self.position_loop[j,0,ion_loop] = self.datlines[i+j+1].split()[1] # x
+                # self.position_loop[j,1,ion_loop] = self.datlines[i+j+1].split()[2] # y
+                # self.position_loop[j,2,ion_loop] = self.datlines[i+j+1].split()[3] # z
                 for j in range(self.natom):
+                    # x
                     self.position_loop[ion_loop, j, 0] = self.datlines[
                         i + j + 1
                     ].split()[1]
+                    # y
                     self.position_loop[ion_loop, j, 1] = self.datlines[
                         i + j + 1
                     ].split()[2]
+                    # z
                     self.position_loop[ion_loop, j, 2] = self.datlines[
                         i + j + 1
                     ].split()[3]
                 ion_loop += 1
         return self.position_loop
 
+    # ReadMd.py, ReadVasprun.py 互換
+    # self.force_loop = np.zeros((self.natom,3,self.n_ion_loop))
     def get_force_loop(self):
         self.force_loop = np.zeros((self.n_ion_loop, self.natom, 3))
         force_reg = re.compile(".*Forces acting on atoms.*")
         ion_loop = 0
         for i in range(self.num):
             if bool(force_reg.match(self.datlines[i])):
+                # self.force_loop[j,0,ion_loop] = self.datlines[i+j+2].split()[6] # x
+                # self.force_loop[j,1,ion_loop] = self.datlines[i+j+2].split()[7] # y
+                # self.force_loop[j,2,ion_loop] = self.datlines[i+j+2].split()[8] # z
                 for j in range(self.natom):
+                    # x
                     self.force_loop[ion_loop, j, 0] = self.datlines[i + j + 2].split()[
                         6
                     ]
+                    # y
                     self.force_loop[ion_loop, j, 1] = self.datlines[i + j + 2].split()[
                         7
                     ]
+                    # z
                     self.force_loop[ion_loop, j, 2] = self.datlines[i + j + 2].split()[
                         8
                     ]
@@ -228,8 +318,10 @@ class ReadPwOut(object):
     def get_n_ion_loop(self):
         return self.n_ion_loop
 
+    # ReadOutcar.py 互換
     def get_toten_ion(self):
         return self.toten_ion
 
+    # ReadVasprun.py / ReadMd.py 互換
     def get_energy_loop(self):
         return self.toten_ion

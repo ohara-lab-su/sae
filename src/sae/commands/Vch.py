@@ -6,6 +6,31 @@ from sae.vasp.kpoints import ReadVaspKpoints
 from sae.vasp.poscar import ReadVaspPoscar
 from sae.vasp.potcar import ReadVaspPotcar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vcheck.py (Vch)
+#
+#  1) VASP に必要な入力ファイルが存在しているかのチェック。
+#  2) NSW のチェック
+#  3) ブロードニングのチェック
+#
+#  4) POSCAR の selective の有無のチェック
+#
+#  などを行う。
+#  ジョブ投入時のケアレスミスのチェック
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.07.033 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -17,12 +42,19 @@ import os
 import glob
 import optparse
 
+#
+################################################################################
+# import numpy as np
+# import re
+# from copy import deepcopy
 try:
     from x_logger import XLogger
 except ImportError:
     pass
 
 
+# import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     parser = optparse.OptionParser()
     parser.add_option("-i", "--input", dest="INPUT")
@@ -31,6 +63,7 @@ def options():
     options, args = parser.parse_args()
 
 
+################################################################################
 if __name__ == "__main__":
     if not os.path.exists("INCAR"):
         sys.exit("STOP: INCAR not found")

@@ -1,3 +1,225 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# OpenMX 3.7 *.dat 形式ファイル 読み込み class
+#
+#
+#  class ReadMxDatMethod ----- class RreadMxDat
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.08.25
+#  コンストラクタ大改修（統合化互換）終了
+#
+# 2015.08.24
+#  統合＆大改修直前の安定バージョン
+#   1) Method の継承を止めて 自前のコンストラクタで実装
+#      インスタンス変数の重視化
+#
+# 2015.02.24
+#  *.dat / *.out 共通method (主に *.dat 部分) を ReadMxDatMethod.py へ
+#  分離し、そちらをスーパークラスとする。class ReadMxDat ではsuperclass
+#  を継承してそれら method を実装する形にする。
+#
+# 2015.02.24
+#   spin チェックmethod
+#
+# 2015.02.17
+#
+#  旧名) ReadDatMx (ReadMxDat)
+#    *.dat 名の重複があるので DatMx とする( 例 RMC_POT の *.dat 形式 )
+#    ==> MxDat へルール変更
+#
+# 2015.02.17
+#  get_position_max(), get_position_min 追加
+#   position[atom,3] のそれぞれ x,y,z の最大値を返す
+#
+# 2015.02.17
+#  get_t() を初めいくつかの method で *.dat のコメントアウト処理に正しく
+#  対応してなかったため意図しない動作になっていたのを修正
+#
+# 2015.02.17
+#  Al-Si111-ESM.dat が正しく読めないエラー
+#  ReadDatMx class, get_t, get_position のバグ(仕様)を修正
+#
+# 2015.02.17
+#  get_fix() も get_position() と同様に atoms_index の順番に合わせる
+#
+# 2015.02.17
+#  get_atom() の新方式に合わせて get_position() の順番もソートしなおして
+#  atoms_index に矛盾なく並べ直した情報を返すように変更
+#
+#  オリジナルの順番とatoms_indexに合わせてソートしなおした配列の対応は
+#  get_position() 後の self.position_index にてアクセス可能
+#
+# 2015.02.16
+#  get_atom() の分類方法を変更
+#   古: 連続して並んでいる元素記号のみを一つのサイトとしてひとくくりにした
+#   新: atoms_index (Atomic.Species タグ) の情報のみでサイトのグルーピング
+#
+# 2015.02.12 1st
+#
+#  注意)
+#     get_fix() は必ず get_position() の後に実行する
+#
+################################################################################
+################################################################################
+# import gzip
+# sys.path.append('../..')
+################################################################################
+############################################################################
+# for Method
+#    ###################################
+#    # natom の Left 版
+#    def get_left_natom(self):
+#        self.FLAG_left = False
+#        self.left_natom = 0
+#        comment_reg = re.compile('^#.*',re.IGNORECASE)
+#        reg = re.compile('.*LeftLeadAtoms\.Number')
+#        for i in range(self.num):
+#            if not bool(comment_reg.match(self.datlines[i])):
+#                if bool(reg.match(self.datlines[i])):
+#                    self.FLAG_left = True
+#                    self.left_natom = int(self.datlines[i].split()[1])
+#                    break
+#        return self.left_natom
+#
+#    ###################################
+#    # Left_atoms_index_j
+#    # 通し番号を与えると元素記号を返す
+#    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+#    def get_left_atoms_index_j(self):
+#        self.FLAG_left = False
+#        left_natom = self.get_left_natom()
+#
+#        comment_reg = re.compile('^#.*',re.IGNORECASE)
+#        reg0 = re.compile('.*\<LeftLeadAtoms\.SpeciesAndCoordinates')
+##       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
+#
+#        self.left_atoms_index_j = []
+#        for i in range(self.num):
+#            if not bool(comment_reg.match(self.datlines[i])):
+#                if bool(reg0.match(self.datlines[i])):
+#                    self.FLAG_left = True
+#                    for j in range(left_natom):
+#                        self.left_atoms_index_j.append(\
+#                                self.datlines[i+j+1].split()[1])
+#                    break
+#        return self.left_atoms_index_j
+#
+#    ###################################
+#    # Left_position
+#    # 通し番号を与えると元素記号を返す
+#    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+#    # self.UNIT を用いるので get_position の後に実行する
+#    def get_left_position(self):
+#        self.FLAG_left = False
+#        left_natom = self.get_left_natom()
+#
+#        comment_reg = re.compile('^#.*',re.IGNORECASE)
+#        reg0 = re.compile('.*\<LeftLeadAtoms\.SpeciesAndCoordinates')
+##       reg1 = re.compile('.*LeadLeftAtoms\.SpeciesAndCoordinates\>')
+#
+#        self.FLAG_left = False
+#        self.left_position = np.zeros((left_natom,3))
+#        for i in range(self.num):
+#            if not bool(comment_reg.match(self.datlines[i])):
+#                if bool(reg0.match(self.datlines[i])):
+#                    self.FLAG_left = True
+#                    for j in range(left_natom):
+#                        self.left_position[j,0] = \
+#                                float(self.datlines[i+j+1].split()[2])*self.UNIT
+#                        self.left_position[j,1] = \
+#                                float(self.datlines[i+j+1].split()[3])*self.UNIT
+#                        self.left_position[j,2] = \
+#                                float(self.datlines[i+j+1].split()[4])*self.UNIT
+#                    break
+#        return self.left_position
+#
+#
+#    ###################################
+#    # natom の Right 版
+#    def get_right_natom(self):
+#        self.FLAG_right = False
+#        self.right_natom = 0
+#        comment_reg = re.compile('^#.*',re.IGNORECASE)
+#        reg = re.compile('.*RightLeadAtoms\.Number')
+#        for i in range(self.num):
+#            if not bool(comment_reg.match(self.datlines[i])):
+#                if bool(reg.match(self.datlines[i])):
+#                    self.FLAG_right = True
+#                    self.right_natom = int(self.datlines[i].split()[1])
+#                    break
+#        return self.right_natom
+#
+#    ###################################
+#    # Right_atoms_index_j
+#    # 通し番号を与えると元素記号を返す
+#    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+#    def get_right_atoms_index_j(self):
+#        self.FLAG_right = False
+#        right_natom = self.get_right_natom()
+#
+#        comment_reg = re.compile('^#.*',re.IGNORECASE)
+#        reg0 = re.compile('.*\<RightLeadAtoms\.SpeciesAndCoordinates')
+#
+#        self.right_atoms_index_j = []
+#        for i in range(self.num):
+#            if not bool(comment_reg.match(self.datlines[i])):
+#                if bool(reg0.match(self.datlines[i])):
+#                    self.FLAG_right = True
+#                    for j in range(right_natom):
+#                        self.right_atoms_index_j.append(\
+#                                self.datlines[i+j+1].split()[1])
+#                    break
+#        return self.right_atoms_index_j
+#
+#    ###################################
+#    # Right_position
+#    # 通し番号を与えると元素記号を返す
+#    # VASP出力は無いので、気にせずにそのまま.dat記述通りに吸い出す
+#    # self.UNIT を用いるので get_position の後に実行する
+#    def get_right_position(self):
+#        self.FLAG_right = False
+#        right_natom = self.get_right_natom()
+#
+#        comment_reg = re.compile('^#.*',re.IGNORECASE)
+#        reg0 = re.compile('.*\<RightLeadAtoms\.SpeciesAndCoordinates')
+#
+#        self.right_position = np.zeros((right_natom,3))
+#        for i in range(self.num):
+#            if not bool(comment_reg.match(self.datlines[i])):
+#                if bool(reg0.match(self.datlines[i])):
+#                    self.FLAG_right = True
+#                    for j in range(right_natom):
+#                        self.right_position[j,0] = \
+#                                float(self.datlines[i+j+1].split()[2])*self.UNIT
+#                        self.right_position[j,1] = \
+#                                float(self.datlines[i+j+1].split()[3])*self.UNIT
+#                        self.right_position[j,2] = \
+#                                float(self.datlines[i+j+1].split()[4])*self.UNIT
+#                    break
+#        return self.right_position
+#
+#
+################################################################################
+# 'openmx' より最適なデフォルトファイル名の推定ルーチン
+################################################################################
+#   print ""
+#   print "max_x", position_max[0]
+#   print "max_y", position_max[1]
+#   print "max_z", position_max[2]
+#   print ""
+#   print "min_x", position_min[0]
+#   print "min_y", position_min[1]
+#   print "min_z", position_min[2]
+#   for i in range(natom):
+#       print fix[i][0], fix[i][1], fix[i][2]
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.openmx.dat_methods import ReadMxDatMethod
@@ -12,13 +234,50 @@ except ImportError:
     ReadMxDatMethod = ReadMxDatMethod
 
 
+###############################################
+## init and Read POSCAR
+############################################################################
 class ReadMxDat(ReadMxDatMethod):
 
+    ###################################
+    # atoms_j (My配列),natomまでの通し番号で原子の種類を返すMethod
+    #    ReadMxDatMethod.get_atoms version2 に対応する get_atoms_j
+    #    atoms_index (ReadOutcar.get_atoms_index_j に準じる)
+    #    ただし、atoms_j は元素記号ではなく原子の種類番号を返す
+    #    この機能と互換のMethodは ReadOutcar.atoms_j() となる
+    #
+    # 混乱するので普通に get_atoms_index_j と命名し直す (2015.03.09)
+    # --> さらに混乱した
+    #     atoms_index_j はそもそも番号ではなく元素記号で返す変数だったのを忘れいた
+    #     元に戻す(2015.03.09)
+    #
+    ###################################
+    # 2015.03.09
+    # ion[j]    : 通し番号(max=natom)を与えると原子の種類番号を返す
+    # atoms[i]  : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+    ###############################################
+    ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+    ##
+    # print tmp, int(ion[tmp]), int(ion_local[tmp])
+    ###################################
+    # 2015.03.09
+    # atoms[i]          : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+    # atoms_j[j]        : 通し番号(max=natom)を与えると、原子の種類番号を返す
+    # atoms_index[i]    : 原子の種類番号(max=nion)を与えると、原子種の元素記号を返す
+    # atoms_index_j[i]  : 通し番号(max=natom)を与えると、原子種の元素記号を返す
+    #
+    ###############################################
+    ## atoms_number[i]
+    ##   atoms_index の原子番号版
+    ###############################################
+    ## atoms_number_j[j]
+    ##   atoms_index_j に併せて記号ではなく原子番号で保存しておく配列を用意
     def __init__(self, datname, suffix=".dat", sort=True, atoms_index=None):
         from sae.common.text import TextFiles
         from sae.structure.elements import ElementTable
 
         self.datlines, self.num = TextFiles().read_dataline(datname)
+        # Bohr radius in Angstrom
         BOHR = 0.529177
         comment_reg = re.compile("^#.*", re.IGNORECASE)
         reg_switch_off = re.compile("Off", re.IGNORECASE)
@@ -35,6 +294,7 @@ class ReadMxDat(ReadMxDatMethod):
         reg_unit2 = re.compile("FRAC", re.IGNORECASE)
         reg0_atoms = re.compile(".*\\<Atoms\\.SpeciesAndCoordinates")
         reg1_atoms = re.compile(".*Atoms\\.SpeciesAndCoordinates\\>")
+        # reg0_atoms
         reg_position1 = re.compile(".*\\<Atoms\\.SpeciesAndCoordinates")
         reg0_unit_vector = re.compile(".*Atoms\\.UnitVectors\\.Unit")
         reg2_unit_vector = re.compile(".*\\<Atoms\\.UnitVectors")
@@ -43,15 +303,86 @@ class ReadMxDat(ReadMxDatMethod):
         reg_md1 = re.compile(".*MD\\.Fixed\\.XYZ\\>")
         self.ispin = 1
         self.scale = 1.0
+        # dummy
         self.vasp_version = 5
         self.atoms_index = []
         self.t = np.zeros((3, 3))
         self.selective = False
+        # 基本並進の存在があるかどうかのフラグ
         self.t_FLAG = False
         NION_FLAG = False
         NATOM_FLAG = False
         UNIT_FLAG = False
         for i in range(self.num):
+            # title
+            # spin の有無( SpinPolarization on = 2, off = 1 )
+            # scf.SpinPolarization        on
+            # 擬ポテンシャルのセクション(1)
+            #
+            #    nion
+            #
+            # 擬ポテンシャルのセクション(2)
+            #
+            #    atoms_index
+            #
+            # 内部座標セクション(1)
+            #
+            #    position の直前
+            #    natom
+            #
+            # 内部座標セクション(2)
+            #
+            #    get direct mode & unit
+            #
+            # 内部座標セクション(3)-1
+            #
+            #   atoms (get_atoms version2) 正しく動作
+            #    OpenMX 的には Species.Number で区分される PAO/VPS は
+            #    同一記号ならばかならず同一サイトとして分類してもよい感じ
+            #    なので、そのように分類し直す。この分類変更にともなって
+            #    position と fix の行列も整理し直す必要あるので注意
+            #
+            # 内部座標セクション(3)-2
+            #
+            #      atoms で読み込んだところと同じところを再度読む
+            #      内部座標の順番を atoms_index (および atoms) と同じく
+            #      するために元素記号ごと(atom_indexの順番で)ソートする
+            #
+            #      内部座標の取得 AU --> Ang 変換だけはここでやる
+            #      (カーテシアンとダイレクトの変換はここでは行わない)
+            #      並んでいる順番通りに並べる
+            #
+            # 基本並進ベクトルセクション(1)
+            #
+            #   基本並進に用いている Unit を調べて AU のときは Ang にする
+            #
+            # 基本並進ベクトルセクション(2)
+            #
+            #   Read Translation Vector
+            #         x   y   z
+            #   t1 = t11 t21 t31
+            #   t2 = t12 t22 t32
+            #   t3 = t13 t23 t33
+            # get translation vector # 基本並進が存在しない場合があるのでフラグを入れる
+            #
+            # MD 情報セクション(1)
+            #
+            #    get selective mode (MD flag)
+            #
+            # MD 情報セクション(2)
+            #
+            #   fixed
+            #    fix の情報は VASP 相当に変更する(F=Fix, T=moving True)
+            #    position の取得と別のmethodにする
+            #
+            #    内部座標を atoms_index と合わせるためにソートする
+            #
+            #    注意)
+            #    ソート用のindexは get_position() で生成される self.position_index
+            #    が必要。get_fix 中では get_position() は読まずに self.get_position()
+            #    実行後に get_fix が実行されると仮定して self.position_index および
+            #    self.position_index_r を用いる
+            #
             if not bool(comment_reg.match(self.datlines[i])):
                 if bool(reg_title.match(self.datlines[i])):
                     src = self.datlines[i].split()[1]
@@ -79,6 +410,8 @@ class ReadMxDat(ReadMxDatMethod):
                         sys.exit("STOP: Atomic.Species Tag Error")
                 if bool(reg_natom.match(self.datlines[i])):
                     self.natom = int(self.datlines[i].split()[1])
+                    # position_index, sort_index --> original_index
+                    # position_index_r, original_index --> sort_index
                     if not NATOM_FLAG:
                         NATOM_FLAG = True
                         self.atoms_j = np.zeros(self.natom, dtype=int)
@@ -90,9 +423,11 @@ class ReadMxDat(ReadMxDatMethod):
                 if bool(reg_unit.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
                         self.direct = False
+                        # 'Atomic Unit'
                         self.UNIT = BOHR
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
                         self.direct = False
+                        # 'Ang'
                         self.UNIT = 1.0
                     elif bool(reg_unit2.match(self.datlines[i].split()[1])):
                         self.direct = True
@@ -119,8 +454,10 @@ class ReadMxDat(ReadMxDatMethod):
                         )
                     ATOMS_FLAG = True
                 if bool(reg_position1.match(self.datlines[i])) and ATOMS_FLAG:
+                    # sort_index
                     l = 0
                     for k in range(self.nion):
+                        # original_index
                         for j in range(1, self.natom + 1):
                             if self.atoms_index[k] == self.datlines[i + j].split()[1]:
                                 self.position_index[l] = (
@@ -140,8 +477,10 @@ class ReadMxDat(ReadMxDatMethod):
                     UNIT_FLAG = False
                 if bool(reg0_unit_vector.match(self.datlines[i])):
                     if bool(reg_unit0.match(self.datlines[i].split()[1])):
+                        # FLAG_UNIT = True   # 'Atomic Unit'
                         self.UNIT = BOHR
                     elif bool(reg_unit1.match(self.datlines[i].split()[1])):
+                        # FLAG_UNIT = False  # 'Ang'
                         self.UNIT = 1.0
                     else:
                         sys.exit("STOP: Unknown Atoms.UnitVectors.Unit")
@@ -182,25 +521,38 @@ class ReadMxDat(ReadMxDatMethod):
                 if self.selective:
                     if bool(reg_md0.match(self.datlines[i])):
                         j = 1
+                        # self.fix.append([fix_x, fix_y, fix_z])
+                        ### original の index で fix を作るのではなく
+                        ### atoms_index の並びで sort した index で fix を作る
+                        # self.fix[j-1,0] = fix_x
+                        # self.fix[j-1,1] = fix_y
+                        # self.fix[j-1,2] = fix_z
+                        #########################
                         while not bool(reg_md1.match(self.datlines[i + j])):
                             fix_x = int(self.datlines[i + j].split()[1])
                             fix_y = int(self.datlines[i + j].split()[2])
                             fix_z = int(self.datlines[i + j].split()[3])
                             if fix_x == 1:
+                                # Moving False ( Fixed )
                                 fix_x = "F"
                             elif fix_x == 0:
+                                # Moving True  ( non Fixed )
                                 fix_x = "T"
                             else:
                                 sys.exit("STOP: unknown Fixed Parameter")
                             if fix_y == 1:
+                                # Moving False ( Fixed )
                                 fix_y = "F"
                             elif fix_y == 0:
+                                # Moving True  ( non Fixed )
                                 fix_y = "T"
                             else:
                                 sys.exit("STOP: unknown Fixed Parameter")
                             if fix_z == 1:
+                                # Moving False ( Fixed )
                                 fix_z = "F"
                             elif fix_z == 0:
+                                # Moving True  ( non Fixed )
                                 fix_z = "T"
                             else:
                                 sys.exit("STOP: unknown Fixed Parameter")

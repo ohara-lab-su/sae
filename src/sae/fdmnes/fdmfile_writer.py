@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding:utf-8
+# 固定
 # Copyright Kengo NAKADA; SAE class library.
 """
 fdmfile.txt の作成

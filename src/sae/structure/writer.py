@@ -1,3 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# 統合テスト
+#  出力系関数をラップするボス
+#
+################################################################################
+# History
+#
+# 2015.08.19
+#  startup
+#
+################################################################################
+################################################################################
+# import re
+# import gzip
+# import numpy as np
+# sys.path.append('..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+## VASP
+## FDMNES
+## OpenMX
+## RMC_POT
+## PWscf
+##
 # Copyright Kengo NAKADA; SAE class library.
 import sys
 import os
@@ -24,6 +52,8 @@ class StructureWriter:
         from sae.structure.calculation_settings import CalculationSettings
         from sae.vasp.poscar_writer import PoscarWriter
 
+        ### VASP ###
+        ### 出力ファイル名は outname+".vasp" と自動で内部的に ".vasp" が加わる
         if code.upper() == "VASP":
             if outname is None:
                 outname = "POSCAR"
@@ -45,6 +75,7 @@ class StructureWriter:
                 cell.position,
                 cell.fix,
             )
+        ### FDMNES ###
         if code.upper() == "FDMNES" or code.upper() == "FDM":
             if outname is None:
                 outname = "read_pdb.inp"
@@ -55,6 +86,8 @@ class StructureWriter:
                 FdmnesStructureWriter().print_fdmnes_inp1(
                     outname=outname, cell=cell, MOL=MOL
                 )
+        ### OpenMX ###
+        ### 出力ファイル名は outname+".dat" と自動で内部的に ".dat" が加わる
         if code.upper() == "OPENMX" or code.upper() == "MX":
             if outname is None:
                 outname = "openemx"
@@ -93,6 +126,8 @@ class StructureWriter:
                 KP=KP,
                 FRAC=FRAC,
             )
+        ### RMC_POT ###
+        ### 出力ファイル名は outname+".cfg" と自動で内部的に ".cfg" が加わる
         if (
             code.upper() == "RMC_POT"
             or code.upper() == "RMC"
@@ -116,6 +151,7 @@ class StructureWriter:
                 cell.position,
                 cell.fix,
             )
+        ### PWScf ###
         if (
             code.upper() == "PWSCF"
             or code.upper() == "QE"

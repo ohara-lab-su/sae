@@ -1,3 +1,61 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# RMC_POT (cfg) 出力 まとめ(ラップ)ルーチン
+#
+################################################################################
+# History
+#
+# 2015.08.24
+#  startup
+#
+################################################################################
+################################################################################
+# import re
+# import gzip
+# import numpy as np
+# sys.path.append('..')
+# import SpaceGroupEnvironment as SGE
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# RMC_POT(cfg) 形式への出力
+#   並進ベクトルや内部座標は事前に RMC_POT(cfg)形式にしておく必要がある
+#   変換は conv_vasp2cfg() にて行う
+#
+# [in] cname              : STD=False のときの出力ファイル名
+# [in] STD                : 結果出力がstdoutのときは STD=True
+#
+# [in] title              : タイトル
+#
+# [in/out] t[3,3]         : 基本並進ベクトル(注意:配列内indexは0から)
+#                                  x   y   z
+#                            t1 = a11 a21 a31
+#                            t2 = a12 a22 a32
+#                            t3 = a13 a23 a33
+#
+#
+# [in]     natom          : number of atom
+# [in]     nion           : number of atom
+# [in/out] atoms[i]       : 原子の種類番号(max=nion)を与えると、その原子種の数を返す
+# [in/out] position[j,3]  : 通し番号(max=natom)とx,y,z 指定で内部座標
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2014.10.30/31 1st
+#
+################################################################################
+################################################################################
+# import os
+# import re
+# import optparse
+# from numpy import *
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -23,6 +81,8 @@ class RmcConfigWriter:
         position,
         fix,
     ):
+        # RMC_POT(cfg) へ変換
+        # print cfg (RMC_POT) style
         from sae.geometry.coordinates import CoordinateTransforms
         from sae.rmcpot.cfg_writer import RmcConfigWriter
         from sae.rmcpot.conversion import RmcConversions
@@ -30,6 +90,8 @@ class RmcConfigWriter:
         scale, t, natom, direct, position = CoordinateTransforms().conv_scale21(
             scale, t, natom, direct, position
         )
+        # scale factor to 1.0
+        # Cartesian to Direct
         if not direct:
             scale, t, natom, direct, position = CoordinateTransforms().conv_car2direct(
                 scale, t, natom, direct, position
@@ -51,6 +113,10 @@ class RmcConfigWriter:
         t3_x = t[0, 2]
         t3_y = t[1, 2]
         t3_z = t[2, 2]
+        ###############################################
+        ## write cfg (RMC_POT) file
+        ## open cfg files
+        ##
         if STD:
             out = sys.stdout
         else:

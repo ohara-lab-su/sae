@@ -1,3 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# PWScf (Quantum ESPRESSO 5..x )
+# dos 関連出力 ファイル( dos.x projwfc.x 出力ファイル 読み込み)
+#
+# 正直なgnuplot形式なので、matplotlib から使うときは numpy でスライスする
+# だけなのだが、今までの plot プログラムからの呼び出しとの互換のために
+# Method 化する
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.05.08 startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import re
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+################################################################################
+################################################################################
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -8,6 +36,7 @@ import numpy as np
 
 class ReadPwTdos(object):
 
+    # default spin=1
     def __init__(self, cname="input.dos"):
         from sae.common.text import TextFiles
 

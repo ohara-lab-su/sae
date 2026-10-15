@@ -1,0 +1,194 @@
+get_atomic_weight.py get_atomic_weight1
+--- OLD
++++ v0.1.0
+@@ -15,6 +15,6 @@
+     radius_list = np.zeros((nlist, 3), dtype='S4')
+     nlist = read_list3(name, radius_list)
+     for i in range(nlist):
+-        if atom == radius_list[i, 1]:
++        if atom == radius_list[i, 1] or atom == radius_list[i, 1].decode('ascii'):
+             weight = float(radius_list[i, 2])
+     return weight
+
+get_calinfo.py get_calinfo
+--- OLD
++++ v0.1.0
+@@ -11,8 +11,8 @@
+             if os.path.exists('INCAR'):
+                 print('Read VASP INCAR  = INCAR')
+                 file_name = 'INCAR'
+-                class_name = 'ReadIncar'
+-            module = __import__(module_name, globals(), locals(), [class_name], -1)
++                class_name = 'ReadVaspIncar'
++            module = __import__(module_name, globals(), locals(), [class_name], 0)
+             klass = getattr(module, class_name)
+             incar = klass(file_name)
+             NSW = incar.get_nsw()
+
+io/vasp/ReadVaspPoscar.py conv_supercell
+--- OLD
++++ v0.1.0
+@@ -5,7 +5,7 @@
+     if self.__direct:
+         ABS = True
+         self.scale, self.__direct = conv_direct2cara(ABS, self.scale, self.t, self.natom, self.__direct, self.position)
+-    supers = super_x * super_y * super_x
++    supers = super_x * super_y * super_z
+     sv = np.zeros((supers, 3))
+     sp = np.zeros((self.natom * supers, 3))
+     ion_sp = np.zeros(self.natom * supers)
+@@ -16,7 +16,7 @@
+     make_supercell_param(super_x, super_y, super_z, self.nion, self.atoms, self.t)
+     self.natom = self.natom * supers
+     if not self.__direct:
+-        self.scale, self.__direct = conv_car2direct(self.scale, self.t, self.natom, self.__direct, sp)
++        self.scale, self.__direct = conv_car2directa(self.scale, self.t, self.natom, self.__direct, sp)
+     self.ion = ion_sp
+     self.ion_local = ion_local_sp
+     self.position = sp
+
+io/vasp/ReadVaspOutcar.py __init__
+--- OLD
++++ v0.1.0
+@@ -70,7 +70,7 @@
+             self.nion = len(tmp) - 4
+             if self.nion >= 10:
+                 if os.path.exists('vasprun.xml'):
+-                    vrun = ReadVasprun()
++                    vrun = ReadVaspVasprun()
+                     self.nion = vrun.get_nion()
+                 else:
+                     sys.exit('STOP(get_nion): NION >= 10')
+
+io/vasp/ReadVaspAcf.py __init__
+--- OLD
++++ v0.1.0
+@@ -1,6 +1,6 @@
+ def __init__(self, poscar=None, potcar=None, acf='ACF.dat'):
+     self.datlines, self.num = read_dataline(acf)
+-    if isinstance(poscar, SAEnv.io.vasp.ReadVaspPoscar):
++    if isinstance(poscar, ReadVaspPoscar):
+         self.poscar = poscar
+         self.natom = self.poscar.natom
+         self.nion = self.poscar.nion
+@@ -8,7 +8,7 @@
+         self.atoms_index_j = self.poscar.atoms_index_j
+     else:
+         sys.exit('STOP: poscar is not ReadPoscar instance')
+-    if isinstance(potcar, SAEnv.io.vasp.ReadVaspPotcar):
++    if isinstance(potcar, ReadVaspPotcar):
+         self.potcar = potcar
+         self.atoms_index = self.potcar.atoms_index
+         self.atoms_zval = self.potcar.atoms_zval
+
+io/pwscf/ReadPwTdos.py get_inttdos
+--- OLD
++++ v0.1.0
+@@ -1,2 +1,2 @@
+ def get_inttdos(self, spin=0):
+-    return self.intdos_all[:, spin]
++    return self.inttdos_all[:, spin]
+
+io/mx/ReadMxDosMethod.py get_ispin
+--- OLD
++++ v0.1.0
+@@ -8,7 +8,7 @@
+         datname = self.name + '.dat'
+     else:
+         sys.exit('STOP: ' + self.name + '.out or ' + self.name + '.dat file not found')
+-    module = __import__(module_name, globals(), locals(), [class_name], -1)
++    module = __import__(module_name, globals(), locals(), [class_name], 0)
+     klass = getattr(module, class_name)
+     dat = klass(datname)
+     self.ispin = dat.get_ispin()
+
+io/mx/ReadMxDosMethod.py get_natom
+--- OLD
++++ v0.1.0
+@@ -8,7 +8,7 @@
+         datname = self.name + '.dat'
+     else:
+         sys.exit('STOP: ' + self.name + '.out or ' + self.name + '.dat file not found')
+-    module = __import__(module_name, globals(), locals(), [class_name], -1)
++    module = __import__(module_name, globals(), locals(), [class_name], 0)
+     klass = getattr(module, class_name)
+     dat = klass(datname)
+     self.natom = dat.get_natom()
+
+io/mx/ReadMxDosMethod.py get_title
+--- OLD
++++ v0.1.0
+@@ -8,7 +8,7 @@
+         datname = self.name + '.dat'
+     else:
+         sys.exit('STOP: ' + self.name + '.out or ' + self.name + '.dat file not found')
+-    module = __import__(module_name, globals(), locals(), [class_name], -1)
++    module = __import__(module_name, globals(), locals(), [class_name], 0)
+     klass = getattr(module, class_name)
+     dat = klass(datname)
+     self.title = dat.get_title()
+
+io/mx/ReadMxDosMethod.py get_nion
+--- OLD
++++ v0.1.0
+@@ -8,7 +8,7 @@
+         datname = self.name + '.dat'
+     else:
+         sys.exit('STOP: ' + self.name + '.out or ' + self.name + '.dat file not found')
+-    module = __import__(module_name, globals(), locals(), [class_name], -1)
++    module = __import__(module_name, globals(), locals(), [class_name], 0)
+     klass = getattr(module, class_name)
+     dat = klass(datname)
+     self.NION = dat.get_nion()
+
+io/mx/ReadMxDosMethod.py get_atoms_j
+--- OLD
++++ v0.1.0
+@@ -8,7 +8,7 @@
+         datname = self.name + '.dat'
+     else:
+         sys.exit('STOP: ' + self.name + '.out or ' + self.name + '.dat file not found')
+-    module = __import__(module_name, globals(), locals(), [class_name], -1)
++    module = __import__(module_name, globals(), locals(), [class_name], 0)
+     klass = getattr(module, class_name)
+     dat = klass(datname)
+     self.atoms_j = dat.get_atoms_j()
+
+io/Read.py __init__
+--- OLD
++++ v0.1.0
+@@ -41,7 +41,7 @@
+     try:
+         module = __import__(module_name, fromlist=[class_name])
+     except:
+-        module = __import__(module_name, globals(), locals(), [class_name], -1)
++        module = __import__(module_name, globals(), locals(), [class_name], 0)
+     klass = getattr(module, class_name)
+     self.cell = klass(filename, suffix=suffix, atoms_index=atoms_index)
+     self.title = self.cell.title
+
+gui/CrystalMaker.py plot_atoms
+--- OLD
++++ v0.1.0
+@@ -6,8 +6,8 @@
+     self.cell.conv_supercell(times=(self.times[0], self.times[1], self.times[2]))
+     if self.cell.direct:
+         ABS = False
+-        self.cell.scale, self.cell.direct = conv_direct2car0(ABS, self.cell.scale, self.cell.t, self.cell.natom, self.cell.direct, self.cell.position)
+-    self.cell.scale = conv_car2carABS(self.cell.scale, self.cell.t, self.cell.natom, self.cell.direct, self.cell.position)
++        self.cell.scale, self.cell.direct = conv_direct2cara(ABS, self.cell.scale, self.cell.t, self.cell.natom, self.cell.direct, self.cell.position)
++    self.cell.scale = conv_car2carABSa(self.cell.scale, self.cell.t, self.cell.natom, self.cell.direct, self.cell.position)
+     self.ratio = 0.3
+     for i in range(self.cell.natom):
+         xp = self.cell.position[i, 0] + self.origin[0]
+
+gui/CrystalMaker.py plot_bader
+--- OLD
++++ v0.1.0
+@@ -1,5 +1,5 @@
+ def plot_bader(self, acf, mode='ABS', cmax=None, cmin=None):
+-    if not isinstance(acf, SAEnv.ReadVaspAcf):
++    if not isinstance(acf, ReadVaspAcf):
+         sys.exit("STOP: acf does'nt instance")
+     acf.get_min_bader()
+     acf.get_max_bader()

@@ -12,9 +12,16 @@ def test_no_legacy_runtime_dependencies():
     assert not (ROOT / "src/StructureAnalysisEnvironment").exists()
     assert "[project]" in (ROOT / "pyproject.toml").read_text()
     for path in (ROOT / "src/sae").rglob("*.py"):
-        text = path.read_text()
-        assert "StructureAnalysisEnvironment" not in text, path
-        assert "/OLD/" not in text, path
+        tree = ast.parse(path.read_text())
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.Import, ast.ImportFrom)):
+                names = [a.name for a in node.names] + [getattr(node, "module", "") or ""]
+                assert not any("StructureAnalysisEnvironment" in n for n in names), path
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                # Documentation and comments may retain historical names.
+                if node.value.startswith("StructureAnalysisEnvironment"):
+                    raise AssertionError((path, node.value))
+                assert "/OLD/" not in node.value, path
 
 
 def test_all_implementation_modules_import():

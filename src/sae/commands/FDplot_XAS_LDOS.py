@@ -1,11 +1,30 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print "NAME",name
 from __future__ import print_function
 from sae.fdmnes.conv import ReadFdmConv
 from sae.fdmnes.inp import ReadFdmInp
 from sae.fdmnes.sd import ReadFdmSd
 from sae.fdmnes.txt import ReadFdmTxt
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# FDMNES
+#   XAS + 特定原子の LDOS 多段組
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.09.07
+#  startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +38,14 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+# import gzip
+# import re
+# import numpy as np
+# import SpaceGroupEnvironment as SGE
+################################################################################
+########## default inpname 取得
 def options():
     from sae.fdmnes.fdmfile import ReadFdmFdmfile
 
@@ -43,6 +70,29 @@ def options():
     return [inpname, options.filout, options.atom, options.orbit, options.fermi]
 
 
+################################################################################
+###########################################################################
+#   bav = SAE.io.ReadFdmBav(name0)
+###########################################################################
+###########################################################################
+###########################################################################
+################################################ convert Energy
+# PhotoEnegy モードで計算した時と同じ結果を返す
+# E_fermi を引く(A) : A=B
+# E_fermi を引く(B) : A=B
+######################################### plot XAS
+# XANES
+#   xmin, xmax, ymin, ymax = plt.axis()
+#   dos_p = sd0.get_ldos(l='p')
+#   eng_p = sd0.get_eng()
+#   plt.plot(eng_p, dos_p, linewidth=1, color='black', label='absorber')
+#   plt.xlim([xmin, xmax])
+######################################### plot LDOS
+# LDOS
+#   plt.xlabel("Energy above Fermi [eV]")
+#   plt.ylabel("Absorption [arb. unit]")
+#   plt.savefig("XAS_LDOS"+str(atom)+".eps")
+#   plt.savefig("XAS_LDOS"+str(atom)+".png")
 if __name__ == "__main__":
     inpname, filout, atom, orbit, FLAG_fermi = options()
     if not atom:
@@ -56,9 +106,13 @@ if __name__ == "__main__":
     if not filout:
         filout = inp.filout
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 16
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 14
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # for portrait
     plt.figure(figsize=(7.0, 9.89))
     orgx = 0.17
     orgy = 0.08

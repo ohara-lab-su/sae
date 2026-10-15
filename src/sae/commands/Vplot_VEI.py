@@ -1,7 +1,29 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Vplot_VEI.py
+#   拙作 VEI スクリプト(free energy 項目を引っ張るだけ)
+#   をその場で一発で可視化するためのスクリプト
+#   gnuplot いらず
+#
+#   VEI は読まずに Vplot_VEI.py 中で同等のことをする
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.01.06 1st
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -15,11 +37,39 @@ import re
 import matplotlib.pyplot as plt
 
 
+#                                                                                         
+################################################################################
+#import optparse
+#import numpy as np
+#from pylab import *
+#import matplotlib.mlab as mlab
+#import StructureAnalysisEnvironment as SAE                                      
+#import SpaceGroupEnvironment as SGE  
+################################################################################
 def options():
     OUTCAR = "OUTCAR"
     return OUTCAR
 
 
+################################################################################
+# Default & OptionParser
+# ファイルの存在有無と圧縮の有無の確認
+# ファイル読み込み
+# ION loop の帰結 ( with entropy ) energy は 5番目 <-- VEE 互換
+#   energy_reg = re.compile(".*free  energy",re.IGNORECASE)
+#   num = 5 - 1
+# ION loop の帰結 ( without entropy ) energy は 4番目
+#   energy_reg = re.compile(".*energy  without entropy=",re.IGNORECASE)
+#   num = 4 - 1
+# SCF & ION loop ( with entropy ) energy は 5番目
+#   energy_reg = re.compile(".*free energy",re.IGNORECASE)
+#   num = 5 - 1
+# SCF & ION loop ( with entropy ) energy は 5番目
+# free energy の吸い出し
+############################################################################
+# matplotlib
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+#   plt.xlabel("Total Loop ( ION Loop) [n]", fontsize=20 )
 if __name__ == "__main__":
     OUTCAR = options()
     if os.path.exists(OUTCAR):
@@ -49,13 +99,19 @@ if __name__ == "__main__":
     for i in range(ndat):
         if bool(energy_reg.match(datlines[i])):
             tmp = datlines[i].split()
+            # Y: free energy
             y.append(tmp[num])
+            # X: total_loop ( scf & ion loop)
             x.append(total_loop)
             total_loop += 1
     plt.rcParams["font.family"] = "Times New Roman"
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 18
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    # 原点(x,y), 幅(x,y)
     plt.axes([0.13, 0.13, 0.8, 0.8])
     plt.plot(x, y, color="red", linewidth=2, label="Total Energy")
     plt.ylabel("Total Energy [eV]", fontsize=20)

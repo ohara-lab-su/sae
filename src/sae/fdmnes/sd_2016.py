@@ -1,3 +1,107 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#  〜 2016.01.08 までのバージョンのsdファイルの解析
+#  +
+#  〜 新しいバージョンの sdファイル形式に対応
+#
+# FDMNES
+#   *_sd*.txt ファイル( pw.x 入力ファイル 読み込み)
+#   Ver_0.0.2 以降 FDMNS のバージョンの違いによるログの違いを吸収
+#
+# Energy
+# Int_t
+# n(0, 0)
+# Intn(0, 0)
+# n_l(0)
+# Intn_l(0)
+# n(1, -1)
+# Intn(1, -1)
+# n(1, 0)
+# Intn(1, 0)
+# n(1, 1)
+# Intn(1, 1)
+# n_l(1)
+# Intn_l(1)
+# n(2, -2)
+# Intn(2, -2)
+# n(2, -1)
+# Intn(2, -1)
+# n(2, 0)
+# Intn(2, 0)
+# n(2, 1)
+# Intn(2, 1)
+# n(2, 2)
+# Intn(2, 2)
+# n_l(2)
+# Intn_l(2)
+#
+###############################################################################
+#
+# 2020.07.17 (Ver_0.0.2)
+#  2016.08.01 以降に sd? のナンバリングルールが変わったのでそれに対する対応
+#  - バージョンチェック(ReadFdmBav.py) を用いる
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.09.11
+#   lmax 判定の新バージョン(2015.08.18)が
+#   spin に対して動作が不完全だったので修正
+#
+# 2015.09.09
+#   TDOS および INTTDOS が未完成だったので修正した
+#
+# 2015.09.08
+#   DOS の最大レンジ自動取得
+#
+# 2015.09.08
+#   非平均化もーどで DOS の Weight の計算が出来るようにした
+#
+# 2015.09.08
+#  sd 平均化情報の出力（ファイル出力）を修正
+#  それにあせて sd ファイルのヘッダー出力なども追加
+#
+# 2015.09.07
+#  pdos を軌道成分名 or l,m の指定でゲットできるようにした
+#
+# 2015.08.18
+#  lmax の抽出を _bav.txt ファイルではなくて 実際に計算している _sd*.txt
+#  のヘッダから行うように変更。それに伴って _bav.txt の利用を前面停止
+#  ただし、内部的には bavname はそのまま用いる(averageなどで使う)
+#  --> 明示的に指定しない限り bavname は自動で sdname となる
+#
+# 2015.07.02
+#  spin,ylm,intt,等の全出力の対応を含めた一般化
+#
+# 2015.07.01
+#  spin対応版 startup
+#
+# 2015.07.01
+#  平均化ルーチンで重み(平均する際に割る数)を引数に追加
+#  --> 平均化ルーチンはコンストラクタで処理
+#
+# 2015.07.01
+#   absorber 複数のファイル結合モードを追加
+#
+# 2015.05.21
+#   startup (スピン未対応)
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# sys.path.append('../..')
+# import SpaceGroupEnvironment as SGE
+###############################################################################
+#   name = 'Fe'
+###############################################################################
+#tmp = sd.get_pdos(l=0,lm='s', spin=0)
+#print(tmp)
+#   eng = conv.get_eng()
+#   xas = conv.get_xas()
+#   print "NAME",name
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -7,8 +111,56 @@ import optparse
 import numpy as np
 
 
+# END OF __init__()
+####################################################
+# lm の順番は -1,0,1, -2,-1,0,2,,,,,
+#
+#  Ylm : 「real」 spherical harmonics
+# l=1
+#  m=-1: p_y
+#  m= 0: p_z
+#  m= 1: p_x
+#
+# l=2
+#  m=-2: d_xy
+#  m=-1: d_yz
+#  m= 0: d_z2
+#  m= 1: d_xz
+#  m= 2: d_x2-y2
+#
+####################################################
+#       return self.ylm[:,l,m,spin]
+#
+# get/set attribute (2)
+#
+#
+# property
+#
+# 読み込んだ sd ファイル丸ごと(平均化したら、平均化した値)
+# 読み込んだ sd ファイルに基づいて lmax を抽出
 class ReadFdmSd2016(object):
 
+    # input に書かれている情報を取得する
+    ############################## self.datlines ##########################
+    # 複数の sd ファイルを読んで平均化する
+    # sum
+    ############################## self.datlines ##########################
+    # 合計した sd ファイルを丸ごと保存
+    # オービタルの情報(bav) とスピンの情報(inp) を入手
+    #       bav = SAE.ReadFdmBav(bavname)
+    #################
+    #
+    # get lmax
+    # _sd*.txt で実際に出力されている lmax の最大値をゲットする
+    # ヘッダの一番最後のrawをゲットして加工する
+    #
+    # print('lmax (bav) = %s' % int(bav.get_lmax()))
+    #  _bav.txt ファイルから吸収原子の lmax を抽出する
+    # self.lmax = int(bav.get_lmax())
+    # トータルのオービタル数を計算
+    # _sd0.txt で出力される列数
+    # _sd0.txt の一行目のチェック
+    # すべての row 成分の情報を配列に叩きこむ
     def __init__(
         self,
         sdname,
@@ -47,6 +199,16 @@ class ReadFdmSd2016(object):
             inpname = inpdir + "/" + inpfile
         else:
             inpname = inpfile
+        #
+        # absoer が None --> 読み込んだファイルが一つだけの時
+        #
+        # weight で各要素を割る(datlinesに詰め直す)
+        #
+        # absoer not None --> 読み込んだファイルが複数の時
+        #
+        # アホな合計->平均->元の要素が結合したリスト形式への変換
+        # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
+        # 最後に header を追加
         if absorber is None:
             print("")
             print("---- ReadFdmSd ----")
@@ -56,6 +218,10 @@ class ReadFdmSd2016(object):
             print("-------------------")
             self.datlines, self.__num = TextFiles().read_dataline(sdname + suffix)
             self.__header = self.datlines[0]
+            # 全要素の数値データーを配列に入れる
+            # Energy 行追加
+            # 元々の self.datlines 形式に合わせて配列を作りなおす(互換性維持)
+            # 最後に header を追加
             if weight is not None:
                 print("--- ReadFdmSd ------")
                 print("--- weight mode ----")
@@ -65,7 +231,9 @@ class ReadFdmSd2016(object):
                 print(" num = %s" % num)
                 print(" row = %s" % row)
                 numdata = np.zeros((num, row))
+                # 一行目は除く(ヘッダなので)
                 for j in range(1, num):
+                    # Energy は除く
                     for r in range(1, row):
                         numdata[j, r] = float(self.datlines[j].split()[r]) / float(
                             weight
@@ -74,6 +242,7 @@ class ReadFdmSd2016(object):
                     numdata[i, 0] = float(self.datlines[i].split()[0])
                 listdata = list(numdata)
                 self.datlines = []
+                # dummy '1st-line'
                 self.datlines.append("")
                 for i in range(1, num):
                     self.datlines.append(
@@ -96,21 +265,31 @@ class ReadFdmSd2016(object):
             dsum = np.zeros((num, row))
             dtmp = np.zeros((num, row))
             numdata = np.zeros((num, row))
+            # 間違い？を発見、明らかに間違いっぽいが念のため取っておく(15.09.08)
+            # for i in range(1, num):     # 一行目は除く
+            #    for r in range(1, row):  # Energy は除く
+            #        dtmp[i, r] = datatmp[i].split()[r]
+            # dsum = dtmp + dsum
             for i in range(len(absorber)):
                 sdname = bavname + "_" + str(absorber[i]) + suffix
                 print("sum : %s" % str(sdname))
                 datatmp, num0 = TextFiles().read_dataline(sdname)
                 if i == 0:
                     self.__header = datatmp[0]
+                # 一行目は除く
                 for j in range(1, num):
+                    # Energy は除く
                     for r in range(1, row):
                         dtmp[j, r] = datatmp[j].split()[r]
                 dsum = dtmp + dsum
+            # 平均値を出す
             numdata = dsum / n_site
             for i in range(1, num):
+                # Energy行
                 numdata[i, 0] = datatmp[i].split()[0]
             listdata = list(numdata)
             self.datlines = []
+            # dummy '1st-line'
             self.datlines.append("")
             for i in range(1, num):
                 self.datlines.append(
@@ -128,8 +307,10 @@ class ReadFdmSd2016(object):
         tmp = self.__header.split()[nl - 1]
         tmp = re.sub(".*\\(", "", tmp)
         try:
+            # nonmag 版
             self.__lmax = int(re.sub("\\).*", "", tmp))
         except:
+            # spin 版
             self.__lmax = int(re.sub(",.*\\).*", "", tmp))
         print("lmax       = %s" % self.__lmax)
         self.__ispin = int(inp.get_ispin())
@@ -140,6 +321,7 @@ class ReadFdmSd2016(object):
         total_orbit = tmmax
         total_row = 1 + self.__ispin + total_orbit * 2 + (l + 1) * 2 * self.__ispin
         if absorber is None:
+            # print len(self.datlines[0].split()), "= ", self.datlines[0]
             if len(self.datlines[0].split()) != total_row:
                 print("lmax %s" % str(self.__lmax))
                 print("ispin %s" % str(self.__ispin))
@@ -162,6 +344,8 @@ class ReadFdmSd2016(object):
         self.intldos_all = np.zeros((self.__num - 1, self.__lmax + 1, self.__ispin))
         self.inttdos_all = np.zeros((self.__num - 1, self.__ispin))
         self.eng = np.zeros(self.__num - 1)
+        # INTTDOS  Int_t(u), Int_t(d)
+        # PDOS & INTPDOS
         for i in range(1, self.__num):
             row = 0
             self.eng[i - 1] = float(self.datlines[i].split()[row])
@@ -171,6 +355,7 @@ class ReadFdmSd2016(object):
                 row += 1
             for ll in range(self.__lmax + 1):
                 m0 = 0
+                # m,spin成分分解 n(0,0),,,
                 for m in range(-ll, ll + 1):
                     for s in range(self.__ispin):
                         self.ylm[i - 1, ll, m0, s] = float(
@@ -182,6 +367,7 @@ class ReadFdmSd2016(object):
                         )
                         row += 1
                     m0 += 1
+                # l軌道のsum n_l(0,0),,,
                 for s in range(self.__ispin):
                     self.ldos_all[i - 1, ll, s] = float(self.datlines[i].split()[row])
                     self.tdos_all[i - 1, s] = (

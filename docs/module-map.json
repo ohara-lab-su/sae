@@ -133,5 +133,7 @@
   "StructureAnalysisEnvironment.sort_position": "sae.structure.ordering",
   "StructureAnalysisEnvironment.sphere_integral_of_elf": "sae.vasp.elf",
   "StructureAnalysisEnvironment.write": "sae.structure.writer",
-  "StructureAnalysisEnvironment.util.logger_support": "sae.common.logging_setup"
+  "StructureAnalysisEnvironment.util.logger_support": "sae.common.logging_setup",
+  "StructureAnalysisEnvironment.gui.CrystalMaker": "sae.gui.crystal",
+  "StructureAnalysisEnvironment.gui.crystal_make_unit": "sae.gui.unit_cell"
 }

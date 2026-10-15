@@ -1,3 +1,51 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+################################################################################
+#
+# PWScf (Quantum ESPRESSO 5..x )
+# scf.in ファイル( pw.x 入力ファイル 読み込み)
+#
+# 1) pw.x 入力ファイル名の第一候補を scf.in とする
+# 2) ibrav = 0 のみ対応 (2015.05.12)
+# 3) タグ名と値の間の区切りの = (イコール) には必ずスペースが入る事が前提
+#
+# 4) CELL_PARAMETERS は {alat} が前提
+# 5) ATOMIC_POSITIONS は {crystal} が前提
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.08.24
+#  統合化のためのすりあわせ (4)と(5) の注意事項に注意
+#
+# 2015.08.24
+#  統合化の前に、インスタンス重視に切りかえる
+#
+# 2015.05.12 startup
+#
+################################################################################
+################################################################################
+# import gzip
+# import SpaceGroupEnvironment as SGE
+# sys.path.append('../..')
+################################################################################
+################################################################################
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.structure.base import Method
@@ -13,8 +61,20 @@ except ImportError:
     Method = Method
 
 
+############################################################################
 class ReadPwIn(Method):
 
+    # 1bhor = 0.529177249 angstrom
+    # 1Rydberg = 13.6056981 eV
+    # set default
+    ########## END of loop ############################
+    ## natom までの通し番号で原子の種類番号を返す
+    ## atoms_number
+    ## atoms_number_j
+    ###############################################
+    ## ion[j] : 通し番号(max=natom)を与えると原子の種類番号を返す
+    ## ion_local[j]  : 通し番号(max=natom)を与えるとサイト内のローカル通し番号を返す
+    ## dummy
     def __init__(self, cname, suffix=".in", sort=False, atoms_index=None):
         from sae.common.text import TextFiles
         from sae.structure.elements import ElementTable
@@ -47,6 +107,7 @@ class ReadPwIn(Method):
                 self.ibrav = int(tmp)
                 if self.ibrav != 0:
                     sys.exit("STOP: ibrav != 0")
+            #               self.scale = float(tmp)*0.529177249
             if bool(lattice_a_reg.match(line)):
                 tmp = re.sub(".*a *=", "", line.lower())
                 tmp = re.sub(",.*", "", tmp)

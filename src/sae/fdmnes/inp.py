@@ -1,3 +1,83 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+###############################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+#  Method --- ReadVaspPoscar
+#  Method --- ReadFdmInp
+#  Method --- ReaMxDatMethod -- ReadMxDat
+#                            -- ReadMxDftscf
+#                            -- ReadMxOut
+#                            -- ReadMxPdos
+#                            -- ReadMxTdos
+#  Method --- ReadRmcpotCfg
+#  Method --- ReadPwIn
+#
+###############################################################################
+#
+# FDMNES
+# *.in ファイル
+#
+# 主に Crystal の部分の解析と読み込み
+#
+###############################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.11.20
+#  convolution 用の結晶構造情報が無いファイルに対する対応
+#
+# 2015.08.25
+#  統合化&Method でいろいろと分離
+#
+# 2015.08.20
+#  Read.py との統合化のためのすりあわせ
+#  position のソートルーチンの追加＆分離
+#
+# 2015.08.19
+#  cellparam の基本並進ベクトル変換を ASE の coorsys を採用
+#
+# 2015.06.24
+#  allsite 計算をしているか否かの判断を*.inp かおこなう
+#
+# 2015.06.19
+#   読み込むタグをいくつか追加
+#   コメントアウトの処理
+#   タグ名とタグの内容が同一行でも対応可能に
+#
+# 2015.05.19 startup
+#   cellpar(a,b,c,alpha,beta,gamma) --> cell(基本並進) への変換が意外に鬼門
+#   ---> とりあえずこのルーチンの開発は一旦サスペンド
+#
+###############################################################################
+# トップディレクトリ関係のエラーは ImportError ではキャッチ出来ない
+###############################################################################
+# import gzip
+# import os
+# import copy
+# import SpaceGroupEnvironment as SGE
+# for coorsys
+# suing coorsys
+###############################################################################
+##########################################################################
+#   name = 'POSCAR.inp'
+##########################################################################
+#   out = ReadFdmInp(name,sort=True)
+#   cal = np.cos(alpha * np.pi / 180.0)
+#   cbe = np.cos(beta * np.pi / 180.0)
+#   cga = np.cos(gamma * np.pi /180.0)
+#   sga = np.sin(gamma * np.pi /180.0)
+#   t = np.array([
+#                 [a, b * cga, c * cbe],\
+#                 [0, b * sga, c * (cal - cbe * cga) / sga],\
+#                 [0, 0, c * np.sqrt(1 - cal**2 -cbe**2 - cga**2 +\
+#                                    2 * cal * cbe * cga) / sga],\
+#                ]).transpose()
+#   out.sort_atoms_index_j()
+#   out.sort_atoms_number_j()
+#   out.sort_fix()
+#       print "NAME",name
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 from sae.structure.base import Method
@@ -14,11 +94,43 @@ except ImportError:
 from ase.io.wien2k import *
 
 
+#########################
+# test print atom_index_j
+#########################
+# j=0
+# for i in scaled_position:
+#    print atoms_index_j[j],i
+#    j += 1
+# for FDMNES  infomation
+# for structure infomation
+# for structure convert
+# add 2019.03.14
+# add 2019.03.14
 class ReadFdmInp(Method):
     """
     FDMNES の input ファイル名を読み込む
     """
 
+    # filout_reg = re.compile('.*Filout.*',re.IGNORECASE)
+    ## 2020.06.23 修正
+    # crystal_reg = re.compile('.*crystal .*', re.IGNORECASE)  # include space
+    # convolution などで filout 項目がないときは
+    # filout に calculation 名を渡す
+    ########################################
+    # position を numpy array 化
+    # すべてのサイトの原子数
+    ########################################
+    # ION 数および atoms, atoms_index の作成
+    # natom までの通し番号で原子種(原子の種類番号を返す)
+    ########################################
+    # fix 情報のダミー
+    ########################################
+    # 原子種ごとのソートスイッチが入っているとき
+    ########################################
+    # ion[j]: 通し番号(max=nmax)を与えると原子の種類番号を返す
+    ########################################
+    # ion_local[j]: 通し番号(max=nmax)を与えるとサイト内のローカル通し番号を返す
+    # 共通仕様
     def __init__(self, inpname, suffix=".inp", sort=True, atoms_index=None):
         from sae.common.text import TextFiles
         from sae.structure.elements import ElementTable
@@ -32,7 +144,9 @@ class ReadFdmInp(Method):
         absorber_reg = re.compile(".*Absorber.*", re.IGNORECASE)
         filout_reg = re.compile(".*Fil.*out.*", re.IGNORECASE)
         atom_reg = re.compile("^\\S*Atom", re.IGNORECASE)
+        # include space
         crystal_reg = re.compile(".*crystal.*", re.IGNORECASE)
+        # include space
         crystal_p_reg = re.compile(".*crystal_p.*", re.IGNORECASE)
         mole_reg = re.compile(".*molecule.*", re.IGNORECASE)
         char_reg = re.compile("\\D", re.IGNORECASE)
@@ -49,6 +163,24 @@ class ReadFdmInp(Method):
         self.convolution = False
         self.center_abs = False
         self.nonexc = False
+        # print RAW DATA for debug
+        # Noexe
+        # PhotoEnergy
+        # Atom TAG があるときは停止(未対応)
+        # Magnetism ( Atom タグがない Magnetism は SOC のみ )
+        # allsite
+        # Filout 名確保
+        # Calculation (以前の計算結果を引き継ぐ) 名の確保
+        # conv_out
+        # convolution flag
+        # center_abs flag
+        # Absorber
+        #
+        # START Crystal
+        #
+        # Crystal 行を検索 (position の スペース行コメント行も対応)
+        # self.position = np.array(self.position)
+        ################################################# END Crystal #####
         for i in range(self.num):
             print("%s" % self.datlines[i])
             if bool(nonexec_reg.match(self.datlines[i])):
@@ -81,6 +213,11 @@ class ReadFdmInp(Method):
                     self.absorber = int(self.datlines[i].split()[1].strip())
                 else:
                     self.absorber = int(self.datlines[i + 1].strip())
+            # crystal 行を見つけたらそれは molecule モードではない
+            # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
+            # conventional cell パラメーターをゲット
+            # self.position = np.array(self.position)
+            # Mol 行を検索 (position の スペース行コメント行も対応)
             if bool(crystal_reg.match(self.datlines[i])) and (
                 not bool(comment_reg.match(self.datlines[i]))
             ):
@@ -102,8 +239,13 @@ class ReadFdmInp(Method):
                 self.atoms_index_j = []
                 while 1:
                     i += 1
+                    # 空白行はスキップ
+                    # for TEST
+                    # print("%s %f %f %f" % (zz, x, y, z))
+                    # 原子番号から元素名を取り出す
                     if len(self.datlines[i].split()) > 0:
                         if bool(char_reg.match(self.datlines[i].split()[0])):
+                            # 数字以外は スキップ
                             break
                         zz = int(self.datlines[i].split()[0])
                         x = float(self.datlines[i].split()[1])
@@ -114,6 +256,14 @@ class ReadFdmInp(Method):
                         self.position.append([x, y, z])
                     if i == self.num:
                         break
+            # molecule mode (ただし、現状ではcrystal と変わりない形式しか読まない)
+            # ここで想定しているのは a,b,c,alpha,beta,gamma 記述モード
+            # conventional cell パラメーターをゲット
+            ########
+            # 2019.03.14 2019.03.14 commented out
+            # self.position = []
+            # self.atoms_index_j = []
+            ########
             elif bool(mole_reg.match(self.datlines[i])) and (
                 not bool(comment_reg.match(self.datlines[i]))
             ):
@@ -134,8 +284,10 @@ class ReadFdmInp(Method):
                 print("====")
                 while 1:
                     i += 1
+                    # 空白行はスキップ
                     if len(self.datlines[i].split()) > 0:
                         if bool(char_reg.match(self.datlines[i].split()[0])):
+                            # 数字以外は スキップ
                             break
                         zz = int(self.datlines[i].split()[0])
                         x = float(self.datlines[i].split()[1])

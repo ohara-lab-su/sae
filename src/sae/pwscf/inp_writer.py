@@ -1,3 +1,32 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# print
+#   PWScf (Quantum ESPRESSO ) to *.in
+#
+################################################################################
+#
+# 2018.08.21
+#  Python2/3 両対応
+#
+# 2015.08.24
+#  startup
+#  統合化用にこれまでの PWvasp2in から分離
+#
+# 2015.03.20
+#  PWvasp2in startup
+#
+################################################################################
+################################################################################
+# import optparse
+# import os
+# import re
+# import numpy as np
+# import glob
+# import SpaceGroupEnvironment as SGE
+################################################################################
 # Copyright Kengo NAKADA; SAE class library.
 from __future__ import print_function
 import sys
@@ -25,17 +54,23 @@ class PWscfInputWriter:
     ):
         from sae.structure.elements import ElementTable
 
+        ############################################################################
+        # mode
         title = "input"
         calculation = "scf"
         title = "input"
         pseudo_dir = "/"
         outdir = "./work/"
         ecutwfc = 25.0
+        # ecutwfc*4.0
         ecutrho = 100.0
         occupations = "tetrahedra"
         mixing_beta = 0.7
         conv_thr = 0.01
+        # starting_magnetization(1)
         mag = 0.6
+        ############################################################################
+        # output system.inp
         if STD:
             out = sys.stdout
         else:
@@ -76,11 +111,13 @@ class PWscfInputWriter:
         print("                   conv_thr = " + str(conv_thr) + ",", file=out)
         print("!                  conv_thr = 1.0d-8,", file=out)
         print("/", file=out)
+        #   print("CELL_PARAMETERS {angstrom}", file=out)
         print("CELL_PARAMETERS {alat}", file=out)
         print(" %18.15f %18.15f %18.15f" % (t[0, 0], t[1, 0], t[2, 0]), file=out)
         print(" %18.15f %18.15f %18.15f" % (t[0, 1], t[1, 1], t[2, 1]), file=out)
         print(" %18.15f %18.15f %18.15f" % (t[0, 2], t[1, 2], t[2, 2]), file=out)
         print("ATOMIC_SPECIES", file=out)
+        # print(" %s %9.5f" %(atoms_index[ion], atomic_weight), file=out)
         for ion in range(nion):
             atomic_weight = ElementTable().get_atomic_weight1(atoms_index[ion])
             print(

@@ -1,10 +1,27 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+#   print poscar.natom
 from __future__ import print_function
 from sae.vasp.acf import ReadVaspAcf
 from sae.vasp.poscar import ReadVaspPoscar
 from sae.vasp.potcar import ReadVaspPotcar
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# ACF.dat viewer
+#
+################################################################################
+#
+# 2018.08.15
+#  Python2/3 両対応
+#
+# 2015.07.07 startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -18,6 +35,11 @@ import numpy as np
 import optparse
 
 
+#
+################################################################################
+# import gzip
+# import SpaceGroupEnvironment as SGE
+################################################################################
 def options():
     name = "POSCAR"
     parser = optparse.OptionParser()
@@ -34,6 +56,7 @@ def options():
     return name
 
 
+################################################################################
 if __name__ == "__main__":
     name = options()
     poscar = ReadVaspPoscar(name)

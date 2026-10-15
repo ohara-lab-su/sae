@@ -1,10 +1,45 @@
 #!/usr/bin/env python
 # Copyright Kengo NAKADA; SAE class library.
+################################################################################
 from __future__ import print_function
 from sae.common.paths import FileDiscovery
 from sae.wien2k.dos import ReadWienDos
 from sae.wien2k.output0 import ReadWienOutput0
 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+################################################################################
+# K.NAKADA, kengo.nakada@gmail.com
+#
+# Wplot_ADOS.py
+#
+#    MXplot_ADOS.py (2015.03.26ベース)
+#
+#   原子の種類ごとのオービタル足しあわせ LDOS + TODOS 出力
+#
+################################################################################
+#
+# 2018.08.17
+#  Python2/3 両対応
+#
+# 2015.03.27
+#  unit の表示
+#
+# 2015.03.27
+#  total-DOS がないときの処理と原子毎のtotal の処理
+#
+# 2015.03.26
+#  軌道成分の存在確認＆出力の有無の自動判別を追加
+#
+# 2015.03.26
+#  get_ldos_ion() にて読んでいる case.output0 は並列計算すると
+#  output0000 になるので注意、修正した
+#
+# 2015.03.26
+#   startup
+#
+################################################################################
+################################################################################
 __author__ = "Kengo NAKADA"
 __maintainer__ = "Kengo NAKADA"
 __credits__ = ["Kengo NAKADA"]
@@ -19,6 +54,14 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 
+#
+################################################################################
+#import gzip
+#import numpy as np
+#from copy import deepcopy
+#import SpaceGroupEnvironment as SGE
+#import matplotlib.mlab as mlab
+################################################################################
 def options():
     name = re.sub(".*/", "", os.getcwd())
     unit = "ev"
@@ -50,6 +93,25 @@ def options():
     ]
 
 
+################################################################################
+############################################
+# set input file
+############################################
+# case.dos ファイルを抽出
+############################################
+# unit の書き直し
+############################################
+# check SPIN
+############################################
+# SPIN 有りの時に list のスピン毎の作り直し
+############################################################################
+# matplotlib
+#   plt.rcParams['font.family'] = 'Times New Roman'
+#   plt.figure(figsize=(横, 縦), dpi=解像度, facecolor=背景色)
+############################################################################
+############################################################################
+#   plt.xlim([-10,10])
+#   plt.ylim([0,200])
 if __name__ == "__main__":
     case, unit, FERMI, NO_WINDOW_FLAG, AT_FLAG, OPT_EMAX, OPT_EMIN, OPT_YMAX = options()
     if OPT_EMAX:
@@ -95,9 +157,15 @@ if __name__ == "__main__":
             dn.append(re.sub("up", "", re.sub("dn", "", i)) + "dn")
         up_lists = list(set(up))
         dn_lists = list(set(dn))
+    # ラベル等のフォントサイズ
     plt.rcParams["font.size"] = 20
+    # レジェンドのフォントサイズ
     plt.rcParams["legend.fontsize"] = 18
+    # 軸の太さを設定。目盛りは変わらない
     plt.rcParams["axes.linewidth"] = 1.5
+    ############################
+    # makes instance
+    # EF0
     for spin in range(nspin):
         if FLAG_SPIN and spin == 0:
             lists = up_lists
@@ -113,13 +181,16 @@ if __name__ == "__main__":
         plot_ions = dos.get_plot_ions()
         title = case
         if nspin == 1:
+            # 一段組の原点(x,y), 幅(x,y)
             plt.axes([0.13, 0.13, 0.8, 0.8])
             plt.title(title)
         if nspin == 2:
             if spin == 0:
+                # 二段組の上側(y幅半分) up-spin
                 plt.axes([0.13, 0.53, 0.8, 0.4])
                 plt.title(title)
             if spin == 1:
+                # 二段組の下段( down-spin )
                 plt.axes([0.13, 0.13, 0.8, 0.4])
         e = []
         for i in range(nedos):
@@ -135,6 +206,9 @@ if __name__ == "__main__":
             TDOS_FLAG = False
         j = 0
         ion_j = 0
+        # autumn, bone, cool, copper, flag, gray, hot, hsv,
+        # jet, pink, prism, spring, summer, winter, spectral
+        # Y軸の調整
         for ion in plot_ions:
             atom_index = atoms_index[ion - 1]
             if nspin == 1:
@@ -185,6 +259,7 @@ if __name__ == "__main__":
         if nspin == 2:
             if spin == 0:
                 plt.xticks([])
+            # y 軸反転
             if spin == 1:
                 xmin, xmax, ymin, ymax = plt.axis()
                 plt.ylim([ymax, 0])
@@ -196,7 +271,9 @@ if __name__ == "__main__":
         plt.xlabel("$E -  E_{\\mathrm{F}}$ [" + unit + "]", fontsize=20)
     else:
         plt.xlabel("$E$ [" + unit + "]", fontsize=20)
+    # 凡例Box
     leg = plt.legend(fontsize=12)
+    # Alphaチャンネル(半透明化)
     leg.get_frame().set_alpha(0.5)
     plt.savefig("ADOS.eps")
     plt.savefig("ADOS.pdf")
