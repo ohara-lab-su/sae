@@ -2,6 +2,46 @@
 requires = ["setuptools>=61,<68", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "StructureAnalysisEnvironment"
+version = "0.1.0"
+description = "Code-specific libraries for structure and electronic-state analysis"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.7"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Kengo NAKADA" },
+]
+dependencies = [
+    "numpy>=1.17",
+]
+
+[project.optional-dependencies]
+analysis = [
+    "ase",
+    "pandas",
+    "matplotlib",
+    "humanfriendly",
+    "coloredlogs",
+]
+test = [
+    "pytest>=7,<8",
+]
+
+[project.scripts]
+sae = "sae.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["StructureAnalysisEnvironment.bin"]
+
+[tool.setuptools.package-data]
+StructureAnalysisEnvironment = ["*.list"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
