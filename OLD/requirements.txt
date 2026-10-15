@@ -1,4 +1,0 @@
-pandas
-ase
-numpy
-matplotlib
