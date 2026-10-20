@@ -1,5 +1,8 @@
 # StructureAnalysisEnvironment (SAE)
 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ohara-lab-su/sae/blob/main/README.en.md)
+[![ja](https://img.shields.io/badge/lang-ja-yellow.svg)](https://github.com/ohara-lab-su/sae/blob/main/README.md)
+
 ## はじめに
 
 現在(2026)においては、ASEや pymatgen などが発展しており、

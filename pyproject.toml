@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "structure-analysis-environment"
-version = "0.1.3"
+version = "0.1.4"
 
 description = "StructureAnalysisEnvironment (SAE)"
 readme = "README.md"
