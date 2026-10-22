@@ -3,105 +3,68 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ohara-lab-su/sae/blob/main/README.en.md)
 [![ja](https://img.shields.io/badge/lang-ja-yellow.svg)](https://github.com/ohara-lab-su/sae/blob/main/README.md)
 
-## はじめに
+## Introduction
 
-現在(2026)においては、ASEや pymatgen などが発展しており、
-このプロジェクト自体の存在価値がほぼありません。
-すでに死んでいるコードです。
+As of 2026, projects such as ASE and pymatgen have advanced considerably, leaving almost no reason for this project to exist. This code is effectively obsolete.
 
-ただ、比較的マイナーな国産のコードも対応していることから、
-必要と思うところ無いわけでもないですので、
-少し改修して現代で使える形にしたつもりです。
-ただし、ほぼテストしてません。
+Nevertheless, it supports some relatively obscure Japanese-developed codes, so it may still be useful in certain circumstances. I have made some modifications to bring it into a form that can be used today. However, it has hardly been tested.
 
-## プログラムについて
+## About the Program
 
-VASP, WIEN2k, Quantum ESPRESSO, OpenMX, CP2K, HiLAPW, FDMNES, RMC\_POT 
-等の第一原理計算および逆モンテカルロ法の各種計算コードに対応した入出力・解析の一元化を目指した
-Python フレームワークです。
-これにより、計算コードの違いを意識することなく、
-構造作成や解析などの計算コードの入出力・解析を統一的な方法で実現できます。
-また、同時に提供される、同フレームワークを用いて開発された実用的なツール群により
-エンドユーザーは気楽にほぼ同一の手続きで計算から解析まで行うことが可能になります。
+This Python framework aims to unify input/output handling and analysis across first-principles and reverse Monte Carlo calculation codes, including VASP, WIEN2k, Quantum ESPRESSO, OpenMX, CP2K, HiLAPW, FDMNES, and RMC_POT. It enables structural construction, analysis, and input/output operations through a common interface, without requiring users to be concerned with differences between calculation codes. The practical tools developed using the framework also allow end users to perform calculations and analyses using essentially the same procedures.
 
+Version 0.1.0 takes the existing class architecture one step further by organizing namespaces by calculation code and classes by the files and functions handled within each namespace. Version 0.0.x already used the pattern of loading structures and calculation results into instances and applying methods to transform, analyze, and write them. That principle remains unchanged. This update reorganizes functionality and call destinations scattered by years of incremental development, making the library easier to use while preserving the results produced by the existing formulas, algorithms, and parsers.
 
-0.1.0 では、これまでのクラス構成を一歩進めて、計算コードごとのネームスペースと、
-その中で扱うファイルや機能ごとのクラスを整理しました。0.0.x でも、構造や計算結果を
-インスタンスに読み込み、メソッドで変換・解析・書き出しをする形は普通に使っています。
-今回もその考え方は同じです。長年の増改築で散らばった処理と呼び出し先を整理し、
-既存の数式・アルゴリズム・パーサーによる結果を保ったまま、ライブラリとして扱いやすくするための変更です。
+## Excuses from the Original Development Period
 
-## 当時のいいわけ
+This was developed in considerable haste, and many planned features were never fully realized. Major development largely stopped around 2015; although I have made changes when necessary since then, the result remains incomplete. I also did not understand Python particularly well at the time, and much of the code looks rather careless in retrospect.
 
-かなり突貫で作っておりまして、まだまだ企画倒れな部分も多数あります。
-2015 年あたりから大きな開発は止まり、その後も必要に応じて手を入れてきたものの、中途半端です。
-また、当時はPythonがよくわかってなかったので今見るとかなりいい加減です。
+## History
 
-## 履歴
+- ver_0.1.0: 2026.10.15 Reorganized and extended the existing class architecture, separating namespaces by calculation code. Retained Python 3.7 syntax and consolidated package configuration in `pyproject.toml`.
+- ver_0.0.18: 2020.11.18 21:11 Hasty minor adjustments; partially resolved namespace problems.
+- ver_0.0.15: 2020.11.18 Hasty minor adjustments.
+- ver_0.0.6: 2018.10.15 Hasty minor adjustments (minor fixes). **Python3.0**
+- ver_0.0.0: 2015.02.16 Last-Release Version (development discontinued).
+- ... relics from even earlier versions.
 
-- ver_0.1.0: 2026.10.15 既存のクラス構成を整理・拡張し、計算コード別にネームスペースを分離。Python 3.7 の文法を保ち、パッケージ設定を pyproject.toml に集約
-- ver_0.0.18: 2020.11.18 21:11 突貫微調整, 名前空間の問題を（一部）解消
-- ver_0.0.15: 2020.11.18 突貫微調整
-- ver_0.0.6: 2018.10.15 突貫微調整 (マイナーfix) **Python3.0**
-- ver_0.0.0: 2015.02.16 Last-Release Version (開発停止版)
-- ...それ以前の過去の遺物
+## License and Disclaimer
 
-## ライセンスおよび免責事項
+This software is licensed under Apache License 2.0. Users must comply with Apache License 2.0 when using it. Under that license, the author assumes no liability for the software. See the included `LICENSE.txt` for details.
 
-Apache License 2.0 です。
-ユーザーは使用にあたって Apache License 2.0 を順守してください。
-Apache License 2.0 に基づき、作者はソフトウエアに関して何ら責任を負いません。
-詳しくはパッケージに同封の LICENSE.txt ファイルをご覧ください。
+## Intended Runtime Environment
 
-## 想定する実行環境
+Development was primarily performed on Mac OS X, and testing primarily on Linux. Version 0.0.x was also tested to some extent on Windows 7 Pro and Windows 8.1 Pro. Ideally, the software should run almost anywhere Python is installed, but version 0.1.0 has not been revalidated on every platform.
 
-開発のメインは Mac OS X で、テスト環境のメインは Linux です。
-0.0.x では Windows 7 Pro および Windows 8.1 Pro でもある程度テストを行っていました。
-Python が導入されていればほとんど何処でも動くようにしたいところですが、
-0.1.0 で全環境を改めて確認したわけではありません。
+Version 0.1.0 uses **Python 3.7 or later syntax**. Syntax and instantiation of the central classes were checked under Python 3.7.9; tests involving numerical processing were performed under Python 3.12.11. This does not mean that all numerical operations, including dependencies, have been verified under Python 3.7. The principal test environments for 0.0.x were Python 3.6.10, 3.7.10, and 3.9.1.
 
-0.1.0 のソースは **Python 3.7 以上の文法**で書いています。
-Python 3.7.9 で構文と中心となるクラスのインスタンス生成を確認し、
-数値処理を含むテストは Python 3.12.11 で行っています。
-Python 3.7 上で、依存モジュールも含めてすべての数値処理を確認したという意味ではありません。
-なお、0.0.x の主なテスト環境は Python 3.6.10、3.7.10、3.9.1 でした。
+## Installation
 
-## インストール
-
-ソースを展開し、`pyproject.toml` があるディレクトリで次のように実行してください。
+Extract the source and execute the following in the directory containing `pyproject.toml`:
 
 ```sh
 python -m pip install .
 ```
 
-wheel からのインストールも可能です。
+Installation from a wheel is also supported:
 
 ```sh
 python -m pip install structureanalysisenvironment-0.1.0-py3-none-any.whl
 ```
 
-パッケージ名はこれまでどおり `StructureAnalysisEnvironment` ですが、
-Python から使うときの import 名は `sae` になります。
-ビルド設定、依存モジュール、ツール群の登録は `pyproject.toml` にまとめました。
-0.1.0 はこのパッケージだけで使えますので、以前の版や OLD ディレクトリを置いておく必要はありません。
+The distribution name remains `StructureAnalysisEnvironment`, while its Python import name is `sae`. Build configuration, dependencies, and tool registrations are consolidated in `pyproject.toml`. Version 0.1.0 is self-contained; earlier versions and the `OLD` directory are not required.
 
-以前は `python setup.py install`、もしくは次のような git からの pip インストールを案内していました。
+Previously, installation instructions used `python setup.py install` or pip installation from Git:
 
 ```sh
 pip install git+http://selenium.spring8.or.jp:8081/analysis/sae.git
 ```
 
-これは0.0.xでの配布先と手順です。0.1.0では setup.py は使いません。
-さらに古い Windows 64bit 用の `StructureAnalysisEnvironment-0.0.1.win-amd64.exe` は
-Python 2.7 向けのもので、Python 2.6 には一部制限がありました。
-当時は PyPI に登録していなかったため、このインストーラや setup.py から導入していましたが、
-現在はその Windows 用インストーラはサポートしていません。
+Those instructions and that distribution location applied to 0.0.x. Version 0.1.0 does not use `setup.py`. The still older 64-bit Windows installer, `StructureAnalysisEnvironment-0.0.1.win-amd64.exe`, targeted Python 2.7 and had some restrictions under Python 2.6. At that time the package was not registered on PyPI, so installation relied on that installer or `setup.py`. The Windows installer is no longer supported.
 
-## 実行に必要なPythonおよびモジュール
+## Required Python Version and Modules
 
-初期の Python 2.7、その後の Python 3.5 以上という想定から、
-0.1.0 では Python 3.7 以上の文法に揃えています。
-次のモジュールを使います。それぞれ、使用する Python に対応する版を導入してください。
+The original targets were Python 2.7 and, subsequently, Python 3.5 or later. Version 0.1.0 standardizes on Python 3.7 or later syntax. Install compatible versions of the following modules for your Python environment:
 
 * [ASE](https://wiki.fysik.dtu.dk/) (AtomicSimulationEnvironment)
 * [NumPy](http://www.numpy.org)
@@ -111,29 +74,20 @@ Python 2.7 向けのもので、Python 2.6 には一部制限がありました�
 * coloredlogs
 * xlogger-py
 
-cif 関係では PyCifRW、3D描画やGUIでは [VPython](http://vpython.org) と
-[wxPython](http://www.wxpython.org) を使う処理もあります。
-GUI部分は旧来の `visual` と `wx` の環境を前提としており、
-現行の VPython のAPIに書き直したものではありません。
-計算コード本体や計算結果のファイル、OpenMX の擬ポテンシャル等の設定は別途必要です。
+Some CIF-related operations use PyCifRW, while some 3D rendering and GUI operations use [VPython](http://vpython.org) and [wxPython](http://www.wxpython.org). The GUI components assume the older `visual` and `wx` environments; they have not been rewritten for the current VPython API. Calculation programs, their result files, and configuration such as OpenMX pseudopotentials must be supplied separately.
 
-### Matplotlib に必要とされるモジュール
+### Modules Previously Required for Matplotlib
 
-以前の環境では、NumPy と SciPy のほか、以下のモジュールも案内していました。
-Matplotlib の版や環境に応じて必要なものを導入してください。
+Older environments also listed the following modules in addition to NumPy and SciPy. Install them as appropriate for the Matplotlib version and environment:
 
-* [SciPy](http://www.numpy.org): Matplotlib を用いた処理で使用
-* [pytz](https://pypi.python.org/pypi/pytz/): Matplotlib の旧環境で使用
-* [pyparsing](https://pypi.python.org/pypi/pyparsing): Matplotlib で使用
-* [six](https://pypi.python.org/pypi/six): Matplotlib の旧環境で使用
+* [SciPy](http://www.numpy.org): Used in Matplotlib-based processing.
+* [pytz](https://pypi.python.org/pypi/pytz/): Used in older Matplotlib environments.
+* [pyparsing](https://pypi.python.org/pypi/pyparsing): Used by Matplotlib.
+* [six](https://pypi.python.org/pypi/six): Used in older Matplotlib environments.
 
-## フレームワークの基本的な使い方
+## Basic Framework Usage
 
-一般的な Python の OOP スタイルでコードが書けます。
-構造情報や計算結果をクラスのインスタンスに読み込み、メソッドを作用させて処理するという、
-0.0.x からの基本的な使い方は同じです。たとえば、以下の数行のプログラムにより、
-VASP の構造入力ファイルである POSCAR を FDMNES 形式に変換します。
-<b>プログラム本体はたった二行で変換作業が終わります</b>。
+Programs can be written in ordinary object-oriented Python style. As in 0.0.x, structural information and calculation results are loaded into class instances and processed by methods. For example, the following few lines convert a VASP POSCAR structure file into FDMNES format. <b>The actual conversion requires just two lines of code.</b>
 
 ```python
 #!/usr/bin/env python
@@ -143,15 +97,9 @@ cell = VASP("POSCAR")
 cell.write(code="FDMNES")
 ```
 
-以前の `import StructureAnalysisEnvironment as SAE`、
-`SAE.io.Read(filename='POSCAR', code='VASP')` に相当する使い方です。
-0.1.0 では、計算コードが決まっていれば、そのコードのクラスを直接使えます。
-旧 import 名の互換層は用意していませんので、既存のスクリプトでは import と呼び出し先を変更してください。
+This corresponds to the previous `import StructureAnalysisEnvironment as SAE` and `SAE.io.Read(filename='POSCAR', code='VASP')` usage. In 0.1.0, you can directly use the class for a particular calculation code. No compatibility layer for the old import name is provided; existing scripts must update their imports and call sites.
 
-これらのクラス・メソッドには様々なオプションがあり、
-たとえば構造情報である POSCAR 以外の VASP の入力ファイルを読み込んで、
-ほぼ同じ計算条件の入力ファイルを自動作成する機能などもあります。
-構造を保持したまま座標を変換し、その結果を書き出すこともできます。
+These classes and methods provide various options. For example, they can read VASP input files other than POSCAR and automatically generate inputs with nearly equivalent calculation conditions. Coordinates can also be transformed while retaining the structure, and the result written out.
 
 ```python
 from sae import VASP
@@ -161,13 +109,9 @@ vasp.conv_direct2car()
 vasp.write(outname="converted", code="FDMNES")
 ```
 
-`vasp.structure` が構造を持つ `ReadVaspPoscar` インスタンスです。
-DOSCAR を扱いたい場合は `vasp.read_dos("DOSCAR")` とすると、
-作成された `ReadVaspDoscar` インスタンスが `vasp.dos` に保持され、戻り値にもなります。
-各メソッドの状態変更や戻り値、オプションの既定値は既存の処理に従います。
-変換するたびに別のインスタンスを返すように統一したわけではありません。
+`vasp.structure` is a `ReadVaspPoscar` instance holding the structure. To handle DOSCAR, call `vasp.read_dos("DOSCAR")`: the resulting `ReadVaspDoscar` instance is stored in `vasp.dos` and also returned. State changes, return values, and default options of individual methods follow their existing implementations. Methods have not been standardized to return a separate instance for every transformation.
 
-対象となるファイルのクラスを直接使っても構いません。
+You can also instantiate the class for the target file directly:
 
 ```python
 from sae.vasp.poscar import ReadVaspPoscar
@@ -177,9 +121,7 @@ cell.conv_direct2car()
 cell.write(outname="converted", code="FDMNES")
 ```
 
-以前はインスタンスの `write` メソッド以外に、`SAE.write(cell, code='FDMNES')` のように
-関数側から処理する書き方もできました。0.1.0 では、独立していた処理も役割ごとのクラスに
-まとめていますので、同じ使い分けは `StructureWriter` のメソッドで行えます。
+Previously, in addition to an instance's `write` method, operations could be invoked through functions such as `SAE.write(cell, code='FDMNES')`. In 0.1.0, formerly independent operations have been grouped into classes according to their roles. The corresponding usage is available through `StructureWriter` methods:
 
 ```python
 from sae.vasp.poscar import ReadVaspPoscar
@@ -189,19 +131,13 @@ cell = ReadVaspPoscar("POSCAR")
 StructureWriter().write(cell, code="FDMNES")
 ```
 
-その他、スーパーセルを作ったり、オイラー角にしたがって回転させたりなど、
-多数の構造に関するメソッドを有しています。他にも、計算後の電子状態に対する処理も
-同様の手続きで処理が可能です。それぞれ多数のオプション機能がありますので、
-Python でのプログラム経験があれば、構造作成から電子状態の解析まで統一的に扱えると思います。
+Numerous additional structural methods are available, including supercell construction and rotations based on Euler angles. Post-calculation electronic-state processing can be performed through similar procedures. Each operation offers numerous options, so users familiar with Python should be able to handle everything from structural construction to electronic-state analysis through a unified interface.
 
-### クラスと内部構造
+### Classes and Internal Architecture
 
-0.0.x でも、各種の Read クラスや共通の Method クラスにデータと操作をまとめていました。
-ただ、対応するコードや機能を足していくうちに、クラスと単独関数の置き場所、
-それを呼び出す側の名前がわかりにくくなっていました。
-0.1.0 では、この構成を計算コードごとに整理し、それぞれの中で対象ファイルや機能を分けています。
+Version 0.0.x already grouped data and operations into various Read classes and shared Method classes. As calculation codes and functionality accumulated, however, the locations of classes and standalone functions and the names used by their callers became difficult to follow. Version 0.1.0 reorganizes these components by calculation code and separates the corresponding files and functions within each code.
 
-| 計算コード・対象 | ネームスペース | 中心となるクラス |
+| Calculation code / target | Namespace | Main class |
 | --- | --- | --- |
 | VASP | `sae.vasp` | `VASP` |
 | OpenMX | `sae.openmx` | `OpenMX` |
@@ -215,126 +151,95 @@ Python でのプログラム経験があれば、構造作成から電子状態�
 | Athena | `sae.athena` | `Athena` |
 | PF | `sae.pf` | `PF` |
 
-たとえば、`sae/vasp/vasp.py` の `VASP` クラスは、その計算の構造・入力・出力・解析の
-各インスタンスを保持します。POSCAR のデータと座標操作は `sae/vasp/poscar.py` の
-`ReadVaspPoscar`、DOSCAR は `doscar.py` の `ReadVaspDoscar`、
-POSCAR の出力処理は `poscar_writer.py` の `PoscarWriter` という具合です。
-ファイル別のクラスからでも、コード単位のクラスからでも、同じ処理を使えます。
+For example, the `VASP` class in `sae/vasp/vasp.py` holds instances for structure, input, output, and analysis associated with a calculation. POSCAR data and coordinate operations belong to `ReadVaspPoscar` in `sae/vasp/poscar.py`; DOSCAR is handled by `ReadVaspDoscar` in `doscar.py`; POSCAR output is handled by `PoscarWriter` in `poscar_writer.py`. The same operations are accessible through file-specific classes or calculation-code-level classes.
 
-FDMNES も同様に、入力の構造は `sae/fdmnes/inp.py`、入力の生成は `inp_writer.py`、
-計算結果は `bav.py` と、扱う対象ごとに分けています。出力形式の年代差に対応していた
-処理は、その区別も残しています。CP2K 向けの既存コマンドもありますが、
-独立した `CP2K` クラスはまだありません。
+Likewise, FDMNES separates input structures (`sae/fdmnes/inp.py`), input generation (`inp_writer.py`), and calculation results (`bav.py`). Distinctions for different generations of output formats have been retained. Existing commands for CP2K are included, but there is not yet a standalone `CP2K` class.
 
-共通の座標変換は `CoordinateTransforms`、スーパーセルの処理は `SupercellOperations`、
-元素表は `ElementTable`、テキストの読み込みは `TextFiles` といったクラスにまとめました。
-単独関数であった処理も、これらのメソッドとして使います。
-各モジュールに処理本体がありますので、以前のソースを外から呼び出す仕組みではありません。
-構造や計算結果を読み込むだけでなく、そのデータを使って変換・解析・生成まで行う点は従来どおりです。
+Shared coordinate transformations have been grouped into `CoordinateTransforms`, supercell operations into `SupercellOperations`, the periodic table into `ElementTable`, and text-file reading into `TextFiles`. Former standalone functions are used as methods of these classes. Their implementations reside in the respective modules; this is not a mechanism for calling into the old source tree. The existing approach of loading structures or calculation results and then transforming, analyzing, and generating data from them remains unchanged.
 
-配置を詳しく知りたい場合は、[実装対応表](docs/implementation-map.json)、
-[クラス操作の対応表](docs/class-bindings.json)、[設計](docs/design.md)を参照してください。
+For more detail on the layout, see the [implementation map](docs/implementation-map.json), [class bindings](docs/class-bindings.json), and [design documentation](docs/design.md).
 
-### 利用例とサンプル
+### Usage Examples and Samples
 
-[examples/vasp_conversion.py](examples/vasp_conversion.py) は VASP の構造変換、
-[examples/fdmnes_input.py](examples/fdmnes_input.py) は FDMNES の入力生成の例です。
-以前からの実用的な小さいスクリプトも、コメントを含めて
-[examples/legacy](examples/legacy/README.md) に置いています。
-必要に応じて書き換えて使うための例としてはこちらも参考になると思います。
+[examples/vasp_conversion.py](examples/vasp_conversion.py) demonstrates VASP structure conversion, while [examples/fdmnes_input.py](examples/fdmnes_input.py) demonstrates FDMNES input generation. Small practical scripts from earlier versions, including their comments, are retained in [examples/legacy](examples/legacy/README.md). They may be useful as starting points for scripts that users adapt to their own requirements.
 
-`examples/` がコードの使い方の例であるのに対して、`src/sae/sample_input/` は
-計算データ等のサンプルです。テスト用に保存した基準値は `tests/golden/` にあります。
+Whereas `examples/` contains code usage examples, `src/sae/sample_input/` contains sample calculation data and related files. Reference values saved for testing are stored in `tests/golden/`.
 
-各機能についてはここでは詳しくは紹介しませんが、実際には、このフレームワークを用いて
-作られたツール群から使うこともできます。普通に計算や解析をするエンドユーザーは、
-まずは次のツール群をお使いください。
+The individual functions are not described exhaustively here. In practice, they can also be accessed through the tools built on this framework. End users performing ordinary calculations and analyses should begin with the tools described below.
 
-## フレームワークを用いたツール群の解説
 
-ツール群は `src/sae/commands` にあり、インストール時にスクリプトとして登録されます。
-0.1.0 では、内部で呼び出すクラスを新しいネームスペースへ接続しています。
-実際に収録している197コマンドは [コマンド一覧](docs/commands.md) と `pyproject.toml` を
-参照してください。以下の説明には以前からの開発予定や旧時点の対応状況も含みますので、
-収録一覧とは必ずしも一致しません。`BUG` を含む名前の古いスクリプトも残っています。
+## Tools Built on the Framework
 
-### 基本ルール
-普通ユーザーはフレームワーク自体を直接使うことはほぼ稀となります。実際には、ユーザーはフレームワークとともに提供されるツール群を用いることになります。このツール群は、一部の例外はありますが、基本的には以下のルールに則ってネーミングをされてます。同じような名前のツールはほぼ同じ機能を用いており、多数の機能を似たような手続きで使うことが可能になります。
+The tools are located in `src/sae/commands` and are registered as executable scripts during installation. In version 0.1.0, the classes called internally have been connected to the new namespaces. For the 197 commands actually included, consult the [command list](docs/commands.md) and `pyproject.toml`. The descriptions below also include older development plans and historical support status, so they do not necessarily match the current inventory. Legacy scripts whose names contain `BUG` also remain.
 
-1. <b>大文字</b>から始まるコードはユーザーが編集する必要のない<b>汎用ツール</b>。非常に多くのコマンドラインオプションを持ち、かなり高機能化、肥大化しているツールもあります。大抵は -h でヘルプが一応出るようにしてます。汎用の高機能のマクロとも言えます。
+### Basic Conventions
 
-2. <b>小文字</b>から始まるコードはユーザーがその都度必要に応じて直接編集する必要があります。ただし、実施問題小回りの効いた非常に小さいコードであり、Pythonを知っていれば汎用性が高く、簡単に目的に応じて編集できるので、ある意味一番便利なコードでもあります。一種の野良マクロと言えます。
+Ordinary users rarely need to use the framework directly. Instead, they generally use the tools distributed with it. With some exceptions, the tools follow the naming conventions below. Similarly named tools usually provide similar functions, allowing a large number of operations to be performed through nearly identical procedures.
 
-3. 先頭の<b>大文字</b>もしくは<b>小文字</b>は、使用する計算コードを示します。これらツールのネーミングセンスの元は、小口先生のHiLAPWに同封されているLAcopyなどのツールに由来します。LAcopy に相当する他の計算コード向けのプログラムなど(例えばVASP用の Vcopy や Vmove など）も多数用意していますが、多くはc-shellやb-shell、もしくは Perl で実装しているために、このフレームワークのツール群としてはパッケージしていません。
-	1. <b>CP</b>から始まる CP\*.py プログラムは <b>CP2K</b>用
-	2. <b>FD</b>から始まる FD\*.py プログラムは <b>FDMNES</b>用
-	3. <b>LA</b>から始まる LA\*.py プログラムは <b>HiLAPW</b>用
-	4. <b>MX</b>から始まる MX\*.py プログラムは <b>OpenMX</b>用
-	5. <b>PW</b>から始まる PW\*.py プログラムは <b>Quantum ESPRESSO(PWScf)</b>用
-	6. <b>R</b>から始まる R\*.py プログラムは <b>RMC_POT</b>用
-	7. <b>V</b>から始まる V\*.py プログラムは <b>VASP</b>用
-	8. <b>W</b>から始まる W\*.py プログラムは <b>WIEN2k</b>用
-4. 先頭の大文字を除いて同じ名前だったらほぼ同じ操作で同じことが出来ます。
-    1. (例) Vplot\_LDOS.py と Wplot\_LDOS.py は同じく LDOS 描画ツールでほぼ同じコマンドラインオプションで同じ描画をしてくれる機能を有します。
-    2. (例) LAcopy と FDcopy はほぼ同等の機能を有します。
-    3. (例)\*plot\*.py が含まれているコードは matplotlib を用いた2Dプロットかもしくは3Dプロットするコードです。
+1. Programs beginning with an <b>uppercase letter</b> are <b>general-purpose tools</b> that users need not edit. Some have grown into highly capable, relatively large programs with numerous command-line options. Most provide at least some help with `-h`. They can be regarded as sophisticated general-purpose macros.
+2. Programs beginning with a <b>lowercase letter</b> must be edited directly by users as necessary. In practice, however, they are small, flexible scripts; anyone familiar with Python can readily adapt them to a particular purpose. In that sense they may be the most useful tools. They are a kind of informal, ad hoc macro.
+3. The initial <b>uppercase or lowercase letter</b> identifies the calculation code. The naming convention was inspired by tools such as `LAcopy`, distributed with Professor Oguchi's HiLAPW. Numerous analogous utilities exist for other codes, including `Vcopy` and `Vmove` for VASP, but many are written in c-shell, b-shell, or Perl and are therefore not packaged as framework tools.
+   1. `CP*.py` (prefix <b>CP</b>): <b>CP2K</b>.
+   2. `FD*.py` (prefix <b>FD</b>): <b>FDMNES</b>.
+   3. `LA*.py` (prefix <b>LA</b>): <b>HiLAPW</b>.
+   4. `MX*.py` (prefix <b>MX</b>): <b>OpenMX</b>.
+   5. `PW*.py` (prefix <b>PW</b>): <b>Quantum ESPRESSO (PWscf)</b>.
+   6. `R*.py` (prefix <b>R</b>): <b>RMC_POT</b>.
+   7. `V*.py` (prefix <b>V</b>): <b>VASP</b>.
+   8. `W*.py` (prefix <b>W</b>): <b>WIEN2k</b>.
+4. Tools whose names differ only in their initial uppercase letter generally perform the same task using almost the same procedure.
+   1. For example, `Vplot_LDOS.py` and `Wplot_LDOS.py` both plot LDOS with nearly identical command-line options.
+   2. `LAcopy` and `FDcopy` provide nearly equivalent functionality.
+   3. Programs with `*plot*` in their names use matplotlib for 2D or 3D plotting.
 
-### 同封しているツールの概略
-本フレームワークを用いて開発されたツール群のうち、ある程度メンテナンスが行き届いていて、かつ実用的と思われる
-ツールをいくつか紹介します。フレームワークのパッケージに同封していますのでフレームワークをインストールすれば自動的にパスが通っているはずなのでコマンドラインから普通に使えずはずです。また、パッケージにはここに記載されているプログラムをより多くのツールが同封されていますが、作者自身の使用頻度が低いものや古いものはとりあえずはここでの紹介は省いています。また、プログラム中から呼び出すことが前提の関数群(モジュールですらなく、そのまま関数的に使うスクリプト)の紹介も割愛します。
+### Overview of Included Tools
 
-特にplot系ツールに関してはかなり機能が肥大化しており非常に多数のオプションを持ちます。ここではそれらについてはほとんど解説しません。各ツールには -h オプション指定で動かす事によりヘルプが出てきます。ヘルプを参照してください。
+The following are selected tools developed using this framework that are considered reasonably maintained and practical. They are included in the framework package and should be available on the command line after installation, assuming the installation registered their paths correctly. The package contains many more tools than are described here; those the author seldom uses, older tools, and collections of functions intended to be invoked from other programs (including scripts used directly as functions rather than modules) are omitted from this introduction.
+
+Plotting tools in particular have grown considerably and offer very large numbers of options. Most options are not explained here; consult the help displayed by running each tool with `-h`.
 
 #### for CP2K
-- <b>CPvasp2inp.py</b> : VASP の POSCAR ファイルを CP2K の \*.inp 形式に変換します。\*.inp はマクロ的にかなり高度な記述が可能な文法を持つ入力ファイルです。現在では部分的にのみ対応はしています。また、POSCAR の構造情報以外の VASP の計算のコントロール系の情報ファイルも同時に読み込み、ある程度のパラメーターおよび入力書式には対応しています。完全ではないですが、VASP の計算の入力ファイルをそのままCP2Kで動かすことは可能です。順次対応を強化していく予定です。
+- <b>CPvasp2inp.py</b>: Converts a VASP POSCAR file into CP2K `*.inp` format. The CP2K input syntax supports sophisticated macro-like constructs, and only part of it is currently supported. The script also reads VASP calculation-control input files in addition to the POSCAR structure and supports a subset of their parameters and input formats. Although incomplete, it can generate CP2K input from VASP input files that can be used to run a calculation. Support was planned to be expanded incrementally.
 
 #### for FDMNES
-- <b>FDbav2xyz.py</b> : \*\_bav.txt ファイルから xyz 形式のファイルを出力します。計算に用いたクラスター半径に応じて \*\_bav.txt で記述される構造が変わってきますので、それらをxyz形式に直すことにより、どのようなある半径のクラスターで切り取った構造を容易に可視化することが可能です。xyz形式はVESTAを初めほぼあらゆるツールで可視化が可能です。
-- <b>FDcif2fdm.py</b> : \*.cif 形式から FDMNES で用いる \*.inp ファイルを出力します。また構造情報だけではなく、典型的な計算のサンプルインプットファイルも同時に \*.inp に記述されますので、ほとんど修正無く、基本的な XANES スペクトルの計算が可能な \*.inp ファイルを cif ファイルから作成可能です。
-- <b>FDclean.py</b> : FDMNES の計算結果等のファイルを消し、計算前のファイル構成に戻ります。拙作(c/b-shell/perl版) Vclean、LAclean などの、他のコード向けのツールと同等のセンスで作られています。\*.inp ファイルに記述している filout タグからファイル名のプリフィックスを FDMNES用のクラスから取得して初期状態に戻すためにわざわざPythonで記述しています。過去のスクリプトも順次Python版へ移行します。
-- <b>FDmove.py</b> : filout タグにしたがって出力されたファイル名を一気に変更する。Vmove などと同様の機能
-- <b>FDconv\_e2photoe.py</b>: 計算後の \*\_conv.txt ファイルが above Fermi Energy 形式の時、Photon Energy 形式に直して計算し直します。Energpho をタグを入れずに計算したとき、または逆にもとのFermi Level形式に戻したいときに使います。
-- <b>FDfdm2vasp.py</b> : FDMNES の入力形式ファイル \*.inp に書かれた構造情報を VASP の POSCAR 形式に変換するスクリプトです。あまり需要は無いと思いますが、何かの構造からではなく手動で FDMNES 用の \*.inp ファイルの構造情報を作成されたときにご活用ください。ただし、まだ空間群などの入力形式を初め、いくつかのFDMNES特有の自由な構造入力形式にはすべて対応しきっておりません。
-- <b>FDmakeCconvAllsite.py</b> : Absorber を指定せずに、allsite で計算したときなど、複数の Absorber を用いたときは はすべての site で convolution されません。このスクリプトは、計算後にまとめてすべての site で convolution するためのスクリプトです。 convolution 用の \*.inp ファイルの一括作成とそれを連続動作させるための fdmfiles.txt の自動作成スクリプトとなります。このスクリプトを動かしたときは fdmfiles.txt は書き換わりますのでご注意ください。
-- <b>FDpbd2fdm.py</b> : PDB形式のファイルを FDMNES の入力形式 \*.inp に変換するスクリプトです。FDMNESには本来PDB形式ファイルをインポートする機能があります。
-PDB形式には、出力するソフトウエアによっては、周期的な構造情報をプロットするために、コメントアウト行にこっそりと格子等の情報を書くことがあります。
-正しく知りませんがおそらく正式なPDB仕様ではないと推察しますが、VESTA や CrystalMaker などの多くのソフトで対応しています。
-FMNESはこの書式にも実は対応しているのですが、これを読み込む機能がFDMNESはいささかバグっぽいです。
-おそらく仕様自体がPDB公式でないためと推察しています。そのため、周期構造をアウトプットした場合は公式の？PDBフォーマットを扱う場合は、FDMNES本来のインポート機能を用いるよりは、このスクリプトを用いて、直接 \*.inp に変換した構造を記述した方が意図した構造が計算出来ると思います。当然、通常のxyz形式で書かれたPDBにも対応しております。
-- <b>FDplot\_XAS.py</b> : \*\_conv.txt ファイルや \*.txt ファイルなどの XANES の計算結果および、\*\_sd.txt ファイルなどの状態密の結果をまとめて表示したり、それぞれの結果を平均化したりするなどの様々なオプション機能を持つ高機能描画ソフトです。かなり機能がゴージャスです。基本的に　matploblib のGUI画面を持ちますので、そちらで拡大縮小やセーブも可能ですが、このプログラムを実行するだけで、デフォルトで自動的に描画結果はpdf,png,eps 形式に出力されます。詳しくは引数に-hを付けたオプションでヘルプが出ますのでそちらを参照してください。
-- <b>FDplot\_XASs.py</b> :
-- <b>FDplot\_XAS_LDOS.py</b> : XAS の結果(convoluton) および選択した原子のLDOSを多段組で表示する。軌道解析用。むしろ、基本機能が FDplot\_LDOS.py ですべて実装されてしまっているので、あまり必要ないかもしれない。あるいみショートカット的なスクリプトです。機能の充実は FDplot\_LDOS.py の方で精力的に行っているので、もしかしたらそのうちお蔵行きにします。
-- <b>FDplot\_LDOS.py</b> : 選択した原子のLDOS の結果のみを多段組で表示する。軌道解析用。複数の原子を選択すると、れを足し合わせ表示をしたり、XANES と同時プロット、積分状態密度のプロットなど多数の機能を持ちます。XANESスペクトルの表示(元ファイル and convolutionファイル)や トータルDOSおよび積分状態密度のプロットにも対応しています。もしかすると FDplot\_XAS.py は必要ないかもしれませんが、こちらは一応LDOSメインなのでXASの平均化などのオプションは加えておりません。
-- <b>FDplot\_PDOS.py</b> : 選択した原子のPDOS の結果のみを多段組で表示します。LDOS の PDOS 版です。もともとFDMNES の出力はlm分解なので、こちらが本来のフル機能版の LDOS.py と思っても良いと思います。軌道解析用。表示する起動の選択表記も可能です。
-- <b>FDvasp2fdm.py</b> : VASP の入力ファイルPOSCAR を FDMNES の入力形式 \*.inp へ変換するスクリプトです。また構造情報だけではなく、典型的な計算のサンプルインプットファイルも同時に \*.inp に記述されますので、ほとんど修正無く、基本的な XANES スペクトルの計算が可能な \*.inp ファイルを POSCAR ファイルから作成可能です。
-- <b>FDxyz2fdm.py</b> : xyz形式(md形式)ファイルを FDMNES の入力形式 \*.inp へ変換するスクリプト
-- <b>fdExp\_comp\_XAS.py</b> : FDplot\_XAS.py のシンプル機能版にさらに、同フレームワーク中の Athena のノーマライズ形式(nor)を読み込むクラスを用いて実験結果と計算結果度同時にプロットしたりするプログラムです。
-比較的シンプルに作ってあるので、実際には状況に応じてユーザーはこれを書き換えて、自由に臨み通りの図をプロットすることが用意です。
-このプログラムは、そのためサンプルプログラムであるともいえます。
-- <b>fdLDOS.py</b> : \*\_sd\*.txt に記述されている状態密度情報をプロットするプログラムの基本機能のみを抽出したシンプルプログラムです。
-FDplot\_XAS.py では Absorber の状態密度プロット機能はありますが、別のサイトの局所状態密度まではプロットするようにはしていません。
-局所状態密度解析を行うときはこちらをベースにすると便利だと思います。
-- <b>fdLDOS0_specified.py</b> : fdLDOS.py とほぼ同等ですが、FDplot\_XAS.py に実装されているのと同じく、局所DOSの規格化オプション（サイトごとや原子ごとに直す）も使われていますので、それらの機能確認を使いこなしてプロットするためのサンプルも兼ねた基本プログラムとなっています。
-- <b>fdPDOS_XAS_av.py</b> : FDplot\_PDOS.py をベースとしてます。複数の計算結果を平均化してプロットするなど、複数の計算結果に直接アクセスするようにしています。ケースバーケースで作り替える必要があります。
-- <b>fdLDOSmulti.py</b> : FDplob\_LDOS.py をベースとして、多段組を手動作りの最小構成サンプル。subplot を使っている。書き換える必要があるが、ひな形としては柔軟性が回ので実用的。
-- <b>fdMulti.py</b> : FDplob\_LDOS.py をベースとして、多段組を手動作りの最小構成サンプル。subplot を使わずに数値で値を入れている。fdLDOSmulti.py より小回りがきく。(subplotを使いこなせば良いという話もあるが、そこまでしなくてももっと気楽につかえる。)
+- <b>FDbav2xyz.py</b>: Exports an XYZ file from `*_bav.txt`. The structure recorded in `*_bav.txt` depends on the cluster radius used in the calculation. Conversion to XYZ makes it easy to visualize the cluster cut out at a given radius. XYZ can be visualized by VESTA and almost all other structural visualization tools.
+- <b>FDcif2fdm.py</b>: Generates an FDMNES `*.inp` input file from `*.cif`. In addition to structural information, the generated input contains a sample configuration for a typical calculation. Thus, a CIF file can be turned into input suitable for basic XANES calculations with almost no modifications.
+- <b>FDclean.py</b>: Deletes FDMNES output and related files, restoring the pre-calculation file layout. Its design follows the author's Vclean, LAclean, and similar utilities for other codes written in c-shell, b-shell, or Perl. It is implemented in Python specifically to retrieve the filename prefix from the `filout` tag in `*.inp` through the FDMNES class. The older scripts were intended to be migrated to Python incrementally.
+- <b>FDmove.py</b>: Renames the files produced according to the `filout` tag in one operation, providing functionality similar to `Vmove`.
+- <b>FDconv_e2photoe.py</b>: Converts a post-calculation `*_conv.txt` file expressed in energy above the Fermi level to photon-energy form and reruns the convolution calculation. Useful when the original calculation omitted the `Energpho` tag, or when converting back to the original Fermi-level representation.
+- <b>FDfdm2vasp.py</b>: Converts structural information from an FDMNES `*.inp` input file to VASP POSCAR format. This may be useful when an FDMNES structure has been entered manually rather than converted from another structure. Some flexible FDMNES-specific structural input forms, including space-group specifications, are not yet fully supported.
+- <b>FDmakeCconvAllsite.py</b>: When a calculation uses multiple absorbers, for example with `allsite` and no explicitly specified absorber, convolution is not performed for every site. This script prepares convolution for all sites after the calculation by generating the required `*.inp` files in a batch, along with `fdmfiles.txt` to execute them sequentially. **Running this script overwrites `fdmfiles.txt`.**
+- <b>FDpbd2fdm.py</b>: Converts a PDB file to FDMNES `*.inp` format. FDMNES already has a native PDB import function, but some programs write lattice information in commented lines to represent periodic structures. The author suspects this is not part of the official PDB specification, although programs such as VESTA and CrystalMaker support it. FDMNES appears to recognize this convention, but its import behavior for it seems somewhat buggy, perhaps because it is not an official PDB feature. For exported periodic structures, explicitly converting to `*.inp` with this script may reproduce the intended structure more reliably than native FDMNES import. Ordinary PDB files containing XYZ-style coordinates are also supported.
+- <b>FDplot_XAS.py</b>: A feature-rich plotting utility for displaying XANES calculation results from `*_conv.txt`, `*.txt`, and related files together with density-of-states data from files such as `*_sd.txt`. It also supports averaging results and numerous other options. It normally opens a matplotlib GUI, allowing zooming and saving, and automatically exports plots as PDF, PNG, and EPS by default. Run with `-h` for details.
+- <b>FDplot_XASs.py</b>:
+- <b>FDplot_XAS_LDOS.py</b>: Displays convolved XAS results and the LDOS of selected atoms in stacked panels for orbital analysis. Much of its basic functionality is already available in `FDplot_LDOS.py`, making this something of a shortcut script. Because development has concentrated on `FDplot_LDOS.py`, this script may eventually be retired.
+- <b>FDplot_LDOS.py</b>: Displays the LDOS of selected atoms in stacked panels for orbital analysis. It can sum contributions from multiple selected atoms, plot XANES simultaneously, and display integrated DOS. It also supports raw and convolved XANES spectra, total DOS, and integrated DOS. Although it overlaps with `FDplot_XAS.py`, its main focus is LDOS and it does not include options such as averaging XAS results.
+- <b>FDplot_PDOS.py</b>: Displays the PDOS of selected atoms in stacked panels: the PDOS counterpart of the LDOS plotting tool. Since FDMNES output is originally resolved by `lm`, this may be regarded as the fully featured counterpart of `LDOS.py`. Intended for orbital analysis; it also allows the user to specify which orbitals to display and how the selected orbitals are labeled.
+- <b>FDvasp2fdm.py</b>: Converts a VASP POSCAR file into FDMNES `*.inp`. It writes both structural data and sample settings for a typical calculation, allowing basic XANES calculations with almost no changes.
+- <b>FDxyz2fdm.py</b>: Converts an XYZ-format (MD-format) file into FDMNES `*.inp`.
+- <b>fdExp_comp_XAS.py</b>: A simpler counterpart of `FDplot_XAS.py` that also uses the framework's Athena class for reading normalized experimental data (`nor` format), allowing experimental and calculated spectra to be plotted together. Its deliberately simple implementation makes it easy for users to edit for their particular plots; it also serves as an example program.
+- <b>fdLDOS.py</b>: A minimal program containing the basic plotting functionality for DOS information in `*_sd*.txt`. `FDplot_XAS.py` can plot the absorber DOS, but not the local DOS of other sites. This script is a useful starting point for local DOS analysis.
+- <b>fdLDOS0_specified.py</b>: Similar to `fdLDOS.py`, but includes LDOS normalization options also found in `FDplot_XAS.py`, such as normalization by site or by atom. It serves as a basic example for checking and using these features.
+- <b>fdPDOS_XAS_av.py</b>: Based on `FDplot_PDOS.py`; directly accesses multiple calculation results to average and plot them. It must be adapted case by case.
+- <b>fdLDOSmulti.py</b>: A minimal, manually assembled multipanel example based on `FDplot_LDOS.py`, using `subplot`. It requires editing, but is a flexible and practical template.
+- <b>fdMulti.py</b>: Another minimal manually assembled multipanel example based on `FDplot_LDOS.py`, using explicit numeric placement instead of `subplot`. It is more readily adjustable than `fdLDOSmulti.py` without needing to master `subplot`.
 - fdXAS.py
-- fdXAS\_specified.py
+- fdXAS_specified.py
 
 #### for HiLAPW
-- <b>LAvasp2sets.py</b> : VASPのPOSCAR形式をHiLAPW の sets.in 形式に変換します。現時点では sets.in の空間群は P1 のみ（VASPでの記述のそのまま）にしか変換しません。HiLAPW用というわけではありませんが、VASPなどのP1で書かれた構造から対称性を探す Symmetry Finder は独自に作ろうと思っています。適当にお待ちください。[FINDSYM](http://stokes.byu.edu/iso/findsym.php) などの外部のファインダーがあれば対称性は探せると思います。FINDSYMは非常に強力なのでお勧めです。
+- <b>LAvasp2sets.py</b>: Converts VASP POSCAR format to HiLAPW `sets.in`. At present it only generates space group P1, preserving the VASP description. The author had planned to develop an independent symmetry finder for P1 structures such as those used by VASP. External tools such as [FINDSYM](http://stokes.byu.edu/iso/findsym.php) can identify symmetry; FINDSYM is particularly powerful and recommended.
 
 #### for OpenMX
 - MXEE.py
 - MXEI.py
-- <b>MXdat2vasp.py</b> : OpenMX の \*.dat 形式の中に記述された構造情報を元に VASP の POSCAR 形式に変換するスクリプトです。cartesian および direct への変換オプションを装備しております。
-- <b>MXdat2xyz.py</b> : OpenMX の \*.dat 形式の中に記述された構造情報を元に xyz 形式に変換するスクリプトです。
+- <b>MXdat2vasp.py</b>: Converts structural information in an OpenMX `*.dat` file to VASP POSCAR format, with options for Cartesian and direct coordinates.
+- <b>MXdat2xyz.py</b>: Converts structural information in an OpenMX `*.dat` file into XYZ format.
 - MXdosall.py
 - MXfindDAT.py
 - MXfindPAO.py
 - MXgetvalence.py
 - MXjoinxyz.py
-- <b>MXmd2vasprun.py</b> : OpenMX の構造緩和の出力結果である \*.md　ファイルを VASP の vasprun.xml 形式に無理矢理変換するスクリプトです。VASP の可視化ツールである p4vasp で容易に \*.md ファイルのアニメーションが可能です。わざわざP4vsp用のXMLファイルに変換するプログラムはおそらく業界初だと思います。VASPユーザーにとっては以外に便利だと思っています。
+- <b>MXmd2vasprun.py</b>: Forcibly converts the `*.md` output of an OpenMX structural relaxation into VASP `vasprun.xml` format. This makes it easy to animate the `*.md` trajectory using the VASP visualization tool p4vasp. The author believes that a converter specifically producing XML for p4vasp may have been the first of its kind. It can be unexpectedly useful for VASP users.
 - MXplot\_ADOS.py
 - MXplot\_ADOS\_portrait.py
 - MXplot\_LDOS.py
@@ -344,18 +249,18 @@ FDplot\_XAS.py では Absorber の状態密度プロット機能はあります�
 - MXplot\_TDOS.py
 - MXplot\_temperature.py
 - MXtemp.py
-- <b>MXvasp2mx.py</b> : VASP の構造情報ファイルであるPOSCAR形式のファイルをよみとり OpenMX の入力形式 \*.dat  に変換するスクリプトです。OpenMX の \*.dat 形式は VASP でいうところの INCAR/KPOINTS などの計算のコントロール系のファイルも兼ねており、本スクリプトはPOSCAR 以外のこれらVASPの入力ファイルがあれば積極的に読み込み、VASP とほぼ同等の計算条件で計算する OpenMX 用の\*.dat ファイルを自動作成します。これによりほぼ一対一で VASP と OpenMX の行き来が可能です。様々なオプション指定が可能であり直交座標系から基本並進系の相対座標系まで好きなオプションで変換が可能です。擬ポテンシャルや擬波動関数情報は、VASPのPOSCAR情報を元に、OpenMXのHPにある参考例を元にして、私が勝手にチョイスしますので、一応何も編集なしに \*.dat ファイルは意図したように動作します。推奨値が気に入らないときは、PAO や VPP ファイルの修正は各自勝手に行ってください。
+- <b>MXvasp2mx.py</b>: Reads a VASP POSCAR structural file and converts it to OpenMX `*.dat` input. OpenMX `*.dat` also contains calculation controls corresponding to VASP INCAR and KPOINTS. When these other VASP input files are available, the script actively reads them and automatically generates OpenMX input with calculation conditions as close as possible to the VASP setup, enabling nearly one-to-one conversion between VASP and OpenMX. Numerous options allow conversion using Cartesian or fractional coordinates relative to primitive translation vectors. The author selects pseudopotential and pseudo-atomic-orbital (PAO) information from examples on the OpenMX website based on the POSCAR data, so the generated `*.dat` should generally run without editing. Users dissatisfied with these recommended defaults should modify the PAO and VPP files themselves.
 - mxDOS1.py
 
 #### for Quantum ESPRESSO
-- <b>PWin2vasp.py</b> : Quantum ESPRESSO (PWScf) の入力ファイルである \*.in ファイルを読み込み、VASP の POSCARけいしきに変換するプログラム。PWScf の入力ファイル \*.in は構造のみならず計算条件などのコントロール系の情報あるため、その情報をVASPのINCAR や KPOINTS に変換し、さらに擬ポテンシャル情報を読み込み POTCAR を自動作成する尾オプションなどの機能も有しています。
+- <b>PWin2vasp.py</b>: Reads a Quantum ESPRESSO (PWscf) `*.in` input file and converts it to VASP POSCAR format. Since PWscf input includes calculation controls as well as structure, the program can also translate these into VASP INCAR and KPOINTS. Options include reading pseudopotential information and automatically generating POTCAR.
 - PWmakePPinp.py
-- <b>PWout2vasp.py</b> : Quantum ESPRESSO (PWScf) の計算結果の出力ファイルである \*.out ファイルを読み込み(出力ファイル名は任意であるがここでは \*.out とする) VASP の POSCAR 形式に変換する。同じく各種コントロロール系の情報を良い込み、計算条件をPWScfとなるべく揃えた INCAR/KPOINTS/POTCAR を用意するオプション機能も用意しています。</b>
-- <b>PWout2vasprun.py</b> : Quantum ESPRESSO (PWScf) の計算結果の出力ファイルを読み込み、VASP の vasprun.xml 形式に出力し直すスクリプト。vasprun.xml は VASP の可視化ソフトである p4vasp で可視化が可能であり、MD計算のアニメーション＆フォースなどの可視化を容易に行うこと出来る。現時点では DOS/LDOS などのアウトプットは vasprun.xml 形式には変換できない。
+- <b>PWout2vasp.py</b>: Reads a Quantum ESPRESSO (PWscf) calculation output file (called `*.out` here, although its name is arbitrary) and converts its structure to VASP POSCAR format. Optional functions read calculation-control information and prepare INCAR, KPOINTS, and POTCAR to reproduce the PWscf calculation conditions as closely as possible.
+- <b>PWout2vasprun.py</b>: Reads Quantum ESPRESSO (PWscf) calculation output and rewrites it in VASP `vasprun.xml` format. This can be visualized with p4vasp, making MD animations, forces, and other results easy to inspect. Conversion of DOS and LDOS output to `vasprun.xml` is not supported at present.
 - PWplot\_TDOS.py
 - PWplot\_XAS.py
-- <b>PWvasp2in.py</b> : VASP の構造情報ファイルである POSCAR を基礎として、Quantum ESPRESSO (PWScf)の入力ファイルである \*.in 形式を出力するスクリプトです。PWScf の入力は標準入力ですのでファイル名は任意ですが、ここでは \*.in としています。もし KPOINTS や POTCAR や INCAR があればそれらから情報を読み込み、PWScf 形式へ出力も同時にするオプションも存在します。
-- <b>pwPDOS.py</b> : Quantum ESPRESSO の PDOS はアホみたいに K-point を使わないとまともな結果が出ないのでご注意ください（対称化されていません）。
+- <b>PWvasp2in.py</b>: Generates Quantum ESPRESSO (PWscf) `*.in` input from a VASP POSCAR structure. PWscf reads standard input, so the actual filename is arbitrary; `*.in` is used here as a convention. Optional functions also read KPOINTS, POTCAR, and INCAR when present and translate their information into PWscf input.
+- <b>pwPDOS.py</b>: Be aware that Quantum ESPRESSO PDOS requires an absurdly large number of k-points to obtain reasonable results (the output is not symmetrized).
 - pwTDOS.py
 
 #### for RMC\_POT
@@ -379,10 +284,10 @@ FDplot\_XAS.py では Absorber の状態密度プロット機能はあります�
 - Vacf.py
 - Vados.py
 - Vband.py
-- <b>Vcar2direct.py</b> : cartesian 形式のPOSCARファイルをdirect形式のPOSCARファイルに変換します。
-- <b>Vch</b> : VASP の計算に必要なファイルのチェックをしてくれるスクリプトです。計算の前に実行することにより、必要ファイルは必要パラメータを失念するのを少しは緩和できます。
-- <b>VchangeVacumm.py</b> : POSCARなどの真空層を再調整するプログラムです。
-- <b>Vdirect2car.py</b> : direct 形式のPOSCARファイルをcartesian形式に変換します。現時点では、拙作 Perl 版と比べると格子定数の倍率変化（内部の絶対座標の変化なし）など様々なオプション機能がディスエイブルされています。
+- <b>Vcar2direct.py</b>: Converts a Cartesian POSCAR to Direct coordinates.
+- <b>Vch</b>: Checks files required for a VASP calculation. Running it before calculation helps prevent omissions of required files or parameters.
+- <b>VchangeVacumm.py</b>: Readjusts vacuum regions in POSCAR and related structures.
+- <b>Vdirect2car.py</b>: Converts Direct POSCAR coordinates to Cartesian. Compared with my Perl version, options such as changing the lattice-constant scale without changing internal absolute coordinates are currently disabled.
 - Vextract0.py
 - VfindBond.py
 - VfindNN0.py
@@ -391,76 +296,40 @@ FDplot\_XAS.py では Absorber の状態密度プロット機能はあります�
 - VfindNN2FNC.py
 - Vforce.py
 - Vforce2md.py
-- <b>VgetCOHPinfo.py</b> : COHP解析で計算している軌道成分や、計算している結合ペアの確認に用います。
-- <b>Vldos.py</b> : gnuplot 形式（および拙作 Perl 版プロットプログラム)ご関係しに出力するプログラムです。
-拙作 Vldos.pl とほぼ同等の機能を持ちます。
-現時点では Vplot\_LDOS\*.py シリーズでほぼ代用できるのでほとんど必要ないかもしれませんが、gnuplot で表示したいとき、gunupot で表示するスクリプトをかなり高度に組んでしまった時などにご活用ください。
-lm分解で計算されたときは、l軌道のサムを自動でやってくれます。
-gnuplot 形式は index を活用しています。
-各原子種ごとに index で分解しています。
-詳しくは出力されたファイルのコメント欄をご覧ください。
-当然スピンにも対応しております。
-- <b>Vldos_COHP.py</b> : Vldos.py は DOSCAR を読み込みますが、その代わりに DOSCAR.lobster を読み込みます。lobster で射影し直した LDOS を gnuplot 形式に変換してくれます。
-- <b>VmakeSuperCell2.py</b> : VASP の POSCAR 形式を元に、指定した倍率でスーパーセルを作ります。
+- <b>VgetCOHPinfo.py</b>: Checks the orbital components and bonded atom pairs included in COHP analysis.
+- <b>Vldos.py</b>: Exports LDOS in gnuplot format, compatible with my Perl plotting scripts, with nearly the same functionality as Vldos.pl. The Vplot\_LDOS*.py series now largely replaces it, but it remains useful for gnuplot users, particularly those with elaborate gnuplot scripts. Automatically sums m-resolved contributions into l components when lm decomposition was calculated. The gnuplot output uses indices to separate atomic species; see comments in the output files. Spin is supported.
+- <b>Vldos_COHP.py</b>: Like Vldos.py, but reads DOSCAR.lobster instead of DOSCAR and exports the LOBSTER-reprojected LDOS in gnuplot format.
+- <b>VmakeSuperCell2.py</b>: Builds a supercell from VASP POSCAR using specified multiplication factors.
 - VmodifyAtomPosition.py
-- <b>Vpdos.py</b> : gnuplot 形式（および拙作 Perl 版プロットプログラム)ご関係しに出力するプログラムです。拙作 Vpdos.pl とほぼ同等の機能を持ちます。現時点では Vplot\_PDOS\*.py シリーズでほぼ代用できるのでほとんど必要ないかもしれませんが、gnuplot で表示したいとき、gunupot で表示するスクリプトをかなり高度に組んでしまった時などにご活用ください。くれます。gnuplot 形式は index を活用しています。各原子種ごとに index で分解しています。詳しくは出力されたファイルのコメント欄をご覧ください。当然スピンにも対応しております。
+- <b>Vpdos.py</b>: Exports PDOS in gnuplot format, compatible with my Perl plotting programs and offering nearly the same functionality as Vpdos.pl. The Vplot\_PDOS*.py series now largely replaces it, but this tool remains useful for gnuplot users, particularly with advanced existing gnuplot scripts. The output uses gnuplot indices to separate atomic species; see the comments in the output files. Spin is supported.
 - Vplot\_ADOS.py
 - Vplot\_ADOS\_portrait.py
 - Vplot\_Bader.py
-- <b>Vplot\_COHP\_tate.py</b> : lobster による pCOHP 解析の結果をプロットします。プロットする局所状態密度は pCOHP 解析のためにプロジェクションされ直した状態密度です。
-左右の二段組みで、左側が状態密度パート、右側が COHP パートになります。
-デフォルト動作はスピンありのときは up-spin のみで、一番目の原子の局所状態密度からの解析結果になります。
-指定した番号の原子種のペアのCOHP解析の結果を表示します。
-引数で複数の原子ペアの番号を振ると複数の局所状態密度・pCOHP 解析の結果を同時にプロットしますが、原子種・ペアが多いと訳が分からなくなります。
-デフォルトではスピンを指定してスピンごとにプロットしますが、up-spin と down-spin の同時プットも出来ますが、同時にプロットすると情報量が多くて訳が分からなくなります。
-必要な情報のみを取捨選択して賢くプロットしてください。またプロット前には VgetCOHPinfo.py を実行し、COHP 解析される軌道成分および、結合解析される原子のペアを確認していただけると楽に Vplot\_COHP\_tate.py にプロットする軌道や原子ペアを指定できるかと思います。
-- <b>Vplot\_COHP\_yoko.py</b> : Vplot\_COHP\_tate.py とほぼ同等のことをしますが、Vplot\_LDOSm.py などで使われている 上下形式の多段組で、実際に COHP 解析を行った LDOS を同時に表示します。局所状態密度にの成分分解の解析を主眼としてプロットするときは、こちらの形式の方が論文に使いやすい図表となる場合があります。複数の結合ペアのCOHP解析の同時プロットや、単独のペアを指定して、それぞれのl成分分解のLDOS表記など多数の機能があります。
+- <b>Vplot\_COHP\_tate.py</b>: Plots LOBSTER pCOHP results, together with the LDOS reprojected for pCOHP analysis. Uses two side-by-side columns: DOS on the left and COHP on the right. With spin polarization, the default shows up-spin only and starts from the LDOS of the first atom. Displays COHP for selected numbered atomic pairs. Multiple pair numbers can be specified to display multiple LDOS and pCOHP results together, although many atoms or pairs quickly make the plot hard to interpret. Spins can be selected separately, or up and down spins plotted together, although the latter can become overcrowded. Select only the information needed. Running VgetCOHPinfo.py first makes it easier to identify analyzed orbital components and atom pairs and specify them to Vplot\_COHP\_tate.py.
+- <b>Vplot\_COHP\_yoko.py</b>: Performs nearly the same analysis as Vplot\_COHP\_tate.py, but displays the LDOS used in COHP analysis in vertically stacked panels, as in Vplot\_LDOSm.py. This layout may be more suitable for publication figures focused on orbital decomposition of LDOS. Features include plotting multiple bonded pairs together, selecting a single pair, and showing its l-decomposed LDOS components.
 - Vplot\_Crystal.py
 - Vplot\_CrystalAnimeMD.py
 - Vplot\_CrystalAnimePOSCAR.py
-- <b>Vplot\_COHP_LDOSm.py</b> : Vplot\_LDOSm.py と同等です。
-DOSCAR の代わりに DOSCAR.lobster を読み出します。
-- <b>Vplot\_COHP_PDOS.py</b> : Vplot\_PDOS.py と同等です。
-DOSCAR の代わりに DOSCAR.lobster を読み出します。COHPペアを指定して、COHP解析の結果の同時表記も可能です。
-- <b>Vplot\_LDOS.py</b> : DOSCAR および PROCAR ファイルを用いて局所状態密度を一段組でプロットします。
-引数を指定することで、特定の原子種ごとにプロットします（特定原子種の局所状態密度をプロット)。
-描画範囲の指定など多くのオプション機能を持つ多機能のプロットプログラムとなっています。
-安直な方法での一発で局所状態密度のプロットは結構便利だと思います。
-引数で原子種を指定しますが、その際の\*.pdf などの出力結果には原子種のsuffixが付加されます。
-スピン表示は単独、もしくは両スピン（上下反転した形式で）表示することも可能です。
-- <b>Vplot\_LDOSm.py</b> : Vplot\_LDOS.py は一段組での特定原子における局所状態密度（l軌道成分分解）を描画しますが、Vplot\_LDOSm.py は多段組で、l軌道成分ごとにsubplot分解されて表示されるマルチプロット表示を持ちます。
-ほとんどの場合はマルチプロット表示で多段組の方が各軌道成分が見やすいので普通はこちらを使う方が良いと思います。
-スピン表示は単独、もしくは両スピン（上下反転した形式で）表示することも可能です。
-VASP で計算するときに LORBIT=11 などでlm分解で計算したときは、自動的に l 成分のサムをしてプロットします。
-局所状態密度の計算は大は小を兼ねるのでかならずl分解ではなくlm分解で射影した計算をすることをお勧めします。
-- <b>Vplot\_PDOS.py</b> : DOSCAR および PROCAR ファイルを用いて局所状態密度(lm分解)を多段組でプロットします。
-計算している物質系の点群を判別し、たとえばcubicのときの t2g と eg 軌道などに縮退ごとに分割した多段でプロットされる機能をデフォルトで持ちます。
+- <b>Vplot\_COHP_LDOSm.py</b>: Equivalent to Vplot\_LDOSm.py, except that it reads DOSCAR.lobster rather than DOSCAR.
+- <b>Vplot\_COHP_PDOS.py</b>: Equivalent to Vplot\_PDOS.py, except that it reads DOSCAR.lobster rather than DOSCAR. It can also display COHP results for specified bonded pairs simultaneously.
+- <b>Vplot\_LDOS.py</b>: Plots LDOS from DOSCAR and PROCAR in a single panel. Arguments select particular atomic species. Numerous options control plot ranges and other settings, making it a versatile plotting tool. It is convenient for quickly producing LDOS plots. Output files such as *.pdf acquire an atomic-species suffix when species are selected. Supports a single spin or both spins, with one inverted vertically.
+- <b>Vplot\_LDOSm.py</b>: Whereas Vplot\_LDOS.py displays l-decomposed LDOS for selected atoms in a single panel, Vplot\_LDOSm.py displays orbital components in multiple stacked subplots. In most cases the multipanel view makes orbital components easier to inspect and is recommended. Supports one spin or both spins, with one inverted. If VASP was run with lm decomposition, for example LORBIT=11, it automatically sums m components into l components. Since lm-projected calculations contain the information needed for l decomposition, I recommend calculating lm-resolved rather than only l-resolved LDOS.
+- <b>Vplot\_PDOS.py</b>: Uses DOSCAR and PROCAR to plot lm-decomposed LDOS in multiple panels. By identifying the point group of the material, it can by default group and plot degenerate orbital components, such as t2g and eg in cubic symmetry.
 - Vplot\_TDOS.py
 - Vplot\_VDEI.py
 - Vplot\_VEE.py
 - Vplot\_VEI.py
-- <b>Vplot\_band.py</b> : バンド分散(E-K曲線)の計算結果を表示するプログラムです。
-EIGENVAL をベースに表示します。
-Brillouin Zone の長さをプログラムは正しく把握するため、プロットにおけるゾーンの長さを正しく調整します。
-また、この手の計算プロットではバンドを「線」でつないでいる描画プログラムがありますが、VASP は既約表現の計算などを行っていないために「線」でバンドをつなぐのは物理学的に大きく間違っています。
-そのため、本プログラムはあえて「点」でバンドをプロットしているために「美しくない」ですが、それはVASPの仕様を正しく表現したためで、一切の誤解無くE-Kプロットされています。
-スピン分解の同時表示や別表示、描画モード、バンドインデックスの表示など多くのオプション機能をわりとゴージャスに詰め込んでおります。
-詳しくはプログラムのヘルプ(-hオプション)をご覧ください。
-拙作perl版ではノンコリニアやスピン軌道相互作用にも対応しておりましたが、python 版ではまだそれらには対応しておりません。
-それらに対応している。perl版が欲しい人はご連絡ください。
-- <b>Vplot\_com.py</b> : バンド分散(E-K曲線)の計算結果を表示するプログラムです。
-EIGENVAL だけではなく PROCAR の情報に基づき、各バンドを構成している波動関数の成分表記のプロットに対応しています。
-成分の大小によりプロットする点の大きさを変更したり色を段階的に変化させる機能を有しています。これにより、どのバンドがどの軌道のどの射影成分に対応しているのか容易に知ることが出来ます。バンドの解析にかなり強力な手助けになると思います。Brillouin Zone の長さの違いによる調整を行います。
-VASPの仕様を正しく再現するために「線」ではなく「点」でプロットします。これにより物理的に誤解無くE-Kプロットされます。Vplot\_band.py と同様に、スピン分解の同時表示や別表示、描画モード、バンドインデックスの表示など多くのオプション機能をわりとゴージャスに詰め込んでおります。詳しくはプログラムのヘルプ(-hオプション)をご覧ください。拙作Perl版と比べるとノンコリニアやスピン軌道相互作用の対応など基本機能で劣りますが、可視化機能ではこちらの方が綺麗に描画できるかと思います。
+- <b>Vplot\_band.py</b>: Plots calculated band dispersion (E–k) using EIGENVAL. It accounts for Brillouin-zone path lengths to scale the horizontal axis correctly. Some band plotting tools join bands with lines, but VASP does not determine the irreducible representations required to identify band connectivity, so joining them can be physically misleading. This tool deliberately plots points rather than lines. The result may look less attractive but represents the VASP data without implying unverified connectivity. Options include combined or separate spin plots, plotting modes, and band indices. See the program help (-h). My Perl version also supports noncollinear magnetism and spin–orbit coupling; the Python version does not yet. Contact me if you need the Perl version.
+- <b>Vplot\_com.py</b>: Plots E–k band dispersion using not only EIGENVAL but also PROCAR to visualize the wavefunction components making up each band. Point size or continuously graded color indicates the magnitude of selected projections, making it easier to identify the orbital character of bands. Brillouin-zone path lengths are adjusted correctly. As in Vplot\_band.py, bands are plotted as points rather than joined lines to avoid physically misleading connectivity. Includes options for combined or separate spins, plotting modes, and band indices; see help (-h). Compared with my Perl version, it lacks noncollinear and spin–orbit support, but its visualization is more polished.
 - Vplot\_temperature.py
-- <b>VrotPOSCAR.py</b> : POSCAR をオイラー角(alpha,beta,gamma)で回転させます。ここで言うオイラー角の定義は応用群論p121の定義(z-y-z)を用いていますのでご注意ください。電場をかけるなどで結晶軸が特定方向を向いてないと定義できない場合に用いると幸せになります。回した後の計算では、真空層があるときは KPOINTS ファイルの kx,ky,kz にはご注意ください。
+- <b>VrotPOSCAR.py</b>: Rotates POSCAR by Euler angles (alpha, beta, gamma), using the z–y–z convention defined on page 121 of *Applied Group Theory*. Useful when, for example, an applied electric field requires a particular orientation of crystal axes. After rotation, check kx, ky, kz in KPOINTS when a vacuum region is present.
 - Vtdos.py
 - Vtemp.py
 - Vvasp2xyz.py
 - Vxdat2MD.py
 - Vxml2CONTCAR\_ALL.py
 - Vxml2MD.py
-- <b>Vxml2POSCAR.py</b>: VASP のXML形式の出力である vasprun.xml から計算に用いた初期の POSCAR 情報を抽出し、吐き出すプログラムです。vasprun.xml には計算の結果がほぼすべて記述してあるので、適切な読み込みクラスさえあれば、実は意外に使い勝手が良いです。
+- <b>Vxml2POSCAR.py</b>: Extracts the original POSCAR structure used in a calculation from VASP's XML output, vasprun.xml. Since vasprun.xml contains almost all calculation results, it is surprisingly useful when an appropriate reader class is available.
 - vLDOSm\_3d.py
 - vLDOSm\_4d.py
 - vLDOSmulti.py
@@ -488,119 +357,92 @@ VASPの仕様を正しく再現するために「線」ではなく「点」で�
 - wXAS.py
 - wfch\_XAS.py
 
-## リリースノート
+## Release Notes
 
-### 0.1.0 の整理と確認
+### Reorganization and Verification in 0.1.0
 
-今回の変更は、これまでのクラス構成を整理・拡張し、計算コードごとにネームスペースを
-分けたものです。構造変換や解析の方法を作り直したわけではありません。
-同じ入力から従来と同じ結果と生成物が得られることを基準にしています。
-既存の増改築で名前や引数、戻り値の受け渡しが合わなくなっていた箇所は、
-呼び出される側の元の処理に合わせて接続を直しています。
+This release reorganizes and extends the existing class structure, separating namespaces by calculation code. It does not rewrite structure-conversion or analysis algorithms. The criterion is that identical inputs should produce the same results and generated artifacts as before. Where incremental additions had caused mismatches in names, arguments, or return-value handling, connections were repaired to match the original implementation of the called code.
 
-OLD に保存した0.0.xの実ソースとの比較では、904メソッドを対象に、
-ネームスペース、import、単独関数への self 追加等を揃えると890件の本体が一致しました。
-残る14件は、元素記号の bytes/str 境界、スーパーセル生成先の確保数と戻り値の接続、
-属性名、動的 import、型判定の参照先、GUIから既存の変換処理への接続です。
-実際の差分は [メソッド差分](docs/method-differences.txt) にあります。
-この比較だけで、すべての入力に対する結果の一致を確認できるわけではありませんので、
-数値と生成ファイルの比較も行っています。
+Comparing the actual 0.0.x sources stored in OLD, 890 of 904 method bodies matched after normalizing namespaces, imports, and additions of `self` to standalone functions. The remaining 14 concern bytes/str boundaries for element symbols, allocated sizes and return-value connections for supercell generation, attribute names, dynamic imports, references in type checks, and GUI connections to existing conversion routines. Actual differences are documented in [Method Differences](docs/method-differences.txt). This source comparison alone cannot establish identical results for all inputs; numerical and generated-file comparisons were also performed.
 
-Python 3.12.11 でのテスト結果は **1,188件成功**です。
-以前保存した移植作業用スナップショットとの算術式比較899件、クラス接続260件、
-保存済みの旧版の数値・生成物との比較13ケース、既存の接続修正等11件に、
-文書・コメント・データの保持とGUI関係の確認5件を加えています。
-算術式の比較と、今回のOLD実ソースに対するメソッド全体の比較は別の検査です。
-Python 3.7.9 ではソース・利用例・テスト計348ファイルの構文と、11個の中心クラスの
-空インスタンス生成を確認しています。また、旧パッケージをimportできない環境で、
-wheelからの各実装モジュールの読み込み、VASP変換、FDMNES入力生成を確認しました。
+On Python 3.12.11, **1,188 tests passed**: 899 arithmetic-expression comparisons against a previously saved porting snapshot, 260 class-connection checks, 13 comparisons of numerical results and artifacts with the preserved old version, 11 existing connection repairs and related checks, and 5 checks covering preservation of documentation, comments, and data, plus GUI-related behavior. Arithmetic-expression comparisons and the full-method comparison against the current OLD source are separate checks. On Python 3.7.9, syntax was verified for 348 source, example, and test files, and empty instances of 11 central classes were successfully constructed. In an environment where the old package could not be imported, loading implementation modules from the wheel, VASP conversion, and FDMNES input generation were also verified.
 
-ソース内の説明や履歴も引き継いでいます。対象342ファイルの23,666コメントトークンを
-照合し、クラス・メソッドのdocstringも、インデントと外側の空白を除いて欠落がないことを
-確認しました。コメント中に旧名称や過去の使い方が残っているのはそのためです。
-元ファイルと移植先の対応、データのハッシュは [移植一覧](docs/migration-inventory.json)、
-以前の設定やパッケージ初期化の説明・履歴資料は [docs/history](docs/history/README.md) にあります。
-このREADMEでも、従来のツールの説明や開発経緯を残しながら、0.1.0の使い方を各項目に織り込んでいます。
+Source explanations and historical notes have been retained. A comparison of 23,666 comment tokens across 342 files confirmed preservation, and no class or method docstrings were lost after ignoring indentation and surrounding whitespace. This is why some comments retain old names and historical usage instructions. The correspondence between original and ported files, and data hashes, are in the [Migration Inventory](docs/migration-inventory.json); previous settings, package initialization explanations, and historical documents are in [docs/history](docs/history/README.md). This README likewise retains historical tool descriptions and development background while integrating 0.1.0 usage instructions into the relevant sections.
 
-全197コマンドやすべての計算コード・形式・実データを実行したわけではありません。
-GUIの実表示、Python 3.7上での数値処理全体も未検証です。
-従来と同じ終了状態や未実装のメソッドが残る箇所もあり、
-そのことを数式やアルゴリズムの問題とは判断していません。
-詳しい結果と範囲は [検証記録](docs/validation.md)、[移植監査](docs/release-audit.md)、
-各版の変更履歴は [CHANGELOG](CHANGELOG.md) を参照してください。
+Not all 197 commands, calculation codes, formats, or real-world datasets have been executed. Actual GUI display and the complete numerical workflow on Python 3.7 remain unverified. Some routines retain their historical exit behavior or unimplemented methods; these are not considered evidence of problems in their formulas or algorithms. For details of results and scope, see [Validation Records](docs/validation.md), [Migration Audit](docs/release-audit.md), and the version-by-version [CHANGELOG](CHANGELOG.md).
 
-## 特徴
-<p>現在のところ、各種計算コードの入出力の変換機能がメインとなります。たとえば、構造の変換で言えば、結晶・分子構造をその計算コードで要求される形式に変換するだけではなく、その他計算に必要な入力項目の変換も含んでいます。基本方針としては、一度どれかの計算コードにおいて、計算が可能な入力ファイルを作れば、別の計算コードでもそのまま無編集で計算まで持っていけることを目指しています。つまり、計算コードの入出力に関して、可能な限り計算コードの違いを吸収することが目的の一つとなります。計算コードを扱う際の入出力の一元化に関しては、当然計算コードのアルゴリズム上、本質的に同じように扱うことが無理な場合も多数あります。その場合は、ある程度は私自身の推奨する独断と偏見の初期パラメーターを与えて簡略化をしています。当然詳細設定も可能です。無論、最初から一元化を諦めて特化機能としている部分も多数ありますが、これらはほぼ同じ手順で簡単に操作が可能としています。入力の構造のみならず、計算結果や、電子状態の解析など、あらゆるシーンで、対応する計算コードの一元的な操作環境を提供しています。特に解析機能が充実しているのも特徴となります。
+## Features
 
-### フレームワーク
-<p>中間ファイルは可能な限り吐き出さず、すべてPythonのOOPモデルの元、フレームワーク上で一元的に処理しています。この手の統合環境では中間ファイルを積極的に用いる小規模コードの集合体としての開発方針もあるとは思いますが、OOPによる開発コスト軽減と一元化が目的なのでこのコードでは採用していません。フレームワークを用いた開発を行うことにより、たとえばことなる計算プログラム間の構造変換はたった二行のコードを書くことにより変換できます。これはとてつもないメリットを生み出します。
+<p>At present, the main functionality is converting input and output among calculation codes. Structural conversion, for example, includes not only converting crystal or molecular structures to a code's required format but also translating the other input settings needed to run a calculation. The guiding aim is that once working input files have been prepared for one calculation code, they can be used with another without manual editing. One objective is to absorb differences among calculation codes as far as possible and provide unified handling of their inputs and outputs. Naturally, fundamental algorithmic differences sometimes make equivalent treatment impossible. In such cases, I simplify the process by supplying default parameters based, to some extent, on my own subjective recommendations; detailed configuration remains possible. Some specialized functions deliberately cannot be unified, but they can still be operated through largely consistent procedures. The framework offers a common operating environment not only for input structures but also for calculated results and electronic-structure analysis. Its extensive analysis capabilities are a particular feature.
 
-0.1.0 でも、このOOPによる一元的な処理という方針は同じです。
-既存のデータとメソッドのまとまりを活かしつつ、VASPなら `sae.vasp`、FDMNESなら
-`sae.fdmnes` の中を見れば関係するクラスがわかるようにしています。
-個々のファイルを扱うクラスと、計算コード単位でそれらを持つクラスの使い分けについては、
-前述の「クラスと内部構造」を参照してください。
+### Framework
 
-小谷先生流にかっこ良く言えば<B>「計算のための独自言語」</B>を設計していると言い換えること出来ます。
+<p>Intermediate files are avoided wherever possible. Processing is unified within a Python object-oriented (OOP) framework. One could instead build an integrated environment from small programs communicating through intermediate files, but this project favors OOP to reduce development effort and unify processing. For example, conversion of structures between different calculation programs can be accomplished in just two lines of code, a considerable advantage.
 
-エンドユーザーから見るとおそらくこのフレームワークは全く意味を持たずに、私自身がこのフレームワークを用いて開発したツール群が実態として意味を持つことになるかと思います。また、第三者がこのフレームワークを用いて開発することは現時点ではお薦めしません。設計がかなり右往左往しています。現時点でしたら、特別の理由がない限り、既存の代表的なASEフレームワークを用いて開発したほうがはるかに有意義かと思います。
+Version 0.1.0 retains this unified OOP approach. While preserving the existing groupings of data and methods, the namespace layout now makes it possible to find VASP-related classes under `sae.vasp` and FDMNES-related classes under `sae.fdmnes`. For the distinction between classes handling individual files and classes holding them at the calculation-code level, see “Classes and Internal Structure” above.
 
-無論、どのようなフレームワークのデザインに設計し直そうとも、エンドユーザーが使うツール群のインターフェースは変えませんので、ユーザーから見ると基本的には使い勝手は変わらないようには開発は進めます。
+In Professor Kotani's more elegant phrasing, one could call this the design of <B>“a dedicated language for computation.”</B>
 
-### マイナー対応
-<p>このフレームワークは、一部国産コードや逆モンテカルロなどのマイナーコードや、Plane Wave系の基底では pCOHPなどのマイナーな解析出力に対応している(lobsterなどのコードに対応)のが実用上の特徴かと思います。また、なにげに RMC\_POTへの対応は業界初だと思っています。Pythonフレームワークの意味では、pCOHPもおそらく業界初です。特定の手法への特化ではなく統合的な環境の意味では、FDMNESが対象に含まれているのもこちらもおそらく業界初かと思います。日本のXANESコミュではFDMNESはそれほど普及していないので、このツールの普及を兼ねてFDMNESの普及も狙っています。VASP等のコード<-->FDMNESなどが自由に出来るフレームワークはほとんど無いと思いますので、きわめて有効に作用するかと思います。FDMNES対応で判るように、わりとXANES関係には力を入れていますのでそっちの業界の人には結構役立つと思います。OpenMXやRMC\_POTを除き、対応している第一原理計算コードはすべてXANESスペクトル計算が可能であり、その意味ではこのフレームワークは<b>XANESスペクトル計算フレームワーク</b>であるとも言えます。実際、現時点での仕事上の開発の主目的は、ほぼXANESスペクトルの解析とも言えますので、その利便のために開発しておりますので当然です。微妙に実現しているとは言いがたいですが、割と便利には使えると思います。
+For end users, the framework itself probably matters very little; what matters in practice is the collection of tools I develop using it. I do not currently recommend that third parties develop against this framework, since its design has changed direction repeatedly. Unless there is a special reason, developing with the established ASE framework is likely far more productive.
 
-### 解析対応
-<p>電荷密度、局所状態密度、バンド分散、Barder電荷、XANESスペクトル、pCOHP解析などを始めとした、基本的な解析対応だけではなく、様々な計算の解析・プロット、およびそれらへの入力支援を行う機能を多数含んでいます。おそらく、ASEよりも解析関係のログ解析やプロット機能が豊富ではないかと推察します。現時点での開発者自身の開発のモチベーションの主軸はむしろ解析支援部分の機能の開発にあります。
+Whatever redesign the framework undergoes, I intend to preserve the interfaces of the end-user tools so their usability remains essentially unchanged.
 
-### 構造作成支援
-<p>スーパーセルの作成から配位数やボンドのサーチ、指定した局所構造の並進移動・回転操作などの座標のモディファイ、表面作成や真空層作成なども含みます。ただ、わりと構造系の支援はしてくれるクラスや関数は作っているのですが、現時点ではあまり賢く作ってないのと、機能もまだまだ不十分です。ASEのようにナノパーティクルとかナノチューブとかは自動では作ってくれません。
+### Support for Less-Common Codes and Analyses
 
-### 2Dプロット機能
-<p>2Dプロット機能は基本的にはmatplotlibモジュールを用いていますので、PDF/EPS出力に対応しています。局所状態密度解析などを初めバンド計算で用いられる一般的な解析のテンプレートは多く実装しており、かなり容易に、論文に使える図表などの作成をルーチンワークに持っていけると思います。スクリプトからの自動実行・ルーチン作業化が大前提ですので、GUI化には全く力を入れておりません。当然バンド分散プロット等では波動関数成分の可視化をE-Kプロット上に連続的な色の変化やポイントのサイズの変化で同時に表示することにも対応しています。また、VASPの一般的な可視化ソフトであるp4vaspのXML形式へ各種計算コードの結果を変換する機能を持っているのがおそらくマニアックな特徴となります。おそらくp4vaspへ無理矢理変換する発想も、その機能も、業界初だと思います。たとえば、OpenMXで計算したMDのxyz形式をp4vaspでアニメーションする形へ持っていくのも容易に出来ます。XCrysDen に対応しているツールは多いと思いますが、本ツールではまず p4vasp に対応しました。XCrysDen にはまだ対応してません。小口先生のPSP形式の対応はこっそりとは進んでいますが、maplotlib 機能で直接PDF出力したほうが現時点では健全かつ便利です。
+<p>A practical distinguishing feature is support for some less-common Japanese calculation codes, reverse Monte Carlo codes, and less-common plane-wave analysis outputs such as pCOHP through tools including LOBSTER. I believe support for RMC\_POT may have been a first, and pCOHP support in a Python framework possibly also a first. Including FDMNES in an integrated environment, rather than a method-specific package, may likewise have been unprecedented. Since FDMNES has not been especially widespread in Japan's XANES community, I hope this framework also encourages its adoption. There seem to be very few frameworks enabling flexible conversion between VASP and other codes and FDMNES. XANES receives particular emphasis and should be useful to researchers in that field. With the exception of OpenMX and RMC\_POT, all supported first-principles codes can calculate XANES spectra; in that sense this can also be called an <b>XANES spectrum calculation framework</b>. Indeed, XANES analysis is essentially the main professional motivation for the current development. Although that objective has not yet been fully realized, the tools are already reasonably convenient.
 
-### 3Dプロット機能
+### Analysis Support
 
-0.1.0 では、従来の `CrystalMaker` と単位胞の描画処理を `sae.gui` にまとめています。
-描画の仕組み自体は従来のままですので、必要な `visual` と `wx` の環境については、
-「実行に必要なPythonおよびモジュール」も参照してください。
+<p>Beyond standard analyses such as charge density, LDOS, band dispersion, Bader charges, XANES spectra, and pCOHP, the package provides numerous tools for analyzing and plotting different calculations and preparing their inputs. I suspect its analysis-log parsing and plotting functions may be more extensive than ASE's. Developing analysis-support functions is now the author's primary motivation.
 
-<p>3Dプロット機能およびGUIはほとんどおまけといいますかまだ機能テストの段階です。主に VPython + wxPython を用いることにより、間接的に OpenGL を用いています。OpenGLを用いた3Dプロットの可視化およびGUIの設計で、もう少し自由度を上げるために VTKからのOpenGL利用や直接OpenGLを用いることを検討しています。現在一部機能は準備中でして、これは解析支援の柱の一つだとは思っています。ただ、実際問題、開発リソースが１人で、しかも内職ですので全く構想に開発が追いついていません。現段階では、役立ち機能では Barder 解析の結果を3D可視化する機能の実装は出来ており、これは比較的役に立つ3Dプロットだとは思っています。当然スーパーセル化などには対応しています。それ以外では、出力結果をVESTA/p4vaspで描画したほうが現時点ではまだマシです。
+### Structure-Building Support
 
+<p>Functions include supercell generation, coordination-number and bond searches, coordinate modifications such as translation and rotation of selected local structures, surface generation, and creation of vacuum regions. There are quite a few supporting classes and functions, but they are not yet especially sophisticated and remain incomplete. Unlike ASE, this framework cannot automatically generate nanoparticles or nanotubes.
 
-## 開発の経緯と現状
-<p>元々は作者が大学院時代からポスドク時代までのおよそ１５年位の間にほそぼそと個別に作っていたAWK/Perl/Cなどを用いた多数の変換・プロット・解析支援プログラムがベースになっています。これまで、それぞれの支援コードにおいて、各支援コードが同じような方法論で使えるインターフェースを持ちつつ、それぞれの支援コードが相補性的に機能するように'なるべく'作ってきましたが、対応する計算コードの増加と、開発規模の肥大化に伴い、全体像としての開発が破綻しかけていたのがまず現状としてあります。そのため、自身の利便性と趣味でPython化したことから始まっています。そのため完全に独自実装をしてます。
+### 2D Plotting
 
-<p>フレームワーク化により開発にまつわる多くの問題は解決されます。Pythonフレームワーク設計ですので、ASEをご存じの方は、ASEを思い出すと思いますが、本コードは結果的にはASEの廉価版だと思ってくれてよいです。末端のReadクラスからの構造の読み込み・書き込みなどの基本機能の使い勝手、関数として呼び出しても良いしMethodで呼び出しても良い点など、ほぼASEと同じです。インスタンス作成からの流れや、マルチパラダイムな点は、ASEでなくとも、Pythonフレームワークならばどれも発想は同じなると思います。ですので、自虐的にASEの類似品と言うよりは Python OOP の自然の帰結だと思います。(むしろASEは基本構造としてクラス・メッソド・継承などのOOP的な手続よりは、多くは関数で作られている印象があります）。内部構造は当然まったく異なります。ただ基本機能の意味で、現時点ではかなりASE廉価版かと思われます。かなりショボイかもしれません。開発当初は自身の不勉強のためにASEの存在をあまり良く知らなかったこともあります。今になって振り返ると、Python フレームワークで計算の統合環境といえば、ASEがダントツで優れており、業界標準です。欧米では第一原理計算コードはASE対応が前提なものがほとんどです。おそらくASE以外にはそれに匹敵する同等のツールは必要ありません。本フレームワークは、結果的に似たようなフレームワークなので、開発として無駄だった点もあるかもしれませんが、独自開発故のメリットも当然多数あります。
+<p>2D plotting mainly uses matplotlib and supports PDF/EPS output. Many templates implement routine analyses such as LDOS and band calculations, making it straightforward to automate production of publication-ready figures. Script-driven execution and routine automation are assumed; little effort has gone into GUI development. Band plots can visualize wavefunction components directly on E–k plots through continuously varying colors or point sizes. An unusual feature is conversion of results from multiple calculation codes to the XML format used by p4vasp, a common VASP visualization program. I believe both the idea and implementation of such forced p4vasp conversion may have been firsts. For example, OpenMX MD results in XYZ format can readily be animated in p4vasp. Many tools support XCrySDen, but this project prioritized p4vasp and does not yet support XCrySDen. Support for Professor Oguchi's PSP format is quietly progressing, although direct PDF output through matplotlib is currently a sounder and more convenient approach.
 
-<p>一応、このフレームワークの意義は、自身の利便性のための自身のためのコードでして、その意味ではASEとは別の価値があるとは思います。私自身が必要とする機能の迅速な開発のための、<b>開発環境</b>の提供こそ意味があります。一応ミソとしてましては、ASEで対応していない国産のマイナーコードやマイナーな解析に対応している特徴はあります。さらに、自身の利便のために可視化も含めて様々なツール群を作っていまして、おそらくユーザーの視点で見るとフレームワークというよりはフレームワークとともに配布するツール群には一定の価値は見出していただけると思います。
+### 3D Plotting
 
-<p>同じく、マイナー対応では小谷先生が、同じくPythonフレームワークでXtalEditを開発されてまして、そちらの方が国産コードの対応が出来てるかと思いますが、開発は停滞しているようです。XtalEditは私のような解析中心ではなくて群論的な構造作成機能が中心です。当然ASEには同じ機能はあります。やはり Python を使った計算シミュレーション系の統合環境フレームワークは、結果的には老舗であるASEを追いかけ、その廉価版になってしまうのは必然かもしれません。おそらく、自己満足以外の目的では、計算物理屋は自身でこのようなコードを開発せずにいるのが賢明です。マイナー機能やマイナーコードの対応クラス等が欲しかったならば、ASEへ何らかの形でをコントリビュート、もしくはASEからのブランチとしたほうが健全ではないかとは思っています。
+Version 0.1.0 groups the previous `CrystalMaker` and unit-cell drawing routines under `sae.gui`. The rendering mechanism itself has not changed; see “Required Python and Modules” for the necessary `visual` and `wx` environment.
 
-<p>もし、国産コード対応が目的で、GUI が前提でしたら、近年ではCMSIなどのコミュニティがすすめるC-Toolsがあるかと思います。MateriApplsLiveに同封されています。GUI は割とシンプルでまだかなり機能も原始的ですが、それなりに最低限の需要は満たしていると思います。国産のマイナーコードの構造変換等の対応でしたらだいたいOKです。同じく、小谷先生のXtalEditも開発は止まっていますが、JavaのUIは一応持っています。それらのツールを使うのも手かもしれません。私の用意するフレームワークはまだGUI部分に限ってみれば、それらのツールには及んでいませんし、今後も迫る予定もほとんどありません。
+<p>3D plotting and the GUI are mostly experimental additions still in functional testing. They mainly use VPython and wxPython, indirectly relying on OpenGL. I am considering using OpenGL through VTK or directly to gain more flexibility in 3D visualization and GUI design. Some functionality is still being prepared, and I consider this an important future pillar of analysis support. In practice, however, there is only one developer working on this as a side project, so implementation lags far behind the plans. A reasonably useful 3D visualization of Bader analysis results has been implemented, including supercell support. For other purposes, visualization with VESTA or p4vasp is currently preferable.
 
-### 現状と未対応状況
-<p>現状では、昔開発していた AWK/Perl/Cなどの各種コードを用いた古い解析・計算支援系コードのうち、特に、KANSAI-92、LmtART、MarkさんのLMTO、FHI-AIMSなどへの対応した機能は、現時点では全くフレームワークへの移植・対応はしておりません。私自身、最近はそのあたりのコードを使ってないので将来的にも対応予定は今のところありません。その他VASPなどのコードにおいても、まだ一部の機能しか実装できていない問題があります。たとえば、ごく基本的な構造変換以外、まだHiLAPW対応もまったく進んでません。この６〜７年、HiLAPWも使っていませんので対応もかなりおざなりです。
+## Development History and Current Status
 
-<p>最大の問題は、統合的なフレームワークのデザインで未だに自身の方針が二転三転しているのと、自身のスキルなさと、そのスキルの変遷、特にOOP デザインへの理解度の変遷が、コードのリファクタリングにまったく追いついていません。そろそろきちんとリファクタリングしないと開発が発散してしまいそうで、少し限界に近い状況でもあります。フレームワーク＋ツール群で5万行くらいコードがありますので、そろそろしんどいです。リファクタリングを一気にやってスリム化したいです。ただ、いまだに対応するコードや機能が増加中で、あらゆる開発が追いついていないのが現状です。
+<p>The project grew from many independent AWK, Perl, and C programs for conversion, plotting, and analysis that I wrote gradually over roughly 15 years, from graduate school through my postdoctoral period. I tried, as far as possible, to give these programs similar interfaces and complementary functionality. As the number of supported calculation codes and the overall codebase grew, however, development as a coherent whole began to break down. I therefore began porting the tools to Python for my own convenience and enjoyment, implementing the framework independently.
 
-このような増改築を整理するため、0.1.0では既存のクラスを土台にネームスペースと
-内部の呼び出し関係を整理しました。対応する計算コードを増やしたり、解析手法を
-変更したりする作業とは分けて、まずは既存の処理を見通せる構成にするところから進めています。
+<p>Framework development solves many of these maintenance problems. Readers familiar with ASE may recognize similarities; in terms of functionality, this project can be regarded as a budget version of ASE. Basic operations such as reading and writing structures from reader classes, and calling functionality as functions or methods, resemble ASE. Instance creation and the multiparadigm approach are natural patterns of Python frameworks generally, not necessarily imitation of ASE. In that sense, the similarities are a natural consequence of Python OOP. (Indeed, my impression is that ASE itself relies heavily on functions rather than class/method/inheritance-based OOP procedures.) The internal architecture is entirely different. Still, the basic functionality is currently much more limited than ASE's and may look rather modest. When development began, I did not know ASE well. Looking back, ASE is by far the leading, industry-standard Python framework for integrated computational workflows; in Europe and the United States, many first-principles codes are expected to support it. There is probably little need for an equivalent alternative. Developing a similar independent framework may have involved wasted effort, but independent development has its own benefits.
 
-### 名前
-<p>ネームスペースを作る都合、現時点ではStructureAnalysisEnvironment (SAE) と名づけていますが、ASE (AtomicSimulationEnvironmet)の存在を知る前につけたネーミングでして、今の実感だとこの前はこの名前は<B>ありえない</B>と思っています。自身でもASEと混乱します。そのうち変更予定ですがセンスが無いので思いつきませんのでこのままかもしれません。（最近は三文字ではなく、略称としてはSAEnvとしてます）。
+<p>Its significance, above all, is that it is my own code for my own convenience, which gives it value distinct from ASE. Providing a <b>development environment</b> for quickly implementing functions I need is the central purpose. A distinguishing point is support for less-common Japanese codes and analyses not covered by ASE. I have also developed many utilities, including visualization tools. From a user's perspective, these bundled tools may be more valuable than the framework itself.
 
-### ASEモジュールおよびcif対応
-<p>残念ながら現状では、群論に関するごく一部機能をASEのモジュールから用いています。ASEに慣れてくると自身のフレームワークの存在価値を失いそうになるのですが、一応、これら群論機能の独自実装は一部では進んでますのでそのうちフレームワーク本体からのASEモジュールの使用は除きます。ただ、時間が足りていないのと、ぶっちゃけASEモジュール利用で困ってないので、困っています。その他、現状では私のフレームワークでは直接 cif の読み書きは直接できないので、この機能を ASEモジュール に頼るか PyCifRWモジュールに頼るか、中途半端な独自実装をするかは迷ってます。cif変換系はASEのフレームワークを使う支援プログラムとして、ツール群の中に一緒に放り込んではいますので、ユーザー視点としてみれば、実用上は問題無いとは思います。一般にはcifからの変換系ツールでは [cif2cell](http://sourceforge.net/projects/cif2cell/) が対応フォーマットの多さと利便性と知名度で何歩か進んでいると思います。cif2cell だと当然彼らも独自実装せずに、PyCifRWモジュールで対応してます。ともあれ、正直cifに関しては、VESTAを一度通せばほとんど対応できるので実際問題微妙にモチベーションは低いですが、シームレスな対応の意味では見逃せないポイントではあります。
+<p>Professor Kotani also developed a Python framework called XtalEdit, probably with better support for Japanese codes, although development seems to have stalled. Unlike my analysis-centered approach, XtalEdit focuses on group-theoretical structure generation; ASE naturally provides similar functionality. Integrated Python simulation frameworks may inevitably end up following the older ASE and becoming simplified versions of it. Unless motivated by personal satisfaction, computational physicists might be better off not writing such frameworks themselves. For support of less-common codes and functions, contributing to ASE or branching from it may be healthier.
 
-### 今後
-<p><b>群論機能</b>の充実と、それを基盤にしてバンドフォールディング機能の実装などは目論んでいます。当初はそれを目玉機能とするつもりだったのですが、それも [unfolding](http://www.ifm.liu.se/theomod/compphys/band-unfolding/)  コードを別途見つけてしまったのでいささかモチベーションが低いです。作ろうと思っていたことはほぼ実現されてしまっています。私自身の開発は、基盤フレームワークの整備が思ったより肥大化して、しかも肥大化が止まる気配がないので、現状フォールディング等の機能の実装が完全に止まっています。むしろ、既存の unfolding コードは使うにあたっての手続きがかなり煩雑なのでそれをラップするだけでもかなり便利かもしれません。解析利用という一点で見れば、その方向性はありとは思っていますので、少し検討中です。ただ、大前提として<b>解析手法の開発基盤</b>開発が目的でもありますので、群論機能の充実は今後の開発の心臓部分だと思っています。無論、心臓だけでは何も出来ませんので手足もドンドン作っていく予定です。
+<p>If the goal is Japanese-code support with a GUI, C-Tools, promoted by communities such as CMSI and included in MateriAppsLive, may be appropriate. Its GUI is relatively simple and its features still basic, but it meets many minimum needs, including structural conversion for less-common Japanese codes. Professor Kotani's XtalEdit, although no longer actively developed, also has a Java UI. Either may be useful. The GUI in this framework currently falls short of these tools, and there is little intention to catch up.
 
-特に解析(よび構造作成)に関しては特定の計算コードにとらわれずにツールを作ることは大切だと思っています。PAWの波動関数からの内殻の情報を再計算するなども、いまさらFortranで書くのもいまいち戸惑うのも本音です。なるべく周辺部分は計算コード依存を無くしていきたいと思います。
+### Current Limitations and Unsupported Features
 
-特にこの手のコードは、ASE が世の中にある現場、<b>マイナーの計算コード対応</b>と、<b>独自の解析機能実装</b>と、<b>GUI機能の充実</b>以外ではおそらくオリジナリティと利便性は出てこないと思います。開発の意義は多分それです。独自の実装を含む解析の機能充実とマイナーコードの対応はドンドン進めていく予定です。GUIは必要に応じて作りますが、おそらくかなり手抜きだと思いますので、期待は出来ません。一応、趣味もかねて、wxPython,wxWiget でクロスプラットホームで,
-Pythonのみならず、C++などのネイティブなGUIも含めて開発は進めています。
+<p>Many older analysis and calculation-support tools written in AWK, Perl, and C have not been ported at all, particularly support for KANSAI-92, LmtART, Mark's LMTO, and FHI-AIMS. Since I have not used those codes recently, I currently have no plans to support them. Even for VASP, only some of the old functionality has been implemented. HiLAPW support, for example, has barely progressed beyond basic structural conversion; I have not used HiLAPW in six or seven years.
 
-結局、どれに時間と力を注ぎこむのかは今後次第です。ただ残念ながら、しばらく計算をする仕事からは離れそうなので、あまり開発は進められない気もします。
+<p>The greatest problem is that my design policy for the integrated framework continues to change. My limited skills and their evolution, particularly my growing understanding of OOP design, have not been matched by sufficient refactoring. Without proper refactoring soon, development risks becoming unmanageable. The framework and tools contain roughly 50,000 lines of code, and maintenance is becoming difficult. I would like to carry out substantial refactoring and simplify the codebase, but the number of supported codes and functions is still increasing, and development cannot keep pace.
 
+To organize these successive additions, version 0.1.0 reorganized namespaces and internal call relationships on the basis of existing classes. This work is separate from adding calculation codes or changing analysis methods; the immediate priority is to make existing processing easier to understand and maintain.
+
+### Name
+
+<p>The framework is currently called StructureAnalysisEnvironment (SAE), a name I chose before learning of ASE (Atomic Simulation Environment). In retrospect, I think this name is <B>unacceptable</B>, since even I confuse it with ASE. I plan to change it eventually, but lacking a better idea it may remain. Recently I have tended to abbreviate it SAEnv rather than SAE.
+
+### ASE Modules and CIF Support
+
+<p>Unfortunately, some limited group-theoretical functionality currently uses ASE modules. As I become more familiar with ASE, the value of my own framework can seem questionable, but independent implementations of some of these functions are progressing and I intend eventually to remove ASE dependencies from the core framework. Time is limited, however, and ASE currently works perfectly well, which makes replacing it hard to prioritize. The framework also cannot directly read and write CIF files. I am undecided whether to rely on ASE, PyCifRW, or a partial independent implementation. CIF conversion utilities using ASE are already bundled among the tools, so this is not a major practical problem for users. For general CIF conversion, [cif2cell](http://sourceforge.net/projects/cif2cell/) is probably ahead in supported formats, convenience, and recognition; it also uses PyCifRW rather than implementing CIF parsing independently. In practice, passing CIF files through VESTA handles most cases, so my motivation is admittedly limited, but seamless support remains important.
+
+### Future Plans
+
+<p>I intend to expand <b>group-theoretical functionality</b> and use it as a foundation for band unfolding. This was originally planned as a flagship feature, but finding the existing [unfolding](http://www.ifm.liu.se/theomod/compphys/band-unfolding/) code reduced my motivation, since it already implements much of what I had intended. The foundational framework grew far beyond expectations and continues to expand, so work on unfolding itself has stopped. Existing unfolding tools involve cumbersome procedures, however, and even a convenient wrapper could be valuable for analysis. I am considering that direction. Since developing a <b>platform for developing analysis methods</b> is a central goal, improved group theory remains essential. Naturally, a foundation alone is not enough; practical tools must continue to be built around it.
+
+I consider it important to develop analysis and structure-building tools that are not tied to particular calculation codes. Even reconstructing core-electron information from PAW wavefunctions is not something I am eager to implement in Fortran now. I want to eliminate code-specific dependencies from peripheral processing as much as possible.
+
+With ASE already available, the main opportunities for originality and usefulness in this kind of project are probably <b>support for less-common calculation codes</b>, <b>original analysis functions</b>, and <b>better GUI functionality</b>. I expect to continue expanding the first two, including original implementations. I will add GUI functionality when necessary, but it will probably remain relatively minimal. Partly as a hobby, I am also developing cross-platform interfaces with wxPython and wxWidgets, including native GUIs in C++ as well as Python.
+
+How much effort goes into each area remains to be seen. Unfortunately, I may be moving away from work involving numerical calculations for a while, so development may not progress very quickly.
