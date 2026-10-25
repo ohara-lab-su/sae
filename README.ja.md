@@ -3,6 +3,9 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ohara-lab-su/sae/blob/main/README.en.md)
 [![ja](https://img.shields.io/badge/lang-ja-yellow.svg)](https://github.com/ohara-lab-su/sae/blob/main/README.md)
 
+[![GitHub](https://img.shields.io/badge/GitHub-ohara--lab--su%2Fsae-181717?logo=github)](https://github.com/ohara-lab-su/sae/)
+[![Ohara Lab](https://img.shields.io/badge/Ohara%20Lab-Home-4B5563?logo=homeassistant&logoColor=white)](https://ohara-lab-su.github.io/index.html)
+
 ## はじめに
 
 現在(2026)においては、ASEや pymatgen などが発展しており、
