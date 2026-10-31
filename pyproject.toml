@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 name = "structure-analysis-environment"
 version = "0.1.4"
 
-description = "StructureAnalysisEnvironment (SAE)"
+description = "Python toolkit for atomistic structure conversion, analysis, and visualization across VASP, RMC, FDMNES, WIEN2k, and other simulation formats."
 readme = "README.md"
 requires-python = ">=3.7"
 authors = [
@@ -24,6 +24,12 @@ dependencies = [
     "humanfriendly",
     "coloredlogs",
 ]
+
+[project.urls]
+Homepage = "https://ohara-lab-su.github.io/structure_analysis_environment/"
+Documentation = "https://ohara-lab-su.github.io/structure_analysis_environment/"
+Repository = "https://github.com/ohara-lab-su/structure_analysis_environment"
+Issues = "https://github.com/ohara-lab-su/structure_analysis_environment/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
